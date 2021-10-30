@@ -2,5 +2,8 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^\.github$
-^certetemplate\.Rproj$
+^certeplot2\.Rproj$
 ^_pkgdown\.yml$
+^logo\.svg$
+^\.DS_Store$
+^data-raw$

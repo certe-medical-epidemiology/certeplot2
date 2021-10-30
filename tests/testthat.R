@@ -18,6 +18,6 @@
 # ===================================================================== #
 
 library(testthat)
-library(certetemplate)
+library(certeplot2)
 
-test_check("certetemplate")
+test_check("certeplot2")

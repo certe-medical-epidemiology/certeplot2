@@ -1,5 +1,5 @@
-Package: certetemplate
-Title: A Certe R Package for ...
+Package: certeplot2
+Title: A Certe R Package for Convenient Plotting
 Version: 0.0.1
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
@@ -16,11 +16,17 @@ Authors@R: c(
          email = "e.dijkstra@certe.nl"),
   person(given = "Certe Medical Diagnostics & Advice Foundation",
          role = c("cph", "fnd")))
-Description: A Certe R Package for ... .
+Description: A Certe R Package with plotting functions which are convenient
+  wrappers around the 'ggplot2' package, and also apply the Certe organisational
+  style.
   This package is part of the 'certedata' universe.
-URL: https://github.com/certe-medical-epidemiology/certetemplate
+URL: https://github.com/certe-medical-epidemiology/certeplot2, https://github.com/certe-medical-epidemiology/certeplot2
 Depends: 
   R (>= 3.6.0)
+Imports:
+  certestyle,
+  dplyr (>= 1.0.0),
+  ggplot2 (>= 3.3.5)
 Suggests: 
   testthat (>= 2.0.0)
 License: GPL-2

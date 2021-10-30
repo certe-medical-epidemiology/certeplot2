@@ -17,22 +17,14 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-title: "certeplot2"
-url: "https://certe-medical-epidemiology.github.io/certeplot2"
-
-navbar:
-  title: "AMR (for R)"
-  left:
-    - text: "Home"
-      icon: "fa-home"
-      href: "index.html"
-    - text: "Manual"
-      icon: "fa-book-open"
-      href: "reference/index.html"
-    - text: "Source Code"
-      icon: "fab fa-github"
-      href: "https://github.com/certe-medical-epidemiology/certeplot2"
-  right:
-    - text: "Certe Website"
-      icon: "fa-flask"
-      href: "https://certe.nl"
+#' Example Data Set with Admitted Patients
+#'
+#' An auto-generated, fictitious data set containing patients admitted to hospitals.
+#' @format A [data.frame] with `r format(nrow(admitted_patients), big.mark = ",")` observations and `r ncol(admitted_patients)` variables:
+#' - `date`\cr date of hospital admission
+#' - `gender`\cr gender of the patient
+#' - `age`\cr age of the patient
+#' - `age_group`\cr age group of the age of the patient, generated with [AMR::age_groups()]
+#' - `hospital`\cr ID of the hospital, from A to D
+#' - `ward`\cr type of ward, either ICU or Non-ICU
+"admitted_patients"

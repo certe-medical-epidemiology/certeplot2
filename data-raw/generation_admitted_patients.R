@@ -17,23 +17,17 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-#' Title of function
-#'
-#' Short description
-#' @param arg1 text
-#' @rdname title123
-#' @export
-#' @importFrom dplyr summarise n_distinct
-#' @examples
-#' a <- "example1"
-#' b <- "example2"
-abc <- function() {
-
-}
-
-#' @param d text
-#' @rdname title123
-#' @export
-def <- function(d) {
-
-}
+library(dplyr)
+library(AMR)
+admitted_patients <- example_isolates %>%
+  group_by(patient_id) %>%
+  filter(n() == 1) %>%
+  ungroup() %>%
+  transmute(date,
+            gender,
+            age,
+            age_group = age_groups(age),
+            hospital = hospital_id,
+            ward = ifelse(ward_icu, "ICU", "Non-ICU")) %>%
+  slice_sample(n = 250) %>%
+  arrange(date)

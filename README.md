@@ -1,11 +1,11 @@
-# The `certetemplate` package for R
+# The `certeplot2` package for R
 
-[![certetemplate status badge](https://certe-medical-epidemiology.r-universe.dev/badges/certetemplate?color=01617e)](https://certe-medical-epidemiology.r-universe.dev)
-[![codecov](https://codecov.io/gh/certe-medical-epidemiology/certetemplate/branch/main/graph/badge.svg)](https://codecov.io/gh/certe-medical-epidemiology/certetemplate)
-[![R-CMD-check](https://github.com/certe-medical-epidemiology/certetemplate/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/certe-medical-epidemiology/certetemplate/actions/workflows/R-CMD-check.yaml)
-[![CodeFactor](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certetemplate/badge/main)](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certetemplate/overview/main)
+[![certeplot2 status badge](https://certe-medical-epidemiology.r-universe.dev/badges/certeplot2?color=01617e)](https://certe-medical-epidemiology.r-universe.dev)
+[![codecov](https://codecov.io/gh/certe-medical-epidemiology/certeplot2/branch/main/graph/badge.svg)](https://codecov.io/gh/certe-medical-epidemiology/certeplot2)
+[![R-CMD-check](https://github.com/certe-medical-epidemiology/certeplot2/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/certe-medical-epidemiology/certeplot2/actions/workflows/R-CMD-check.yaml)
+[![CodeFactor](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certeplot2/badge/main)](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certeplot2/overview/main)
 
-<img src="https://certe-medical-epidemiology.github.io/certetemplate/logo.svg" alt="The certetemplate R package" style="width: 181px; height: 209px;">
+<img src="https://certe-medical-epidemiology.github.io/certeplot2/logo.svg" alt="The certeplot2 R package" style="width: 181px; height: 209px;">
 
 ### General Information
 
