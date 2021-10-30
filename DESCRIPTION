@@ -1,0 +1,31 @@
+Package: certetemplate
+Title: A Certe R Package for ...
+Version: 0.0.1
+Authors@R: c(
+  person(given = c("Matthijs", "S."), 
+         family = "Berends",
+         role = c("aut", "cre"),
+         email = "m.berends@certe.nl"),
+  person(given = c("Erwin", "E.", "A."),
+         family = "Hassing", 
+         role = c("aut"),
+         email = "e.hassing@certe.nl"),
+  person(given = c("Erwin"),
+         family = "Dijkstra", 
+         role = c("aut"),
+         email = "e.dijkstra@certe.nl"),
+  person(given = "Certe Medical Diagnostics & Advice Foundation",
+         role = c("cph", "fnd")))
+Description: A Certe R Package for ... .
+  This package is part of the 'certedata' universe.
+URL: https://github.com/certe-medical-epidemiology/certetemplate
+Depends: 
+  R (>= 3.6.0)
+Suggests: 
+  testthat (>= 2.0.0)
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Config/testthat/edition: 2

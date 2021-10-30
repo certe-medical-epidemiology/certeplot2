@@ -1,0 +1,85 @@
+# ===================================================================== #
+#  An R package by Certe:                                               #
+#  https://github.com/certe-medical-epidemiology                        #
+#                                                                       #
+#  Licensed as GPL-v2.0.                                                #
+#                                                                       #
+#  Developed at non-profit organisation Certe Medical Diagnostics &     #
+#  Advice, department of Medical Epidemiology.                          #
+#                                                                       #
+#  This R package is free software; you can freely use and distribute   #
+#  it for both personal and commercial purposes under the terms of the  #
+#  GNU General Public License version 2.0 (GNU GPL-2), as published by  #
+#  the Free Software Foundation.                                        #
+#                                                                       #
+#  We created this package for both routine data analysis and academic  #
+#  research and it was publicly released in the hope that it will be    #
+#  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
+# ===================================================================== #
+
+# Remember that R-universe will hourly build binaries for macOS and Windows:
+# https://certe-medical-epidemiology.r-universe.dev
+
+on:
+  push:
+    branches: '**' # matches every branch
+  pull_request:
+    branches: '**' # matches every branch
+  schedule:
+    # run a schedule every Monday and Thursday at 1 AM.
+    # this is to check that all dependencies are still available
+    - cron:  '0 1 * * 1,4'
+
+name: R-CMD-check
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+    continue-on-error: ${{ matrix.config.allowfail }}
+    name: ${{ matrix.config.os }} (R-${{ matrix.config.r }})
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: macOS-latest,   r: 'devel',   allowfail: true}
+          - {os: macOS-latest,   r: '4.1',     allowfail: false}
+          - {os: macOS-latest,   r: '4.0',     allowfail: false}
+          - {os: macOS-latest,   r: '3.6',     allowfail: false}
+          - {os: ubuntu-20.04,   r: 'devel',   allowfail: true,  rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-20.04,   r: '4.1',     allowfail: false, rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-20.04,   r: '4.0',     allowfail: false, rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-20.04,   r: '3.6',     allowfail: false, rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: windows-latest, r: 'devel',   allowfail: true}
+          - {os: windows-latest, r: '4.1',     allowfail: false}
+          - {os: windows-latest, r: '4.0',     allowfail: false}
+          - {os: windows-latest, r: '3.6',     allowfail: false}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@v1
+        with:
+          use-public-rspm: true
+          # be sure to enable our R-universe
+          extra-repositories: 'https://certe-medical-epidemiology.r-universe.dev'
+
+      - uses: r-lib/actions/setup-r-dependencies@v1
+        with:
+          extra-packages: rcmdcheck
+
+      - uses: r-lib/actions/check-r-package@v1
+
+      - name: Show testthat output
+        if: always()
+        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
+
+      - name: Upload check results
+        if: failure()
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+          path: check

@@ -1,0 +1,48 @@
+# ===================================================================== #
+#  An R package by Certe:                                               #
+#  https://github.com/certe-medical-epidemiology                        #
+#                                                                       #
+#  Licensed as GPL-v2.0.                                                #
+#                                                                       #
+#  Developed at non-profit organisation Certe Medical Diagnostics &     #
+#  Advice, department of Medical Epidemiology.                          #
+#                                                                       #
+#  This R package is free software; you can freely use and distribute   #
+#  it for both personal and commercial purposes under the terms of the  #
+#  GNU General Public License version 2.0 (GNU GPL-2), as published by  #
+#  the Free Software Foundation.                                        #
+#                                                                       #
+#  We created this package for both routine data analysis and academic  #
+#  research and it was publicly released in the hope that it will be    #
+#  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
+# ===================================================================== #
+
+on:
+  push:
+    branches: '**' # matches every branch
+  pull_request:
+    branches: '**' # matches every branch
+
+name: lintr
+
+jobs:
+  lintr:
+    runs-on: macOS-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@v1
+        with:
+          use-public-rspm: true
+          # be sure to enable our R-universe
+          extra-repositories: 'https://certe-medical-epidemiology.r-universe.dev'
+
+      - uses: r-lib/actions/setup-r-dependencies@v1
+        with:
+          extra-packages: lintr
+
+      - name: Lint
+        run: lintr::lint_package(linters = lintr::with_defaults(line_length_linter = NULL, trailing_whitespace_linter = NULL, object_name_linter = NULL, cyclocomp_linter = NULL, object_length_linter = lintr::object_length_linter(length = 50L)))
+        shell: Rscript {0}
