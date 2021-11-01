@@ -3,100 +3,17 @@
 \name{plot2}
 \alias{plot2}
 \alias{plot2.default}
+\alias{plot2.numeric}
 \alias{plot2.data.frame}
+\alias{plot2.freq}
+\alias{plot2.sf}
 \title{Conveniently Create a New \code{ggplot}}
 \usage{
-plot2(
-  .data,
-  x = NULL,
-  y = NULL,
-  category = NULL,
-  facet = NULL,
-  type = "column",
-  title = NULL,
-  subtitle = NULL,
-  tag = NULL,
-  caption = NULL,
-  bins = NULL,
-  category.focus = NULL,
-  category.sort = TRUE,
-  colour = getOption("plot2.colours", "certe"),
-  colour.extended_spectrum = FALSE,
-  colour.fill = NULL,
-  colour.opacity = 0,
-  datalabels = TRUE,
-  datalabels.fill = "white",
-  datalabels.round = ifelse(y.percent, 1, 2),
-  datalabels.size = 3,
-  decimal_comma = ",",
-  facet.bold = TRUE,
-  facet.drop = FALSE,
-  facet.fill = NULL,
-  facet.fixed_y = FALSE,
-  facet.italic = FALSE,
-  facet.margin = 8,
-  facet.nrow = NULL,
-  facet.position = "top",
-  facet.relative = FALSE,
-  facet.repeat_lbls_x = TRUE,
-  facet.repeat_lbls_y = TRUE,
-  facet.size = 10,
-  facet.sort = TRUE,
-  horizontal = FALSE,
-  jitter_seed = 1,
-  legend.barheight = 5,
-  legend.barwidth = 1,
-  legend.italic = FALSE,
-  legend.position = "top",
-  legend.reverse = NULL,
-  legend.title = "",
-  linetype = 1,
-  markdown = TRUE,
-  na.replace = "(onbekend)",
-  na.rm = FALSE,
-  print = FALSE,
-  reverse = horizontal,
-  size = ifelse(type \%in\% c("point", "jitter", "boxplot", "violin"), 2, 0.75),
-  stacked = FALSE,
-  stackedpercent = FALSE,
-  subtitle.maxlength = 60,
-  summarise_function = base::sum,
-  text.factor = 1,
-  text.font_family = "Calibri",
-  theme = theme_minimal2(),
-  title.maxlength = 60,
-  width = ifelse(type \%in\% c("jitter", "boxplot", "violin"), 0.75, 0.5),
-  x.date_breaks = "1 day",
-  x.date_labels = "d mmm",
-  x.expand = 0.5,
-  x.lbl_align = NULL,
-  x.lbl_angle = 0,
-  x.lbl_italic = FALSE,
-  x.limits = NULL,
-  x.max_items = Inf,
-  x.max_txt = "(rest, x{n})",
-  x.position = "bottom",
-  x.remove = FALSE,
-  x.sort = TRUE,
-  x.title = NULL,
-  y.24h = FALSE,
-  y.age = FALSE,
-  y.breaks = NULL,
-  y.expand = 0.25,
-  y.labels = NULL,
-  y.limits = NULL,
-  y.percent = FALSE,
-  y.percent_break = 10,
-  y.position = "left",
-  y.remove = FALSE,
-  y.title = NULL,
-  y.trans = "identity",
-  x.category = NULL,
-  y.category = NULL,
-  ...
-)
+plot2(...)
 
-\method{plot2}{default}(.data = NULL, x = NULL, y = NULL, category = NULL, facet = NULL, ...)
+\method{plot2}{default}(object, ...)
+
+\method{plot2}{numeric}(y, ...)
 
 \method{plot2}{data.frame}(
   .data = NULL,
@@ -104,14 +21,126 @@ plot2(
   y = NULL,
   category = NULL,
   facet = NULL,
-  type = "column",
+  type = NULL,
+  x.title = NULL,
+  y.title = NULL,
+  title = NULL,
+  subtitle = NULL,
+  caption = NULL,
+  tag = NULL,
+  title_maxlength = 60,
+  subtitle_maxlength = 60,
+  na.replace = "(??)",
+  na.rm = FALSE,
+  facet.fill = NULL,
+  facet.position = "top",
+  facet.bold = TRUE,
+  facet.size = 10,
+  facet.repeat_lbls_x = TRUE,
+  facet.repeat_lbls_y = TRUE,
+  facet.fixed_y = FALSE,
+  facet.drop = FALSE,
+  facet.nrow = NULL,
+  facet.margin = 8,
+  facet.relative = FALSE,
+  facet.italic = FALSE,
+  x.date_breaks = NULL,
+  x.date_labels = NULL,
+  category.focus = NULL,
+  colour = getOption("plot2.colours", "certe"),
+  colour.fill = NULL,
+  colour.opacity = 0,
+  x.lbl_angle = 0,
+  x.lbl_align = NULL,
+  x.lbl_italic = FALSE,
+  x.remove = FALSE,
+  x.position = "bottom",
+  x.max = Inf,
+  x.max_txt = "(rest, x \%n)",
+  category.max = Inf,
+  category.max_txt = "(rest, x \%n)",
+  facet.max = Inf,
+  facet.max.txt = "(rest, x \%n)",
+  x.breaks = NULL,
+  x.breaks_n = NULL,
+  x.trans = "identity",
+  x.expand = 0.5,
+  x.limits = NULL,
+  x.character = NULL,
+  y.remove = FALSE,
+  y.24h = FALSE,
+  y.age = FALSE,
+  y.percent = FALSE,
+  y.percent_break = 10,
+  y.breaks = NULL,
+  y.limits = NULL,
+  y.labels = NULL,
+  y.expand = 0.25,
+  y.trans = "identity",
+  y.position = "left",
+  sort.x = TRUE,
+  sort.category = TRUE,
+  sort.facet = TRUE,
   datalabels = TRUE,
+  datalabels.round = ifelse(y.percent, 2, 1),
+  datalabels.colour = "grey25",
+  datalabels.fill = "white",
+  datalabels.size = 3,
+  decimal.mark = ",",
+  big.mark = ".",
+  summarise_function = base::sum,
+  stacked = FALSE,
+  stackedpercent = FALSE,
+  horizontal = FALSE,
+  reverse = horizontal,
+  smooth = FALSE,
+  smooth.method = NULL,
+  smooth.formula = NULL,
+  smooth.se = TRUE,
+  smooth.ci = 0.95,
+  smooth.alpha = 0.15,
+  smooth.size = 0.5,
+  smooth.linetype = 3,
+  size = NULL,
+  linetype = 1,
+  bins = NULL,
+  width = NULL,
+  jitter_seed = 1,
+  legend.position = "top",
+  legend.title = "",
+  legend.reverse = NULL,
+  legend.barheight = 5,
+  legend.barwidth = 1,
+  legend.nbin = 300,
+  legend.italic = FALSE,
+  print = FALSE,
+  font.family = "Calibri",
+  text.factor = 1,
+  markdown = TRUE,
+  taxonomy.italic = markdown,
+  theme.certe = TRUE,
+  theme.certe.sf = TRUE,
   x.category = NULL,
   y.category = NULL,
   ...
 )
+
+\method{plot2}{freq}(.data, x = .data$item, y = .data$count, sort.x = "freq-desc", ...)
+
+\method{plot2}{sf}(
+  .data,
+  colour = "grey50",
+  x.expand = 0,
+  y.expand = 0,
+  datalabels = FALSE,
+  datalabels.colour = "black",
+  legend.position = "right",
+  ...
+)
 }
 \arguments{
+\item{object}{data object which will be transformed with \code{\link[ggplot2:fortify]{ggplot2::fortify()}}, which allows S3 extensions by other packages}
+
 \item{.data}{data to plot}
 }
 \description{
@@ -122,18 +151,19 @@ The \code{\link[=plot2]{plot2()}} function uses the \code{ggplot2} package for p
 \itemize{
 \item A convenient wrapper around many \code{ggplot2} functions such as \code{\link[=ggplot]{ggplot()}}, \code{\link[=geom_col]{geom_col()}}, \code{\link[=facet_wrap]{facet_wrap()}}, \code{\link[=labs]{labs()}}, etc.
 \item Writing as few lines of codes as possible
-\item Benefits from Microsoft Excel:
+\item Some benefits from Microsoft Excel:
 \itemize{
 \item The y axis starts at 0
-\item The y scale contains extra space to read all data points
+\item The y scale contains extra space at the top to be able to interpret all data points
 \item Date breaks can be written in a readable format such as "d mmm yyyy"
 \item Data labels can easily be printed
 }
 \item Easy plotting in three 'directions': \code{x} (the regular x axis), \code{category} (replaces 'fill' and 'colour') and \code{facet}
 \item Easy way for sorting data in may ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': \code{x.sort}, \code{category.sort} and \code{facet.sort}
-\item Easy limiting values, e.g. by setting \code{x.max_items = 5}
+\item Easy limiting values, e.g. by setting \code{x.max_items = 5} or \code{category.max_items = 5}
 \item Markdown support for any label, with any theme
 \item An extra clean, minimalistic theme with a lot of whitespace that is ideal for printing
+\item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
 The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. Less typing, faster coding.
@@ -147,9 +177,19 @@ plot2(iris, x = Species, y = Sepal.Length, type = "boxplot")
 
 library(dplyr, warn.conflicts = FALSE)
 
+# automatically takes first columns, will be points since both are numeric
 mtcars \%>\% 
-  plot2(mpg, hp,
-        type = "point")
-        
-
+  plot2()
+mtcars \%>\% 
+  plot2(mpg, hp)
+  
+# if there are more Y values than groups, the default will be boxplot
+mtcars \%>\% 
+  mutate(cyl = as.character(cyl)) \%>\%
+  plot2()
+  
+# plot2() supports all S3 extensions available through ggplot2::fortify():
+mtcars \%>\% 
+  lm(mpg ~ hp, data = .) \%>\% 
+  plot2()
 }
