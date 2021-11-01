@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • certeplot2</title>
+<title>Example Data Set with Admitted Patients — admitted_patients • certeplot2</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,8 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Example Data Set with Admitted Patients — admitted_patients" />
+<meta property="og:description" content="An auto-generated, fictitious data set containing patients admitted to hospitals." />
 <meta property="og:image" content="https://certe-medical-epidemiology.github.io/certeplot2/logo.svg" />
 
 
@@ -66,7 +67,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -126,60 +127,33 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Example Data Set with Admitted Patients</h1>
+    <small class="dont-index">Source: <a href='https://github.com/certe-medical-epidemiology/certeplot2/blob/master/R/admitted_patients.R'><code>R/admitted_patients.R</code></a></small>
+    <div class="hidden name"><code>admitted_patients.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>An auto-generated, fictitious data set containing patients admitted to hospitals.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='va'>admitted_patients</span></pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="admitted_patients.html">admitted_patients</a></code> </p>
-        </td>
-        <td><p>Example Data Set with Admitted Patients</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plot2.html">plot2()</a></code> </p>
-        </td>
-        <td><p>Conveniently Create a New <code>ggplot</code></p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plot3.html">plot3()</a></code> </p>
-        </td>
-        <td><p>Plotting functions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="uses_decimal_comma.html">uses_decimal_comma()</a></code> </p>
-        </td>
-        <td><p>Check if <em>locale</em> uses comma as decimal separator</p></td>
-      </tr>
-    </tbody>
-    </table>
+
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>A <a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a> with 250 observations and 6 variables:</p><ul>
+<li><p><code>date</code><br /> date of hospital admission</p></li>
+<li><p><code>gender</code><br /> gender of the patient</p></li>
+<li><p><code>age</code><br /> age of the patient</p></li>
+<li><p><code>age_group</code><br /> age group of the age of the patient, generated with <code>AMR::age_groups()</code></p></li>
+<li><p><code>hospital</code><br /> ID of the hospital, from A to D</p></li>
+<li><p><code>ward</code><br /> type of ward, either ICU or Non-ICU</p></li>
+</ul>
+
+
   </div>
-
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>

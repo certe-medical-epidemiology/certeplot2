@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://certe-medical-epidemiology.github.io/certetemplate//index.html</loc>
+    <loc>https://certe-medical-epidemiology.github.io/certeplot2/index.html</loc>
+  </url>
+  <url>
+    <loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/admitted_patients.html</loc>
+  </url>
+  <url>
+    <loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/plot2.html</loc>
+  </url>
+  <url>
+    <loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/plot3.html</loc>
+  </url>
+  <url>
+    <loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/uses_decimal_comma.html</loc>
   </url>
 </urlset>
