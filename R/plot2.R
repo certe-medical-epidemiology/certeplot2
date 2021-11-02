@@ -19,7 +19,7 @@
 
 #' Conveniently Create a New `ggplot`
 #'
-#' These functions create [ggplot2:ggplot] objects, but work in a more convenient way than the `ggplot2` package. By design, the `ggplot2` package requires users to use a lot of functions, while the `certeplot2` package requires to use only arguments in one function.
+#' These functions create [ggplot2::ggplot()] objects, but work in a more convenient way than the `ggplot2` package. By design, the `ggplot2` package requires users to use a lot of functions, while the `certeplot2` package requires to use only arguments in one function.
 #' @param .data data to plot
 #' @details The [plot2()] function uses the `ggplot2` package for plotting and provides:
 #'   * A convenient wrapper around many `ggplot2` functions such as [ggplot()], [geom_col()], [facet_wrap()], [labs()], etc.
@@ -33,7 +33,7 @@
 #'   * Easy way for sorting data in may ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': `x.sort`, `category.sort` and `facet.sort`
 #'   * Easy limiting values, e.g. by setting `x.max_items = 5` or `category.max_items = 5`
 #'   * Markdown support for any label, with any theme
-#'   * An extra clean, minimalistic theme with a lot of whitespace that is ideal for printing
+#'   * An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: [theme_minimal2()]
 #'   * Support for any `ggplot2` extension based on [ggplot2::fortify()]
 #'   
 #' The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. Less typing, faster coding.
@@ -64,7 +64,8 @@
 #' # plot2() supports all S3 extensions available through ggplot2::fortify():
 #' mtcars %>% 
 #'   lm(mpg ~ hp, data = .) %>% 
-#'   plot2()
+#'   plot2(title = "Titles/captions *support* **markdown**",
+#'         x.title = "*hp*")
 plot2 <- function(...) {
   UseMethod("plot2")
 }
@@ -77,7 +78,7 @@ plot2 <- function(...) {
 plot2.default <- function(object, ...) {
   # ggplot2's fortify() will try to make this a data.frame,
   # so that plot2.data.frame() can be called
-  plot2(fortify(object))
+  plot2(fortify(object), ...)
 }
 
 #' @rdname plot2
@@ -91,7 +92,8 @@ plot2.numeric <- function(y, ...) {
 
 #' @rdname plot2
 #' @importFrom dplyr `%>%` mutate tibble 
-#' @importFrom ggplot2 ggplot aes labs scale_x_discrete scale_x_continuous
+#' @importFrom ggplot2 ggplot aes labs scale_x_discrete scale_x_continuous theme_grey
+#' @importFrom ggtext element_markdown
 #' @importFrom certestyle format2
 #' @export
 plot2.data.frame <- function(.data = NULL,
@@ -156,9 +158,9 @@ plot2.data.frame <- function(.data = NULL,
                              y.expand = 0.25,
                              y.trans = "identity",
                              y.position = "left",
-                             sort.x = TRUE,
-                             sort.category = TRUE,
-                             sort.facet = TRUE,
+                             x.sort = NULL,
+                             category.sort = TRUE,
+                             facet.sort = TRUE,
                              datalabels = TRUE,
                              datalabels.round = ifelse(y.percent, 2, 1),
                              datalabels.colour = "grey25",
@@ -192,12 +194,11 @@ plot2.data.frame <- function(.data = NULL,
                              legend.nbin = 300,
                              legend.italic = FALSE,
                              print = FALSE,
-                             font.family = "Calibri",
                              text.factor = 1,
+                             text.font_family = "Verdana",
+                             theme = theme_minimal2(),
                              markdown = TRUE,
                              taxonomy.italic = markdown,
-                             theme.certe = TRUE,
-                             theme.certe.sf = TRUE,
                              # old certetools support
                              x.category = NULL,
                              y.category = NULL,
@@ -240,14 +241,12 @@ plot2.data.frame <- function(.data = NULL,
                   decimal.mark = decimal.mark,
                   big.mark = big.mark,
                   datalabels.round = datalabels.round,
-                  sort.x = sort.x,
-                  sort.category = sort.category,
-                  sort.facet = sort.facet,
+                  x.sort = x.sort,
+                  category.sort = category.sort,
+                  facet.sort = facet.sort,
                   summarise_function = summarise_function,
                   horizontal = horizontal,
                   ...)
-  
-  print(head(df))
   
   # generate mapping ----
   mapping <- aes(y = `_var_y`)
@@ -309,6 +308,41 @@ plot2.data.frame <- function(.data = NULL,
                      decimal.mark = decimal.mark,
                      big.mark = big.mark)
   
+  
+  # add the theme and markdown support ----
+  if (is_empty(theme)) {
+    # turn to default ggplot2 theme, so we can:
+    # - extend all element_text() classes with element_markdown()
+    # - add all theme options set as parameters, like legend position
+    theme <- theme_grey()
+  }
+  if (inherits(theme, "theme")) {
+    if (isTRUE(markdown)) {
+      # add 'element_markdown' to all text classes, which the ggtext pkg will use to print in markdown
+      # for this, the ggtext pkg has at least to be installed, but not loaded
+      attr_bak <- attributes(theme)
+      theme <- lapply(theme, function(el) {
+        if (inherits(el, "element_text")) {
+          class(el) <- c("element_markdown", class(el))
+        }
+        el
+      })
+      attributes(theme) <- attr_bak # restore class and all other attributes
+    }
+    p <- p + theme
+  } else if (!is_empty(theme)) {
+    # not a valid ggplot2 theme
+    stop("'theme' must be a valid ggplot2 theme", call. = FALSE)
+  }
+  
+  # add titles ----
+  if (!is_empty(x.title)) p <- p + labs(x = x.title) # this wil overwrite the var name
+  if (!is_empty(y.title)) p <- p + labs(y = y.title) # this wil overwrite the var name
+  if (!is_empty(title)) p <- p + labs(title = title)
+  if (!is_empty(subtitle)) p <- p + labs(subtitle = subtitle)
+  if (!is_empty(tag)) p <- p + labs(tag = tag)
+  if (!is_empty(caption)) p <- p + labs(caption = caption)
+  
   # return plot ----
   p
 }
@@ -318,12 +352,12 @@ plot2.data.frame <- function(.data = NULL,
 plot2.freq <- function(.data,
                        x = .data$item,
                        y = .data$count,
-                       sort.x = "freq-desc",
+                       x.sort = "freq-desc",
                        ...) {
   plot2(as.data.frame(.data, stringsAsFactors = FALSE)[, 1:2, drop = FALSE],
         x = x,
         y = y,
-        sort.x = sort.x,
+        x.sort = x.sort,
         ...)
 }
 

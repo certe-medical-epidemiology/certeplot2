@@ -35,10 +35,16 @@ plot_message <- function(..., print = interactive()) {
 
 #' @importFrom dplyr `%>%` pull
 get_column_name <- function(df, column_var) {
-  out <- vapply(FUN.VALUE = logical(1), df, function(col) identical(col, df %>% pull({{column_var}})))
+  out <- vapply(FUN.VALUE = logical(1), df, function(col) {
+    identical(col,
+              df %>% pull({{column_var}}))
+  })
   if (all(out[names(out) %unlike% "^_var_"] == FALSE)) {
-    # no column found, probably due to sorting, try again
-    out <- vapply(FUN.VALUE = logical(1), df, function(col) identical(as.character(col), df %>% pull({{column_var}}) %>% as.character()))
+    # no column found, probably due to sorting (i.e., factors), try again with character comparison
+    out <- vapply(FUN.VALUE = logical(1), df, function(col) {
+      identical(col %>% as.character(),
+                df %>% pull({{column_var}}) %>% as.character())
+    })
   }
   names(out)[out & names(out) %unlike% "^_var_"][1L]
 }
@@ -145,4 +151,8 @@ determine_date_breaks_labels <- function(x) {
                 labels = "mmm 'yy")
   }
   out
+}
+
+is_empty <- function(x) {
+  is.null(x) || isFALSE(x) || identical(x, "") || all(is.na(x))
 }

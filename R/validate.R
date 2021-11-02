@@ -24,11 +24,13 @@ validate_type <- function(type, df) {
     if (!has_x(df)) {
       # only numeric values, make it a boxplot
       type <- "geom_boxplot"
-      plot_message("Using '", font_bold(type), "' as ", font_blue("type"), font_black(" since there is no x axis"))
+      plot_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL),
+                   font_black(" since there is no x axis"))
     } else if (has_x(df) && is.numeric(get_x(df))) {
       # make it points if x and y are both numeric
       type <- "geom_point"
-      plot_message("Using '", font_bold(type), "' as ", font_blue("type"),  font_black(" since both axes are numeric"))
+      plot_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL), 
+                   font_black(" since both axes are numeric"))
     } else {
       # check if y has multiple values across groups, then make it boxplot
       sizes <- df %>% 
@@ -36,11 +38,13 @@ validate_type <- function(type, df) {
         group_size()
       if (all(sizes > 3)) {
         type <- "geom_boxplot"
-        plot_message("Using '", font_bold(type), "' as ", font_blue("type"), font_black(" since all groups have size > 3"))
+        plot_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL),
+                     font_black(" since all groups have size > 3"))
       } else {
         # otherwise: column
         type <- "geom_col"
-        plot_message("Using '", font_bold(type), "' as default ", font_blue("type"))
+        plot_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL), 
+                     font_black(" as default"))
       }
     }
   } else {
@@ -96,16 +100,29 @@ validate_data <- function(df,
   
   if (!has_y(df)) {
     # try to find numeric column for y
-    first_numeric_col <- names(which(vapply(FUN.VALUE = logical(1), df, is.numeric)))
-    if (is.na(first_numeric_col[1L])) {
+    numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.numeric)))
+    if (is.na(numeric_cols[1L])) {
       stop("no numeric column found to use for y", call. = FALSE)
     }
-    if (length(first_numeric_col) > 1) {
-      first_numeric_col <- first_numeric_col[1L]
-      plot_message("Using column '", font_bold(first_numeric_col), "' for the ", font_blue("y axis"))
+    if (length(numeric_cols) > 1) {
+      # first check if there is also no x axis
+      if (!has_x(df)) {
+        # make x first numeric column and y second numeric column
+        plot_message("Using ", font_blue("x = ", numeric_cols[1L], collapse = NULL))
+        plot_message("Using ", font_blue("y = ", numeric_cols[2L], collapse = NULL))
+        df <- df %>% 
+          mutate(`_var_x` = df %>% pull(numeric_cols[1L]),
+                 `_var_y` = df %>% pull(numeric_cols[2L]))
+      } else {
+        plot_message("Using ", font_blue("y = ", numeric_cols[1L], collapse = NULL))
+        df <- df %>% 
+          mutate(`_var_y` = df %>% pull(numeric_cols[1L]))
+      }
+    } else {
+      plot_message("Using ", font_blue("y = ", numeric_cols, collapse = NULL))
+      df <- df %>% 
+        mutate(`_var_y` = df %>% pull(numeric_cols))
     }
-    df <- df %>% 
-      mutate(`_var_y` = df %>% pull(first_numeric_col))
   }
   
   if (misses_x && !has_x(df) && ncol(df) > 1) {
@@ -115,7 +132,7 @@ validate_data <- function(df,
     } else {
       x_col <- colnames(df)[1L]
     }
-    plot_message("Using column '", font_bold(x_col), "' for the ", font_blue("x axis"))
+    plot_message("Using ", font_blue("x = ", x_col, collapse = NULL))
     df <- df %>% 
       mutate(`_var_x` = df %>% pull(x_col))
   }
@@ -127,7 +144,7 @@ validate_data <- function(df,
                      !(has_x(df) && identical(get_x(df), col)))
     cols <- names(cols)[cols]
     if (length(cols) > 0) {
-      plot_message("Using column '", font_bold(cols[1L]), "' as ", font_blue("category"))
+      plot_message("Using ", font_blue("category = ", cols[1L], collapse = NULL))
       df <- df %>% 
         mutate(`_var_category` = df %>% pull(cols[1L]))
     }
@@ -171,13 +188,13 @@ validate_data <- function(df,
   
   # apply sortings
   if (has_x(df)) {
-    # if (misses.sort.x & any(data %>% pull(col_x_) %>% class() %in% c("Date", "POSIXct", "POSIXlt", "numeric", "integer"))) {
-    #   sort.x <- NULL
-    # }
+    if (is.null(dots$x.sort) && inherits(get_x(df), c("character", "factor"))) {
+      dots$x.sort <- TRUE
+    }
     
     df <- df %>% 
       mutate(`_var_x` = sort_data(original_values = get_x(df),
-                                  sort_method = dots$sort.x,
+                                  sort_method = dots$x.sort,
                                   datapoints = get_y(df),
                                   summarise_function = dots$summarise_function,
                                   horizontal = dots$horizontal)) %>%
@@ -186,7 +203,7 @@ validate_data <- function(df,
   if (has_category(df)) {
     df <- df %>% 
       mutate(`_var_category` = sort_data(original_values = get_category(df),
-                                         sort_method = dots$sort.category,
+                                         sort_method = dots$category.sort,
                                          datapoints = get_y(df),
                                          summarise_function = dots$summarise_function,
                                          horizontal = dots$horizontal))
@@ -194,10 +211,10 @@ validate_data <- function(df,
   if (has_facet(df)) {
     df <- df %>% 
       mutate(`_var_facet` = sort_data(original_values = get_facet(df),
-                                      sort_method = dots$sort.facet,
+                                      sort_method = dots$facet.sort,
                                       datapoints = get_y(df),
                                       summarise_function = dots$summarise_function,
-                                      horizontal = FALSE)) # never resverse sort when horizontal
+                                      horizontal = FALSE)) # never reversely sort when horizontal
   }
   
   df

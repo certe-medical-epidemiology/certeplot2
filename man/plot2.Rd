@@ -78,9 +78,9 @@ plot2(...)
   y.expand = 0.25,
   y.trans = "identity",
   y.position = "left",
-  sort.x = TRUE,
-  sort.category = TRUE,
-  sort.facet = TRUE,
+  x.sort = NULL,
+  category.sort = TRUE,
+  facet.sort = TRUE,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.colour = "grey25",
@@ -114,18 +114,17 @@ plot2(...)
   legend.nbin = 300,
   legend.italic = FALSE,
   print = FALSE,
-  font.family = "Calibri",
   text.factor = 1,
+  text.font_family = "Verdana",
+  theme = theme_minimal2(),
   markdown = TRUE,
   taxonomy.italic = markdown,
-  theme.certe = TRUE,
-  theme.certe.sf = TRUE,
   x.category = NULL,
   y.category = NULL,
   ...
 )
 
-\method{plot2}{freq}(.data, x = .data$item, y = .data$count, sort.x = "freq-desc", ...)
+\method{plot2}{freq}(.data, x = .data$item, y = .data$count, x.sort = "freq-desc", ...)
 
 \method{plot2}{sf}(
   .data,
@@ -144,7 +143,7 @@ plot2(...)
 \item{.data}{data to plot}
 }
 \description{
-These functions create \link{ggplot2:ggplot} objects, but work in a more convenient way than the \code{ggplot2} package. By design, the \code{ggplot2} package requires users to use a lot of functions, while the \code{certeplot2} package requires to use only arguments in one function.
+These functions create \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}} objects, but work in a more convenient way than the \code{ggplot2} package. By design, the \code{ggplot2} package requires users to use a lot of functions, while the \code{certeplot2} package requires to use only arguments in one function.
 }
 \details{
 The \code{\link[=plot2]{plot2()}} function uses the \code{ggplot2} package for plotting and provides:
@@ -162,7 +161,7 @@ The \code{\link[=plot2]{plot2()}} function uses the \code{ggplot2} package for p
 \item Easy way for sorting data in may ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': \code{x.sort}, \code{category.sort} and \code{facet.sort}
 \item Easy limiting values, e.g. by setting \code{x.max_items = 5} or \code{category.max_items = 5}
 \item Markdown support for any label, with any theme
-\item An extra clean, minimalistic theme with a lot of whitespace that is ideal for printing
+\item An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: \code{\link[=theme_minimal2]{theme_minimal2()}}
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
@@ -191,5 +190,6 @@ mtcars \%>\%
 # plot2() supports all S3 extensions available through ggplot2::fortify():
 mtcars \%>\% 
   lm(mpg ~ hp, data = .) \%>\% 
-  plot2()
+  plot2(title = "Titles/captions *support* **markdown**",
+        x.title = "*hp*")
 }

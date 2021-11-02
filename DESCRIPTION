@@ -29,6 +29,7 @@ Imports:
   dplyr (>= 1.0.0),
   forcats (>= 0.5.1),
   ggplot2 (>= 3.3.5),
+  ggtext (>= 0.1.1),
   scales (>= 1.1.1),
   stringr (>= 1.4.0)
 Suggests: 
