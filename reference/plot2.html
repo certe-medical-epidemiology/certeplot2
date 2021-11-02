@@ -47,7 +47,7 @@
 
 
 <meta property="og:title" content="Conveniently Create a New ggplot — plot2" />
-<meta property="og:description" content="These functions create ggplot2:ggplot objects, but work in a more convenient way than the ggplot2 package. By design, the ggplot2 package requires users to use a lot of functions, while the certeplot2 package requires to use only arguments in one function." />
+<meta property="og:description" content="These functions create ggplot2::ggplot() objects, but work in a more convenient way than the ggplot2 package. By design, the ggplot2 package requires users to use a lot of functions, while the certeplot2 package requires to use only arguments in one function." />
 <meta property="og:image" content="https://certe-medical-epidemiology.github.io/certeplot2/logo.svg" />
 
 
@@ -135,7 +135,7 @@
     </div>
 
     <div class="ref-description">
-    <p>These functions create ggplot2:ggplot objects, but work in a more convenient way than the <code>ggplot2</code> package. By design, the <code>ggplot2</code> package requires users to use a lot of functions, while the <code>certeplot2</code> package requires to use only arguments in one function.</p>
+    <p>These functions create <code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot2::ggplot()</a></code> objects, but work in a more convenient way than the <code>ggplot2</code> package. By design, the <code>ggplot2</code> package requires users to use a lot of functions, while the <code>certeplot2</code> package requires to use only arguments in one function.</p>
     </div>
 
     <pre class="usage"><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
@@ -210,9 +210,9 @@
   y.expand <span class='op'>=</span> <span class='fl'>0.25</span>,
   y.trans <span class='op'>=</span> <span class='st'>"identity"</span>,
   y.position <span class='op'>=</span> <span class='st'>"left"</span>,
-  sort.x <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  sort.category <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  sort.facet <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  x.sort <span class='op'>=</span> <span class='cn'>NULL</span>,
+  category.sort <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  facet.sort <span class='op'>=</span> <span class='cn'>TRUE</span>,
   datalabels <span class='op'>=</span> <span class='cn'>TRUE</span>,
   datalabels.round <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='va'>y.percent</span>, <span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>)</span>,
   datalabels.colour <span class='op'>=</span> <span class='st'>"grey25"</span>,
@@ -246,19 +246,18 @@
   legend.nbin <span class='op'>=</span> <span class='fl'>300</span>,
   legend.italic <span class='op'>=</span> <span class='cn'>FALSE</span>,
   print <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  font.family <span class='op'>=</span> <span class='st'>"Calibri"</span>,
   text.factor <span class='op'>=</span> <span class='fl'>1</span>,
+  text.font_family <span class='op'>=</span> <span class='st'>"Verdana"</span>,
+  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span><span class='op'>)</span>,
   markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
   taxonomy.italic <span class='op'>=</span> <span class='va'>markdown</span>,
-  theme.certe <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  theme.certe.sf <span class='op'>=</span> <span class='cn'>TRUE</span>,
   x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.category <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
 <span class='co'># S3 method for freq</span>
-<span class='fu'>plot2</span><span class='op'>(</span><span class='va'>.data</span>, x <span class='op'>=</span> <span class='va'>.data</span><span class='op'>$</span><span class='va'>item</span>, y <span class='op'>=</span> <span class='va'>.data</span><span class='op'>$</span><span class='va'>count</span>, sort.x <span class='op'>=</span> <span class='st'>"freq-desc"</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>plot2</span><span class='op'>(</span><span class='va'>.data</span>, x <span class='op'>=</span> <span class='va'>.data</span><span class='op'>$</span><span class='va'>item</span>, y <span class='op'>=</span> <span class='va'>.data</span><span class='op'>$</span><span class='va'>count</span>, x.sort <span class='op'>=</span> <span class='st'>"freq-desc"</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for sf</span>
 <span class='fu'>plot2</span><span class='op'>(</span>
@@ -300,7 +299,7 @@
 <li><p>Easy way for sorting data in may ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': <code>x.sort</code>, <code>category.sort</code> and <code>facet.sort</code></p></li>
 <li><p>Easy limiting values, e.g. by setting <code>x.max_items = 5</code> or <code>category.max_items = 5</code></p></li>
 <li><p>Markdown support for any label, with any theme</p></li>
-<li><p>An extra clean, minimalistic theme with a lot of whitespace that is ideal for printing</p></li>
+<li><p>An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: <code><a href='theme_minimal2.html'>theme_minimal2()</a></code></p></li>
 <li><p>Support for any <code>ggplot2</code> extension based on <code><a href='https://ggplot2.tidyverse.org/reference/fortify.html'>ggplot2::fortify()</a></code></p></li>
 </ul>
 
@@ -319,37 +318,9 @@
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>6</span> 2002-04-26 M         79 75+       D        Non-ICU</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, x <span class='op'>=</span> <span class='va'>Sepal.Width</span>, y <span class='op'>=</span> <span class='va'>Sepal.Length</span>, category <span class='op'>=</span> <span class='va'>Species</span>, type <span class='op'>=</span> <span class='st'>"point"</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   Sepal.Length Sepal.Width Petal.Length Petal.Width    Species _var_x _var_y</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1          5.0         2.0          3.5         1.0 versicolor      2    5.0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 2          6.0         2.2          4.0         1.0 versicolor    2.2    6.0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 3          6.2         2.2          4.5         1.5 versicolor    2.2    6.2</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 4          6.0         2.2          5.0         1.5  virginica    2.2    6.0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 5          4.5         2.3          1.3         0.3     setosa    2.3    4.5</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 6          5.5         2.3          4.0         1.3 versicolor    2.3    5.5</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   _var_category _var_datalabels</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1    versicolor             5,0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 2    versicolor             6,0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 3    versicolor             6,2</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 4     virginica             6,0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 5        setosa             4,5</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 6    versicolor             5,5</span>
 <span class='r-plt img'><img src='plot2-1.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, x <span class='op'>=</span> <span class='va'>Species</span>, y <span class='op'>=</span> <span class='va'>Sepal.Length</span>, type <span class='op'>=</span> <span class='st'>"boxplot"</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species _var_x _var_y</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1          5.1         3.5          1.4         0.2  setosa setosa    5.1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 2          4.9         3.0          1.4         0.2  setosa setosa    4.9</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 3          4.7         3.2          1.3         0.2  setosa setosa    4.7</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 4          4.6         3.1          1.5         0.2  setosa setosa    4.6</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 5          5.0         3.6          1.4         0.2  setosa setosa    5.0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 6          5.4         3.9          1.7         0.4  setosa setosa    5.4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   _var_datalabels</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1             5,1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 2             4,9</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 3             4,7</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 4             4,6</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 5             5,0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 6             5,4</span>
 <span class='r-plt img'><img src='plot2-2.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span>, warn.conflicts <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
@@ -357,77 +328,22 @@
 <span class='r-in'><span class='co'># automatically takes first columns, will be points since both are numeric</span></span>
 <span class='r-in'><span class='va'>mtcars</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> </span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>                 mpg cyl  disp hp drat    wt  qsec vs am gear carb</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Datsun 710     22.8   4 108.0 93 3.85 2.320 18.61  1  1    4    1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Merc 240D      24.4   4 146.7 62 3.69 3.190 20.00  1  0    4    2</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Merc 230       22.8   4 140.8 95 3.92 3.150 22.90  1  0    4    2</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Fiat 128       32.4   4  78.7 66 4.08 2.200 19.47  1  1    4    1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Honda Civic    30.4   4  75.7 52 4.93 1.615 18.52  1  1    4    2</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Toyota Corolla 33.9   4  71.1 65 4.22 1.835 19.90  1  1    4    1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>                _var_datalabels _var_y _var_x</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Datsun 710                22,8   22.8      4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Merc 240D                 24,4   24.4      4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Merc 230                  22,8   22.8      4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Fiat 128                  32,4   32.4      4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Honda Civic               30,4   30.4      4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Toyota Corolla            33,9   33.9      4</span>
 <span class='r-plt img'><img src='plot2-3.png' alt='' width='700' height='433' /></span>
 <span class='r-in'><span class='va'>mtcars</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> </span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>mpg</span>, <span class='va'>hp</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>                      mpg cyl disp  hp drat    wt  qsec vs am gear carb _var_x</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Cadillac Fleetwood  10.4   8  472 205 2.93 5.250 17.98  0  0    3    4   10.4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Lincoln Continental 10.4   8  460 215 3.00 5.424 17.82  0  0    3    4   10.4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Camaro Z28          13.3   8  350 245 3.73 3.840 15.41  0  0    3    4   13.3</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Duster 360          14.3   8  360 245 3.21 3.570 15.84  0  0    3    4   14.3</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Chrysler Imperial   14.7   8  440 230 3.23 5.345 17.42  0  0    3    4   14.7</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Maserati Bora       15.0   8  301 335 3.54 3.570 14.60  0  1    5    8     15</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>                     _var_y _var_datalabels</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Cadillac Fleetwood     205           205,0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Lincoln Continental    215           215,0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Camaro Z28             245           245,0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Duster 360             245           245,0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Chrysler Imperial      230           230,0</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Maserati Bora          335           335,0</span>
 <span class='r-plt img'><img src='plot2-4.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='co'># if there are more Y values than groups, the default will be boxplot</span></span>
 <span class='r-in'><span class='va'>mtcars</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> </span>
 <span class='r-in'>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>cyl <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='va'>cyl</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>                 mpg cyl  disp hp drat    wt  qsec vs am gear carb</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Datsun 710     22.8   4 108.0 93 3.85 2.320 18.61  1  1    4    1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Merc 240D      24.4   4 146.7 62 3.69 3.190 20.00  1  0    4    2</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Merc 230       22.8   4 140.8 95 3.92 3.150 22.90  1  0    4    2</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Fiat 128       32.4   4  78.7 66 4.08 2.200 19.47  1  1    4    1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Honda Civic    30.4   4  75.7 52 4.93 1.615 18.52  1  1    4    2</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Toyota Corolla 33.9   4  71.1 65 4.22 1.835 19.90  1  1    4    1</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>                _var_datalabels _var_y _var_x</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Datsun 710                22,8   22.8      4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Merc 240D                 24,4   24.4      4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Merc 230                  22,8   22.8      4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Fiat 128                  32,4   32.4      4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Honda Civic               30,4   30.4      4</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Toyota Corolla            33,9   33.9      4</span>
 <span class='r-plt img'><img src='plot2-5.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='co'># plot2() supports all S3 extensions available through ggplot2::fortify():</span></span>
 <span class='r-in'><span class='va'>mtcars</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> </span>
 <span class='r-in'>  <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>mpg</span> <span class='op'>~</span> <span class='va'>hp</span>, data <span class='op'>=</span> <span class='va'>.</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> </span>
-<span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>                 mpg hp       .hat   .sigma     .cooksd  .fitted    .resid</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Honda Civic    30.4 52 0.09277415 3.856676 0.055952992 26.55099  3.849010</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Merc 240D      24.4 62 0.08046517 3.918693 0.006878142 25.86871 -1.468707</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Toyota Corolla 33.9 65 0.07704010 3.592046 0.205546714 25.66402  8.235978</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Fiat 128       32.4 66 0.07592585 3.702623 0.137930406 25.59579  6.804206</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Fiat X1-9      27.3 66 0.07592585 3.915184 0.008652652 25.59579  1.704206</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Porsche 914-2  26.0 91 0.05253020 3.908328 0.008728436 23.89009  2.109913</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>                 .stdresid _var_datalabels _var_y _var_x</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Honda Civic     1.0460944            30,4   30.4     52</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Merc 240D      -0.3964886            24,4   24.4     62</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Toyota Corolla  2.2192349            33,9   33.9     65</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Fiat 128        1.8323295            32,4   32.4     66</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Fiat X1-9       0.4589318            27,3   27.3     66</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Porsche 914-2   0.5611272            26,0   26.0     91</span>
+<span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span>title <span class='op'>=</span> <span class='st'>"Titles/captions *support* **markdown**"</span>,</span>
+<span class='r-in'>        x.title <span class='op'>=</span> <span class='st'>"*hp*"</span><span class='op'>)</span></span>
 <span class='r-plt img'><img src='plot2-6.png' alt='' width='700' height='433' /></span>
 </pre>
   </div>
