@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.4</span>
       </span>
     </div>
 
@@ -138,10 +138,10 @@
     <p>These functions create <code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot2::ggplot()</a></code> objects, but work in a more convenient way than the <code>ggplot2</code> package. By design, the <code>ggplot2</code> package requires users to use a lot of functions, while the <code>certeplot2</code> package requires to use only arguments in one function.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>.data</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for default</span>
-<span class='fu'>plot2</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>plot2</span><span class='op'>(</span><span class='va'>.data</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for numeric</span>
 <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -187,12 +187,12 @@
   x.lbl_italic <span class='op'>=</span> <span class='cn'>FALSE</span>,
   x.remove <span class='op'>=</span> <span class='cn'>FALSE</span>,
   x.position <span class='op'>=</span> <span class='st'>"bottom"</span>,
-  x.max <span class='op'>=</span> <span class='cn'>Inf</span>,
+  x.max_items <span class='op'>=</span> <span class='cn'>Inf</span>,
   x.max_txt <span class='op'>=</span> <span class='st'>"(rest, x %n)"</span>,
-  category.max <span class='op'>=</span> <span class='cn'>Inf</span>,
+  category.max_items <span class='op'>=</span> <span class='cn'>Inf</span>,
   category.max_txt <span class='op'>=</span> <span class='st'>"(rest, x %n)"</span>,
-  facet.max <span class='op'>=</span> <span class='cn'>Inf</span>,
-  facet.max.txt <span class='op'>=</span> <span class='st'>"(rest, x %n)"</span>,
+  facet.max_items <span class='op'>=</span> <span class='cn'>Inf</span>,
+  facet.max_txt <span class='op'>=</span> <span class='st'>"(rest, x %n)"</span>,
   x.breaks <span class='op'>=</span> <span class='cn'>NULL</span>,
   x.breaks_n <span class='op'>=</span> <span class='cn'>NULL</span>,
   x.trans <span class='op'>=</span> <span class='st'>"identity"</span>,
@@ -275,10 +275,6 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>object</th>
-      <td><p>data object which will be transformed with <code><a href='https://ggplot2.tidyverse.org/reference/fortify.html'>ggplot2::fortify()</a></code>, which allows S3 extensions by other packages</p></td>
-    </tr>
-    <tr>
       <th>.data</th>
       <td><p>data to plot</p></td>
     </tr>
@@ -300,6 +296,7 @@
 <li><p>Easy limiting values, e.g. by setting <code>x.max_items = 5</code> or <code>category.max_items = 5</code></p></li>
 <li><p>Markdown support for any label, with any theme</p></li>
 <li><p>An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: <code><a href='theme_minimal2.html'>theme_minimal2()</a></code></p></li>
+<li><p>Automatic settings for mapping (<code>aes()</code>)</p></li>
 <li><p>Support for any <code>ggplot2</code> extension based on <code><a href='https://ggplot2.tidyverse.org/reference/fortify.html'>ggplot2::fortify()</a></code></p></li>
 </ul>
 
