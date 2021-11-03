@@ -149,8 +149,8 @@ validate_data <- function(df,
         mutate(`_var_category` = df %>% pull(cols[1L]))
     }
   }
-
-  # create surrogate labels to data
+  
+  # create surrogate labels to df
   if (has_x(df) & !label_x %in% colnames(df) & label_x != "NULL") {
     df$`_label_x` <- get_x(df)
     colnames(df)[colnames(df) == "_label_x"] <- label_x
@@ -217,6 +217,25 @@ validate_data <- function(df,
                                       horizontal = FALSE)) # never reversely sort when horizontal
   }
   
+  # apply limitations
+  df <- set_max_items(df = df,
+                      y = get_y(df),
+                      x = get_x_name(df),
+                      x.max_items = dots$x.max_items,
+                      x.max_txt = dots$x.max_text,
+                      category = get_category_name(df), 
+                      category.max_items = dots$category.max_items,
+                      category.max_txt = dots$category.max_txt,
+                      facet = get_facet_name(df), 
+                      facet.max_items = dots$facet.max_items, 
+                      facet.max_txt = dots$facet.max_txt,
+                      horizontal = dots$horizontal)
+  
+  # sort on x, important when piping plot2()'s after plot2()'s
+  df <- df %>% 
+    arrange(across(`_var_x`))
+  
+  # output
   df
 }
 
@@ -322,12 +341,12 @@ validate_y_scale <- function(df,
                              big.mark,
                              ...) {
   
-  breaks_fn <- function(data, waiver,
+  breaks_fn <- function(df, waiver,
                         y.breaks = NULL, y.expand = 0.25, stackedpercent = FALSE,
                         y.age = FALSE, y.percent = FALSE, y.percent.break = 10, y.24h = FALSE, y.limits = NULL,
                         ...) {
-    data_min <- min(0, data) * -(1 + y.expand)
-    data_max <- max(data) * (1 + y.expand)
+    data_min <- min(0, df) * -(1 + y.expand)
+    data_max <- max(df) * (1 + y.expand)
     
     if (!is.null(y.breaks)) {
       y.breaks
@@ -363,7 +382,7 @@ validate_y_scale <- function(df,
     }
   }
   
-  labels_fn <- function(data, waiver,
+  labels_fn <- function(df, waiver,
                         y.labels,
                         y.age, y.percent, y.24h, stackedpercent,
                         decimal.mark, big.mark, ...) {
@@ -380,36 +399,36 @@ validate_y_scale <- function(df,
     }
   }
   
-  limits_fn <- function(data, y.limits,
+  limits_fn <- function(df, y.limits,
                         y.expand, facet.fixed_y, y.age,
                         ...) {
     if (!is.null(y.limits)) {
       y.limits
     } else if (isTRUE(y.age)) {
       # geen functie dus, maar vector forceren
-      c(0, max(data) * (1 + y.expand))
+      c(0, max(df) * (1 + y.expand))
     } else if (isTRUE(facet.fixed_y)) {
       # geen functie dus, maar vector forceren
-      c(NA, max(data) * (1 + y.expand))
+      c(NA, max(df) * (1 + y.expand))
     } else {
       function(x, y_expand = y.expand, ...) c(min(0, x), max(x))
     }
   }
   
-  expand_fn <- function(data, y.expand, y.age, stackedpercent, ...) {
+  expand_fn <- function(df, y.expand, y.age, stackedpercent, ...) {
     if (is.function(y.expand)) {
       y.expand
     } else if (isTRUE(y.age) | isTRUE(stackedpercent)) {
       expansion(mult = c(0, 0))
     } else {
       # ingestelde percentage toevoegen aan bovenkant bij positieve waarden en aan onderkant bij negatieve waarden
-      expansion(mult = c(ifelse(any(data < 0), y.expand, 0),
-                         ifelse(any(data > 0), y.expand, 0)))
+      expansion(mult = c(ifelse(any(df < 0), y.expand, 0),
+                         ifelse(any(df > 0), y.expand, 0)))
     }
   }
   
   scale_y_continuous(
-    breaks = breaks_fn(data = get_y(df),
+    breaks = breaks_fn(df = get_y(df),
                        waiver = waiver(),
                        y.breaks = y.breaks,
                        y.expand = y.expand,
@@ -420,7 +439,7 @@ validate_y_scale <- function(df,
                        y.24h = y.24h,
                        y.limits = y.limits,
                        ...),
-    labels = labels_fn(data = get_y(df),
+    labels = labels_fn(df = get_y(df),
                        waiver = waiver(),
                        y.labels,
                        y.percent = y.percent,
@@ -430,13 +449,13 @@ validate_y_scale <- function(df,
                        decimal.mark = decimal.mark,
                        big.mark = big.mark,
                        ...),
-    limits = limits_fn(data = get_y(df),
+    limits = limits_fn(df = get_y(df),
                        y.limits,
                        y.expand = y.expand,
                        facet.fixed_y = facet.fixed_y,
                        y.age = y.age,
                        ...),
-    expand = expand_fn(data = get_y(df),
+    expand = expand_fn(df = get_y(df),
                        y.expand = y.expand,
                        y.age = y.age,
                        stackedpercent = stackedpercent,
@@ -444,6 +463,97 @@ validate_y_scale <- function(df,
     trans = y.trans,
     position = y.position
   )
+}
+
+#' @importFrom ggplot2 geom_bar position_stack position_fill position_dodge2 geom_line geom_boxplot
+validate_geom <- function(type,
+                          df,
+                          stacked,
+                          stackedpercent,
+                          horizontal,
+                          width,
+                          size,
+                          linetype,
+                          reverse) {
+  if (is.null(size)) {
+    size <- ifelse(type %in% c("geom_point", "geom_jitter", "geom_boxplot"), 2, 0.75)
+  }
+  if (is.null(width)) {
+    width <- ifelse(type %in% c("geom_violin", "geom_jitter", "geom_boxplot"), 0.75, 0.5)
+  }
+  
+  geom_fn <- getFromNamespace(x = type, ns = asNamespace("ggplot2"))
+  
+  if (type %in% c("geom_col", "geom_bar")) {
+    geom_bar(width = width,
+             stat = "identity",
+             # small whitespace between columns:
+             position = if (isTRUE(stacked)) {
+               position_stack(reverse = reverse)
+             } else if (isTRUE(stackedpercent)) {
+               position_fill(reverse = reverse)
+             } else {
+               position_dodge2(width = width * 1.05,
+                               preserve = "single")
+             },
+             na.rm = TRUE)
+    
+  } else if (type %in% c("geom_line", "geom_path")) {
+    geom_fn(lineend = "round",
+            size = size,
+            linetype = linetype,
+            na.rm = TRUE)
+    
+  } else if (type %in% c("geom_point", "geom_path")) {
+    geom_fn(size = size,
+            na.rm = TRUE)
+    
+  } else if (type %in% c("geom_boxplot", "geom_boxplot")) {
+    geom_fn(#colour = colour_set,
+      #fill = colour_set.fill,
+      outlier.size = 1.5,
+      outlier.alpha = 0.75,
+      width = width * 0.75,
+      lwd = (size * 0.75) / 2.5, # line width, van hele vlak
+      fatten = 1.5, # factor om mediaan dikker te maken t.o.v. lwd
+      na.rm = TRUE)
+    
+  } else {
+    # try to put some parameters into the requested geom
+    warning("'", type, "' currently only loosely supported in plot2()", call. = FALSE)
+    geom_fn(size = size,
+            width = width,
+            linetype = linetype,
+            na.rm = TRUE)
+  }
+}
+
+#' @importFrom ggplot2 theme_grey
+#' @importFrom ggtext element_markdown
+validate_theme <- function(theme, markdown) {
+  if (is_empty(theme)) {
+    # turn to default ggplot2 theme, so we can:
+    # - extend all element_text() classes with element_markdown()
+    # - add all theme options set as parameters, like legend position
+    theme <- theme_grey()
+  }
+  if (inherits(theme, "theme")) {
+    if (isTRUE(markdown)) {
+      # add 'element_markdown' to all text classes, which the ggtext pkg will use to print in markdown
+      # for this, the ggtext pkg has at least to be installed, but not loaded
+      attr_bak <- attributes(theme)
+      theme <- lapply(theme, function(el) {
+        if (inherits(el, "element_text")) {
+          class(el) <- c("element_markdown", class(el))
+        }
+        el
+      })
+      attributes(theme) <- attr_bak # restore class and all other attributes
+    }
+    theme
+  } else {
+    NULL
+  }
 }
 
 #' @importFrom forcats fct_inorder fct_reorder
@@ -486,47 +596,47 @@ sort_data <- function(original_values, sort_method, datapoints, summarise_functi
   numeric_sort <- any(grepl("[0-9]", original_values), na.rm = TRUE)
   if (sort_method %in% c("alpha", "alpha-asc", "asc")) {
     # alphabetical, or ascending
-    out <- factor(original_values,
-                  levels = str_sort(unique(original_values),
-                                             numeric = numeric_sort))
+    df <- factor(original_values,
+                 levels = str_sort(unique(original_values),
+                                   numeric = numeric_sort))
   } else if (sort_method %in% c("alpha-desc", "desc")) {
-    out <- factor(original_values,
-                  levels = str_sort(unique(original_values),
-                                             numeric = numeric_sort,
-                                             decreasing = TRUE))
+    df <- factor(original_values,
+                 levels = str_sort(unique(original_values),
+                                   numeric = numeric_sort,
+                                   decreasing = TRUE))
   } else if (sort_method %in% c("false", "order", "inorder")) {
-    out <- fct_inorder(as.character(original_values))
+    df <- fct_inorder(as.character(original_values))
   } else if (sort_method %in% c("freq-asc", "infreq-asc")) {
-    out <- fct_reorder(.f = as.character(original_values),
-                       .x = datapoints,
-                       .fun = summarise_function,
-                       .desc = FALSE)
+    df <- fct_reorder(.f = as.character(original_values),
+                      .x = datapoints,
+                      .fun = summarise_function,
+                      .desc = FALSE)
   } else if (sort_method %in% c("freq-desc", "infreq-desc")) {
-    out <- fct_reorder(.f = as.character(original_values),
-                       .x = datapoints,
-                       .fun = summarise_function,
-                       .desc = TRUE)
+    df <- fct_reorder(.f = as.character(original_values),
+                      .x = datapoints,
+                      .fun = summarise_function,
+                      .desc = TRUE)
   } else {
     stop("invalid sorting option: '", sort_method.bak, "'")
   }
   
-  out
+  df
 }
 
-set_max_items <- function(data, y,
-                          x, x.max, x.max.txt,
-                          category, category.max, category.max.txt,
-                          facet, facet.max, facet.max.txt,
+#' @importFrom forcats fct_relevel
+#' @importFrom dplyr `%>%` group_by across group_size
+set_max_items <- function(df, y,
+                          x, x.max_items, x.max_txt,
+                          category, category.max_items, category.max_txt,
+                          facet, facet.max_items, facet.max_txt,
                           horizontal, type) {
   
-  if (is.infinite(x.max) && is.infinite(category.max) && is.infinite(facet.max)) {
-    return(data)
+  if (is.infinite(x.max_items) && is.infinite(category.max_items) && is.infinite(facet.max_items)) {
+    return(df)
   }
   if (is.null(x) && is.null(category) && is.null(facet)) {
-    return(data)
+    return(df)
   }
-  
-  out <- data
   
   # helper function
   set_max <- function(values, n_max, txt, horizontal) {
@@ -534,7 +644,7 @@ set_max_items <- function(data, y,
       return(values)
     }
     if (!is.factor(values)) {
-      warning("Maximising x, category or facet only works when they are sorted, or a factor", call. = FALSE)
+      plot_message("Maximising 'x', 'category' or 'facet' only works when they are sorted, or a factor")
       return(values)
     }
     if (n_max < length(levels(values))) {
@@ -563,31 +673,38 @@ set_max_items <- function(data, y,
   
   # set new factor levels
   if (!is.null(x)) {
-    out[, x] <- set_max(values = out %>% pull(x),
-                        n_max = x.max,
-                        txt = x.max.txt,
-                        horizontal = horizontal)
+    df[, x] <- set_max(values = get_x(df),
+                       n_max = x.max_items,
+                       txt = x.max_txt,
+                       horizontal = horizontal)
+    df$`_var_x` <- df[, x, drop = TRUE]
   }
   if (!is.null(category)) {
-    out[, category] <- set_max(values = out %>% pull(category),
-                               n_max = category.max,
-                               txt = category.max.txt,
-                               horizontal = horizontal)
+    df[, category] <- set_max(values = get_category(df),
+                              n_max = category.max_items,
+                              txt = category.max_txt,
+                              horizontal = horizontal)
+    df$`_var_category` <- df[, category, drop = TRUE]
   }
   if (!is.null(facet)) {
-    out[, facet] <- set_max(values = out %>% pull(facet),
-                            n_max = facet.max,
-                            txt = facet.max.txt,
-                            horizontal = FALSE)
+    df[, facet] <- set_max(values = get_facet(df),
+                           n_max = facet.max_items,
+                           txt = facet.max_txt,
+                           horizontal = FALSE)
+    df$`_var_facet` <- df[, facet, drop = TRUE]
   }
   
-  if (!type %in% c("boxplot", "jitter", "violin")) {
+  sizes <- df %>% 
+    group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df)))) %>%
+    group_size()
+  if (all(sizes == 1)) {
     # summarise again
-    out <- out %>%
-      mutate(n = out %>% pull(y)) %>%
-      group_by(across(c(x, category, facet))) %>% # if one is NULL, no problem for across()!
+    df <- df %>%
+      mutate(n = get_y(df)) %>%
+      group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df)))) %>%
       summarise(n = sum(n, na.rm = TRUE))
-    colnames(out)[colnames(out) == "n"] <- y
+    colnames(df)[colnames(df) == "n"] <- get_y_name(df)
   }
-  out
+  df
+  
 }

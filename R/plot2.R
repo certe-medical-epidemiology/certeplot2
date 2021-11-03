@@ -34,6 +34,7 @@
 #'   * Easy limiting values, e.g. by setting `x.max_items = 5` or `category.max_items = 5`
 #'   * Markdown support for any label, with any theme
 #'   * An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: [theme_minimal2()]
+#'   * Automatic settings for mapping ([aes()])
 #'   * Support for any `ggplot2` extension based on [ggplot2::fortify()]
 #'   
 #' The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. Less typing, faster coding.
@@ -66,19 +67,19 @@
 #'   lm(mpg ~ hp, data = .) %>% 
 #'   plot2(title = "Titles/captions *support* **markdown**",
 #'         x.title = "*hp*")
-plot2 <- function(...) {
+plot2 <- function(.data, ...) {
   UseMethod("plot2")
 }
 
 #' @rdname plot2
-#' @param object data object which will be transformed with [ggplot2::fortify()], which allows S3 extensions by other packages
+# @param object data object which will be transformed with [ggplot2::fortify()], which allows S3 extensions by other packages
 #' @importFrom dplyr tibble
 #' @importFrom ggplot2 fortify
 #' @export
-plot2.default <- function(object, ...) {
+plot2.default <- function(.data, ...) {
   # ggplot2's fortify() will try to make this a data.frame,
   # so that plot2.data.frame() can be called
-  plot2(fortify(object), ...)
+  plot2(fortify(.data), ...)
 }
 
 #' @rdname plot2
@@ -92,9 +93,8 @@ plot2.numeric <- function(y, ...) {
 
 #' @rdname plot2
 #' @importFrom dplyr `%>%` mutate tibble 
-#' @importFrom ggplot2 ggplot aes labs scale_x_discrete scale_x_continuous theme_grey
-#' @importFrom ggtext element_markdown
-#' @importFrom certestyle format2
+#' @importFrom ggplot2 ggplot aes labs scale_x_discrete scale_x_continuous stat_boxplot scale_colour_continuous
+#' @importFrom certestyle format2 font_red font_black
 #' @export
 plot2.data.frame <- function(.data = NULL,
                              x = NULL,
@@ -135,12 +135,12 @@ plot2.data.frame <- function(.data = NULL,
                              x.lbl_italic = FALSE,
                              x.remove = FALSE,
                              x.position = "bottom",
-                             x.max = Inf,
+                             x.max_items = Inf,
                              x.max_txt = "(rest, x %n)",
-                             category.max = Inf,
+                             category.max_items = Inf,
                              category.max_txt = "(rest, x %n)",
-                             facet.max = Inf,
-                             facet.max.txt = "(rest, x %n)",
+                             facet.max_items = Inf,
+                             facet.max_txt = "(rest, x %n)",
                              x.breaks = NULL,
                              x.breaks_n = NULL,
                              x.trans = "identity",
@@ -212,10 +212,10 @@ plot2.data.frame <- function(.data = NULL,
   misses_x <- missing(x)
   misses_category <- missing(category) & missing(y.category)
   if (!missing(y.category)) {
-    warning("Using 'y.category' is deprecated - use 'category' instead", call. = FALSE) 
+    warning(font_black("Using "), font_red("'y.category' is deprecated"), font_black(" - use 'category' instead"), call. = FALSE) 
   }
   if (!missing(x.category)) {
-    warning("Using 'x.category' is deprecated - use 'facet' instead", call. = FALSE) 
+    warning(font_black("Using "), font_red("'x.category' is deprecated"), font_black(" - use 'facet' instead"), call. = FALSE) 
   }
   
   label_x <- deparse(substitute(x))
@@ -246,25 +246,64 @@ plot2.data.frame <- function(.data = NULL,
                   facet.sort = facet.sort,
                   summarise_function = summarise_function,
                   horizontal = horizontal,
+                  x.max_items = x.max_items,
+                  x.max_txt = x.max_txt,
+                  category.max_items = category.max_items,
+                  category.max_txt = category.max_txt,
+                  facet.max_items = facet.max_items,
+                  facet.max_txt = facet.max_txt,
                   ...)
   
+  # validate type ----
+  type <- validate_type(type, df = df) # this will automatically determine type if is.null(type)
+  
   # generate mapping ----
-  mapping <- aes(y = `_var_y`)
+  mapping <- aes(y = `_var_y`, group = 1)
   if (has_x(df)) {
-    mapping <- utils::modifyList(mapping, aes(x = `_var_x`))
+    mapping <- utils::modifyList(mapping, aes(x = `_var_x`,
+                                              group = `_var_x`))
   }
   if (has_category(df)) {
     mapping <- utils::modifyList(mapping, aes(fill = `_var_category`,
-                                              colour = `_var_category`))
+                                              colour = `_var_category`,
+                                              group = `_var_category`))
   }
+  if (type %in% c("geom_boxplot", "geom_violin")) {
+    # remove the group from the mapping
+    mapping <- utils::modifyList(mapping, aes(group = NULL))
+  }
+  # print(mapping)
   
   # generate ggplot ----
   p <- ggplot(data = df, mapping = mapping)
   
   # add geom ----
-  type <- validate_type(type, df = df) # this will automatically determine type if is.null(type)
-  geom_fn <- getExportedValue(name = type, ns = asNamespace("ggplot2"))
-  p <- p + geom_fn()
+  if (type == "geom_boxplot") {
+    # first add the whiskers
+    p <- p + stat_boxplot(geom = "errorbar",
+                          coef = 1.5, # 1.5 * IQR
+                          width = ifelse(is.null(width), 0.75, width) * 0.75 * 0.5,
+                          lwd = (ifelse(is.null(size), 2, size) * 0.75) / 2.5)
+  }
+  p <- p + validate_geom(type = type,
+                         df = df,
+                         stacked = stacked,
+                         stackedpercent = stackedpercent,
+                         horizontal = horizontal,
+                         width = width,
+                         size = size,
+                         linetype = linetype,
+                         reverse = reverse)
+  
+  # add colours
+  # if (has_category(df)) {
+  #   if (is.numeric(get_category(df))) {
+  #     p <- p + scale_colour_continuous()
+  #   }
+  #   p <- p +
+  #     scale_colour_manual(values = colour_set) +
+  #     scale_fill_manual(values = colour_set.fill)
+  # }
   
   # add axis labels ----
   p <- p +
@@ -309,30 +348,10 @@ plot2.data.frame <- function(.data = NULL,
                      big.mark = big.mark)
   
   
-  # add the theme and markdown support ----
-  if (is_empty(theme)) {
-    # turn to default ggplot2 theme, so we can:
-    # - extend all element_text() classes with element_markdown()
-    # - add all theme options set as parameters, like legend position
-    theme <- theme_grey()
-  }
-  if (inherits(theme, "theme")) {
-    if (isTRUE(markdown)) {
-      # add 'element_markdown' to all text classes, which the ggtext pkg will use to print in markdown
-      # for this, the ggtext pkg has at least to be installed, but not loaded
-      attr_bak <- attributes(theme)
-      theme <- lapply(theme, function(el) {
-        if (inherits(el, "element_text")) {
-          class(el) <- c("element_markdown", class(el))
-        }
-        el
-      })
-      attributes(theme) <- attr_bak # restore class and all other attributes
-    }
+  # add theme / markdown support ----
+  theme <- validate_theme(theme = theme, markdown = markdown)
+  if (!is_empty(theme)) {
     p <- p + theme
-  } else if (!is_empty(theme)) {
-    # not a valid ggplot2 theme
-    stop("'theme' must be a valid ggplot2 theme", call. = FALSE)
   }
   
   # add titles ----
@@ -343,8 +362,15 @@ plot2.data.frame <- function(.data = NULL,
   if (!is_empty(tag)) p <- p + labs(tag = tag)
   if (!is_empty(caption)) p <- p + labs(caption = caption)
   
+  # set positions ----
+  p <- p + theme(legend.position = validate_legend.position(legend.position))
+  
   # return plot ----
-  p
+  if (isTRUE(print)) {
+    print(p)
+  } else {
+    p
+  }
 }
 
 #' @rdname plot2

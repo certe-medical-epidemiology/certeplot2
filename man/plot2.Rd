@@ -9,9 +9,9 @@
 \alias{plot2.sf}
 \title{Conveniently Create a New \code{ggplot}}
 \usage{
-plot2(...)
+plot2(.data, ...)
 
-\method{plot2}{default}(object, ...)
+\method{plot2}{default}(.data, ...)
 
 \method{plot2}{numeric}(y, ...)
 
@@ -55,12 +55,12 @@ plot2(...)
   x.lbl_italic = FALSE,
   x.remove = FALSE,
   x.position = "bottom",
-  x.max = Inf,
+  x.max_items = Inf,
   x.max_txt = "(rest, x \%n)",
-  category.max = Inf,
+  category.max_items = Inf,
   category.max_txt = "(rest, x \%n)",
-  facet.max = Inf,
-  facet.max.txt = "(rest, x \%n)",
+  facet.max_items = Inf,
+  facet.max_txt = "(rest, x \%n)",
   x.breaks = NULL,
   x.breaks_n = NULL,
   x.trans = "identity",
@@ -138,8 +138,6 @@ plot2(...)
 )
 }
 \arguments{
-\item{object}{data object which will be transformed with \code{\link[ggplot2:fortify]{ggplot2::fortify()}}, which allows S3 extensions by other packages}
-
 \item{.data}{data to plot}
 }
 \description{
@@ -162,6 +160,7 @@ The \code{\link[=plot2]{plot2()}} function uses the \code{ggplot2} package for p
 \item Easy limiting values, e.g. by setting \code{x.max_items = 5} or \code{category.max_items = 5}
 \item Markdown support for any label, with any theme
 \item An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: \code{\link[=theme_minimal2]{theme_minimal2()}}
+\item Automatic settings for mapping (\code{\link[=aes]{aes()}})
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
