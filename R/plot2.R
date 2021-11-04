@@ -19,33 +19,37 @@
 
 #' Conveniently Create a New `ggplot`
 #'
-#' These functions create [ggplot2::ggplot()] objects, but work in a more convenient way than the `ggplot2` package. By design, the `ggplot2` package requires users to use a lot of functions, while the `certeplot2` package requires to use only arguments in one function.
+#' @description  The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions. By design, the `ggplot2` package requires users to use a lot of functions, while the [plot2()] function auto-determines needs and only requires to define arguments in one single function.
+#' 
+#' See [plot2-methods] for all implemented methods for different object classes.
 #' @param .data data to plot
-#' @details The [plot2()] function uses the `ggplot2` package for plotting and provides:
-#'   * A convenient wrapper around many `ggplot2` functions such as [ggplot()], [geom_col()], [facet_wrap()], [labs()], etc.
+#' @details The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions such as [`ggplot()`][ggplot2::ggplot()], [`geom_col()`][ggplot2::geom_col()], [`facet_wrap()`][ggplot2::facet_wrap()], [`labs()`][ggplot2::labs()], etc., and provides:
 #'   * Writing as few lines of codes as possible
-#'   * Some benefits from Microsoft Excel:
-#'     * The y axis starts at 0
-#'     * The y scale contains extra space at the top to be able to interpret all data points
-#'     * Date breaks can be written in a readable format such as "d mmm yyyy"
-#'     * Data labels can easily be printed
 #'   * Easy plotting in three 'directions': `x` (the regular x axis), `category` (replaces 'fill' and 'colour') and `facet`
-#'   * Easy way for sorting data in may ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': `x.sort`, `category.sort` and `facet.sort`
+#'   * Automatic setting of these 'directions' based on the input data
+#'   * Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': `x.sort`, `category.sort` and `facet.sort`
 #'   * Easy limiting values, e.g. by setting `x.max_items = 5` or `category.max_items = 5`
 #'   * Markdown support for any label, with any theme
 #'   * An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: [theme_minimal2()]
-#'   * Automatic settings for mapping ([aes()])
+#'   * Some conveniences from Microsoft Excel:
+#'     * The y axis starts at 0
+#'     * The y scale expands at the top to be better able to interpret all data points
+#'     * Date breaks can be written in a readable format such as "d mmm yyyy"
+#'     * Data labels can easily be printed and are automatically determined
 #'   * Support for any `ggplot2` extension based on [ggplot2::fortify()]
 #'   
 #' The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. Less typing, faster coding.
-#' @rdname plot2
 #' @importFrom dplyr `%>%` tibble
 #' @importFrom ggplot2 ggplot geom_col
 #' @export
 #' @examples
 #' head(admitted_patients)
 #' 
-#' plot2(iris, x = Sepal.Width, y = Sepal.Length, category = Species, type = "point")
+#' # no variables determined, plot2() does a try:
+#' plot2(iris)
+#' 
+#' # x and y set, no addition mapping will be set:
+#' plot2(iris, Sepal.Width, Sepal.Length)
 #' 
 #' plot2(iris, x = Species, y = Sepal.Length, type = "boxplot")
 #' 
@@ -68,11 +72,17 @@
 #'   plot2(title = "Titles/captions *support* **markdown**",
 #'         x.title = "*hp*")
 plot2 <- function(.data, ...) {
+  # TO DO - copy arguments here from plot2.data.frame()
   UseMethod("plot2")
 }
 
-#' @rdname plot2
+#' Methods for [plot2()]
+#' 
+#' These are the implemented methods for different S3 classes to be used in [plot2()].
 # @param object data object which will be transformed with [ggplot2::fortify()], which allows S3 extensions by other packages
+#' @rdname plot2-methods
+#' @name plot2-methods
+#' @inheritParams plot2
 #' @importFrom dplyr tibble
 #' @importFrom ggplot2 fortify
 #' @export
@@ -82,7 +92,7 @@ plot2.default <- function(.data, ...) {
   plot2(fortify(.data), ...)
 }
 
-#' @rdname plot2
+#' @rdname plot2-methods
 #' @export
 plot2.numeric <- function(y, ...) {
   y_deparse <- deparse(substitute(y))
@@ -91,7 +101,34 @@ plot2.numeric <- function(y, ...) {
   plot2(df, x = NULL, category = NULL, facet = NULL, ...)
 }
 
-#' @rdname plot2
+#' @rdname plot2-methods
+#' @export
+plot2.freq <- function(.data,
+                       x = .data$item,
+                       y = .data$count,
+                       x.sort = "freq-desc",
+                       ...) {
+  plot2(as.data.frame(.data, stringsAsFactors = FALSE)[, 1:2, drop = FALSE],
+        x = x,
+        y = y,
+        x.sort = x.sort,
+        ...)
+}
+
+#' @rdname plot2-methods
+#' @export
+plot2.sf <- function(.data,
+                     colour = "grey50",
+                     x.expand = 0,
+                     y.expand = 0,
+                     datalabels = FALSE,
+                     datalabels.colour = "black",
+                     legend.position = "right",
+                     ...) {
+  
+}
+
+#' @rdname plot2-methods
 #' @importFrom dplyr `%>%` mutate tibble 
 #' @importFrom ggplot2 ggplot aes labs scale_x_discrete scale_x_continuous stat_boxplot scale_colour_continuous
 #' @importFrom certestyle format2 font_red font_black
@@ -128,7 +165,7 @@ plot2.data.frame <- function(.data = NULL,
                              x.date_labels = NULL,
                              category.focus = NULL,
                              colour = getOption("plot2.colours", "certe"),
-                             colour.fill = NULL,
+                             colour_fill = NULL,
                              colour.opacity = 0,
                              x.lbl_angle = 0,
                              x.lbl_align = NULL,
@@ -193,6 +230,7 @@ plot2.data.frame <- function(.data = NULL,
                              legend.barwidth = 1,
                              legend.nbin = 300,
                              legend.italic = FALSE,
+                             zoom = FALSE,
                              print = FALSE,
                              text.factor = 1,
                              text.font_family = "Verdana",
@@ -272,7 +310,10 @@ plot2.data.frame <- function(.data = NULL,
     # remove the group from the mapping
     mapping <- utils::modifyList(mapping, aes(group = NULL))
   }
-  # print(mapping)
+  
+  # generate colour vectors
+  # colour <- validate_colour(colour = colour, colour_fill = colour_fill)
+  # colour_fill <- validate_colour_fill(colour = colour, colour_fill = colour_fill)
   
   # generate ggplot ----
   p <- ggplot(data = df, mapping = mapping)
@@ -296,14 +337,14 @@ plot2.data.frame <- function(.data = NULL,
                          reverse = reverse)
   
   # add colours
-  # if (has_category(df)) {
-  #   if (is.numeric(get_category(df))) {
-  #     p <- p + scale_colour_continuous()
-  #   }
-  #   p <- p +
-  #     scale_colour_manual(values = colour_set) +
-  #     scale_fill_manual(values = colour_set.fill)
-  # }
+  if (has_category(df)) {
+    if (is.numeric(get_category(df))) {
+      p <- p + scale_colour_continuous()
+    }
+    p <- p +
+      scale_colour_manual(values = colour_set) +
+      scale_fill_manual(values = colour_set.fill)
+  }
   
   # add axis labels ----
   p <- p +
@@ -371,31 +412,4 @@ plot2.data.frame <- function(.data = NULL,
   } else {
     p
   }
-}
-
-#' @rdname plot2
-#' @export
-plot2.freq <- function(.data,
-                       x = .data$item,
-                       y = .data$count,
-                       x.sort = "freq-desc",
-                       ...) {
-  plot2(as.data.frame(.data, stringsAsFactors = FALSE)[, 1:2, drop = FALSE],
-        x = x,
-        y = y,
-        x.sort = x.sort,
-        ...)
-}
-
-#' @rdname plot2
-#' @export
-plot2.sf <- function(.data,
-                     colour = "grey50",
-                     x.expand = 0,
-                     y.expand = 0,
-                     datalabels = FALSE,
-                     datalabels.colour = "black",
-                     legend.position = "right",
-                     ...) {
-  
 }

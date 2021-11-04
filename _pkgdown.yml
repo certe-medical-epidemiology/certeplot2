@@ -21,7 +21,7 @@ title: "certeplot2"
 url: "https://certe-medical-epidemiology.github.io/certeplot2"
 
 navbar:
-  title: "AMR (for R)"
+  title: "certeplot2"
   left:
     - text: "Home"
       icon: "fa-home"

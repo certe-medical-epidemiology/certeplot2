@@ -2,165 +2,35 @@
 % Please edit documentation in R/plot2.R
 \name{plot2}
 \alias{plot2}
-\alias{plot2.default}
-\alias{plot2.numeric}
-\alias{plot2.data.frame}
-\alias{plot2.freq}
-\alias{plot2.sf}
 \title{Conveniently Create a New \code{ggplot}}
 \usage{
 plot2(.data, ...)
-
-\method{plot2}{default}(.data, ...)
-
-\method{plot2}{numeric}(y, ...)
-
-\method{plot2}{data.frame}(
-  .data = NULL,
-  x = NULL,
-  y = NULL,
-  category = NULL,
-  facet = NULL,
-  type = NULL,
-  x.title = NULL,
-  y.title = NULL,
-  title = NULL,
-  subtitle = NULL,
-  caption = NULL,
-  tag = NULL,
-  title_maxlength = 60,
-  subtitle_maxlength = 60,
-  na.replace = "(??)",
-  na.rm = FALSE,
-  facet.fill = NULL,
-  facet.position = "top",
-  facet.bold = TRUE,
-  facet.size = 10,
-  facet.repeat_lbls_x = TRUE,
-  facet.repeat_lbls_y = TRUE,
-  facet.fixed_y = FALSE,
-  facet.drop = FALSE,
-  facet.nrow = NULL,
-  facet.margin = 8,
-  facet.relative = FALSE,
-  facet.italic = FALSE,
-  x.date_breaks = NULL,
-  x.date_labels = NULL,
-  category.focus = NULL,
-  colour = getOption("plot2.colours", "certe"),
-  colour.fill = NULL,
-  colour.opacity = 0,
-  x.lbl_angle = 0,
-  x.lbl_align = NULL,
-  x.lbl_italic = FALSE,
-  x.remove = FALSE,
-  x.position = "bottom",
-  x.max_items = Inf,
-  x.max_txt = "(rest, x \%n)",
-  category.max_items = Inf,
-  category.max_txt = "(rest, x \%n)",
-  facet.max_items = Inf,
-  facet.max_txt = "(rest, x \%n)",
-  x.breaks = NULL,
-  x.breaks_n = NULL,
-  x.trans = "identity",
-  x.expand = 0.5,
-  x.limits = NULL,
-  x.character = NULL,
-  y.remove = FALSE,
-  y.24h = FALSE,
-  y.age = FALSE,
-  y.percent = FALSE,
-  y.percent_break = 10,
-  y.breaks = NULL,
-  y.limits = NULL,
-  y.labels = NULL,
-  y.expand = 0.25,
-  y.trans = "identity",
-  y.position = "left",
-  x.sort = NULL,
-  category.sort = TRUE,
-  facet.sort = TRUE,
-  datalabels = TRUE,
-  datalabels.round = ifelse(y.percent, 2, 1),
-  datalabels.colour = "grey25",
-  datalabels.fill = "white",
-  datalabels.size = 3,
-  decimal.mark = ",",
-  big.mark = ".",
-  summarise_function = base::sum,
-  stacked = FALSE,
-  stackedpercent = FALSE,
-  horizontal = FALSE,
-  reverse = horizontal,
-  smooth = FALSE,
-  smooth.method = NULL,
-  smooth.formula = NULL,
-  smooth.se = TRUE,
-  smooth.ci = 0.95,
-  smooth.alpha = 0.15,
-  smooth.size = 0.5,
-  smooth.linetype = 3,
-  size = NULL,
-  linetype = 1,
-  bins = NULL,
-  width = NULL,
-  jitter_seed = 1,
-  legend.position = "top",
-  legend.title = "",
-  legend.reverse = NULL,
-  legend.barheight = 5,
-  legend.barwidth = 1,
-  legend.nbin = 300,
-  legend.italic = FALSE,
-  print = FALSE,
-  text.factor = 1,
-  text.font_family = "Verdana",
-  theme = theme_minimal2(),
-  markdown = TRUE,
-  taxonomy.italic = markdown,
-  x.category = NULL,
-  y.category = NULL,
-  ...
-)
-
-\method{plot2}{freq}(.data, x = .data$item, y = .data$count, x.sort = "freq-desc", ...)
-
-\method{plot2}{sf}(
-  .data,
-  colour = "grey50",
-  x.expand = 0,
-  y.expand = 0,
-  datalabels = FALSE,
-  datalabels.colour = "black",
-  legend.position = "right",
-  ...
-)
 }
 \arguments{
 \item{.data}{data to plot}
 }
 \description{
-These functions create \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}} objects, but work in a more convenient way than the \code{ggplot2} package. By design, the \code{ggplot2} package requires users to use a lot of functions, while the \code{certeplot2} package requires to use only arguments in one function.
+The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \code{\link[ggplot2:ggplot]{ggplot2}} functions. By design, the \code{ggplot2} package requires users to use a lot of functions, while the \code{\link[=plot2]{plot2()}} function auto-determines needs and only requires to define arguments in one single function.
+
+See \link{plot2-methods} for all implemented methods for different object classes.
 }
 \details{
-The \code{\link[=plot2]{plot2()}} function uses the \code{ggplot2} package for plotting and provides:
+The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \code{\link[ggplot2:ggplot]{ggplot2}} functions such as \code{\link[ggplot2:ggplot]{ggplot()}}, \code{\link[ggplot2:geom_bar]{geom_col()}}, \code{\link[ggplot2:facet_wrap]{facet_wrap()}}, \code{\link[ggplot2:labs]{labs()}}, etc., and provides:
 \itemize{
-\item A convenient wrapper around many \code{ggplot2} functions such as \code{\link[=ggplot]{ggplot()}}, \code{\link[=geom_col]{geom_col()}}, \code{\link[=facet_wrap]{facet_wrap()}}, \code{\link[=labs]{labs()}}, etc.
 \item Writing as few lines of codes as possible
-\item Some benefits from Microsoft Excel:
-\itemize{
-\item The y axis starts at 0
-\item The y scale contains extra space at the top to be able to interpret all data points
-\item Date breaks can be written in a readable format such as "d mmm yyyy"
-\item Data labels can easily be printed
-}
 \item Easy plotting in three 'directions': \code{x} (the regular x axis), \code{category} (replaces 'fill' and 'colour') and \code{facet}
-\item Easy way for sorting data in may ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': \code{x.sort}, \code{category.sort} and \code{facet.sort}
+\item Automatic setting of these 'directions' based on the input data
+\item Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': \code{x.sort}, \code{category.sort} and \code{facet.sort}
 \item Easy limiting values, e.g. by setting \code{x.max_items = 5} or \code{category.max_items = 5}
 \item Markdown support for any label, with any theme
 \item An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: \code{\link[=theme_minimal2]{theme_minimal2()}}
-\item Automatic settings for mapping (\code{\link[=aes]{aes()}})
+\item Some conveniences from Microsoft Excel:
+\itemize{
+\item The y axis starts at 0
+\item The y scale expands at the top to be better able to interpret all data points
+\item Date breaks can be written in a readable format such as "d mmm yyyy"
+\item Data labels can easily be printed and are automatically determined
+}
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
@@ -169,7 +39,11 @@ The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} 
 \examples{
 head(admitted_patients)
 
-plot2(iris, x = Sepal.Width, y = Sepal.Length, category = Species, type = "point")
+# no variables determined, plot2() does a try:
+plot2(iris)
+
+# x and y set, no addition mapping will be set:
+plot2(iris, Sepal.Width, Sepal.Length)
 
 plot2(iris, x = Species, y = Sepal.Length, type = "boxplot")
 

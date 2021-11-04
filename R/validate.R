@@ -137,8 +137,9 @@ validate_data <- function(df,
       mutate(`_var_x` = df %>% pull(x_col))
   }
   
-  if (misses_category && !has_category(df) && ncol(df) > 2) {
+  if (misses_x && misses_category && !has_category(df) && ncol(df) > 2) {
     # category must only be used if factor or character
+    # and if x was also missing
     cols <- sapply(df, function(col) (is.factor(col) | is.character(col)) &
                      !identical(get_y(df), col) &
                      !(has_x(df) && identical(get_x(df), col)))
