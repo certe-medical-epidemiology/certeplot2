@@ -18,7 +18,7 @@
 # ===================================================================== #
 
 #' @importFrom certestyle font_black font_blue
-plot_message <- function(..., print = interactive()) {
+plot_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "") {
   if (isTRUE(print)) {
     msg <- paste0(c(...), collapse = "")
     

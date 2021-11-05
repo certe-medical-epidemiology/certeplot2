@@ -59,7 +59,7 @@
   x.date_labels = NULL,
   category.focus = NULL,
   colour = getOption("plot2.colours", "certe"),
-  colour.fill = NULL,
+  colour_fill = NULL,
   colour.opacity = 0,
   x.lbl_angle = 0,
   x.lbl_align = NULL,

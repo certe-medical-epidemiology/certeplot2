@@ -37,9 +37,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. Less typing, faster coding.
 }
 \examples{
-head(admitted_patients)
-
-# no variables determined, plot2() does a try:
+# no variables determined, plot2() tries for itself:
 plot2(iris)
 
 # x and y set, no addition mapping will be set:
@@ -55,10 +53,22 @@ mtcars \%>\%
 mtcars \%>\% 
   plot2(mpg, hp)
   
+head(admitted_patients)
+
 # if there are more Y values than groups, the default will be boxplot
-mtcars \%>\% 
-  mutate(cyl = as.character(cyl)) \%>\%
-  plot2()
+admitted_patients \%>\%
+  plot2(x = hospital)
+  
+admitted_patients \%>\%
+  plot2(x = hospital,
+        category = gender)
+        
+admitted_patients \%>\%
+  plot2(x = hospital,
+        category = gender,
+        colour = c("F" = "orange3", "M" = "purple3"),
+        colour_fill = "white",
+        y.age = TRUE)
   
 # plot2() supports all S3 extensions available through ggplot2::fortify():
 mtcars \%>\% 

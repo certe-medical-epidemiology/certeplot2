@@ -218,7 +218,7 @@ validate_data <- function(df,
                                       horizontal = FALSE)) # never reversely sort when horizontal
   }
   
-  # apply limitations
+  # apply limitations (have to been after sorting, e.g. on frequency)
   df <- set_max_items(df = df,
                       y = get_y(df),
                       x = get_x_name(df),
@@ -324,6 +324,7 @@ validate_x_scale <- function(df,
 }
 
 #' @importFrom ggplot2 waiver expansion scale_y_continuous
+#' @importFrom cleaner as.percentage
 #' @importFrom scales pretty_breaks
 validate_y_scale <- function(df,
                              y.24h,
@@ -392,7 +393,8 @@ validate_y_scale <- function(df,
     } else if (isTRUE(y.24h)) {
       function(x, dec = decimal.mark, big = big.mark, ...) paste0(format2(x, decimal.mark = dec, big.mark = big), "u (", x / 24, "d)")
     } else if (isTRUE(y.age)) {
-      function(x, dec = decimal.mark, big = big.mark, ...) paste0(format2(x, decimal.mark = dec, big.mark = big, round = 0), " jr")
+      function(x, dec = decimal.mark, big = big.mark, ...) paste0(format2(x, decimal.mark = dec, big.mark = big, round = 0),
+                                                                  ifelse(Sys.getlocale("LC_COLLATE") %like% "nl|dutch", " jr", " yrs"))
     } else if (isTRUE(y.percent) | isTRUE(stackedpercent)) {
       function(x, dec = decimal.mark, big = big.mark, ...) format2(as.percentage(x), decimal.mark = dec, big.mark = big)
     } else {
@@ -466,7 +468,7 @@ validate_y_scale <- function(df,
   )
 }
 
-#' @importFrom ggplot2 geom_bar position_stack position_fill position_dodge2 geom_line geom_boxplot
+#' @importFrom ggplot2 position_stack position_fill position_dodge2
 validate_geom <- function(type,
                           df,
                           stacked,
@@ -475,29 +477,27 @@ validate_geom <- function(type,
                           width,
                           size,
                           linetype,
-                          reverse) {
-  if (is.null(size)) {
-    size <- ifelse(type %in% c("geom_point", "geom_jitter", "geom_boxplot"), 2, 0.75)
-  }
-  if (is.null(width)) {
-    width <- ifelse(type %in% c("geom_violin", "geom_jitter", "geom_boxplot"), 0.75, 0.5)
-  }
+                          reverse,
+                          cols) {
   
+  if (type == "geom_col") {
+    type <- "geom_bar"
+  }
   geom_fn <- getFromNamespace(x = type, ns = asNamespace("ggplot2"))
   
   if (type %in% c("geom_col", "geom_bar")) {
-    geom_bar(width = width,
-             stat = "identity",
-             # small whitespace between columns:
-             position = if (isTRUE(stacked)) {
-               position_stack(reverse = reverse)
-             } else if (isTRUE(stackedpercent)) {
-               position_fill(reverse = reverse)
-             } else {
-               position_dodge2(width = width * 1.05,
-                               preserve = "single")
-             },
-             na.rm = TRUE)
+    geom_fn(width = width,
+            stat = "identity",
+            # small whitespace between columns:
+            position = if (isTRUE(stacked)) {
+              position_stack(reverse = reverse)
+            } else if (isTRUE(stackedpercent)) {
+              position_fill(reverse = reverse)
+            } else {
+              position_dodge2(width = width * 1.05,
+                              preserve = "single")
+            },
+            na.rm = TRUE)
     
   } else if (type %in% c("geom_line", "geom_path")) {
     geom_fn(lineend = "round",
@@ -510,14 +510,23 @@ validate_geom <- function(type,
             na.rm = TRUE)
     
   } else if (type %in% c("geom_boxplot", "geom_boxplot")) {
-    geom_fn(#colour = colour_set,
-      #fill = colour_set.fill,
-      outlier.size = 1.5,
-      outlier.alpha = 0.75,
-      width = width * 0.75,
-      lwd = (size * 0.75) / 2.5, # line width, van hele vlak
-      fatten = 1.5, # factor om mediaan dikker te maken t.o.v. lwd
-      na.rm = TRUE)
+    if (has_category(df)) {
+      geom_fn(outlier.size = 1.5,
+              outlier.alpha = 0.75,
+              width = width * 0.75,
+              lwd = (size * 0.75) / 2.5, # line width, of whole box
+              fatten = 1.5, # factor to make median thicker compared to lwd
+              na.rm = TRUE)
+    } else {
+      geom_fn(outlier.size = 1.5,
+              outlier.alpha = 0.75,
+              width = width * 0.75,
+              lwd = (size * 0.75) / 2.5, # line width, of whole box
+              fatten = 1.5, # factor to make median thicker compared to lwd
+              na.rm = TRUE,
+              colour = cols$colour,
+              fill = cols$colour_fill)
+    }
     
   } else {
     # try to put some parameters into the requested geom
@@ -527,6 +536,56 @@ validate_geom <- function(type,
             linetype = linetype,
             na.rm = TRUE)
   }
+}
+
+#' @importFrom certestyle colourpicker
+#' @importFrom dplyr `%>%` count pull
+validate_colour <- function(df, colour, colour_fill, horizontal, type) {
+  
+  minimum_length <- df %>%
+    count(across(c(get_x_name(df), get_category_name(df), get_facet_name(df)))) %>% 
+    nrow()
+  
+  if (type == "geom_boxplot" && length(colour) == 1 && colour %like% "certe[a-z]*" & is.null(colour_fill)) {
+    # specific treatment for Certe boxplots
+    # certeblauw (colour) -> certeblauw6 (colour_fill)
+    colour_fill <- paste0(colour, "6")
+  }
+  
+  if (!has_category(df)) {
+    # has no category
+    if (has_x(df) && length(unique(get_x(df))) != length(colour)) {
+      # take only the first
+      colour <- colour[1]
+      colour_fill <- colour_fill[1]
+    }
+    colour <- colourpicker(colour)
+    colour_fill <- colourpicker(colour_fill)
+  } else {
+    # has also category
+    colour <- colourpicker(colour,
+                           length = ifelse(length(colour) == 1, length(unique(get_category(df))), 1))
+    colour_fill <- colourpicker(colour_fill,
+                                length = ifelse(length(colour_fill) == 1, length(unique(get_category(df))), 1))
+    if (horizontal == TRUE) {
+      colour <- rev(colour)
+      colour_fill <- rev(colour_fill)
+    }
+    
+    if (length(colour) > 1 && length(colour_fill) == 1) {
+      colour_fill <- colour
+    }
+    
+    if (length(colour) < minimum_length) {
+      colour <- rep(colour, minimum_length / length(colour))
+    }
+    if (length(colour_fill) < minimum_length) {
+      colour_fill <- rep(colour_fill, minimum_length / length(colour_fill))
+    }
+  }
+  
+  list(colour = colour,
+       colour_fill = colour_fill)
 }
 
 #' @importFrom ggplot2 theme_grey

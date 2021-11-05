@@ -39,13 +39,9 @@
 #'   * Support for any `ggplot2` extension based on [ggplot2::fortify()]
 #'   
 #' The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. Less typing, faster coding.
-#' @importFrom dplyr `%>%` tibble
-#' @importFrom ggplot2 ggplot geom_col
 #' @export
 #' @examples
-#' head(admitted_patients)
-#' 
-#' # no variables determined, plot2() does a try:
+#' # no variables determined, plot2() tries for itself:
 #' plot2(iris)
 #' 
 #' # x and y set, no addition mapping will be set:
@@ -61,10 +57,22 @@
 #' mtcars %>% 
 #'   plot2(mpg, hp)
 #'   
+#' head(admitted_patients)
+#' 
 #' # if there are more Y values than groups, the default will be boxplot
-#' mtcars %>% 
-#'   mutate(cyl = as.character(cyl)) %>%
-#'   plot2()
+#' admitted_patients %>%
+#'   plot2(x = hospital)
+#'   
+#' admitted_patients %>%
+#'   plot2(x = hospital,
+#'         category = gender)
+#'         
+#' admitted_patients %>%
+#'   plot2(x = hospital,
+#'         category = gender,
+#'         colour = c("F" = "orange3", "M" = "purple3"),
+#'         colour_fill = "white",
+#'         y.age = TRUE)
 #'   
 #' # plot2() supports all S3 extensions available through ggplot2::fortify():
 #' mtcars %>% 
@@ -83,7 +91,6 @@ plot2 <- function(.data, ...) {
 #' @rdname plot2-methods
 #' @name plot2-methods
 #' @inheritParams plot2
-#' @importFrom dplyr tibble
 #' @importFrom ggplot2 fortify
 #' @export
 plot2.default <- function(.data, ...) {
@@ -96,7 +103,7 @@ plot2.default <- function(.data, ...) {
 #' @export
 plot2.numeric <- function(y, ...) {
   y_deparse <- deparse(substitute(y))
-  df <- tibble(y = y)
+  df <- data.frame(y = y, stringsAsFactors = FALSE)
   colnames(df) <- y_deparse
   plot2(df, x = NULL, category = NULL, facet = NULL, ...)
 }
@@ -129,7 +136,7 @@ plot2.sf <- function(.data,
 }
 
 #' @rdname plot2-methods
-#' @importFrom dplyr `%>%` mutate tibble 
+#' @importFrom dplyr `%>%` mutate 
 #' @importFrom ggplot2 ggplot aes labs scale_x_discrete scale_x_continuous stat_boxplot scale_colour_continuous
 #' @importFrom certestyle format2 font_red font_black
 #' @export
@@ -237,7 +244,7 @@ plot2.data.frame <- function(.data = NULL,
                              theme = theme_minimal2(),
                              markdown = TRUE,
                              taxonomy.italic = markdown,
-                             # old certetools support
+                             # old certetools pkg support
                              x.category = NULL,
                              y.category = NULL,
                              ...) {
@@ -295,6 +302,21 @@ plot2.data.frame <- function(.data = NULL,
   # validate type ----
   type <- validate_type(type, df = df) # this will automatically determine type if is.null(type)
   
+  # set default size and width ----
+  if (is.null(size)) {
+    size <- ifelse(type %in% c("geom_point", "geom_jitter", "geom_boxplot"), 2, 0.75)
+  }
+  if (is.null(width)) {
+    width <- ifelse(type %in% c("geom_violin", "geom_jitter", "geom_boxplot"), 0.75, 0.5)
+  }
+  
+  # generate colour vectors ----
+  cols <- validate_colour(df = df,
+                          colour = colour,
+                          colour_fill = colour_fill,
+                          horizontal = horizontal,
+                          type = type)
+  
   # generate mapping ----
   mapping <- aes(y = `_var_y`, group = 1)
   if (has_x(df)) {
@@ -311,20 +333,17 @@ plot2.data.frame <- function(.data = NULL,
     mapping <- utils::modifyList(mapping, aes(group = NULL))
   }
   
-  # generate colour vectors
-  # colour <- validate_colour(colour = colour, colour_fill = colour_fill)
-  # colour_fill <- validate_colour_fill(colour = colour, colour_fill = colour_fill)
-  
   # generate ggplot ----
-  p <- ggplot(data = df, mapping = mapping)
+  p <- ggplot(data = df, mapping = mapping, colour = cols$colour, fill = cols$colour_fill)
   
   # add geom ----
   if (type == "geom_boxplot") {
     # first add the whiskers
     p <- p + stat_boxplot(geom = "errorbar",
                           coef = 1.5, # 1.5 * IQR
-                          width = ifelse(is.null(width), 0.75, width) * 0.75 * 0.5,
-                          lwd = (ifelse(is.null(size), 2, size) * 0.75) / 2.5)
+                          width = width * 0.75 * ifelse(has_category(df), 1, 0.75),
+                          lwd = (size * 0.75) / 2.5,
+                          colour = cols$colour)
   }
   p <- p + validate_geom(type = type,
                          df = df,
@@ -334,17 +353,13 @@ plot2.data.frame <- function(.data = NULL,
                          width = width,
                          size = size,
                          linetype = linetype,
-                         reverse = reverse)
+                         reverse = reverse,
+                         cols = cols)
   
   # add colours
-  if (has_category(df)) {
-    if (is.numeric(get_category(df))) {
-      p <- p + scale_colour_continuous()
-    }
-    p <- p +
-      scale_colour_manual(values = colour_set) +
-      scale_fill_manual(values = colour_set.fill)
-  }
+  p <- p +
+    ggplot2::scale_colour_manual(values = cols$colour) +
+    ggplot2::scale_fill_manual(values = cols$colour_fill)
   
   # add axis labels ----
   p <- p +
