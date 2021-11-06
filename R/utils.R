@@ -50,7 +50,11 @@ get_column_name <- function(df, column_var) {
 }
 
 get_x <- function(df) {
-  df$`_var_x`
+  if (has_x(df)) {
+    df$`_var_x`
+  } else {
+    NULL
+  }
 }
 get_x_name <- function(df) {
   if (has_x(df)) {
@@ -60,11 +64,15 @@ get_x_name <- function(df) {
   }
 }
 has_x <- function(df) {
-  !is.null(get_x(df))
+  "_var_x" %in% colnames(df)
 }
 
 get_y <- function(df) {
-  df$`_var_y`
+  if (has_y(df)) {
+    df$`_var_y`
+  } else {
+    NULL
+  }
 }
 get_y_name <- function(df) {
   if (has_y(df)) {
@@ -74,11 +82,15 @@ get_y_name <- function(df) {
   }
 }
 has_y <- function(df) {
-  !is.null(get_y(df))
+  "_var_y" %in% colnames(df)
 }
 
 get_category <- function(df) {
-  df$`_var_category`
+  if (has_category(df)) {
+    df$`_var_category`
+  } else {
+    NULL
+  }
 }
 get_category_name <- function(df) {
   if (has_category(df)) {
@@ -88,11 +100,15 @@ get_category_name <- function(df) {
   }
 }
 has_category <- function(df) {
-  !is.null(get_category(df))
+  "_var_category" %in% colnames(df)
 }
 
 get_facet <- function(df) {
-  df$`_var_facet`
+  if (has_facet(df)) {
+    df$`_var_facet`
+  } else {
+    NULL
+  }
 }
 get_facet_name <- function(df) {
   if (has_facet(df)) {
@@ -102,11 +118,15 @@ get_facet_name <- function(df) {
   }
 }
 has_facet <- function(df) {
-  !is.null(get_facet(df))
+  "_var_facet" %in% colnames(df)
 }
 
 get_datalabels <- function(df) {
-  df$`_var_datalabels`
+  if (has_datalabels(df)) {
+    df$`_var_datalabels`
+  } else {
+    NULL
+  }
 }
 get_datalabels_name <- function(df) {
   if (has_datalabels(df)) {
@@ -116,7 +136,7 @@ get_datalabels_name <- function(df) {
   }
 }
 has_datalabels <- function(df) {
-  !is.null(get_datalabels(df))
+  "_var_datalabels" %in% colnames(df)
 }
 
 determine_date_breaks_labels <- function(x) {
@@ -159,4 +179,11 @@ is_empty <- function(x) {
 
 type_is_continuous <- function(type) {
   type %in% c("geom_boxplot", "geom_violin")
+}
+
+#' @importFrom dplyr `%>%` group_by across group_size
+group_sizes <- function(df) {
+  df %>% 
+    group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df)))) %>%
+    group_size()
 }

@@ -86,7 +86,7 @@
 #' mtcars %>% 
 #'   lm(mpg ~ hp, data = .) %>% 
 #'   plot2(title = "Titles/captions *support* **markdown**",
-#'         x.title = "*hp*")
+#'         x.title = "*Some X axis*")
 plot2 <- function(.data, ...) {
   # TO DO - copy arguments here from plot2.data.frame()
   UseMethod("plot2")
@@ -144,9 +144,9 @@ plot2.sf <- function(.data,
 }
 
 #' @rdname plot2-methods
-#' @importFrom dplyr `%>%` mutate vars
+#' @importFrom dplyr `%>%` mutate vars group_by across summarise
 #' @importFrom ggplot2 ggplot aes labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip facet_grid facet_wrap coord_flip
-#' @importFrom certestyle format2 font_red font_black
+#' @importFrom certestyle format2 font_red font_black font_blue
 #' @export
 plot2.data.frame <- function(.data = NULL,
                              x = NULL,
@@ -237,7 +237,7 @@ plot2.data.frame <- function(.data = NULL,
                              linetype = 1,
                              bins = NULL,
                              width = NULL,
-                             jitter_seed = 1,
+                             jitter_seed = NA,
                              violin_scale = "count",
                              legend.position = "top",
                              legend.title = "",
@@ -310,6 +310,14 @@ plot2.data.frame <- function(.data = NULL,
   
   # validate type ----
   type <- validate_type(type = type, df = df) # this will automatically determine type if is.null(type)
+  # transform data if not a continuous type but group sizes are > 1
+  if (any(group_sizes(df) > 1) && !type_is_continuous(type)) {
+    plot_message("Group sizes > 1 in discrete plot type (", font_blue(type), font_black("), applying "),
+                 font_blue("summarise_function = " ), font_blue(deparse(substitute(summarise_function))))
+    df <- summarise_data(df = df, summarise_function = summarise_function,
+                         decimal.mark = decimal.mark, big.mark = big.mark,
+                         datalabels.round = datalabels.round)
+  }
   
   # set default size and width ----
   size <- validate_size(size = size, type = type)
@@ -319,6 +327,7 @@ plot2.data.frame <- function(.data = NULL,
   cols <- validate_colour(df = df,
                           colour = colour,
                           colour_fill = colour_fill,
+                          misses_colour_fill = missing(colour_fill),
                           horizontal = horizontal,
                           type = type)
   
@@ -361,6 +370,7 @@ plot2.data.frame <- function(.data = NULL,
                          reverse = reverse,
                          na.rm = na.rm,
                          violin_scale = violin_scale,
+                         jitter_seed = jitter_seed,
                          cols = cols)
   
   # add colours
@@ -438,16 +448,16 @@ plot2.data.frame <- function(.data = NULL,
   # set facets ----
   if (has_facet(df)) {
     scales <- "fixed"
-    if (facet.repeat_lbls_x == TRUE & facet.repeat_lbls_y == TRUE) {
+    if (isTRUE(facet.repeat_lbls_x) & isTRUE(facet.repeat_lbls_y)) {
       scales <- "free"
-    } else if (facet.repeat_lbls_y == TRUE) {
+    } else if (isTRUE(facet.repeat_lbls_y)) {
       scales <- "free_y"
-      if (horizontal == TRUE) {
+      if (isTRUE(horizontal)) {
         scales <- "free_x"
       }
-    } else if (facet.repeat_lbls_x == TRUE) {
+    } else if (isTRUE(facet.repeat_lbls_x)) {
       scales <- "free_x"
-      if (horizontal == TRUE) {
+      if (isTRUE(horizontal)) {
         scales <- "free_y"
       }
     }
@@ -457,9 +467,9 @@ plot2.data.frame <- function(.data = NULL,
       # Error in scale_apply(layer_data, x_vars, "train", SCALE_X, x_scales)
       facet.drop <- TRUE
     }
-    if (facet.relative == TRUE) {
+    if (isTRUE(facet.relative)) {
       switch <- "x"
-      if (horizontal == TRUE) {
+      if (isTRUE(horizontal)) {
         switch <- "y"
       }
       p <- p +
@@ -476,6 +486,11 @@ plot2.data.frame <- function(.data = NULL,
                    drop = facet.drop,
                    nrow = facet.nrow)
     }
+  }
+  
+  # set datalabels ----
+  if (has_datalabels(df)) {
+    p <- set_datalabels(p = p, df = df)
   }
   
   # turn plot horizontal if required ----

@@ -48,7 +48,7 @@
   facet.bold = TRUE,
   facet.size = 10,
   facet.repeat_lbls_x = TRUE,
-  facet.repeat_lbls_y = TRUE,
+  facet.repeat_lbls_y = FALSE,
   facet.fixed_y = FALSE,
   facet.drop = FALSE,
   facet.nrow = NULL,

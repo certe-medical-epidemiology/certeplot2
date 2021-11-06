@@ -17,7 +17,7 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-#' @importFrom dplyr `%>%` group_by across group_size
+#' @importFrom certestyle font_blue font_black  
 validate_type <- function(type, df) {
   type.bak <- type
   if (is.null(type)) {
@@ -33,10 +33,7 @@ validate_type <- function(type, df) {
                    font_black(" since both axes are numeric"))
     } else {
       # check if y has multiple values across groups, then make it boxplot
-      sizes <- df %>% 
-        group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df)))) %>%
-        group_size()
-      if (all(sizes > 3)) {
+      if (all(group_sizes(df) > 3)) {
         type <- "geom_boxplot"
         plot_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL),
                      font_black(" since all groups have size > 3"))
@@ -54,6 +51,9 @@ validate_type <- function(type, df) {
     if (type == "l") type <- "line"
     if (type == "b") type <- "boxplot"
     if (type == "v") type <- "violin"
+    if (type == "j") type <- "jitter"
+    if (type == "a") type <- "area"
+    if (type == "r") type <- "ribbon"
     if (type %in% c("c", "column")) type <- "col"
     if (type %unlike% "^geom_") {
       type <- paste0("geom_", type)
@@ -151,7 +151,7 @@ validate_data <- function(df,
     }
   }
   
-  # create surrogate labels to df
+  # add surrogate columns to df
   if (has_x(df) & !label_x %in% colnames(df) & label_x != "NULL") {
     df$`_label_x` <- get_x(df)
     colnames(df)[colnames(df) == "_label_x"] <- label_x
@@ -184,7 +184,7 @@ validate_data <- function(df,
                                                     decimal.mark = dots$decimal.mark,
                                                     big.mark = dots$big.mark,
                                                     round = dots$datalabels.round,
-                                                    force.decimals = TRUE))
+                                                    force.decimals = FALSE))
   }
   
   # apply sortings
@@ -230,7 +230,11 @@ validate_data <- function(df,
                       facet = get_facet_name(df), 
                       facet.max_items = dots$facet.max_items, 
                       facet.max_txt = dots$facet.max_txt,
-                      horizontal = dots$horizontal)
+                      horizontal = dots$horizontal,
+                      summarise_function = dots$summarise_function,
+                      decimal.mark = dots$decimal.mark,
+                      big.mark = dots$big.mark,
+                      datalabels.round = dots$datalabels.round)
   
   # sort on x, important when piping plot2()'s after plot2()'s
   df <- df %>% 
@@ -308,7 +312,7 @@ validate_x_scale <- function(df,
       if (!is.numeric(get_x(df))) {
         scale_x_discrete(position = x.position)
       } else {
-        if (x.trans == "identity" & horizontal == TRUE) {
+        if (x.trans == "identity" & isTRUE(horizontal)) {
           x.trans <- reverse_trans()
         }
         scale_x_continuous(labels = function(x, ...) format2(x, decimal.mark = decimal.mark, big.mark = big.mark),
@@ -468,7 +472,7 @@ validate_y_scale <- function(df,
   )
 }
 
-#' @importFrom ggplot2 position_stack position_fill position_dodge2
+#' @importFrom ggplot2 position_stack position_fill position_dodge2 position_jitter
 validate_geom <- function(type,
                           df,
                           stacked,
@@ -480,6 +484,7 @@ validate_geom <- function(type,
                           reverse,
                           na.rm,
                           violin_scale,
+                          jitter_seed,
                           cols) {
   
   if (type == "geom_col") {
@@ -513,9 +518,16 @@ validate_geom <- function(type,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)]))
     
-  } else if (type %in% c("geom_point", "geom_path")) {
+  } else if (type %in% c("geom_point")) {
     do.call(geom_fn,
             args = c(list(size = size,
+                          na.rm = na.rm),
+                     list(colour = cols$colour)[!has_category(df)]))
+    
+  } else if (type == "geom_jitter") {
+    do.call(geom_fn,
+            args = c(list(size = size,
+                          position = position_jitter(seed = jitter_seed),
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)]))
     
@@ -555,17 +567,17 @@ validate_geom <- function(type,
 }
 
 #' @importFrom certestyle colourpicker
-#' @importFrom dplyr `%>%` count pull
-validate_colour <- function(df, colour, colour_fill, horizontal, type) {
+validate_colour <- function(df, colour, colour_fill, misses_colour_fill, horizontal, type) {
   
-  minimum_length <- df %>%
-    count(across(c(get_x_name(df), get_category_name(df), get_facet_name(df)))) %>% 
-    nrow()
+  minimum_length <- length(group_sizes(df))
   
   if (type_is_continuous(type) && length(colour) == 1 && colour %like% "certe[a-z]*" & is.null(colour_fill)) {
     # specific treatment for Certe boxplots/violins/...
     # certeblauw (colour) -> certeblauw6 (colour_fill)
     colour_fill <- paste0(colour, "6")
+  }
+  if (isTRUE(misses_colour_fill) && is.null(colour_fill)) {
+    colour_fill <- colour
   }
   
   if (!has_category(df)) {
@@ -583,7 +595,7 @@ validate_colour <- function(df, colour, colour_fill, horizontal, type) {
                            length = ifelse(length(colour) == 1, length(unique(get_category(df))), 1))
     colour_fill <- colourpicker(colour_fill,
                                 length = ifelse(length(colour_fill) == 1, length(unique(get_category(df))), 1))
-    if (horizontal == TRUE) {
+    if (isTRUE(horizontal)) {
       colour <- rev(colour)
       colour_fill <- rev(colour_fill)
     }
@@ -676,13 +688,18 @@ validate_theme <- function(theme, markdown) {
   }
 }
 
+#' 
+set_datalabels <- function(p, df) {
+  p # + ggplot2::geom_label(aes(label = `_var_datalabels`, colour = "black", fill = NA))
+}
+
 #' @importFrom forcats fct_inorder fct_reorder
 #' @importFrom stringr str_sort
 sort_data <- function(original_values, sort_method, datapoints, summarise_function, horizontal, last_level) {
-  if (is.null(sort_method) || (isTRUE(sort_method) & is.factor(original_values) & horizontal == FALSE)) {
+  if (is.null(sort_method) || (isTRUE(sort_method) & is.factor(original_values) & !isTRUE(horizontal))) {
     # don't sort at all
     return(original_values)
-  } else if (isTRUE(sort_method) & is.factor(original_values) & horizontal == TRUE) {
+  } else if (isTRUE(sort_method) & is.factor(original_values) & isTRUE(horizontal)) {
     # reverse the levels of the current factor since horizontal == TRUE
     return(factor(as.character(original_values),
                   levels = rev(levels(original_values)),
@@ -744,12 +761,13 @@ sort_data <- function(original_values, sort_method, datapoints, summarise_functi
 }
 
 #' @importFrom forcats fct_relevel
-#' @importFrom dplyr `%>%` group_by across group_size
+#' @importFrom dplyr `%>%` group_by across group_size mutate summarise
 set_max_items <- function(df, y,
                           x, x.max_items, x.max_txt,
                           category, category.max_items, category.max_txt,
                           facet, facet.max_items, facet.max_txt,
-                          horizontal, type) {
+                          horizontal, type, summarise_function,
+                          decimal.mark, big.mark, datalabels.round) {
   
   if (is.infinite(x.max_items) && is.infinite(category.max_items) && is.infinite(facet.max_items)) {
     return(df)
@@ -768,7 +786,7 @@ set_max_items <- function(df, y,
       return(values)
     }
     if (n_max < length(levels(values))) {
-      if (horizontal == TRUE) {
+      if (isTRUE(horizontal)) {
         lvls_remove <- rev(levels(values))[c(n_max:length(levels(values)))]
       } else {
         lvls_remove <- levels(values)[c(n_max:length(levels(values)))]
@@ -782,7 +800,7 @@ set_max_items <- function(df, y,
       # drop unused factor levels
       values <- droplevels(values)
       # set new level to last place, taking into account 'horizontal'
-      if (horizontal == TRUE) {
+      if (isTRUE(horizontal)) {
         values <- fct_relevel(values, value_new, after = 0)
       } else {
         values <- fct_relevel(values, value_new, after = Inf)
@@ -814,17 +832,41 @@ set_max_items <- function(df, y,
     df$`_var_facet` <- df[, facet, drop = TRUE]
   }
   
-  sizes <- df %>% 
-    group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df)))) %>%
-    group_size()
-  if (all(sizes == 1)) {
+  if (all(group_sizes(df) == 1)) {
     # summarise again
-    df <- df %>%
-      mutate(n = get_y(df)) %>%
-      group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df)))) %>%
-      summarise(n = sum(n, na.rm = TRUE))
-    colnames(df)[colnames(df) == "n"] <- get_y_name(df)
+    df <- summarise_data(df = df, summarise_function = summarise_function,
+                         decimal.mark = decimal.mark, big.mark = big.mark,
+                         datalabels.round = datalabels.round)
   }
   df
   
+}
+
+summarise_data <- function(df,
+                           summarise_function,
+                           decimal.mark,
+                           big.mark,
+                           datalabels.round) {
+  x <- get_x_name(df)
+  y <- get_y_name(df)
+  category <- get_category_name(df)
+  facet <- get_facet_name(df)
+  has_datalbls <- has_datalabels(df)
+  df <- df %>%
+    mutate(n = get_y(df)) %>%
+    group_by(across(c(x, category, facet))) %>%
+    summarise(n = summarise_function(n, na.rm = TRUE))
+  colnames(df)[colnames(df) == "n"] <- y
+  df$`_var_y` <- df[, y, drop = TRUE]
+  if (!is.null(x)) df$`_var_x` <- df[, x, drop = TRUE]
+  if (!is.null(category)) df$`_var_category` <- df[, category, drop = TRUE]
+  if (!is.null(facet)) df$`_var_facet` <- df[, facet, drop = TRUE]
+  if (isTRUE(has_datalbls)) {
+    df$`_var_datalabels` <- format2(df$`_var_y`,
+                                    decimal.mark = decimal.mark,
+                                    big.mark = big.mark,
+                                    round = datalabels.round,
+                                    force.decimals = FALSE)
+  }
+  df
 }

@@ -62,6 +62,14 @@ admitted_patients \%>\%
 # the arguments are in this order: x, y, category, facet
 admitted_patients \%>\%
   plot2(hospital, age, gender)
+  
+admitted_patients \%>\%
+  plot2(hospital, age, facet = gender)
+  
+admitted_patients \%>\%
+  plot2(x = gender,
+        facet = hospital,
+        facet.nrow = 1)
         
 admitted_patients \%>\%
   plot2(x = hospital,
@@ -74,5 +82,5 @@ admitted_patients \%>\%
 mtcars \%>\% 
   lm(mpg ~ hp, data = .) \%>\% 
   plot2(title = "Titles/captions *support* **markdown**",
-        x.title = "*hp*")
+        x.title = "*Some X axis*")
 }
