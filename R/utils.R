@@ -154,5 +154,9 @@ determine_date_breaks_labels <- function(x) {
 }
 
 is_empty <- function(x) {
-  is.null(x) || isFALSE(x) || identical(x, "") || all(is.na(x))
+  is.null(x) || isFALSE(x) || identical(x, "") || all(is.na(as.character(x)))
+}
+
+type_is_continuous <- function(type) {
+  type %in% c("geom_boxplot", "geom_violin")
 }

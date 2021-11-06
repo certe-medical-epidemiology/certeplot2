@@ -58,10 +58,10 @@ head(admitted_patients)
 # if there are more Y values than groups, the default will be boxplot
 admitted_patients \%>\%
   plot2(x = hospital)
-  
+
+# the arguments are in this order: x, y, category, facet
 admitted_patients \%>\%
-  plot2(x = hospital,
-        category = gender)
+  plot2(hospital, age, gender)
         
 admitted_patients \%>\%
   plot2(x = hospital,

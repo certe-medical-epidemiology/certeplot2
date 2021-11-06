@@ -240,7 +240,7 @@ validate_data <- function(df,
   df
 }
 
-#' @importFrom ggplot2 scale_x_discrete expansion scale_x_date scale_x_datetime waiver
+#' @importFrom ggplot2 scale_x_discrete scale_x_date scale_x_datetime scale_x_discrete scale_x_continuous expansion waiver
 #' @importFrom scales reverse_trans
 #' @importFrom cleaner format_datetime
 validate_x_scale <- function(df,
@@ -478,6 +478,8 @@ validate_geom <- function(type,
                           size,
                           linetype,
                           reverse,
+                          na.rm,
+                          violin_scale,
                           cols) {
   
   if (type == "geom_col") {
@@ -485,56 +487,70 @@ validate_geom <- function(type,
   }
   geom_fn <- getFromNamespace(x = type, ns = asNamespace("ggplot2"))
   
-  if (type %in% c("geom_col", "geom_bar")) {
-    geom_fn(width = width,
-            stat = "identity",
-            # small whitespace between columns:
-            position = if (isTRUE(stacked)) {
-              position_stack(reverse = reverse)
-            } else if (isTRUE(stackedpercent)) {
-              position_fill(reverse = reverse)
-            } else {
-              position_dodge2(width = width * 1.05,
-                              preserve = "single")
-            },
-            na.rm = TRUE)
+  if (type == "geom_bar") {
+    # set position
+    if (isTRUE(stacked)) {
+      position <- position_stack(reverse = reverse)
+    } else if (isTRUE(stackedpercent)) {
+      position <- position_fill(reverse = reverse)
+    } else {
+      # small whitespace between columns:
+      position <- position_dodge2(width = width * 1.05, preserve = "single")
+    }
+    do.call(geom_fn,
+            args = c(list(width = width,
+                          stat = "identity",
+                          position = position,
+                          na.rm = na.rm),
+                     list(colour = cols$colour)[!has_category(df)],
+                     list(fill = cols$colour_fill)[!has_category(df)]))
     
   } else if (type %in% c("geom_line", "geom_path")) {
-    geom_fn(lineend = "round",
-            size = size,
-            linetype = linetype,
-            na.rm = TRUE)
+    do.call(geom_fn,
+            args = c(list(lineend = "round",
+                          size = size,
+                          linetype = linetype,
+                          na.rm = na.rm),
+                     list(colour = cols$colour)[!has_category(df)]))
     
   } else if (type %in% c("geom_point", "geom_path")) {
-    geom_fn(size = size,
-            na.rm = TRUE)
+    do.call(geom_fn,
+            args = c(list(size = size,
+                          na.rm = na.rm),
+                     list(colour = cols$colour)[!has_category(df)]))
     
-  } else if (type %in% c("geom_boxplot", "geom_boxplot")) {
-    if (has_category(df)) {
-      geom_fn(outlier.size = 1.5,
-              outlier.alpha = 0.75,
-              width = width * 0.75,
-              lwd = (size * 0.75) / 2.5, # line width, of whole box
-              fatten = 1.5, # factor to make median thicker compared to lwd
-              na.rm = TRUE)
-    } else {
-      geom_fn(outlier.size = 1.5,
-              outlier.alpha = 0.75,
-              width = width * 0.75,
-              lwd = (size * 0.75) / 2.5, # line width, of whole box
-              fatten = 1.5, # factor to make median thicker compared to lwd
-              na.rm = TRUE,
-              colour = cols$colour,
-              fill = cols$colour_fill)
-    }
+  } else if (type == "geom_boxplot") {
+    do.call(geom_fn,
+            args = c(list(outlier.size = size * 3,
+                          outlier.alpha = 0.75,
+                          width = width,
+                          lwd = size, # line width, of whole box
+                          fatten = 1.5, # factor to make median thicker compared to lwd
+                          na.rm = na.rm),
+                     list(colour = cols$colour)[!has_category(df)],
+                     list(fill = cols$colour_fill)[!has_category(df)]))
+    
+  } else if (type == "geom_violin") {
+    do.call(geom_fn,
+            args = c(list(width = width,
+                          lwd = size, # line width, of whole violin
+                          scale = violin_scale,
+                          trim = TRUE,
+                          draw_quantiles = c(0.25, 0.5, 0.75),
+                          na.rm = na.rm),
+                     list(colour = cols$colour)[!has_category(df)],
+                     list(fill = cols$colour_fill)[!has_category(df)]))
     
   } else {
-    # try to put some parameters into the requested geom
-    warning("'", type, "' currently only loosely supported in plot2()", call. = FALSE)
-    geom_fn(size = size,
-            width = width,
-            linetype = linetype,
-            na.rm = TRUE)
+    # try to put some arguments into the requested geom
+    warning("'", type, "' is currently only loosely supported in plot2()", call. = FALSE)
+    do.call(geom_fn,
+            args = c(list(size = size,
+                          width = width,
+                          linetype = linetype,
+                          na.rm = na.rm),
+                     list(colour = cols$colour)[!has_category(df)],
+                     list(fill = cols$colour_fill)[!has_category(df)]))
   }
 }
 
@@ -546,8 +562,8 @@ validate_colour <- function(df, colour, colour_fill, horizontal, type) {
     count(across(c(get_x_name(df), get_category_name(df), get_facet_name(df)))) %>% 
     nrow()
   
-  if (type == "geom_boxplot" && length(colour) == 1 && colour %like% "certe[a-z]*" & is.null(colour_fill)) {
-    # specific treatment for Certe boxplots
+  if (type_is_continuous(type) && length(colour) == 1 && colour %like% "certe[a-z]*" & is.null(colour_fill)) {
+    # specific treatment for Certe boxplots/violins/...
     # certeblauw (colour) -> certeblauw6 (colour_fill)
     colour_fill <- paste0(colour, "6")
   }
@@ -586,6 +602,50 @@ validate_colour <- function(df, colour, colour_fill, horizontal, type) {
   
   list(colour = colour,
        colour_fill = colour_fill)
+}
+
+validate_size <- function(size, type) {
+  if (is.null(size)) {
+    if (type %in% c("geom_boxplot", "geom_violin")) {
+      size <- 0.5
+    } else if (type %in% c("geom_point", "geom_jitter")) {
+      size <- 2
+    } else {
+      size <- 0.75
+    }
+  }
+  size
+}
+
+validate_width <- function(width, type) {
+  if (is.null(width)) {
+    if (type %in% c("geom_boxplot", "geom_violin", "geom_jitter")) {
+      width <- 0.75
+    } else {
+      width <- 0.5
+    }
+  }
+  width
+}
+
+validate_titles <- function(text, markdown = TRUE, max_length = NULL) {
+  if (is_empty(text)) {
+    return(NULL)
+  } else {
+    if (is.expression(text)) {
+      return(text)
+    } else {
+      if (isTRUE(markdown)) {
+        text <- gsub("\n", "<br>", text, fixed = TRUE)
+      }
+      if (is.null(max_length)) {
+        return(text)
+      } else {
+        return(paste(strwrap(x = text, width = max_length),
+                     collapse = ifelse(markdown, "<br>", "\n")))
+      }
+    }
+  }
 }
 
 #' @importFrom ggplot2 theme_grey

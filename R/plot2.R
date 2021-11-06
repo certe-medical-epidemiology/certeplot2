@@ -62,10 +62,18 @@
 #' # if there are more Y values than groups, the default will be boxplot
 #' admitted_patients %>%
 #'   plot2(x = hospital)
+#' 
+#' # the arguments are in this order: x, y, category, facet
+#' admitted_patients %>%
+#'   plot2(hospital, age, gender)
 #'   
 #' admitted_patients %>%
-#'   plot2(x = hospital,
-#'         category = gender)
+#'   plot2(hospital, age, facet = gender)
+#'   
+#' admitted_patients %>%
+#'   plot2(x = gender,
+#'         facet = hospital,
+#'         facet.nrow = 1)
 #'         
 #' admitted_patients %>%
 #'   plot2(x = hospital,
@@ -136,8 +144,8 @@ plot2.sf <- function(.data,
 }
 
 #' @rdname plot2-methods
-#' @importFrom dplyr `%>%` mutate 
-#' @importFrom ggplot2 ggplot aes labs scale_x_discrete scale_x_continuous stat_boxplot scale_colour_continuous
+#' @importFrom dplyr `%>%` mutate vars
+#' @importFrom ggplot2 ggplot aes labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip facet_grid facet_wrap coord_flip
 #' @importFrom certestyle format2 font_red font_black
 #' @export
 plot2.data.frame <- function(.data = NULL,
@@ -152,8 +160,8 @@ plot2.data.frame <- function(.data = NULL,
                              subtitle = NULL,
                              caption = NULL,
                              tag = NULL,
-                             title_maxlength = 60,
-                             subtitle_maxlength = 60,
+                             title.linelength = 60,
+                             subtitle.linelength = 60,
                              na.replace = "(??)",
                              na.rm = FALSE,
                              facet.fill = NULL,
@@ -161,7 +169,7 @@ plot2.data.frame <- function(.data = NULL,
                              facet.bold = TRUE,
                              facet.size = 10,
                              facet.repeat_lbls_x = TRUE,
-                             facet.repeat_lbls_y = TRUE,
+                             facet.repeat_lbls_y = FALSE,
                              facet.fixed_y = FALSE,
                              facet.drop = FALSE,
                              facet.nrow = NULL,
@@ -230,6 +238,7 @@ plot2.data.frame <- function(.data = NULL,
                              bins = NULL,
                              width = NULL,
                              jitter_seed = 1,
+                             violin_scale = "count",
                              legend.position = "top",
                              legend.title = "",
                              legend.reverse = NULL,
@@ -300,15 +309,11 @@ plot2.data.frame <- function(.data = NULL,
                   ...)
   
   # validate type ----
-  type <- validate_type(type, df = df) # this will automatically determine type if is.null(type)
+  type <- validate_type(type = type, df = df) # this will automatically determine type if is.null(type)
   
   # set default size and width ----
-  if (is.null(size)) {
-    size <- ifelse(type %in% c("geom_point", "geom_jitter", "geom_boxplot"), 2, 0.75)
-  }
-  if (is.null(width)) {
-    width <- ifelse(type %in% c("geom_violin", "geom_jitter", "geom_boxplot"), 0.75, 0.5)
-  }
+  size <- validate_size(size = size, type = type)
+  width <- validate_width(width = width, type = type)
   
   # generate colour vectors ----
   cols <- validate_colour(df = df,
@@ -328,7 +333,7 @@ plot2.data.frame <- function(.data = NULL,
                                               colour = `_var_category`,
                                               group = `_var_category`))
   }
-  if (type %in% c("geom_boxplot", "geom_violin")) {
+  if (type_is_continuous(type)) {
     # remove the group from the mapping
     mapping <- utils::modifyList(mapping, aes(group = NULL))
   }
@@ -336,13 +341,13 @@ plot2.data.frame <- function(.data = NULL,
   # generate ggplot ----
   p <- ggplot(data = df, mapping = mapping, colour = cols$colour, fill = cols$colour_fill)
   
-  # add geom ----
+  # generate geom ----
   if (type == "geom_boxplot") {
     # first add the whiskers
     p <- p + stat_boxplot(geom = "errorbar",
                           coef = 1.5, # 1.5 * IQR
-                          width = width * 0.75 * ifelse(has_category(df), 1, 0.75),
-                          lwd = (size * 0.75) / 2.5,
+                          width = width * ifelse(has_category(df), 1, 0.75),
+                          lwd = size,
                           colour = cols$colour)
   }
   p <- p + validate_geom(type = type,
@@ -354,6 +359,8 @@ plot2.data.frame <- function(.data = NULL,
                          size = size,
                          linetype = linetype,
                          reverse = reverse,
+                         na.rm = na.rm,
+                         violin_scale = violin_scale,
                          cols = cols)
   
   # add colours
@@ -403,23 +410,78 @@ plot2.data.frame <- function(.data = NULL,
                      decimal.mark = decimal.mark,
                      big.mark = big.mark)
   
-  
-  # add theme / markdown support ----
+  # add theme + markdown support ----
   theme <- validate_theme(theme = theme, markdown = markdown)
   if (!is_empty(theme)) {
     p <- p + theme
   }
   
   # add titles ----
-  if (!is_empty(x.title)) p <- p + labs(x = x.title) # this wil overwrite the var name
-  if (!is_empty(y.title)) p <- p + labs(y = y.title) # this wil overwrite the var name
-  if (!is_empty(title)) p <- p + labs(title = title)
-  if (!is_empty(subtitle)) p <- p + labs(subtitle = subtitle)
-  if (!is_empty(tag)) p <- p + labs(tag = tag)
-  if (!is_empty(caption)) p <- p + labs(caption = caption)
+  if (!missing(x.title)) p <- p + labs(x = validate_titles(x.title)) # this will overwrite the var name
+  if (!missing(y.title)) p <- p + labs(y = validate_titles(y.title)) # this will overwrite the var name
+  if (!missing(title)) p <- p + labs(title = validate_titles(title, markdown = markdown, max_length = title.linelength))
+  if (!missing(subtitle)) p <- p + labs(subtitle = validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
+  if (!missing(tag)) p <- p + labs(tag = validate_titles(tag))
+  if (!missing(caption)) p <- p + labs(caption = validate_titles(caption))
+  if (!missing(legend.title)) {
+    if ("colour" %in% names(mapping)) {
+      p <- p + labs(colour = validate_titles(legend.title))
+    }
+    if ("fill" %in% names(mapping)) {
+      p <- p + labs(fill = validate_titles(legend.title))
+    }
+  } 
   
   # set positions ----
   p <- p + theme(legend.position = validate_legend.position(legend.position))
+  
+  # set facets ----
+  if (has_facet(df)) {
+    scales <- "fixed"
+    if (facet.repeat_lbls_x == TRUE & facet.repeat_lbls_y == TRUE) {
+      scales <- "free"
+    } else if (facet.repeat_lbls_y == TRUE) {
+      scales <- "free_y"
+      if (horizontal == TRUE) {
+        scales <- "free_x"
+      }
+    } else if (facet.repeat_lbls_x == TRUE) {
+      scales <- "free_x"
+      if (horizontal == TRUE) {
+        scales <- "free_y"
+      }
+    }
+    
+    if (any(is.na(get_facet(df)))) {
+      # drop is droppen van factors levels. Als dit FALSE is en de kolom bevat NA, geeft het een fout:
+      # Error in scale_apply(layer_data, x_vars, "train", SCALE_X, x_scales)
+      facet.drop <- TRUE
+    }
+    if (facet.relative == TRUE) {
+      switch <- "x"
+      if (horizontal == TRUE) {
+        switch <- "y"
+      }
+      p <- p +
+        facet_grid(cols = vars(`_var_facet`),
+                   space = scales,
+                   drop = facet.drop,
+                   scales = scales,
+                   switch = switch)
+    } else {
+      p <- p +
+        facet_wrap("`_var_facet`",
+                   scales = scales,
+                   strip.position = facet.position,
+                   drop = facet.drop,
+                   nrow = facet.nrow)
+    }
+  }
+  
+  # turn plot horizontal if required ----
+  if (isTRUE(horizontal)) {
+    p <- p + coord_flip()
+  }
   
   # return plot ----
   if (isTRUE(print)) {
