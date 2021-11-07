@@ -37,8 +37,12 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. Less typing, faster coding.
 }
 \examples{
+head(iris)
+
 # no variables determined, plot2() tries for itself:
 plot2(iris)
+
+plot2(iris, zoom = TRUE)
 
 # x and y set, no addition mapping will be set:
 plot2(iris, Sepal.Width, Sepal.Length)
@@ -77,6 +81,29 @@ admitted_patients \%>\%
         colour = c("F" = "orange3", "M" = "purple3"),
         colour_fill = "white",
         y.age = TRUE)
+ 
+# the default type is column, datalabels are automatically
+# set in non-continuous types:
+patients_per_hospital_gender <- admitted_patients \%>\%
+  count(hospital, gender)
+  
+patients_per_hospital_gender \%>\%
+  plot2()
+  
+patients_per_hospital_gender \%>\%
+  plot2(stacked = TRUE)
+  
+patients_per_hospital_gender \%>\%
+  plot2(stackedpercent = TRUE)
+  
+# sort any direction
+patients_per_hospital_gender \%>\%
+  plot2(category.sort = "desc")
+  
+patients_per_hospital_gender \%>\%
+  plot2(category.sort = "desc",
+        x.sort = "freq-asc",
+        stacked = TRUE)
   
 # plot2() supports all S3 extensions available through ggplot2::fortify():
 mtcars \%>\% 

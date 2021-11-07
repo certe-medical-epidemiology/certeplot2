@@ -41,8 +41,12 @@
 #' The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. Less typing, faster coding.
 #' @export
 #' @examples
+#' head(iris)
+#' 
 #' # no variables determined, plot2() tries for itself:
 #' plot2(iris)
+#' 
+#' plot2(iris, zoom = TRUE)
 #' 
 #' # x and y set, no addition mapping will be set:
 #' plot2(iris, Sepal.Width, Sepal.Length)
@@ -81,6 +85,29 @@
 #'         colour = c("F" = "orange3", "M" = "purple3"),
 #'         colour_fill = "white",
 #'         y.age = TRUE)
+#'  
+#' # the default type is column, datalabels are automatically
+#' # set in non-continuous types:
+#' patients_per_hospital_gender <- admitted_patients %>%
+#'   count(hospital, gender)
+#'   
+#' patients_per_hospital_gender %>%
+#'   plot2()
+#'   
+#' patients_per_hospital_gender %>%
+#'   plot2(stacked = TRUE)
+#'   
+#' patients_per_hospital_gender %>%
+#'   plot2(stackedpercent = TRUE)
+#'   
+#' # sort any direction
+#' patients_per_hospital_gender %>%
+#'   plot2(category.sort = "desc")
+#'   
+#' patients_per_hospital_gender %>%
+#'   plot2(category.sort = "desc",
+#'         x.sort = "freq-asc",
+#'         stacked = TRUE)
 #'   
 #' # plot2() supports all S3 extensions available through ggplot2::fortify():
 #' mtcars %>% 
@@ -217,7 +244,7 @@ plot2.data.frame <- function(.data = NULL,
                              datalabels.round = ifelse(y.percent, 2, 1),
                              datalabels.colour = "grey25",
                              datalabels.fill = "white",
-                             datalabels.size = 3,
+                             datalabels.size = 3.5,
                              decimal.mark = ",",
                              big.mark = ".",
                              summarise_function = base::sum,
@@ -240,7 +267,7 @@ plot2.data.frame <- function(.data = NULL,
                              jitter_seed = NA,
                              violin_scale = "count",
                              legend.position = "top",
-                             legend.title = "",
+                             legend.title = FALSE,
                              legend.reverse = NULL,
                              legend.barheight = 5,
                              legend.barwidth = 1,
@@ -250,7 +277,9 @@ plot2.data.frame <- function(.data = NULL,
                              print = FALSE,
                              text.factor = 1,
                              text.font_family = "Verdana",
-                             theme = theme_minimal2(),
+                             theme = theme_minimal2(horizontal = horizontal,
+                                                    text.font_family = text.font_family,
+                                                    text.factor = text.factor),
                              markdown = TRUE,
                              taxonomy.italic = markdown,
                              # old certetools pkg support
@@ -265,6 +294,7 @@ plot2.data.frame <- function(.data = NULL,
   
   misses_x <- missing(x)
   misses_category <- missing(category) & missing(y.category)
+  misses_datalabels <- missing(datalabels)
   if (!missing(y.category)) {
     warning(font_black("Using "), font_red("'y.category' is deprecated"), font_black(" - use 'category' instead"), call. = FALSE) 
   }
@@ -318,6 +348,10 @@ plot2.data.frame <- function(.data = NULL,
                          decimal.mark = decimal.mark, big.mark = big.mark,
                          datalabels.round = datalabels.round)
   }
+  # remove datalabels in continuous types
+  if (isTRUE(misses_datalabels) && type_is_continuous(type)) {
+    df <- df %>% select(-`_var_datalabels`)
+  }
   
   # set default size and width ----
   size <- validate_size(size = size, type = type)
@@ -353,13 +387,15 @@ plot2.data.frame <- function(.data = NULL,
   # generate geom ----
   if (type == "geom_boxplot") {
     # first add the whiskers
-    p <- p + stat_boxplot(geom = "errorbar",
+    p <- p +
+      stat_boxplot(geom = "errorbar",
                           coef = 1.5, # 1.5 * IQR
                           width = width * ifelse(has_category(df), 1, 0.75),
                           lwd = size,
                           colour = cols$colour)
   }
-  p <- p + validate_geom(type = type,
+  p <- p +
+    validate_geom(type = type,
                          df = df,
                          stacked = stacked,
                          stackedpercent = stackedpercent,
@@ -375,8 +411,8 @@ plot2.data.frame <- function(.data = NULL,
   
   # add colours
   p <- p +
-    ggplot2::scale_colour_manual(values = cols$colour) +
-    ggplot2::scale_fill_manual(values = cols$colour_fill)
+    scale_colour_manual(values = cols$colour) +
+    scale_fill_manual(values = cols$colour_fill)
   
   # add axis labels ----
   p <- p +
@@ -386,7 +422,6 @@ plot2.data.frame <- function(.data = NULL,
          colour = get_category_name(df)) # will return NULL if not available, so always works
   
   # add the right scales ----
-  
   # x axis
   p <- p + 
     validate_x_scale(df = df,
@@ -400,7 +435,8 @@ plot2.data.frame <- function(.data = NULL,
                      x.trans = x.trans,
                      decimal.mark = decimal.mark,
                      big.mark = big.mark,
-                     horizontal = horizontal)
+                     horizontal = horizontal,
+                     zoom = zoom)
   
   # y axis
   p <- p +
@@ -413,12 +449,14 @@ plot2.data.frame <- function(.data = NULL,
                      y.labels = y.labels,
                      y.limits = y.limits,
                      y.percent = y.percent,
+                     y.percent_break = y.percent_break,
                      y.position = y.position,
                      y.trans = y.trans,
                      stackedpercent = stackedpercent,
                      facet.fixed_y = facet.fixed_y,
                      decimal.mark = decimal.mark,
-                     big.mark = big.mark)
+                     big.mark = big.mark,
+                     zoom = zoom)
   
   # add theme + markdown support ----
   theme <- validate_theme(theme = theme, markdown = markdown)
@@ -433,16 +471,20 @@ plot2.data.frame <- function(.data = NULL,
   if (!missing(subtitle)) p <- p + labs(subtitle = validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
   if (!missing(tag)) p <- p + labs(tag = validate_titles(tag))
   if (!missing(caption)) p <- p + labs(caption = validate_titles(caption))
-  if (!missing(legend.title)) {
+  if (has_category(df)) {
+    # legend
+    if (isTRUE(legend.title)) {
+      legend.title <- get_category_name(df)
+    }
     if ("colour" %in% names(mapping)) {
       p <- p + labs(colour = validate_titles(legend.title))
     }
     if ("fill" %in% names(mapping)) {
       p <- p + labs(fill = validate_titles(legend.title))
     }
-  } 
+  }
   
-  # set positions ----
+# set positions ----
   p <- p + theme(legend.position = validate_legend.position(legend.position))
   
   # set facets ----
@@ -490,7 +532,19 @@ plot2.data.frame <- function(.data = NULL,
   
   # set datalabels ----
   if (has_datalabels(df)) {
-    p <- set_datalabels(p = p, df = df)
+    p <- set_datalabels(p = p,
+                        df = df,
+                        type = type,
+                        width = width,
+                        stacked = stacked,
+                        stackedpercent = stackedpercent,
+                        datalabels.fill = datalabels.fill,
+                        datalabels.colour = datalabels.colour,
+                        datalabels.size = datalabels.size,
+                        text.factor = text.factor,
+                        text.font_family = text.font_family,
+                        reverse = reverse,
+                        horizontal = horizontal)
   }
   
   # turn plot horizontal if required ----

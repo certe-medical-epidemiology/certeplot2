@@ -180,6 +180,7 @@ validate_data <- function(df,
   
   # format datalabels
   if (has_datalabels(df)) {
+    df$`_var_datalabels`[as.character(df$`_var_datalabels`) %in% c("", "0")] <- NA
     df <- df %>% mutate(`_var_datalabels` = format2(`_var_datalabels`,
                                                     decimal.mark = dots$decimal.mark,
                                                     big.mark = dots$big.mark,
@@ -258,10 +259,14 @@ validate_x_scale <- function(df,
                              x.trans,
                              decimal.mark,
                              big.mark,
-                             horizontal) {
+                             horizontal,
+                             zoom) {
   if (!has_x(df)) {
     scale_x_discrete(labels = NULL, breaks = NULL)
   } else {
+    if (isTRUE(zoom)) {
+      x.limits <- c(NA_real_, NA_real_)
+    }
     if (!is.null(x.limits)) {
       if (length(x.limits) != 2) {
         stop("`x.limits` must be of length 2", call. = FALSE)
@@ -315,12 +320,15 @@ validate_x_scale <- function(df,
         if (x.trans == "identity" & isTRUE(horizontal)) {
           x.trans <- reverse_trans()
         }
+        if (is.null(x.limits)) {
+          x.limits <- c(ifelse(min(get_x(df)) < 0, NA_real_, 0), NA)
+        }
         scale_x_continuous(labels = function(x, ...) format2(x, decimal.mark = decimal.mark, big.mark = big.mark),
                            breaks = if (!is.null(x.breaks)) x.breaks else waiver(),
                            n.breaks = x.breaks_n,
                            trans = x.trans,
                            position = x.position,
-                           limits = c(ifelse(min(get_x(df)) < 0, NA_real_, 0), NA),
+                           limits = x.limits,
                            expand = expansion(mult = c(0.05, 0.05)))
       }
     }
@@ -339,17 +347,19 @@ validate_y_scale <- function(df,
                              y.labels,
                              y.limits,
                              y.percent,
+                             y.percent_break,
                              y.position,
                              y.trans,
                              stackedpercent,
                              facet.fixed_y,
                              decimal.mark,
                              big.mark,
+                             zoom,
                              ...) {
   
   breaks_fn <- function(df, waiver,
                         y.breaks = NULL, y.expand = 0.25, stackedpercent = FALSE,
-                        y.age = FALSE, y.percent = FALSE, y.percent.break = 10, y.24h = FALSE, y.limits = NULL,
+                        y.age = FALSE, y.percent = FALSE, y.percent_break = 10, y.24h = FALSE, y.limits = NULL,
                         ...) {
     data_min <- min(0, df) * -(1 + y.expand)
     data_max <- max(df) * (1 + y.expand)
@@ -370,12 +380,12 @@ validate_y_scale <- function(df,
       if (is.null(y.limits)) {
         y.limits <- c(data_min, data_max)
       }
-      labels_n <- (max(y.limits) - min(y.limits)) / y.percent.break
+      labels_n <- (max(y.limits) - min(y.limits)) / y.percent_break
       if (as.integer(labels_n) > 10) {
-        warning("printing at most 10 labels for y axis, set with `y.percent.break`", call. = FALSE)
-        y.percent.break <- round((max(y.limits) - min(y.limits)) / 10, 2)
+        warning("printing at most 10 labels for y axis, set with `y.percent_break`", call. = FALSE)
+        y.percent_break <- round((max(y.limits) - min(y.limits)) / 10, 2)
       }
-      function(x, y_percent_break = y.percent.break, ...) seq(from = min(0, x),
+      function(x, y_percent_break = y.percent_break, ...) seq(from = min(0, x),
                                                               to = max(x),
                                                               by = y_percent_break)
     } else if (isTRUE(stackedpercent)) {
@@ -434,6 +444,10 @@ validate_y_scale <- function(df,
     }
   }
   
+  if (isTRUE(zoom)) {
+    y.limits <- c(NA_real_, NA_real_)
+  }
+  
   scale_y_continuous(
     breaks = breaks_fn(df = get_y(df),
                        waiver = waiver(),
@@ -442,7 +456,7 @@ validate_y_scale <- function(df,
                        stackedpercent = stackedpercent,
                        y.age = y.age,
                        y.percent = y.percent,
-                       y.percent.break = y.percent.break,
+                       y.percent_break = y.percent_break,
                        y.24h = y.24h,
                        y.limits = y.limits,
                        ...),
@@ -490,7 +504,7 @@ validate_geom <- function(type,
   if (type == "geom_col") {
     type <- "geom_bar"
   }
-  geom_fn <- getFromNamespace(x = type, ns = asNamespace("ggplot2"))
+  geom_fn <- getExportedValue(name = type, ns = asNamespace("ggplot2"))
   
   if (type == "geom_bar") {
     # set position
@@ -688,9 +702,133 @@ validate_theme <- function(theme, markdown) {
   }
 }
 
-#' 
-set_datalabels <- function(p, df) {
-  p # + ggplot2::geom_label(aes(label = `_var_datalabels`, colour = "black", fill = NA))
+#' @importFrom ggplot2 geom_text geom_label geom_sf_text geom_sf_label aes position_fill position_stack position_dodge2
+#' @importFrom certestyle colourpicker
+set_datalabels <- function(p,
+                           df,
+                           type,
+                           width,
+                           stacked,
+                           stackedpercent,
+                           datalabels.fill,
+                           datalabels.colour,
+                           datalabels.size,
+                           text.factor,
+                           text.font_family,
+                           reverse,
+                           horizontal) {
+  
+  if (!isTRUE(stacked) & !isTRUE(stackedpercent) & type != "geom_sf") {
+    datalabels.fill <- colourpicker(datalabels.fill)
+    datalabels.colour <- colourpicker(datalabels.colour)
+  } else {
+    datalabels.fill <- colourpicker(datalabels.fill, opacity = 0.75) # 75% transparent
+    datalabels.colour <- colourpicker(datalabels.colour)
+  }
+  
+  is_sf <- type == "geom_sf"
+  
+  # set label and text sizes
+  text_horizontal <- 0.5
+  text_vertical <- -0.75
+  label_horizontal <- 0.5
+  label_vertical <- -0.1
+  if (isTRUE(horizontal)) {
+    text_horizontal <- -0.25
+    text_vertical <- 0.5
+    label_horizontal <- -0.1
+    label_vertical <- 0.5
+  }
+  text_textsize <- text.factor * datalabels.size
+  label_textsize <- (text.factor * 1.25) + text_textsize
+  if (text.factor == 1) {
+    label_textsize <- text_textsize * 0.75
+  }
+  
+  # set positioning function
+  if (isTRUE(stackedpercent)) {
+    position_fn <- position_fill(reverse = reverse, vjust = 0.5)
+  } else if (isTRUE(stacked)) {
+    position_fn <- position_stack(reverse = reverse, vjust = 0.5)
+  } else {
+    position_fn <- position_dodge2(width = width, preserve = "single")
+  }
+  
+  # set label and text functions
+  geom_label_fn <- ifelse(isTRUE(is_sf),  geom_sf_label, geom_label)
+  geom_text_fn <- ifelse(isTRUE(is_sf),  geom_sf_text, geom_text)
+  
+  if (!isTRUE(is_sf)) {
+    geom_label_fn <- geom_label
+    geom_text_fn <- geom_text
+    geometry_fix_fn <- NULL
+  } else {
+    geom_label_fn <- geom_sf_label
+    geom_text_fn <- geom_sf_text
+    st_is_valid <- getExportedValue(name = "st_is_valid", ns = asNamespace("sf"))
+    st_point <- getExportedValue(name = "st_point", ns = asNamespace("sf"))
+    st_point_on_surface <- getExportedValue(name = "st_point_on_surface", ns = asNamespace("sf"))
+    st_zm <- getExportedValue(name = "st_zm", ns = asNamespace("sf"))
+    geometry_fix_fn <- function(x) {
+      x[!st_is_valid(x)] <- st_point()
+      suppressWarnings(st_point_on_surface(st_zm(x)))
+    }
+  }
+  
+  # generate the datalabels
+  p <- p +
+    # set background label
+    do.call(geom_label_fn,
+            args = c(list(mapping = aes(label = paste0(`_var_datalabels`,
+                                                       strrep("-", ceiling(nchar(`_var_datalabels`) * 0.33)))),
+                          colour = NA,
+                          fill = datalabels.fill,
+                          size = label_textsize,
+                          family = text.font_family,
+                          na.rm = TRUE),
+                     # only when there's a category:
+                     list(position = position_fn)[has_category(df)],
+                     # only when not stacked at all:
+                     list(label.padding = unit(0.25, "lines"))[!isTRUE(stacked) & !isTRUE(stackedpercent)],
+                     list(label.r = unit(0, "lines"))[!isTRUE(stacked) & !isTRUE(stackedpercent)],
+                     list(vjust = label_vertical)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
+                     list(hjust = label_horizontal)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
+                     # only when stackedpercent:
+                     list(vjust = 0.5)[isTRUE(stackedpercent) | isTRUE(is_sf)],
+                     list(hjust = 0.5)[isTRUE(stackedpercent) | isTRUE(is_sf)],
+                     # only when sf:
+                     list(fun.geometry = geometry_fix_fn)[isTRUE(is_sf)])) +
+    # set text
+    do.call(geom_text_fn,
+            args = c(list(mapping = aes(label = `_var_datalabels`),
+                          colour = datalabels.colour,
+                          size = label_textsize,
+                          family = text.font_family,
+                          na.rm = TRUE),
+                     # only when there's a category:
+                     list(position = position_fn)[has_category(df)],
+                     # only when not stacked at all:
+                     list(vjust = text_vertical)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
+                     list(hjust = text_horizontal)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
+                     # only when stackedpercent:
+                     list(vjust = 0.5)[isTRUE(stackedpercent) | isTRUE(is_sf)],
+                     list(hjust = 0.5)[isTRUE(stackedpercent) | isTRUE(is_sf)],
+                     # only when sf:
+                     list(fun.geometry = geometry_fix_fn)[isTRUE(is_sf)]))
+  
+  if (!isTRUE(is_sf)) {
+    if (!isTRUE(stacked) & !isTRUE(stackedpercent)) {
+      # move label layer to back + 1;
+      # this will make the labels only interfere with plot lines,
+      # not with the data (such as columns)
+      layer_n <- seq_len(length(p$layers))
+      layer_label <- length(layer_n) - 1
+      layer_others <- layer_n[-layer_label]
+      p$layers <- p$layers[c(layer_label, layer_others)]
+    }
+  }
+  
+  p
 }
 
 #' @importFrom forcats fct_inorder fct_reorder
@@ -862,11 +1000,13 @@ summarise_data <- function(df,
   if (!is.null(category)) df$`_var_category` <- df[, category, drop = TRUE]
   if (!is.null(facet)) df$`_var_facet` <- df[, facet, drop = TRUE]
   if (isTRUE(has_datalbls)) {
-    df$`_var_datalabels` <- format2(df$`_var_y`,
-                                    decimal.mark = decimal.mark,
-                                    big.mark = big.mark,
-                                    round = datalabels.round,
-                                    force.decimals = FALSE)
+    df$`_var_datalabels` <- df$`_var_y`
+    df$`_var_datalabels`[as.character(df$`_var_datalabels`) %in% c("", "0")] <- NA
+    df <- df %>% mutate(`_var_datalabels` = format2(`_var_datalabels`,
+                                                    decimal.mark = decimal.mark,
+                                                    big.mark = big.mark,
+                                                    round = datalabels.round,
+                                                    force.decimals = FALSE))
   }
   df
 }

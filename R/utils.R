@@ -178,7 +178,7 @@ is_empty <- function(x) {
 }
 
 type_is_continuous <- function(type) {
-  type %in% c("geom_boxplot", "geom_violin")
+  type %in% c("geom_boxplot", "geom_violin", "geom_point", "geom_jitter")
 }
 
 #' @importFrom dplyr `%>%` group_by across group_size
