@@ -33,6 +33,9 @@ navbar:
       icon: "fab fa-github"
       href: "https://github.com/certe-medical-epidemiology/certeplot2"
   right:
+    - text: "Certe Med Epi"
+      icon: "fab fa-github"
+      href: "https://github.com/certe-medical-epidemiology"
     - text: "Certe Website"
       icon: "fa-flask"
       href: "https://certe.nl"
