@@ -17,20 +17,28 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-#' @importFrom certestyle font_black font_blue
-plot_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "") {
+#' @importFrom certestyle font_black font_blue font_red
+plot_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", type = "info") {
   if (isTRUE(print)) {
-    msg <- paste0(c(...), collapse = "")
+    msg <- paste0(font_black(c(...), collapse = NULL), collapse = "")
     
     # get info icon
-    if (isTRUE(base::l10n_info()$`UTF-8`) && interactive()) {
-      # \u2139 is a symbol officially named 'information source'
-      info_icon <- "\u2139"
+    if (type == "info") {
+      if (isTRUE(base::l10n_info()$`UTF-8`) && interactive()) {
+        # \u2139 is a symbol officially named 'information source'
+        icon <- font_blue("\u2139")
+      } else {
+        icon <- font_blue("i")
+      }
     } else {
-      info_icon <- "i"
+      icon <- font_red("!")
     }
-    message(paste(font_blue(info_icon), font_black(msg)))
+    message(paste(icon, font_black(msg)))
   }
+}
+
+plot_warning <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "") {
+  plot_message(..., print = print, type = "warning")
 }
 
 #' @importFrom dplyr `%>%` pull
@@ -178,8 +186,12 @@ is_empty <- function(x) {
 }
 
 type_is_continuous <- function(type) {
-  type %in% c("geom_boxplot", "geom_violin", "geom_point", "geom_jitter")
+  type %in% c("geom_boxplot", "geom_violin", "geom_point", "geom_jitter", "geom_histogram", "geom_density")
 }
+type_is_continuous_x <- function(type) {
+  type %in% c("geom_histogram", "geom_density")
+}
+
 
 #' @importFrom dplyr `%>%` group_by across group_size
 group_sizes <- function(df) {

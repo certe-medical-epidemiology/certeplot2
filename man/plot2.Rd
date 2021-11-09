@@ -40,22 +40,19 @@ The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} 
 head(iris)
 
 # no variables determined, plot2() tries for itself:
+# the type will be points since the first two variables are numeric
 plot2(iris)
 
+# only view the data part, like ggplot2 normally does
 plot2(iris, zoom = TRUE)
 
-# x and y set, no addition mapping will be set:
+# if x and y are set, no addition mapping will be set:
 plot2(iris, Sepal.Width, Sepal.Length)
 
+# change to any type
 plot2(iris, x = Species, y = Sepal.Length, type = "boxplot")
 
 library(dplyr, warn.conflicts = FALSE)
-
-# automatically takes first columns, will be points since both are numeric
-mtcars \%>\% 
-  plot2()
-mtcars \%>\% 
-  plot2(mpg, hp)
   
 head(admitted_patients)
 
@@ -68,12 +65,7 @@ admitted_patients \%>\%
   plot2(hospital, age, gender)
   
 admitted_patients \%>\%
-  plot2(hospital, age, facet = gender)
-  
-admitted_patients \%>\%
-  plot2(x = gender,
-        facet = hospital,
-        facet.nrow = 1)
+  plot2(hospital, age, gender, ward)
         
 admitted_patients \%>\%
   plot2(x = hospital,
@@ -81,11 +73,17 @@ admitted_patients \%>\%
         colour = c("F" = "orange3", "M" = "purple3"),
         colour_fill = "white",
         y.age = TRUE)
+        
+admitted_patients \%>\%
+  plot2(age, type = "hist")
+admitted_patients \%>\%
+  plot2(age, type = "density")
  
 # the default type is column, datalabels are automatically
 # set in non-continuous types:
 patients_per_hospital_gender <- admitted_patients \%>\%
   count(hospital, gender)
+head(patients_per_hospital_gender)
   
 patients_per_hospital_gender \%>\%
   plot2()
@@ -104,7 +102,7 @@ patients_per_hospital_gender \%>\%
   plot2(category.sort = "desc",
         x.sort = "freq-asc",
         stacked = TRUE)
-  
+
 # plot2() supports all S3 extensions available through ggplot2::fortify():
 mtcars \%>\% 
   lm(mpg ~ hp, data = .) \%>\% 

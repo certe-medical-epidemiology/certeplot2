@@ -44,22 +44,19 @@
 #' head(iris)
 #' 
 #' # no variables determined, plot2() tries for itself:
+#' # the type will be points since the first two variables are numeric
 #' plot2(iris)
 #' 
+#' # only view the data part, like ggplot2 normally does
 #' plot2(iris, zoom = TRUE)
 #' 
-#' # x and y set, no addition mapping will be set:
+#' # if x and y are set, no addition mapping will be set:
 #' plot2(iris, Sepal.Width, Sepal.Length)
 #' 
+#' # change to any type
 #' plot2(iris, x = Species, y = Sepal.Length, type = "boxplot")
 #' 
 #' library(dplyr, warn.conflicts = FALSE)
-#' 
-#' # automatically takes first columns, will be points since both are numeric
-#' mtcars %>% 
-#'   plot2()
-#' mtcars %>% 
-#'   plot2(mpg, hp)
 #'   
 #' head(admitted_patients)
 #' 
@@ -72,12 +69,7 @@
 #'   plot2(hospital, age, gender)
 #'   
 #' admitted_patients %>%
-#'   plot2(hospital, age, facet = gender)
-#'   
-#' admitted_patients %>%
-#'   plot2(x = gender,
-#'         facet = hospital,
-#'         facet.nrow = 1)
+#'   plot2(hospital, age, gender, ward)
 #'         
 #' admitted_patients %>%
 #'   plot2(x = hospital,
@@ -85,11 +77,17 @@
 #'         colour = c("F" = "orange3", "M" = "purple3"),
 #'         colour_fill = "white",
 #'         y.age = TRUE)
+#'         
+#' admitted_patients %>%
+#'   plot2(age, type = "hist")
+#' admitted_patients %>%
+#'   plot2(age, type = "density")
 #'  
 #' # the default type is column, datalabels are automatically
 #' # set in non-continuous types:
 #' patients_per_hospital_gender <- admitted_patients %>%
 #'   count(hospital, gender)
+#' head(patients_per_hospital_gender)
 #'   
 #' patients_per_hospital_gender %>%
 #'   plot2()
@@ -108,7 +106,7 @@
 #'   plot2(category.sort = "desc",
 #'         x.sort = "freq-asc",
 #'         stacked = TRUE)
-#'   
+#' 
 #' # plot2() supports all S3 extensions available through ggplot2::fortify():
 #' mtcars %>% 
 #'   lm(mpg ~ hp, data = .) %>% 
@@ -293,6 +291,7 @@ plot2.data.frame <- function(.data = NULL,
   }
   
   misses_x <- missing(x)
+  misses_y <- missing(y)
   misses_category <- missing(category) & missing(y.category)
   misses_datalabels <- missing(datalabels)
   if (!missing(y.category)) {
@@ -324,6 +323,7 @@ plot2.data.frame <- function(.data = NULL,
                   label_facet = label_facet,
                   decimal.mark = decimal.mark,
                   big.mark = big.mark,
+                  type = type,
                   datalabels.round = datalabels.round,
                   x.sort = x.sort,
                   category.sort = category.sort,
@@ -342,7 +342,7 @@ plot2.data.frame <- function(.data = NULL,
   type <- validate_type(type = type, df = df) # this will automatically determine type if is.null(type)
   # transform data if not a continuous type but group sizes are > 1
   if (any(group_sizes(df) > 1) && !type_is_continuous(type)) {
-    plot_message("Group sizes > 1 in discrete plot type (", font_blue(type), font_black("), applying "),
+    plot_warning("Duplicate observations in discrete plot type (", font_blue(type), "), applying ",
                  font_blue("summarise_function = " ), font_blue(deparse(substitute(summarise_function))))
     df <- summarise_data(df = df, summarise_function = summarise_function,
                          decimal.mark = decimal.mark, big.mark = big.mark,
@@ -351,6 +351,10 @@ plot2.data.frame <- function(.data = NULL,
   # remove datalabels in continuous types
   if (isTRUE(misses_datalabels) && type_is_continuous(type)) {
     df <- df %>% select(-`_var_datalabels`)
+  }
+  if (!isTRUE(misses_y) && type_is_continuous_x(type)) {
+    plot_message("Ignoring ", font_blue("y"), " for plot type ", font_blue(gsub("geom_", "", type)))
+    df$`_var_y` <- df$`_var_x`
   }
   
   # set default size and width ----
@@ -365,8 +369,16 @@ plot2.data.frame <- function(.data = NULL,
                           horizontal = horizontal,
                           type = type)
   
+  mapping <- aes()
   # generate mapping ----
-  mapping <- aes(y = `_var_y`, group = 1)
+  if (!type_is_continuous_x(type)) {
+    # histograms etc. have a continuous x variable, so only set y if not a histogram-like
+    mapping <- aes(y = `_var_y`, group = 1)
+  } else {
+    if (missing(zoom)) {
+      zoom <- TRUE
+    }
+  }
   if (has_x(df)) {
     mapping <- utils::modifyList(mapping, aes(x = `_var_x`,
                                               group = `_var_x`))
@@ -389,25 +401,26 @@ plot2.data.frame <- function(.data = NULL,
     # first add the whiskers
     p <- p +
       stat_boxplot(geom = "errorbar",
-                          coef = 1.5, # 1.5 * IQR
-                          width = width * ifelse(has_category(df), 1, 0.75),
-                          lwd = size,
-                          colour = cols$colour)
+                   coef = 1.5, # 1.5 * IQR
+                   width = width * ifelse(has_category(df), 1, 0.75),
+                   lwd = size,
+                   colour = cols$colour)
   }
   p <- p +
     validate_geom(type = type,
-                         df = df,
-                         stacked = stacked,
-                         stackedpercent = stackedpercent,
-                         horizontal = horizontal,
-                         width = width,
-                         size = size,
-                         linetype = linetype,
-                         reverse = reverse,
-                         na.rm = na.rm,
-                         violin_scale = violin_scale,
-                         jitter_seed = jitter_seed,
-                         cols = cols)
+                  df = df,
+                  stacked = stacked,
+                  stackedpercent = stackedpercent,
+                  horizontal = horizontal,
+                  width = width,
+                  size = size,
+                  linetype = linetype,
+                  reverse = reverse,
+                  na.rm = na.rm,
+                  violin_scale = violin_scale,
+                  jitter_seed = jitter_seed,
+                  bins = bins,
+                  cols = cols)
   
   # add colours
   p <- p +
@@ -420,6 +433,18 @@ plot2.data.frame <- function(.data = NULL,
          y = get_y_name(df),
          fill = get_category_name(df),
          colour = get_category_name(df)) # will return NULL if not available, so always works
+  if (type_is_continuous_x(type)) {
+    if (type %like% "density") {
+      p <- p +
+        labs(y = "Density")
+      if (missing(y.percent)) {
+        y.percent <- TRUE
+      }
+    } else {
+      p <- p +
+        labs(y = "Frequency")
+    }
+  }
   
   # add the right scales ----
   # x axis
@@ -437,7 +462,6 @@ plot2.data.frame <- function(.data = NULL,
                      big.mark = big.mark,
                      horizontal = horizontal,
                      zoom = zoom)
-  
   # y axis
   p <- p +
     validate_y_scale(df = df,
@@ -484,7 +508,7 @@ plot2.data.frame <- function(.data = NULL,
     }
   }
   
-# set positions ----
+  # set positions ----
   p <- p + theme(legend.position = validate_legend.position(legend.position))
   
   # set facets ----
@@ -544,7 +568,8 @@ plot2.data.frame <- function(.data = NULL,
                         text.factor = text.factor,
                         text.font_family = text.font_family,
                         reverse = reverse,
-                        horizontal = horizontal)
+                        horizontal = horizontal,
+                        misses_datalabels = misses_datalabels)
   }
   
   # turn plot horizontal if required ----

@@ -18,9 +18,9 @@
 # ===================================================================== #
 
 #' @importFrom certestyle font_blue font_black  
-validate_type <- function(type, df) {
+validate_type <- function(type, df = NULL) {
   type.bak <- type
-  if (is.null(type)) {
+  if (is.null(type) && !is.null(df)) {
     if (!has_x(df)) {
       # only numeric values, make it a boxplot
       type <- "geom_boxplot"
@@ -33,10 +33,10 @@ validate_type <- function(type, df) {
                    font_black(" since both axes are numeric"))
     } else {
       # check if y has multiple values across groups, then make it boxplot
-      if (all(group_sizes(df) > 3)) {
+      if (all(group_sizes(df) >= 3)) {
         type <- "geom_boxplot"
         plot_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL),
-                     font_black(" since all groups have size > 3"))
+                     font_black(" since all groups have size >= 3"))
       } else {
         # otherwise: column
         type <- "geom_col"
@@ -44,17 +44,23 @@ validate_type <- function(type, df) {
                      font_black(" as default"))
       }
     }
+  } else if (is.null(type) && is.null(df)) {
+    return("")
   } else {
     type <- trimws(tolower(type[1L]))
     type <- gsub("[^a-z0-9_]", "", type)
-    if (type == "p") type <- "point"
-    if (type == "l") type <- "line"
-    if (type == "b") type <- "boxplot"
-    if (type == "v") type <- "violin"
-    if (type == "j") type <- "jitter"
     if (type == "a") type <- "area"
+    if (type == "b") type <- "boxplot"
+    if (type == "c") type <- "column"
+    if (type == "h") type <- "histogram"
+    if (type == "j") type <- "jitter"
+    if (type == "l") type <- "line"
+    if (type == "p") type <- "point"
     if (type == "r") type <- "ribbon"
-    if (type %in% c("c", "column")) type <- "col"
+    if (type == "v") type <- "violin"
+    if (type == "column") {
+      type <- "col"
+    }
     if (type %unlike% "^geom_") {
       type <- paste0("geom_", type)
     }
@@ -64,7 +70,11 @@ validate_type <- function(type, df) {
   
   valid_geoms <- ls(pattern = "^geom_", env = asNamespace("ggplot2"))
   if (!type %in% valid_geoms) {
-    stop("plot type '", type.bak, "' is invalid, since ggplot2::", type, "() does not exist", call. = FALSE)
+    if (any(valid_geoms %like% type)) {
+      type <- valid_geoms[valid_geoms %like% type][1L]
+    } else {
+      stop("plot type \"", type.bak, "\" is invalid, since ggplot2::", type, "() does not exist", call. = FALSE)
+    }
   }
   type
 }
@@ -97,10 +107,12 @@ validate_data <- function(df,
                           ...) {
   
   dots <- list(...)
+  type <- validate_type(dots$type, df = NULL) # quick validation
   
   if (!has_y(df)) {
     # try to find numeric column for y
     numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.numeric)))
+    numeric_cols <- numeric_cols[numeric_cols %unlike% "^_var_"]
     if (is.na(numeric_cols[1L])) {
       stop("no numeric column found to use for y", call. = FALSE)
     }
@@ -109,19 +121,40 @@ validate_data <- function(df,
       if (!has_x(df)) {
         # make x first numeric column and y second numeric column
         plot_message("Using ", font_blue("x = ", numeric_cols[1L], collapse = NULL))
-        plot_message("Using ", font_blue("y = ", numeric_cols[2L], collapse = NULL))
+        if (!type_is_continuous_x(type)) {
+          # don't show when type for density types - y will not be used
+          plot_message("Using ", font_blue("y = ", numeric_cols[2L], collapse = NULL))
+        }
         df <- df %>% 
           mutate(`_var_x` = df %>% pull(numeric_cols[1L]),
                  `_var_y` = df %>% pull(numeric_cols[2L]))
       } else {
-        plot_message("Using ", font_blue("y = ", numeric_cols[1L], collapse = NULL))
+        if (!type_is_continuous_x(type)) {
+          # don't show when type for density types - y will not be used
+          plot_message("Using ", font_blue("y = ", numeric_cols_y, collapse = NULL))
+        }
         df <- df %>% 
-          mutate(`_var_y` = df %>% pull(numeric_cols[1L]))
+          mutate(`_var_y` = df %>% pull(numeric_cols_y))
       }
     } else {
-      plot_message("Using ", font_blue("y = ", numeric_cols, collapse = NULL))
-      df <- df %>% 
-        mutate(`_var_y` = df %>% pull(numeric_cols))
+      # only one numeric column
+      if (type_is_continuous_x(type)) {
+        if (!has_x(df)) {
+          plot_message("Using ", font_blue("x = ", numeric_cols, collapse = NULL))
+          df <- df %>% 
+            mutate(`_var_x` = df %>% pull(numeric_cols))
+        }
+        # don't show when type for density types - y will not be used
+        df <- df %>% 
+          mutate(`_var_y` = df %>% pull(`_var_x`))
+      } else {
+        if (has_x(df) && get_x_name(df) == numeric_cols) {
+          stop("no numeric column found to use for y, aside from the column used for x (\"", get_x_name(df), "\")", call. = FALSE)
+        }
+        plot_message("Using ", font_blue("y = ", numeric_cols, collapse = NULL))
+        df <- df %>% 
+          mutate(`_var_y` = df %>% pull(numeric_cols))
+      }
     }
   }
   
@@ -381,13 +414,21 @@ validate_y_scale <- function(df,
         y.limits <- c(data_min, data_max)
       }
       labels_n <- (max(y.limits) - min(y.limits)) / y.percent_break
+      if (is.na(labels_n)) {
+        labels_n <- 10
+      }
       if (as.integer(labels_n) > 10) {
         warning("printing at most 10 labels for y axis, set with `y.percent_break`", call. = FALSE)
         y.percent_break <- round((max(y.limits) - min(y.limits)) / 10, 2)
       }
-      function(x, y_percent_break = y.percent_break, ...) seq(from = min(0, x),
-                                                              to = max(x),
-                                                              by = y_percent_break)
+      function(x, y_percent_break = y.percent_break, ...) {
+        if (y_percent_break >= max(x)) {
+          y_percent_break <- max(x) / 10
+        }
+        seq(from = min(0, x),
+            to = max(x),
+            by = y_percent_break)
+      }
     } else if (isTRUE(stackedpercent)) {
       seq(from = 0,
           to = 1,
@@ -487,6 +528,7 @@ validate_y_scale <- function(df,
 }
 
 #' @importFrom ggplot2 position_stack position_fill position_dodge2 position_jitter
+#' @importFrom certestyle font_blue font_black
 validate_geom <- function(type,
                           df,
                           stacked,
@@ -499,6 +541,7 @@ validate_geom <- function(type,
                           na.rm,
                           violin_scale,
                           jitter_seed,
+                          bins,
                           cols) {
   
   if (type == "geom_col") {
@@ -506,16 +549,18 @@ validate_geom <- function(type,
   }
   geom_fn <- getExportedValue(name = type, ns = asNamespace("ggplot2"))
   
+  # set position
+  if (isTRUE(stacked)) {
+    position <- position_stack(reverse = reverse)
+  } else if (isTRUE(stackedpercent)) {
+    position <- position_fill(reverse = reverse)
+  } else {
+    # small whitespace between columns:
+    position <- position_dodge2(width = width * 1.05, preserve = "single")
+  }
+  
+  # set geoms - do.call() applies all arguments to the geom_fn function
   if (type == "geom_bar") {
-    # set position
-    if (isTRUE(stacked)) {
-      position <- position_stack(reverse = reverse)
-    } else if (isTRUE(stackedpercent)) {
-      position <- position_fill(reverse = reverse)
-    } else {
-      # small whitespace between columns:
-      position <- position_dodge2(width = width * 1.05, preserve = "single")
-    }
     do.call(geom_fn,
             args = c(list(width = width,
                           stat = "identity",
@@ -526,13 +571,13 @@ validate_geom <- function(type,
     
   } else if (type %in% c("geom_line", "geom_path")) {
     do.call(geom_fn,
-            args = c(list(lineend = "round",
-                          size = size,
+            args = c(list(size = size,
+                          lineend = "round",
                           linetype = linetype,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)]))
     
-  } else if (type %in% c("geom_point")) {
+  } else if (type == "geom_point") {
     do.call(geom_fn,
             args = c(list(size = size,
                           na.rm = na.rm),
@@ -567,13 +612,33 @@ validate_geom <- function(type,
                      list(colour = cols$colour)[!has_category(df)],
                      list(fill = cols$colour_fill)[!has_category(df)]))
     
+  } else if (type == "geom_histogram") {
+    if (is.null(bins)) {
+      # 30 is the geom_histogram default, we change it if 1/3 of unique values is <30
+      bins <- ceiling(min(30, length(unique(get_x(df))) / 3))
+      plot_message("Using ", font_blue("bins =", bins), " based on data")
+    }
+    do.call(geom_fn,
+            args = c(list(size = size,
+                          bins = bins,
+                          na.rm = na.rm),
+                     list(colour = cols$colour)[!has_category(df)],
+                     list(fill = cols$colour_fill)[!has_category(df)]))
+    
+  } else if (type == "geom_density") {
+    do.call(geom_fn,
+            args = c(list(linetype = linetype,
+                          size = size,
+                          na.rm = na.rm),
+                     list(colour = cols$colour)[!has_category(df)],
+                     list(fill = cols$colour_fill)[!has_category(df)]))
+    
   } else {
     # try to put some arguments into the requested geom
     warning("'", type, "' is currently only loosely supported in plot2()", call. = FALSE)
     do.call(geom_fn,
-            args = c(list(size = size,
-                          width = width,
-                          linetype = linetype,
+            args = c(list(width = width,
+                          size = size,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
                      list(fill = cols$colour_fill)[!has_category(df)]))
@@ -586,7 +651,7 @@ validate_colour <- function(df, colour, colour_fill, misses_colour_fill, horizon
   minimum_length <- length(group_sizes(df))
   
   if (type_is_continuous(type) && length(colour) == 1 && colour %like% "certe[a-z]*" & is.null(colour_fill)) {
-    # specific treatment for Certe boxplots/violins/...
+    # specific treatment for continuous types (such as boxplots/violins/histograms/...)
     # certeblauw (colour) -> certeblauw6 (colour_fill)
     colour_fill <- paste0(colour, "6")
   }
@@ -632,7 +697,7 @@ validate_colour <- function(df, colour, colour_fill, misses_colour_fill, horizon
 
 validate_size <- function(size, type) {
   if (is.null(size)) {
-    if (type %in% c("geom_boxplot", "geom_violin")) {
+    if (type %in% c("geom_boxplot", "geom_violin") | type_is_continuous_x(type)) {
       size <- 0.5
     } else if (type %in% c("geom_point", "geom_jitter")) {
       size <- 2
@@ -716,7 +781,13 @@ set_datalabels <- function(p,
                            text.factor,
                            text.font_family,
                            reverse,
-                           horizontal) {
+                           horizontal,
+                           misses_datalabels) {
+  
+  if (isTRUE(misses_datalabels) && nrow(df) > 150) {
+    plot_warning("Omitting printing of ", nrow(df), " datalabels - use ", font_blue("datalabels = TRUE"), " to force printing")
+    return(p)
+  }
   
   if (!isTRUE(stacked) & !isTRUE(stackedpercent) & type != "geom_sf") {
     datalabels.fill <- colourpicker(datalabels.fill)
