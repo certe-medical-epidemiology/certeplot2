@@ -106,6 +106,9 @@ patients_per_hospital_gender \%>\%
 # plot2() supports all S3 extensions available through ggplot2::fortify():
 mtcars \%>\% 
   lm(mpg ~ hp, data = .) \%>\% 
-  plot2(title = "Titles/captions *support* **markdown**",
-        x.title = "*Some X axis*")
+  plot2(x = mpg ^ 2,
+        y = hp ^ 3,
+        smooth = TRUE,
+        title = "Titles/captions *support* **markdown**",
+        subtitle = "Axis titles contain the square notation: ^2")
 }

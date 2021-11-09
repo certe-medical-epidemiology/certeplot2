@@ -110,8 +110,11 @@
 #' # plot2() supports all S3 extensions available through ggplot2::fortify():
 #' mtcars %>% 
 #'   lm(mpg ~ hp, data = .) %>% 
-#'   plot2(title = "Titles/captions *support* **markdown**",
-#'         x.title = "*Some X axis*")
+#'   plot2(x = mpg ^ 2,
+#'         y = hp ^ 3,
+#'         smooth = TRUE,
+#'         title = "Titles/captions *support* **markdown**",
+#'         subtitle = "Axis titles contain the square notation: ^2")
 plot2 <- function(.data, ...) {
   # TO DO - copy arguments here from plot2.data.frame()
   UseMethod("plot2")
@@ -170,7 +173,7 @@ plot2.sf <- function(.data,
 
 #' @rdname plot2-methods
 #' @importFrom dplyr `%>%` mutate vars group_by across summarise
-#' @importFrom ggplot2 ggplot aes labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip facet_grid facet_wrap coord_flip
+#' @importFrom ggplot2 ggplot aes labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip facet_grid facet_wrap coord_flip geom_smooth
 #' @importFrom certestyle format2 font_red font_black font_blue
 #' @export
 plot2.data.frame <- function(.data = NULL,
@@ -254,9 +257,9 @@ plot2.data.frame <- function(.data = NULL,
                              smooth.method = NULL,
                              smooth.formula = NULL,
                              smooth.se = TRUE,
-                             smooth.ci = 0.95,
+                             smooth.level = 0.95,
                              smooth.alpha = 0.15,
-                             smooth.size = 0.5,
+                             smooth.size = 0.75,
                              smooth.linetype = 3,
                              size = NULL,
                              linetype = 1,
@@ -421,6 +424,21 @@ plot2.data.frame <- function(.data = NULL,
                   jitter_seed = jitter_seed,
                   bins = bins,
                   cols = cols)
+  if (isTRUE(smooth)) {
+    p <- p +
+      do.call(geom_smooth,
+              c(list(mapping = mapping,
+                     fill = "grey60",
+                     formula = smooth.formula,
+                     se = smooth.se,
+                     method = smooth.method,
+                     level = smooth.level,
+                     alpha = smooth.alpha,
+                     linetype = smooth.linetype,
+                     size = smooth.size,
+                     na.rm = na.rm),
+                list(colour = cols$colour[1L])[!has_category(df)]))
+  }
   
   # add colours
   p <- p +

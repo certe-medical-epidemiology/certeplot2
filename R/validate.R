@@ -131,10 +131,10 @@ validate_data <- function(df,
       } else {
         if (!type_is_continuous_x(type)) {
           # don't show when type for density types - y will not be used
-          plot_message("Using ", font_blue("y = ", numeric_cols_y, collapse = NULL))
+          plot_message("Using ", font_blue("y = ", numeric_cols[1L], collapse = NULL))
         }
         df <- df %>% 
-          mutate(`_var_y` = df %>% pull(numeric_cols_y))
+          mutate(`_var_y` = df %>% pull(numeric_cols[1L]))
       }
     } else {
       # only one numeric column
