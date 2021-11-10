@@ -1,0 +1,28 @@
+---
+title: "plot2() plotting"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{plot2() plotting}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(certeplot2)
+```
+
+# Types / geoms
+
+
+# Sorting
+
+
+# Transforming
+

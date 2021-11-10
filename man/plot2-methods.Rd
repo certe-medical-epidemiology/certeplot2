@@ -11,7 +11,7 @@
 \usage{
 \method{plot2}{default}(.data, ...)
 
-\method{plot2}{numeric}(y, ...)
+\method{plot2}{numeric}(.data, ...)
 
 \method{plot2}{freq}(.data, x = .data$item, y = .data$count, x.sort = "freq-desc", ...)
 
@@ -32,7 +32,7 @@
   y = NULL,
   category = NULL,
   facet = NULL,
-  type = NULL,
+  geom = NULL,
   x.title = NULL,
   y.title = NULL,
   title = NULL,
@@ -96,7 +96,8 @@
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.colour = "grey25",
   datalabels.fill = "white",
-  datalabels.size = 3.5,
+  datalabels.size = (3.5 * font.size_factor),
+  datalabels.angle = 0,
   decimal.mark = ",",
   big.mark = ".",
   summarise_function = base::sum,
@@ -127,10 +128,9 @@
   legend.italic = FALSE,
   zoom = FALSE,
   print = FALSE,
-  text.factor = 1,
-  text.font_family = "Verdana",
-  theme = theme_minimal2(horizontal = horizontal, text.font_family = text.font_family,
-    text.factor = text.factor),
+  font.size_factor = 1,
+  font.family = "Calibri",
+  theme = theme_minimal2(),
   markdown = TRUE,
   taxonomy.italic = markdown,
   x.category = NULL,

@@ -40,7 +40,7 @@ The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} 
 head(iris)
 
 # no variables determined, plot2() tries for itself:
-# the type will be points since the first two variables are numeric
+# the geom will be points since the first two variables are numeric
 plot2(iris)
 
 # only view the data part, like ggplot2 normally does
@@ -48,9 +48,10 @@ plot2(iris, zoom = TRUE)
 
 # if x and y are set, no addition mapping will be set:
 plot2(iris, Sepal.Width, Sepal.Length)
+plot2(iris, Species, Sepal.Length)
 
-# change to any type
-plot2(iris, x = Species, y = Sepal.Length, type = "boxplot")
+# change to any geom
+plot2(iris, Species, Sepal.Length, geom = "violin")
 
 library(dplyr, warn.conflicts = FALSE)
   
@@ -75,12 +76,12 @@ admitted_patients \%>\%
         y.age = TRUE)
         
 admitted_patients \%>\%
-  plot2(age, type = "hist")
+  plot2(age, geom = "hist")
 admitted_patients \%>\%
-  plot2(age, type = "density")
+  plot2(age, geom = "density")
  
-# the default type is column, datalabels are automatically
-# set in non-continuous types:
+# the default geom is column, datalabels are automatically
+# set in non-continuous geoms:
 patients_per_hospital_gender <- admitted_patients \%>\%
   count(hospital, gender)
 head(patients_per_hospital_gender)

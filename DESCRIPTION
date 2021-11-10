@@ -1,6 +1,6 @@
 Package: certeplot2
 Title: A Certe R Package for Convenient Plotting
-Version: 0.0.10
+Version: 0.0.12
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
          family = "Berends",
@@ -10,10 +10,6 @@ Authors@R: c(
          family = "Hassing", 
          role = c("aut"),
          email = "e.hassing@certe.nl"),
-  person(given = c("Erwin"),
-         family = "Dijkstra", 
-         role = c("aut"),
-         email = "e.dijkstra@certe.nl"),
   person(given = "Certe Medical Diagnostics & Advice Foundation",
          role = c("cph", "fnd")))
 Description: A Certe R Package with plotting functions which are convenient
@@ -27,6 +23,7 @@ Imports:
   certestyle,
   cleaner (>= 1.5.1),
   dplyr (>= 1.0.0),
+  extrafont (>= 0.17),
   forcats (>= 0.5.1),
   ggplot2 (>= 3.3.5),
   ggtext (>= 0.1.1),
@@ -34,10 +31,13 @@ Imports:
   stringr (>= 1.4.0),
   yaml (>= 2.2.0)
 Suggests: 
-  testthat (>= 2.0.0)
+    rmarkdown (>= 2.11),
+    knitr (>= 1.30),
+    testthat (>= 2.0.0)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Config/testthat/edition: 2
+VignetteBuilder: knitr

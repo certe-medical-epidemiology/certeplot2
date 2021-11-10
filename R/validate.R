@@ -18,65 +18,68 @@
 # ===================================================================== #
 
 #' @importFrom certestyle font_blue font_black  
-validate_type <- function(type, df = NULL) {
-  type.bak <- type
-  if (is.null(type) && !is.null(df)) {
+validate_geom <- function(geom, df = NULL) {
+  geom.bak <- geom
+  if (is.null(geom) && !is.null(df)) {
     if (!has_x(df)) {
       # only numeric values, make it a boxplot
-      type <- "geom_boxplot"
-      plot_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL),
+      geom <- "geom_boxplot"
+      plot_message("Using ", font_blue("geom = \"", gsub("geom_", "", geom), "\"", collapse = NULL),
                    font_black(" since there is no x axis"))
     } else if (has_x(df) && is.numeric(get_x(df))) {
       # make it points if x and y are both numeric
-      type <- "geom_point"
-      plot_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL), 
+      geom <- "geom_point"
+      plot_message("Using ", font_blue("geom = \"", gsub("geom_", "", geom), "\"", collapse = NULL), 
                    font_black(" since both axes are numeric"))
     } else {
       # check if y has multiple values across groups, then make it boxplot
       if (all(group_sizes(df) >= 3)) {
-        type <- "geom_boxplot"
-        plot_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL),
+        geom <- "geom_boxplot"
+        plot_message("Using ", font_blue("geom = \"", gsub("geom_", "", geom), "\"", collapse = NULL),
                      font_black(" since all groups have size >= 3"))
       } else {
         # otherwise: column
-        type <- "geom_col"
-        plot_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL), 
+        geom <- "geom_col"
+        plot_message("Using ", font_blue("geom = \"", gsub("geom_", "", geom), "\"", collapse = NULL), 
                      font_black(" as default"))
       }
     }
-  } else if (is.null(type) && is.null(df)) {
-    return("")
+  } else if (is.null(geom) && is.null(df)) {
+    return("") # for quick validation
   } else {
-    type <- trimws(tolower(type[1L]))
-    type <- gsub("[^a-z0-9_]", "", type)
-    if (type == "a") type <- "area"
-    if (type == "b") type <- "boxplot"
-    if (type == "c") type <- "column"
-    if (type == "h") type <- "histogram"
-    if (type == "j") type <- "jitter"
-    if (type == "l") type <- "line"
-    if (type == "p") type <- "point"
-    if (type == "r") type <- "ribbon"
-    if (type == "v") type <- "violin"
-    if (type == "column") {
-      type <- "col"
+    if (length(geom) > 1) {
+      plot_warning(font_blue("geom"), " can only be of length 1")
     }
-    if (type %unlike% "^geom_") {
-      type <- paste0("geom_", type)
+    geom <- trimws(tolower(geom[1L]))
+    geom <- gsub("[^a-z0-9_]", "", geom)
+    if (geom == "a") geom <- "area"
+    if (geom == "b") geom <- "boxplot"
+    if (geom == "c") geom <- "column"
+    if (geom == "h") geom <- "histogram"
+    if (geom == "j") geom <- "jitter"
+    if (geom == "l") geom <- "line"
+    if (geom == "p") geom <- "point"
+    if (geom == "r") geom <- "ribbon"
+    if (geom == "v") geom <- "violin"
+    if (geom == "column") {
+      geom <- "col"
+    }
+    if (geom %unlike% "^geom_") {
+      geom <- paste0("geom_", geom)
     }
     # replace 'points' etc. with 'point' etc.
-    type <- gsub("s$", "", type)
+    geom <- gsub("s$", "", geom)
   }
   
   valid_geoms <- ls(pattern = "^geom_", env = asNamespace("ggplot2"))
-  if (!type %in% valid_geoms) {
-    if (any(valid_geoms %like% type)) {
-      type <- valid_geoms[valid_geoms %like% type][1L]
+  if (!geom %in% valid_geoms) {
+    if (any(valid_geoms %like% geom)) {
+      geom <- valid_geoms[valid_geoms %like% geom][1L]
     } else {
-      stop("plot type \"", type.bak, "\" is invalid, since ggplot2::", type, "() does not exist", call. = FALSE)
+      stop("plot geom \"", geom.bak, "\" is invalid, since ggplot2::", geom, "() does not exist", call. = FALSE)
     }
   }
-  type
+  geom
 }
 
 validate_legend.position <- function(legend.position) {
@@ -107,8 +110,8 @@ validate_data <- function(df,
                           ...) {
   
   dots <- list(...)
-  type <- validate_type(dots$type, df = NULL) # quick validation
-  
+  geom <- validate_geom(dots$geom, df = NULL) # quick validation
+
   if (!has_y(df)) {
     # try to find numeric column for y
     numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.numeric)))
@@ -121,16 +124,16 @@ validate_data <- function(df,
       if (!has_x(df)) {
         # make x first numeric column and y second numeric column
         plot_message("Using ", font_blue("x = ", numeric_cols[1L], collapse = NULL))
-        if (!type_is_continuous_x(type)) {
-          # don't show when type for density types - y will not be used
+        if (!geom_is_continuous_x(geom)) {
+          # don't show when geom for density geoms - y will not be used
           plot_message("Using ", font_blue("y = ", numeric_cols[2L], collapse = NULL))
         }
         df <- df %>% 
           mutate(`_var_x` = df %>% pull(numeric_cols[1L]),
                  `_var_y` = df %>% pull(numeric_cols[2L]))
       } else {
-        if (!type_is_continuous_x(type)) {
-          # don't show when type for density types - y will not be used
+        if (!geom_is_continuous_x(geom)) {
+          # don't show when geom for density geoms - y will not be used
           plot_message("Using ", font_blue("y = ", numeric_cols[1L], collapse = NULL))
         }
         df <- df %>% 
@@ -138,13 +141,13 @@ validate_data <- function(df,
       }
     } else {
       # only one numeric column
-      if (type_is_continuous_x(type)) {
+      if (geom_is_continuous_x(geom)) {
         if (!has_x(df)) {
           plot_message("Using ", font_blue("x = ", numeric_cols, collapse = NULL))
           df <- df %>% 
             mutate(`_var_x` = df %>% pull(numeric_cols))
         }
-        # don't show when type for density types - y will not be used
+        # don't show when geom for density geoms - y will not be used
         df <- df %>% 
           mutate(`_var_y` = df %>% pull(`_var_x`))
       } else {
@@ -418,7 +421,7 @@ validate_y_scale <- function(df,
         labels_n <- 10
       }
       if (as.integer(labels_n) > 10) {
-        warning("printing at most 10 labels for y axis, set with `y.percent_break`", call. = FALSE)
+        plot_warning("Printing at most 10 labels for ", font_blue("y"), ", set with ", font_blue("y.percent_break"))
         y.percent_break <- round((max(y.limits) - min(y.limits)) / 10, 2)
       }
       function(x, y_percent_break = y.percent_break, ...) {
@@ -529,11 +532,11 @@ validate_y_scale <- function(df,
 
 #' @importFrom ggplot2 position_stack position_fill position_dodge2 position_jitter
 #' @importFrom certestyle font_blue font_black
-validate_geom <- function(type,
+generate_geom <- function(geom,
                           df,
                           stacked,
                           stackedpercent,
-                          horizontal,
+                          # horizontal,
                           width,
                           size,
                           linetype,
@@ -544,10 +547,13 @@ validate_geom <- function(type,
                           bins,
                           cols) {
   
-  if (type == "geom_col") {
-    type <- "geom_bar"
+  # if (geom == "geom_bar") {
+  #   horizontal <- TRUE
+  # }
+  if (geom == "geom_col") {
+    geom <- "geom_bar"
   }
-  geom_fn <- getExportedValue(name = type, ns = asNamespace("ggplot2"))
+  geom_fn <- getExportedValue(name = geom, ns = asNamespace("ggplot2"))
   
   # set position
   if (isTRUE(stacked)) {
@@ -560,7 +566,7 @@ validate_geom <- function(type,
   }
   
   # set geoms - do.call() applies all arguments to the geom_fn function
-  if (type == "geom_bar") {
+  if (geom == "geom_bar") {
     do.call(geom_fn,
             args = c(list(width = width,
                           stat = "identity",
@@ -569,7 +575,7 @@ validate_geom <- function(type,
                      list(colour = cols$colour)[!has_category(df)],
                      list(fill = cols$colour_fill)[!has_category(df)]))
     
-  } else if (type %in% c("geom_line", "geom_path")) {
+  } else if (geom %in% c("geom_line", "geom_path")) {
     do.call(geom_fn,
             args = c(list(size = size,
                           lineend = "round",
@@ -577,20 +583,20 @@ validate_geom <- function(type,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)]))
     
-  } else if (type == "geom_point") {
+  } else if (geom == "geom_point") {
     do.call(geom_fn,
             args = c(list(size = size,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)]))
     
-  } else if (type == "geom_jitter") {
+  } else if (geom == "geom_jitter") {
     do.call(geom_fn,
             args = c(list(size = size,
                           position = position_jitter(seed = jitter_seed),
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)]))
     
-  } else if (type == "geom_boxplot") {
+  } else if (geom == "geom_boxplot") {
     do.call(geom_fn,
             args = c(list(outlier.size = size * 3,
                           outlier.alpha = 0.75,
@@ -601,7 +607,7 @@ validate_geom <- function(type,
                      list(colour = cols$colour)[!has_category(df)],
                      list(fill = cols$colour_fill)[!has_category(df)]))
     
-  } else if (type == "geom_violin") {
+  } else if (geom == "geom_violin") {
     do.call(geom_fn,
             args = c(list(width = width,
                           lwd = size, # line width, of whole violin
@@ -612,7 +618,7 @@ validate_geom <- function(type,
                      list(colour = cols$colour)[!has_category(df)],
                      list(fill = cols$colour_fill)[!has_category(df)]))
     
-  } else if (type == "geom_histogram") {
+  } else if (geom == "geom_histogram") {
     if (is.null(bins)) {
       # 30 is the geom_histogram default, we change it if 1/3 of unique values is <30
       bins <- ceiling(min(30, length(unique(get_x(df))) / 3))
@@ -625,7 +631,7 @@ validate_geom <- function(type,
                      list(colour = cols$colour)[!has_category(df)],
                      list(fill = cols$colour_fill)[!has_category(df)]))
     
-  } else if (type == "geom_density") {
+  } else if (geom == "geom_density") {
     do.call(geom_fn,
             args = c(list(linetype = linetype,
                           size = size,
@@ -635,7 +641,7 @@ validate_geom <- function(type,
     
   } else {
     # try to put some arguments into the requested geom
-    warning("'", type, "' is currently only loosely supported in plot2()", call. = FALSE)
+    plot_warning(font_blue("geom = \"", geom, "\"", collapse = ""), " is currently only loosely supported")
     do.call(geom_fn,
             args = c(list(width = width,
                           size = size,
@@ -646,12 +652,12 @@ validate_geom <- function(type,
 }
 
 #' @importFrom certestyle colourpicker
-validate_colour <- function(df, colour, colour_fill, misses_colour_fill, horizontal, type) {
+validate_colour <- function(df, colour, colour_fill, misses_colour_fill, horizontal, geom) {
   
   minimum_length <- length(group_sizes(df))
   
-  if (type_is_continuous(type) && length(colour) == 1 && colour %like% "certe[a-z]*" & is.null(colour_fill)) {
-    # specific treatment for continuous types (such as boxplots/violins/histograms/...)
+  if (geom_is_continuous(geom) && length(colour) == 1 && colour %like% "certe[a-z]*" & is.null(colour_fill)) {
+    # specific treatment for continuous geoms (such as boxplots/violins/histograms/...)
     # certeblauw (colour) -> certeblauw6 (colour_fill)
     colour_fill <- paste0(colour, "6")
   }
@@ -695,11 +701,11 @@ validate_colour <- function(df, colour, colour_fill, misses_colour_fill, horizon
        colour_fill = colour_fill)
 }
 
-validate_size <- function(size, type) {
+validate_size <- function(size, geom) {
   if (is.null(size)) {
-    if (type %in% c("geom_boxplot", "geom_violin") | type_is_continuous_x(type)) {
+    if (geom %in% c("geom_boxplot", "geom_violin") | geom_is_continuous_x(geom)) {
       size <- 0.5
-    } else if (type %in% c("geom_point", "geom_jitter")) {
+    } else if (geom %in% c("geom_point", "geom_jitter")) {
       size <- 2
     } else {
       size <- 0.75
@@ -708,9 +714,9 @@ validate_size <- function(size, type) {
   size
 }
 
-validate_width <- function(width, type) {
+validate_width <- function(width, geom) {
   if (is.null(width)) {
-    if (type %in% c("geom_boxplot", "geom_violin", "geom_jitter")) {
+    if (geom %in% c("geom_boxplot", "geom_violin", "geom_jitter")) {
       width <- 0.75
     } else {
       width <- 0.5
@@ -741,11 +747,17 @@ validate_titles <- function(text, markdown = TRUE, max_length = NULL) {
 
 #' @importFrom ggplot2 theme_grey
 #' @importFrom ggtext element_markdown
-validate_theme <- function(theme, markdown) {
+validate_theme <- function(theme,
+                           markdown,
+                           font.size_factor,
+                           font.family,
+                           x.lbl_angle,
+                           x.lbl_align,
+                           x.lbl_italic) {
   if (is_empty(theme)) {
-    # turn to default ggplot2 theme, so we can:
+    # turn to default ggplot2 theme, so we can at least:
     # - extend all element_text() classes with element_markdown()
-    # - add all theme options set as parameters, like legend position
+    # - add all theme options set as arguments, like x.lbl_angle
     theme <- theme_grey()
   }
   if (inherits(theme, "theme")) {
@@ -755,6 +767,12 @@ validate_theme <- function(theme, markdown) {
       attr_bak <- attributes(theme)
       theme <- lapply(theme, function(el) {
         if (inherits(el, "element_text")) {
+          el$family <- font.family
+          if (font.size_factor != 1 && !is.null(el$size) && is.numeric(el$size)) {
+            attr_el_bak <- attributes(el$size)
+            el$size <- as.double(el$size) * font.size_factor
+            attributes(el$size) <- attr_el_bak
+          }
           class(el) <- c("element_markdown", class(el))
         }
         el
@@ -771,25 +789,25 @@ validate_theme <- function(theme, markdown) {
 #' @importFrom certestyle colourpicker
 set_datalabels <- function(p,
                            df,
-                           type,
+                           geom,
                            width,
                            stacked,
                            stackedpercent,
                            datalabels.fill,
                            datalabels.colour,
                            datalabels.size,
-                           text.factor,
-                           text.font_family,
+                           datalabels.angle,
+                           font.family,
                            reverse,
                            horizontal,
                            misses_datalabels) {
-  
+
   if (isTRUE(misses_datalabels) && nrow(df) > 150) {
     plot_warning("Omitting printing of ", nrow(df), " datalabels - use ", font_blue("datalabels = TRUE"), " to force printing")
     return(p)
   }
   
-  if (!isTRUE(stacked) & !isTRUE(stackedpercent) & type != "geom_sf") {
+  if (!isTRUE(stacked) & !isTRUE(stackedpercent) & geom != "geom_sf") {
     datalabels.fill <- colourpicker(datalabels.fill)
     datalabels.colour <- colourpicker(datalabels.colour)
   } else {
@@ -797,23 +815,18 @@ set_datalabels <- function(p,
     datalabels.colour <- colourpicker(datalabels.colour)
   }
   
-  is_sf <- type == "geom_sf"
+  is_sf <- geom == "geom_sf"
   
   # set label and text sizes
   text_horizontal <- 0.5
   text_vertical <- -0.75
   label_horizontal <- 0.5
   label_vertical <- -0.1
-  if (isTRUE(horizontal)) {
+  if (isTRUE(horizontal) | datalabels.angle == 90) {
     text_horizontal <- -0.25
     text_vertical <- 0.5
     label_horizontal <- -0.1
     label_vertical <- 0.5
-  }
-  text_textsize <- text.factor * datalabels.size
-  label_textsize <- (text.factor * 1.25) + text_textsize
-  if (text.factor == 1) {
-    label_textsize <- text_textsize * 0.75
   }
   
   # set positioning function
@@ -836,6 +849,7 @@ set_datalabels <- function(p,
   } else {
     geom_label_fn <- geom_sf_label
     geom_text_fn <- geom_sf_text
+    # thes functions from the 'sf' package fix invalid geometries
     st_is_valid <- getExportedValue(name = "st_is_valid", ns = asNamespace("sf"))
     st_point <- getExportedValue(name = "st_point", ns = asNamespace("sf"))
     st_point_on_surface <- getExportedValue(name = "st_point_on_surface", ns = asNamespace("sf"))
@@ -854,8 +868,9 @@ set_datalabels <- function(p,
                                                        strrep("-", ceiling(nchar(`_var_datalabels`) * 0.33)))),
                           colour = NA,
                           fill = datalabels.fill,
-                          size = label_textsize,
-                          family = text.font_family,
+                          size = datalabels.size,
+                          family = font.family,
+                          angle = datalabels.angle,
                           na.rm = TRUE),
                      # only when there's a category:
                      list(position = position_fn)[has_category(df)],
@@ -873,8 +888,9 @@ set_datalabels <- function(p,
     do.call(geom_text_fn,
             args = c(list(mapping = aes(label = `_var_datalabels`),
                           colour = datalabels.colour,
-                          size = label_textsize,
-                          family = text.font_family,
+                          size = datalabels.size,
+                          family = font.family,
+                          angle = datalabels.angle,
                           na.rm = TRUE),
                      # only when there's a category:
                      list(position = position_fn)[has_category(df)],
@@ -975,7 +991,7 @@ set_max_items <- function(df, y,
                           x, x.max_items, x.max_txt,
                           category, category.max_items, category.max_txt,
                           facet, facet.max_items, facet.max_txt,
-                          horizontal, type, summarise_function,
+                          horizontal, geom, summarise_function,
                           decimal.mark, big.mark, datalabels.round) {
   
   if (is.infinite(x.max_items) && is.infinite(category.max_items) && is.infinite(facet.max_items)) {

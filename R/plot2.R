@@ -44,7 +44,7 @@
 #' head(iris)
 #' 
 #' # no variables determined, plot2() tries for itself:
-#' # the type will be points since the first two variables are numeric
+#' # the geom will be points since the first two variables are numeric
 #' plot2(iris)
 #' 
 #' # only view the data part, like ggplot2 normally does
@@ -52,9 +52,10 @@
 #' 
 #' # if x and y are set, no addition mapping will be set:
 #' plot2(iris, Sepal.Width, Sepal.Length)
+#' plot2(iris, Species, Sepal.Length)
 #' 
-#' # change to any type
-#' plot2(iris, x = Species, y = Sepal.Length, type = "boxplot")
+#' # change to any geom
+#' plot2(iris, Species, Sepal.Length, geom = "violin")
 #' 
 #' library(dplyr, warn.conflicts = FALSE)
 #'   
@@ -79,12 +80,12 @@
 #'         y.age = TRUE)
 #'         
 #' admitted_patients %>%
-#'   plot2(age, type = "hist")
+#'   plot2(age, geom = "hist")
 #' admitted_patients %>%
-#'   plot2(age, type = "density")
+#'   plot2(age, geom = "density")
 #'  
-#' # the default type is column, datalabels are automatically
-#' # set in non-continuous types:
+#' # the default geom is column, datalabels are automatically
+#' # set in non-continuous geoms:
 #' patients_per_hospital_gender <- admitted_patients %>%
 #'   count(hospital, gender)
 #' head(patients_per_hospital_gender)
@@ -137,9 +138,9 @@ plot2.default <- function(.data, ...) {
 
 #' @rdname plot2-methods
 #' @export
-plot2.numeric <- function(y, ...) {
-  y_deparse <- deparse(substitute(y))
-  df <- data.frame(y = y, stringsAsFactors = FALSE)
+plot2.numeric <- function(.data, ...) {
+  y_deparse <- deparse(substitute(.data))
+  df <- data.frame(y = .data, stringsAsFactors = FALSE)
   colnames(df) <- y_deparse
   plot2(df, x = NULL, category = NULL, facet = NULL, ...)
 }
@@ -181,7 +182,7 @@ plot2.data.frame <- function(.data = NULL,
                              y = NULL,
                              category = NULL,
                              facet = NULL,
-                             type = NULL,
+                             geom = NULL,
                              x.title = NULL,
                              y.title = NULL,
                              title = NULL,
@@ -245,7 +246,8 @@ plot2.data.frame <- function(.data = NULL,
                              datalabels.round = ifelse(y.percent, 2, 1),
                              datalabels.colour = "grey25",
                              datalabels.fill = "white",
-                             datalabels.size = 3.5,
+                             datalabels.size = (3.5 * font.size_factor),
+                             datalabels.angle = 0,
                              decimal.mark = ",",
                              big.mark = ".",
                              summarise_function = base::sum,
@@ -276,11 +278,9 @@ plot2.data.frame <- function(.data = NULL,
                              legend.italic = FALSE,
                              zoom = FALSE,
                              print = FALSE,
-                             text.factor = 1,
-                             text.font_family = "Verdana",
-                             theme = theme_minimal2(horizontal = horizontal,
-                                                    text.font_family = text.font_family,
-                                                    text.factor = text.factor),
+                             font.size_factor = 1,
+                             font.family = "Calibri",
+                             theme = theme_minimal2(),
                              markdown = TRUE,
                              taxonomy.italic = markdown,
                              # old certetools pkg support
@@ -297,11 +297,19 @@ plot2.data.frame <- function(.data = NULL,
   misses_y <- missing(y)
   misses_category <- missing(category) & missing(y.category)
   misses_datalabels <- missing(datalabels)
+  
+  dots <- list(...)
+  
+  # old arguments, from previous package
   if (!missing(y.category)) {
-    warning(font_black("Using "), font_red("'y.category' is deprecated"), font_black(" - use 'category' instead"), call. = FALSE) 
+    plot_warning("Using ", font_red("'y.category' is deprecated"), " - use ", font_blue("'category'"), " instead") 
   }
   if (!missing(x.category)) {
-    warning(font_black("Using "), font_red("'x.category' is deprecated"), font_black(" - use 'facet' instead"), call. = FALSE) 
+    plot_warning("Using ", font_red("'x.category' is deprecated"), " - use ", font_blue("'facet'"), " instead")
+  }
+  if (!is.null(dots$type)) {
+    plot_warning("Using ", font_red("'type' is deprecated"), " - use ", font_blue("'geom'"), " instead")
+    geom <- dots$type
   }
   
   label_x <- deparse(substitute(x))
@@ -326,7 +334,7 @@ plot2.data.frame <- function(.data = NULL,
                   label_facet = label_facet,
                   decimal.mark = decimal.mark,
                   big.mark = big.mark,
-                  type = type,
+                  geom = geom,
                   datalabels.round = datalabels.round,
                   x.sort = x.sort,
                   category.sort = category.sort,
@@ -341,28 +349,28 @@ plot2.data.frame <- function(.data = NULL,
                   facet.max_txt = facet.max_txt,
                   ...)
   
-  # validate type ----
-  type <- validate_type(type = type, df = df) # this will automatically determine type if is.null(type)
-  # transform data if not a continuous type but group sizes are > 1
-  if (any(group_sizes(df) > 1) && !type_is_continuous(type)) {
-    plot_warning("Duplicate observations in discrete plot type (", font_blue(type), "), applying ",
+  # validate geom ----
+  geom <- validate_geom(geom = geom, df = df) # this will automatically determine the geom if is.null(geom)
+  # transform data if not a continuous geom but group sizes are > 1
+  if (any(group_sizes(df) > 1) && !geom_is_continuous(geom)) {
+    plot_warning("Duplicate observations in discrete plot geom (", font_blue(geom), "), applying ",
                  font_blue("summarise_function = " ), font_blue(deparse(substitute(summarise_function))))
     df <- summarise_data(df = df, summarise_function = summarise_function,
                          decimal.mark = decimal.mark, big.mark = big.mark,
                          datalabels.round = datalabels.round)
   }
-  # remove datalabels in continuous types
-  if (isTRUE(misses_datalabels) && type_is_continuous(type)) {
+  # remove datalabels in continuous geoms
+  if (isTRUE(misses_datalabels) && geom_is_continuous(geom)) {
     df <- df %>% select(-`_var_datalabels`)
   }
-  if (!isTRUE(misses_y) && type_is_continuous_x(type)) {
-    plot_message("Ignoring ", font_blue("y"), " for plot type ", font_blue(gsub("geom_", "", type)))
+  if (!isTRUE(misses_y) && geom_is_continuous_x(geom)) {
+    plot_message("Ignoring ", font_blue("y"), " for plot geom ", font_blue(gsub("geom_", "", geom)))
     df$`_var_y` <- df$`_var_x`
   }
   
   # set default size and width ----
-  size <- validate_size(size = size, type = type)
-  width <- validate_width(width = width, type = type)
+  size <- validate_size(size = size, geom = geom)
+  width <- validate_width(width = width, geom = geom)
   
   # generate colour vectors ----
   cols <- validate_colour(df = df,
@@ -370,11 +378,11 @@ plot2.data.frame <- function(.data = NULL,
                           colour_fill = colour_fill,
                           misses_colour_fill = missing(colour_fill),
                           horizontal = horizontal,
-                          type = type)
+                          geom = geom)
   
   mapping <- aes()
   # generate mapping ----
-  if (!type_is_continuous_x(type)) {
+  if (!geom_is_continuous_x(geom)) {
     # histograms etc. have a continuous x variable, so only set y if not a histogram-like
     mapping <- aes(y = `_var_y`, group = 1)
   } else {
@@ -391,7 +399,7 @@ plot2.data.frame <- function(.data = NULL,
                                               colour = `_var_category`,
                                               group = `_var_category`))
   }
-  if (type_is_continuous(type)) {
+  if (geom_is_continuous(geom)) {
     # remove the group from the mapping
     mapping <- utils::modifyList(mapping, aes(group = NULL))
   }
@@ -400,7 +408,7 @@ plot2.data.frame <- function(.data = NULL,
   p <- ggplot(data = df, mapping = mapping, colour = cols$colour, fill = cols$colour_fill)
   
   # generate geom ----
-  if (type == "geom_boxplot") {
+  if (geom == "geom_boxplot") {
     # first add the whiskers
     p <- p +
       stat_boxplot(geom = "errorbar",
@@ -410,7 +418,7 @@ plot2.data.frame <- function(.data = NULL,
                    colour = cols$colour)
   }
   p <- p +
-    validate_geom(type = type,
+    generate_geom(geom = geom,
                   df = df,
                   stacked = stacked,
                   stackedpercent = stackedpercent,
@@ -451,8 +459,8 @@ plot2.data.frame <- function(.data = NULL,
          y = get_y_name(df),
          fill = get_category_name(df),
          colour = get_category_name(df)) # will return NULL if not available, so always works
-  if (type_is_continuous_x(type)) {
-    if (type %like% "density") {
+  if (geom_is_continuous_x(geom)) {
+    if (geom %like% "density") {
       p <- p +
         labs(y = "Density")
       if (missing(y.percent)) {
@@ -500,8 +508,14 @@ plot2.data.frame <- function(.data = NULL,
                      big.mark = big.mark,
                      zoom = zoom)
   
-  # add theme + markdown support ----
-  theme <- validate_theme(theme = theme, markdown = markdown)
+  # validate theme and add markdown support ----
+  theme <- validate_theme(theme = theme,
+                          markdown = markdown,
+                          font.size_factor = font.size_factor,
+                          font.family = font.family,
+                          x.lbl_angle = x.lbl_angle,
+                          x.lbl_align = x.lbl_align,
+                          x.lbl_italic = x.lbl_italic)
   if (!is_empty(theme)) {
     p <- p + theme
   }
@@ -576,15 +590,15 @@ plot2.data.frame <- function(.data = NULL,
   if (has_datalabels(df)) {
     p <- set_datalabels(p = p,
                         df = df,
-                        type = type,
+                        geom = geom,
                         width = width,
                         stacked = stacked,
                         stackedpercent = stackedpercent,
                         datalabels.fill = datalabels.fill,
                         datalabels.colour = datalabels.colour,
                         datalabels.size = datalabels.size,
-                        text.factor = text.factor,
-                        text.font_family = text.font_family,
+                        datalabels.angle = datalabels.angle,
+                        font.family = font.family,
                         reverse = reverse,
                         horizontal = horizontal,
                         misses_datalabels = misses_datalabels)
