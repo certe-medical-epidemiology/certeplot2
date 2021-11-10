@@ -1,0 +1,25 @@
+.r-msg, .r-msg span {
+  color: #aaaaaa !important;
+  font-style: italic;
+}
+.fu {
+  font-weight: bold
+}
+h1, h1 code,
+h2, h2 code,
+h3, h3 code,
+a, a code {
+  color: #01617E !important;
+}
+.navbar-default {
+  background-color: #F0F8FB;
+  border-color: #01617E;
+}
+.label-default {
+  background-color: #01617E !important;
+}
+.navbar-default .navbar-nav>.active>a,
+.navbar-default .navbar-nav>.active>a:focus,
+.navbar-default .navbar-nav>.active>a:hover {
+  background-color: white !important;
+}

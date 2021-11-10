@@ -45,6 +45,8 @@
 
 
 
+  <link href="../extra.css" rel="stylesheet">
+  
 
 <meta property="og:title" content="Methods for plot2() — plot2-methods" />
 <meta property="og:description" content="These are the implemented methods for different S3 classes to be used in plot2()." />
@@ -80,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.12</span>
       </span>
     </div>
 
@@ -149,7 +151,7 @@
 <span class='fu'><a href='plot2.html'>plot2</a></span><span class='op'>(</span><span class='va'>.data</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for numeric</span>
-<span class='fu'><a href='plot2.html'>plot2</a></span><span class='op'>(</span><span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'><a href='plot2.html'>plot2</a></span><span class='op'>(</span><span class='va'>.data</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for freq</span>
 <span class='fu'><a href='plot2.html'>plot2</a></span><span class='op'>(</span><span class='va'>.data</span>, x <span class='op'>=</span> <span class='va'>.data</span><span class='op'>$</span><span class='va'>item</span>, y <span class='op'>=</span> <span class='va'>.data</span><span class='op'>$</span><span class='va'>count</span>, x.sort <span class='op'>=</span> <span class='st'>"freq-desc"</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -173,7 +175,7 @@
   y <span class='op'>=</span> <span class='cn'>NULL</span>,
   category <span class='op'>=</span> <span class='cn'>NULL</span>,
   facet <span class='op'>=</span> <span class='cn'>NULL</span>,
-  type <span class='op'>=</span> <span class='cn'>NULL</span>,
+  geom <span class='op'>=</span> <span class='cn'>NULL</span>,
   x.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   title <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -237,7 +239,8 @@
   datalabels.round <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='va'>y.percent</span>, <span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>)</span>,
   datalabels.colour <span class='op'>=</span> <span class='st'>"grey25"</span>,
   datalabels.fill <span class='op'>=</span> <span class='st'>"white"</span>,
-  datalabels.size <span class='op'>=</span> <span class='fl'>3.5</span>,
+  datalabels.size <span class='op'>=</span> <span class='op'>(</span><span class='fl'>3.5</span> <span class='op'>*</span> <span class='va'>font.size_factor</span><span class='op'>)</span>,
+  datalabels.angle <span class='op'>=</span> <span class='fl'>0</span>,
   decimal.mark <span class='op'>=</span> <span class='st'>","</span>,
   big.mark <span class='op'>=</span> <span class='st'>"."</span>,
   summarise_function <span class='op'>=</span> <span class='fu'>base</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>,
@@ -268,10 +271,9 @@
   legend.italic <span class='op'>=</span> <span class='cn'>FALSE</span>,
   zoom <span class='op'>=</span> <span class='cn'>FALSE</span>,
   print <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  text.factor <span class='op'>=</span> <span class='fl'>1</span>,
-  text.font_family <span class='op'>=</span> <span class='st'>"Verdana"</span>,
-  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span>horizontal <span class='op'>=</span> <span class='va'>horizontal</span>, text.font_family <span class='op'>=</span> <span class='va'>text.font_family</span>,
-    text.factor <span class='op'>=</span> <span class='va'>text.factor</span><span class='op'>)</span>,
+  font.size_factor <span class='op'>=</span> <span class='fl'>1</span>,
+  font.family <span class='op'>=</span> <span class='st'>"Calibri"</span>,
+  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span><span class='op'>)</span>,
   markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
   taxonomy.italic <span class='op'>=</span> <span class='va'>markdown</span>,
   x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -300,7 +302,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Matthijs S. Berends, Erwin E. A. Hassing, Erwin Dijkstra, Certe Medical Diagnostics & Advice Foundation.</p>
+  <p>Developed by Matthijs S. Berends, Erwin E. A. Hassing, Certe Medical Diagnostics & Advice Foundation.</p>
 </div>
 
 <div class="pkgdown">
