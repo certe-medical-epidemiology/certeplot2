@@ -17,14 +17,37 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-#' Example Data Set with Admitted Patients
-#'
-#' An auto-generated, fictitious data set containing patients admitted to hospitals.
-#' @format A [data.frame] with `r format(nrow(admitted_patients), big.mark = ",")` observations and `r ncol(admitted_patients)` variables:
-#' - `date`\cr date of hospital admission
-#' - `gender`\cr gender of the patient
-#' - `age`\cr age of the patient
-#' - `age_group`\cr age group of the age of the patient, generated with [AMR::age_groups()]
-#' - `hospital`\cr ID of the hospital, from A to D
-#' - `ward`\cr type of ward, either ICU or Non-ICU
-"admitted_patients"
+#' Get Plot Element
+#' 
+#' These functions extract `ggplot` properties.
+#' @param x a `ggplot` model
+#' @name plot_elements
+#' @rdname plot_elements
+#' @export
+#' @examples 
+#' x <- plot2(iris)
+#' 
+#' get_mapping(x)
+#' 
+#' class(get_theme(x))
+get_theme <- function(x) {
+  x$theme
+}
+
+#' @rdname plot_elements
+#' @export
+get_mapping <- function(x) {
+  x$mapping
+}
+
+#' @rdname plot_elements
+#' @export
+get_data <- function(x) {
+  x$data
+}
+
+#' @rdname plot_elements
+#' @export
+get_layers <- function(x) {
+  x$layers
+}

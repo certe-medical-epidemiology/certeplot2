@@ -23,7 +23,7 @@
 #' 
 #' See [plot2-methods] for all implemented methods for different object classes.
 #' @param .data data to plot
-#' @details The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions such as [`ggplot()`][ggplot2::ggplot()], [`geom_col()`][ggplot2::geom_col()], [`facet_wrap()`][ggplot2::facet_wrap()], [`labs()`][ggplot2::labs()], etc., and provides:
+#' @details The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions such as [`ggplot()`][ggplot2::ggplot()], [`aes()`][ggplot2::aes()], [`geom_col()`][ggplot2::geom_col()], [`facet_wrap()`][ggplot2::facet_wrap()], [`labs()`][ggplot2::labs()], etc., and provides:
 #'   * Writing as few lines of codes as possible
 #'   * Easy plotting in three 'directions': `x` (the regular x axis), `category` (replaces 'fill' and 'colour') and `facet`
 #'   * Automatic setting of these 'directions' based on the input data
@@ -32,13 +32,14 @@
 #'   * Markdown support for any label, with any theme
 #'   * An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: [theme_minimal2()]
 #'   * Some conveniences from Microsoft Excel:
-#'     * The y axis starts at 0
+#'     * The y axis starts at 0 if possible
 #'     * The y scale expands at the top to be better able to interpret all data points
-#'     * Date breaks can be written in a readable format such as "d mmm yyyy"
-#'     * Data labels can easily be printed and are automatically determined
+#'     * Date breaks can be written in a human-readable format (such as "d mmm yyyy")
+#'     * Labels with data values can easily be printed and are automatically determined
 #'   * Support for any `ggplot2` extension based on [ggplot2::fortify()]
 #'   
-#' The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. Less typing, faster coding.
+#' The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. **Less typing, faster coding.**
+#' @return The [plot2()] function adds new variables to the data for each mapping: any combination of `_var_x`, `_var_y`, `_var_category`, `_var_facet`. These columns are internally set as mapping with [`aes()`][ggplot2::aes()].
 #' @export
 #' @examples
 #' head(iris)
@@ -163,18 +164,45 @@ plot2.freq <- function(.data,
 #' @export
 plot2.sf <- function(.data,
                      colour = "grey50",
+                     colour_fill = "white",
                      x.expand = 0,
                      y.expand = 0,
                      datalabels = FALSE,
                      datalabels.colour = "black",
+                     size = 0.1,
                      legend.position = "right",
+                     theme = theme_minimal2(panel.grid.major = element_blank(),
+                                            panel.grid.minor = element_blank(),
+                                            panel.border = element_blank(),
+                                            axis.title = element_blank(),
+                                            axis.text = element_blank(),
+                                            axis.line = element_blank(),
+                                            axis.ticks = element_blank()),
                      ...) {
+  if (!"sf" %in% rownames(installed.packages())) {
+    stop("plotting 'sf' objects with plot2() requires the 'sf' package", call. = FALSE)
+  }
   
+  plot2(as.data.frame(.data),
+        sf_column = attributes(.data)$sf_column,
+        x = "",
+        y = 0,
+        geom = "geom_sf",
+        colour = colour,
+        colour_fill = colour_fill,
+        x.expand = x.expand,
+        y.expand = y.expand,
+        datalabels = datalabels,
+        datalabels.colour = datalabels.colour,
+        size = size,
+        legend.position = legend.position,
+        theme = theme,
+        ...)
 }
 
 #' @rdname plot2-methods
 #' @importFrom dplyr `%>%` mutate vars group_by across summarise
-#' @importFrom ggplot2 ggplot aes labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip facet_grid facet_wrap coord_flip geom_smooth
+#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth guides guide_legend
 #' @importFrom certestyle format2 font_red font_black font_blue
 #' @export
 plot2.data.frame <- function(.data = NULL,
@@ -190,25 +218,27 @@ plot2.data.frame <- function(.data = NULL,
                              caption = NULL,
                              tag = NULL,
                              title.linelength = 60,
+                             title.colour = "black",
                              subtitle.linelength = 60,
+                             subtitle.colour = "grey35",
                              na.replace = "(??)",
                              na.rm = FALSE,
-                             facet.fill = NULL,
                              facet.position = "top",
+                             facet.fill = NULL,
                              facet.bold = TRUE,
+                             facet.italic = FALSE,
                              facet.size = 10,
+                             facet.margin = 8,
                              facet.repeat_lbls_x = TRUE,
                              facet.repeat_lbls_y = FALSE,
                              facet.fixed_y = FALSE,
                              facet.drop = FALSE,
                              facet.nrow = NULL,
-                             facet.margin = 8,
                              facet.relative = FALSE,
-                             facet.italic = FALSE,
                              x.date_breaks = NULL,
                              x.date_labels = NULL,
                              category.focus = NULL,
-                             colour = getOption("plot2.colours", "certe"),
+                             colour = "certe",
                              colour_fill = NULL,
                              colour.opacity = 0,
                              x.lbl_angle = 0,
@@ -245,8 +275,8 @@ plot2.data.frame <- function(.data = NULL,
                              datalabels = TRUE,
                              datalabels.round = ifelse(y.percent, 2, 1),
                              datalabels.colour = "grey25",
-                             datalabels.fill = "white",
-                             datalabels.size = (3.5 * font.size_factor),
+                             datalabels.fill = NULL,
+                             datalabels.size = (3 * text_factor),
                              datalabels.angle = 0,
                              decimal.mark = ",",
                              big.mark = ".",
@@ -277,12 +307,12 @@ plot2.data.frame <- function(.data = NULL,
                              legend.nbin = 300,
                              legend.italic = FALSE,
                              zoom = FALSE,
+                             sep = "/",
                              print = FALSE,
-                             font.size_factor = 1,
-                             font.family = "Calibri",
-                             theme = theme_minimal2(),
+                             text_factor = 1,
+                             family = "Calibri",
+                             theme = theme_minimal2(horizontal = horizontal),
                              markdown = TRUE,
-                             taxonomy.italic = markdown,
                              # old certetools pkg support
                              x.category = NULL,
                              y.category = NULL,
@@ -300,16 +330,37 @@ plot2.data.frame <- function(.data = NULL,
   
   dots <- list(...)
   
-  # old arguments, from previous package
+  # old arguments, from previous package ----
   if (!missing(y.category)) {
-    plot_warning("Using ", font_red("'y.category' is deprecated"), " - use ", font_blue("'category'"), " instead") 
+    plot_warning("Using ", font_red("'y.category' is deprecated"), " - use ", font_blue("'category'"), " instead")
+    .data <- .data %>% 
+      mutate(across({{ y.category }}, .names = "_var_category_{col}")) %>% 
+      summarise_variable("_var_category", sep = sep)
+    category <- "_var_category"
   }
   if (!missing(x.category)) {
     plot_warning("Using ", font_red("'x.category' is deprecated"), " - use ", font_blue("'facet'"), " instead")
+    .data <- .data %>% 
+      mutate(across({{ x.category }}, .names = "_var_facet_{col}")) %>% 
+      summarise_variable("_var_facet", sep = sep)
+    facet <- "_var_facet"
   }
+  
   if (!is.null(dots$type)) {
     plot_warning("Using ", font_red("'type' is deprecated"), " - use ", font_blue("'geom'"), " instead")
     geom <- dots$type
+  }
+  if (!is.null(dots$sort.x)) {
+    plot_warning("Using ", font_red("'sort.x' is deprecated"), " - use ", font_blue("'x.sort'"), " instead")
+    x.sort <- dots$sort.x
+  }
+  if (!is.null(dots$sort.category)) {
+    plot_warning("Using ", font_red("'sort.category' is deprecated"), " - use ", font_blue("'category.sort'"), " instead")
+    category.sort <- dots$sort.category
+  }
+  if (!is.null(dots$sort.facet)) {
+    plot_warning("Using ", font_red("'sort.facet' is deprecated"), " - use ", font_blue("'facet.sort'"), " instead")
+    facet.sort <- dots$sort.facet
   }
   
   label_x <- deparse(substitute(x))
@@ -319,11 +370,13 @@ plot2.data.frame <- function(.data = NULL,
   
   # prepare data ----
   df <- .data %>%
-    mutate(`_var_x` = {{ x }},
-           `_var_y` = {{ y }},
-           `_var_category` = if (tryCatch(!is.null(y.category), error = function(x) TRUE)) {{ y.category }} else {{ category }},
-           `_var_facet` = if (tryCatch(!is.null(x.category), error = function(x) TRUE)) {{ x.category }} else {{ facet }},
+    mutate(`_var_y` = {{ y }},
            `_var_datalabels` = {{ datalabels }}) %>% 
+    # add the three directions
+    add_direction({{ x }}, "x") %>% 
+    add_direction({{ category }}, "category") %>% 
+    add_direction({{ facet }}, "facet") %>% 
+    # remove any other S3 class, such as data.table and tbl_df
     as.data.frame(stringsAsFactors = FALSE) %>% 
     # this part will transform the data as needed
     validate_data(misses_x = misses_x,
@@ -382,7 +435,10 @@ plot2.data.frame <- function(.data = NULL,
   
   mapping <- aes()
   # generate mapping ----
-  if (!geom_is_continuous_x(geom)) {
+  print(has_x(df))
+  if (geom == "geom_sf" && !is.null(dots$sf_column)) {
+    mapping <- aes_string(geometry = dots$sf_column)
+  } else if (!geom_is_continuous_x(geom)) {
     # histograms etc. have a continuous x variable, so only set y if not a histogram-like
     mapping <- aes(y = `_var_y`, group = 1)
   } else {
@@ -474,48 +530,64 @@ plot2.data.frame <- function(.data = NULL,
   
   # add the right scales ----
   # x axis
-  p <- p + 
-    validate_x_scale(df = df,
-                     x.date_breaks = x.date_breaks,
-                     x.date_labels = x.date_labels,
-                     x.breaks = x.breaks,
-                     x.expand = x.expand,
-                     x.breaks_n = x.breaks_n,
-                     x.limit = x.limits,
-                     x.position = x.position,
-                     x.trans = x.trans,
-                     decimal.mark = decimal.mark,
-                     big.mark = big.mark,
-                     horizontal = horizontal,
-                     zoom = zoom)
-  # y axis
-  p <- p +
-    validate_y_scale(df = df,
-                     y.24h = y.24h,
-                     y.age = y.age,
-                     y.breaks = y.breaks,
-                     y.expand = y.expand,
-                     y.fixed = y.fixed,
-                     y.labels = y.labels,
-                     y.limits = y.limits,
-                     y.percent = y.percent,
-                     y.percent_break = y.percent_break,
-                     y.position = y.position,
-                     y.trans = y.trans,
-                     stackedpercent = stackedpercent,
-                     facet.fixed_y = facet.fixed_y,
-                     decimal.mark = decimal.mark,
-                     big.mark = big.mark,
-                     zoom = zoom)
+  if (geom == "geom_sf") {
+    # p <- p + 
+    #   validate_sf_scale()
+  } else {
+    p <- p + 
+      validate_x_scale(df = df,
+                       x.date_breaks = x.date_breaks,
+                       x.date_labels = x.date_labels,
+                       x.breaks = x.breaks,
+                       x.expand = x.expand,
+                       x.breaks_n = x.breaks_n,
+                       x.limit = x.limits,
+                       x.position = x.position,
+                       x.trans = x.trans,
+                       decimal.mark = decimal.mark,
+                       big.mark = big.mark,
+                       horizontal = horizontal,
+                       zoom = zoom)
+    
+    # y axis
+    p <- p +
+      validate_y_scale(df = df,
+                       y.24h = y.24h,
+                       y.age = y.age,
+                       y.breaks = y.breaks,
+                       y.expand = y.expand,
+                       y.fixed = y.fixed,
+                       y.labels = y.labels,
+                       y.limits = y.limits,
+                       y.percent = y.percent,
+                       y.percent_break = y.percent_break,
+                       y.position = y.position,
+                       y.trans = y.trans,
+                       stackedpercent = stackedpercent,
+                       facet.fixed_y = facet.fixed_y,
+                       decimal.mark = decimal.mark,
+                       big.mark = big.mark,
+                       zoom = zoom)
+  }
   
   # validate theme and add markdown support ----
   theme <- validate_theme(theme = theme,
                           markdown = markdown,
-                          font.size_factor = font.size_factor,
-                          font.family = font.family,
+                          text_factor = text_factor,
+                          family = family,
+                          horizontal = horizontal,
+                          x.remove = x.remove,
                           x.lbl_angle = x.lbl_angle,
                           x.lbl_align = x.lbl_align,
-                          x.lbl_italic = x.lbl_italic)
+                          x.lbl_italic = x.lbl_italic,
+                          facet.fill = facet.fill,
+                          facet.bold = facet.bold,
+                          facet.italic = facet.italic,
+                          facet.size = facet.size,
+                          facet.margin = facet.margin,
+                          legend.italic = legend.italic,
+                          title.colour = title.colour,
+                          subtitle.colour = subtitle.colour)
   if (!is_empty(theme)) {
     p <- p + theme
   }
@@ -540,50 +612,36 @@ plot2.data.frame <- function(.data = NULL,
     }
   }
   
-  # set positions ----
-  p <- p + theme(legend.position = validate_legend.position(legend.position))
+  # set legend ----
+  legend.position <- validate_legend.position(legend.position)
+  p <- p + theme(legend.position = legend.position)
+  if (!is.null(legend.reverse)) {
+    p <- p +
+      guides(fill = guide_legend(reverse = isTRUE(legend.reverse)),
+             colour = guide_legend(reverse = isTRUE(legend.reverse)))
+  }
+  if (isTRUE(horizontal)) {
+    if (legend.position %in% c("top", "bottom") &&
+        validate_sorting(category.sort, horizontal = horizontal) %unlike% "freq") {
+      # turn legend items when on top or bottom, but not when sorting is freq, freq-asc or freq-desc
+      p <- p +
+        guides(fill = guide_legend(reverse = TRUE),
+               colour = guide_legend(reverse = TRUE))
+    }
+  }
   
-  # set facets ----
+  # set facet ----
   if (has_facet(df)) {
-    scales <- "fixed"
-    if (isTRUE(facet.repeat_lbls_x) & isTRUE(facet.repeat_lbls_y)) {
-      scales <- "free"
-    } else if (isTRUE(facet.repeat_lbls_y)) {
-      scales <- "free_y"
-      if (isTRUE(horizontal)) {
-        scales <- "free_x"
-      }
-    } else if (isTRUE(facet.repeat_lbls_x)) {
-      scales <- "free_x"
-      if (isTRUE(horizontal)) {
-        scales <- "free_y"
-      }
-    }
-    
-    if (any(is.na(get_facet(df)))) {
-      # drop is droppen van factors levels. Als dit FALSE is en de kolom bevat NA, geeft het een fout:
-      # Error in scale_apply(layer_data, x_vars, "train", SCALE_X, x_scales)
-      facet.drop <- TRUE
-    }
-    if (isTRUE(facet.relative)) {
-      switch <- "x"
-      if (isTRUE(horizontal)) {
-        switch <- "y"
-      }
-      p <- p +
-        facet_grid(cols = vars(`_var_facet`),
-                   space = scales,
-                   drop = facet.drop,
-                   scales = scales,
-                   switch = switch)
-    } else {
-      p <- p +
-        facet_wrap("`_var_facet`",
-                   scales = scales,
-                   strip.position = facet.position,
-                   drop = facet.drop,
-                   nrow = facet.nrow)
-    }
+    p <- p +
+      validate_facet(df = df,
+                     geom = geom,
+                     facet.repeat_lbls_x = facet.repeat_lbls_x,
+                     facet.repeat_lbls_y = facet.repeat_lbls_y,
+                     facet.relative = facet.relative,
+                     facet.drop = facet.drop,
+                     facet.nrow = facet.nrow,
+                     facet.position = facet.position,
+                     horizontal = horizontal)
   }
   
   # set datalabels ----
@@ -598,7 +656,7 @@ plot2.data.frame <- function(.data = NULL,
                         datalabels.colour = datalabels.colour,
                         datalabels.size = datalabels.size,
                         datalabels.angle = datalabels.angle,
-                        font.family = font.family,
+                        family = family,
                         reverse = reverse,
                         horizontal = horizontal,
                         misses_datalabels = misses_datalabels)

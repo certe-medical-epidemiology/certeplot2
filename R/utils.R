@@ -21,7 +21,6 @@
 plot_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", geom = "info") {
   if (isTRUE(print)) {
     msg <- paste0(font_black(c(...), collapse = NULL), collapse = "")
-    
     # get info icon
     if (geom == "info") {
       if (isTRUE(base::l10n_info()$`UTF-8`) && interactive()) {
@@ -39,6 +38,21 @@ plot_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") !
 
 plot_warning <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "") {
   plot_message(..., print = print, geom = "warning")
+}
+
+summarise_variable <- function(df, var, sep) {
+  cols <- colnames(df)
+  old_vars <- cols[cols %like% paste0(var, "_")]
+  if (length(old_vars) == 0) {
+    return(df)
+  } else if (length(old_vars) > 1) {
+    new_var <- do.call(paste, c(df[old_vars], sep = sep))
+  } else {
+    new_var <- df[, old_vars, drop = TRUE]
+  }
+  df <- df[, cols[!cols %in% old_vars], drop = FALSE]
+  df[, var] <- new_var
+  df
 }
 
 #' @importFrom dplyr `%>%` pull
@@ -186,12 +200,11 @@ is_empty <- function(x) {
 }
 
 geom_is_continuous <- function(geom) {
-  geom %in% c("geom_boxplot", "geom_violin", "geom_point", "geom_jitter", "geom_histogram", "geom_density")
+  geom %in% c("geom_boxplot", "geom_violin", "geom_point", "geom_jitter", "geom_histogram", "geom_density", "geom_sf")
 }
 geom_is_continuous_x <- function(geom) {
   geom %in% c("geom_histogram", "geom_density")
 }
-
 
 #' @importFrom dplyr `%>%` group_by across group_size
 group_sizes <- function(df) {

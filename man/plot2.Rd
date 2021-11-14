@@ -9,13 +9,16 @@ plot2(.data, ...)
 \arguments{
 \item{.data}{data to plot}
 }
+\value{
+The \code{\link[=plot2]{plot2()}} function adds new variables to the data for each mapping: any combination of \verb{_var_x}, \verb{_var_y}, \verb{_var_category}, \verb{_var_facet}. These columns are internally set as mapping with \code{\link[ggplot2:aes]{aes()}}.
+}
 \description{
 The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \code{\link[ggplot2:ggplot]{ggplot2}} functions. By design, the \code{ggplot2} package requires users to use a lot of functions, while the \code{\link[=plot2]{plot2()}} function auto-determines needs and only requires to define arguments in one single function.
 
 See \link{plot2-methods} for all implemented methods for different object classes.
 }
 \details{
-The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \code{\link[ggplot2:ggplot]{ggplot2}} functions such as \code{\link[ggplot2:ggplot]{ggplot()}}, \code{\link[ggplot2:geom_bar]{geom_col()}}, \code{\link[ggplot2:facet_wrap]{facet_wrap()}}, \code{\link[ggplot2:labs]{labs()}}, etc., and provides:
+The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \code{\link[ggplot2:ggplot]{ggplot2}} functions such as \code{\link[ggplot2:ggplot]{ggplot()}}, \code{\link[ggplot2:aes]{aes()}}, \code{\link[ggplot2:geom_bar]{geom_col()}}, \code{\link[ggplot2:facet_wrap]{facet_wrap()}}, \code{\link[ggplot2:labs]{labs()}}, etc., and provides:
 \itemize{
 \item Writing as few lines of codes as possible
 \item Easy plotting in three 'directions': \code{x} (the regular x axis), \code{category} (replaces 'fill' and 'colour') and \code{facet}
@@ -26,15 +29,15 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: \code{\link[=theme_minimal2]{theme_minimal2()}}
 \item Some conveniences from Microsoft Excel:
 \itemize{
-\item The y axis starts at 0
+\item The y axis starts at 0 if possible
 \item The y scale expands at the top to be better able to interpret all data points
-\item Date breaks can be written in a readable format such as "d mmm yyyy"
-\item Data labels can easily be printed and are automatically determined
+\item Date breaks can be written in a human-readable format (such as "d mmm yyyy")
+\item Labels with data values can easily be printed and are automatically determined
 }
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. Less typing, faster coding.
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)

@@ -3,8 +3,10 @@ title: "plot2() plotting"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{plot2() plotting}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -16,13 +18,64 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(certeplot2)
+library(ggplot2)
+library(dplyr)
 ```
 
-# Types / geoms
+# Setting plot type / geom
 
+# Setting the 3 directions 
 
-# Sorting
+## Setting multiple columns {.tabset}
 
+Support multiple columns, with `c(...)` or even Tidyverse selectors:
+
+### `plot2`
+
+```{r}
+admitted_patients %>%
+  plot2(x = hospital, facet = where(is.character))
+```
+
+### `ggplot2`
+
+```{r}
+admitted_patients %>%
+  ggplot(aes(x = hospital, y = age)) +
+  geom_boxplot() +
+  # the facets require to call the data again
+  # (or requires extensive mutate()/across() code)
+  facet_wrap(facets = admitted_patients %>%
+               select(where(is.character)) %>%
+               colnames())
+```
+
+## The x axis
+
+## The category
+
+## The facet
+
+# Setting the values
+
+# Sorting {sorting}
 
 # Transforming
 
+# Legends
+
+# Plotting geometries (`sf` objects)
+
+Objects of class `sf` (*simple feature*) are treated specially by the `ggplot2` package, although `plot2()` handles these objects like any other data set. Instead it returns a `ggplot` object created with `geom_sf()` internally, but most arguments are usable and even the `theme_minimal2()` theme has good use for `sf` plots.
+
+The `netherlands` data set is such an `sf` object:
+
+```{r}
+print(netherlands)
+```
+
+How does it look?
+
+```{r}
+plot2(netherlands)
+```
