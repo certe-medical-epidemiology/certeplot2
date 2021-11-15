@@ -99,14 +99,14 @@ validate_legend.position <- function(legend.position) {
 }
 
 #' @importFrom dplyr `%>%` mutate across
-add_direction <- function(df, x, var) {
+add_direction <- function(df, direction, var_name, sep) {
   tryCatch(df %>% 
-             mutate(across({{ x }}, .names = paste0("_var_", var, "_{col}"))) %>% 
-             summarise_variable(paste0("_var_", var), sep = sep),
+             mutate(across({{ direction }}, .names = paste0("_var_", var_name, "_{col}"))) %>% 
+             summarise_variable(paste0("_var_", var_name), sep = sep),
            error = function(e) {
              df <- df %>% 
-               mutate(`_var_` = {{ x }})
-             colnames(df)[colnames(df) == "_var_"] <- paste0("_var_", var)
+               mutate(`_var_` = {{ direction }})
+             colnames(df)[colnames(df) == "_var_"] <- paste0("_var_", var_name)
              df
            })
 }
@@ -124,11 +124,12 @@ validate_data <- function(df,
   
   dots <- list(...)
   geom <- validate_geom(dots$geom, df = NULL) # quick validation
+  
+  numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.numeric)))
+  numeric_cols <- numeric_cols[numeric_cols %unlike% "^_var_"]
 
   if (!has_y(df)) {
     # try to find numeric column for y
-    numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.numeric)))
-    numeric_cols <- numeric_cols[numeric_cols %unlike% "^_var_"]
     if (is.na(numeric_cols[1L])) {
       stop("no numeric column found to use for y", call. = FALSE)
     }
@@ -203,26 +204,27 @@ validate_data <- function(df,
         mutate(`_var_category` = df %>% pull(cols[1L]))
     }
   }
-  
-  # remove x from sf objects
-  if (geom == "geom_sf") {
-    df <- df %>% select(-`_var_x`)
+  if (geom == "geom_sf" && misses_category && !has_category(df) && !is.na(numeric_cols[1L])) {
+    # try to take the first numeric column for 'sf' plots
+    plot_message("Using ", font_blue("category = ", numeric_cols[1L], collapse = NULL))
+    df <- df %>% 
+      mutate(`_var_category` = df %>% pull(numeric_cols[1L]))
   }
   
   # add surrogate columns to df
-  if (has_x(df) & !label_x %in% colnames(df) & label_x != "NULL") {
+  if (has_x(df) && !label_x %in% colnames(df) && label_x != "NULL") {
     df$`_label_x` <- get_x(df)
     colnames(df)[colnames(df) == "_label_x"] <- label_x
   }
-  if (has_y(df) & !label_y %in% colnames(df) & label_y != "NULL") {
+  if (has_y(df) && !label_y %in% colnames(df) && label_y != "NULL") {
     df$`_label_y` <- get_y(df)
     colnames(df)[colnames(df) == "_label_y"] <- label_y
   }
-  if (has_category(df) & !label_category %in% colnames(df) & label_category != "NULL") {
+  if (has_category(df) && !label_category %in% colnames(df) && label_category != "NULL") {
     df$`_label_category` <- get_category(df)
     colnames(df)[colnames(df) == "_label_category"] <- label_category
   }
-  if (has_facet(df) & !label_facet %in% colnames(df) & label_facet != "NULL") {
+  if (has_facet(df) && !label_facet %in% colnames(df) && label_facet != "NULL") {
     df$`_label_facet` <- get_facet(df)
     colnames(df)[colnames(df) == "_label_facet"] <- label_facet
   }
@@ -231,9 +233,22 @@ validate_data <- function(df,
   if (has_datalabels(df) && all(get_datalabels(df) == FALSE)) {
     df <- df %>% select(-`_var_datalabels`)
   }
-  # take datalabels from y axis if all are TRUE
+  # keep datalabels if all are TRUE
   if (has_datalabels(df) && all(get_datalabels(df) == TRUE)) {
-    df <- df %>% mutate(`_var_datalabels` = `_var_y`)
+    if (geom == "geom_sf") {
+      # take values from first character column
+      character_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.character)))
+      character_cols <- character_cols[character_cols %unlike% "^_var_"]
+      if (!is.na(character_cols[1L])) {
+        plot_message("Using ", font_blue("datalabels = ", character_cols[1L], collapse = NULL))
+        df <- df %>% mutate(`_var_datalabels` = df %>% pull(character_cols[1L]))
+      } else {
+        plot_warning("No suitable column found for ", font_blue("datalabels = TRUE"))
+      }
+    } else {
+      # take values from y
+      df <- df %>% mutate(`_var_datalabels` = `_var_y`)
+    }
   }
   
   # format datalabels
@@ -247,7 +262,7 @@ validate_data <- function(df,
   }
   
   # apply sortings
-  if (has_x(df)) {
+  if (has_x(df) && geom != "geom_sf") {
     if (is.null(dots$x.sort) && inherits(get_x(df), c("character", "factor"))) {
       dots$x.sort <- TRUE
     }
@@ -277,25 +292,24 @@ validate_data <- function(df,
                                       horizontal = FALSE)) # never reversely sort when horizontal
   }
   
-  # apply limitations (have to been after sorting, e.g. on frequency)
-  df <- set_max_items(df = df,
-                      y = get_y(df),
-                      x = get_x_name(df),
-                      x.max_items = dots$x.max_items,
-                      x.max_txt = dots$x.max_text,
-                      category = get_category_name(df), 
-                      category.max_items = dots$category.max_items,
-                      category.max_txt = dots$category.max_txt,
-                      facet = get_facet_name(df), 
-                      facet.max_items = dots$facet.max_items, 
-                      facet.max_txt = dots$facet.max_txt,
-                      horizontal = dots$horizontal,
-                      summarise_function = dots$summarise_function,
-                      decimal.mark = dots$decimal.mark,
-                      big.mark = dots$big.mark,
-                      datalabels.round = dots$datalabels.round)
-  
   if (geom != "geom_sf") {
+    # apply limitations (have to been after sorting, e.g. on frequency)
+    df <- set_max_items(df = df,
+                        y = get_y(df),
+                        x = get_x_name(df),
+                        x.max_items = dots$x.max_items,
+                        x.max_txt = dots$x.max_text,
+                        category = get_category_name(df), 
+                        category.max_items = dots$category.max_items,
+                        category.max_txt = dots$category.max_txt,
+                        facet = get_facet_name(df), 
+                        facet.max_items = dots$facet.max_items, 
+                        facet.max_txt = dots$facet.max_txt,
+                        horizontal = dots$horizontal,
+                        summarise_function = dots$summarise_function,
+                        decimal.mark = dots$decimal.mark,
+                        big.mark = dots$big.mark,
+                        datalabels.round = dots$datalabels.round)
     # sort on x, important when piping plot2()'s after plot2()'s
     df <- df %>% 
       arrange(across(`_var_x`))
@@ -377,7 +391,7 @@ validate_x_scale <- function(df,
       if (!is.numeric(get_x(df))) {
         scale_x_discrete(position = x.position)
       } else {
-        if (x.trans == "identity" & isTRUE(horizontal)) {
+        if (x.trans == "identity" && isTRUE(horizontal)) {
           x.trans <- reverse_trans()
         }
         if (is.null(x.limits)) {
@@ -555,112 +569,122 @@ validate_y_scale <- function(df,
 }
 
 #' @importFrom ggplot2 scale_fill_gradient2 scale_fill_gradient expansion guide_colourbar element_text
-validate_sf_scale <- function(df,
-                              y.24h,
-                              y.age,
-                              y.breaks,
-                              y.expand,
-                              y.fixed,
-                              y.labels,
-                              y.limits,
-                              y.percent,
-                              y.percent_break,
-                              y.position,
-                              y.trans,
-                              stackedpercent,
-                              facet.fixed_y,
-                              decimal.mark,
-                              big.mark,
-                              zoom,
-                              ...) {
-  labels_fn <- function(y.labels, format.NL = TRUE, ...) {
-    if (!is.null(y.labels)) {
-      y.labels
-    } else if (isTRUE(y.percent)) {
-      function(x, format_NL = format.NL, ...) format2.percentage(x, format.NL = format_NL)
+#' @importFrom certestyle format2
+validate_category_scale <- function(df,
+                                    cols,
+                                    category.labels,
+                                    category.percent,
+                                    category.breaks,
+                                    category.limits,
+                                    category.expand,
+                                    category.trans,
+                                    stackedpercent,
+                                    legend.nbin,
+                                    legend.barheight,
+                                    legend.barwidth,
+                                    legend.reverse,
+                                    decimal.mark,
+                                    big.mark,
+                                    family,
+                                    ...) {
+  # only for a numeric category scale
+  
+  labels_fn <- function(df, category.labels, category.percent, stackedpercent, decimal.mark, big.mark, ...) {
+    if (!is.null(category.labels)) {
+      category.labels
+    } else if (isTRUE(category.percent) | isTRUE(stackedpercent)) {
+      function(x, dec = decimal.mark, big = big.mark, ...) format2(as.percentage(x), decimal.mark = dec, big.mark = big)
     } else {
-      function(x, format_NL = format.NL, ...) format2(x, format.NL = format_NL)
+      function(x, dec = decimal.mark, big = big.mark, ...) format2(x, decimal.mark = dec, big.mark = big)
     }
   }
-  breaks_fn <- function(y.breaks = NULL, y.percent = FALSE, waiver = NULL, ...) {
-    if (!is.null(y.breaks)) {
-      y.breaks
-    } else if (isTRUE(y.percent)) {
+  breaks_fn <- function(category.breaks = NULL, category.percent = FALSE, waiver = NULL, ...) {
+    if (!is.null(category.breaks)) {
+      category.breaks
+    } else if (isTRUE(category.percent)) {
       seq(0, 1, 0.25)
     } else {
       scales::pretty_breaks()
     }
   }
-  limits_fn <- function(y.limits, y.percent = FALSE, ...) {
-    if (!is.null(y.limits)) {
-      y.limits
-    } else if (isTRUE(y.percent)) {
+  limits_fn <- function(category.limits, category.percent = FALSE, ...) {
+    if (!is.null(category.limits)) {
+      category.limits
+    } else if (isTRUE(category.percent)) {
       function(x, ...) c(min(0, x), max(1, x))
     } else {
       function(x, ...) c(min(0, x), max(x))
     }
   }
-  if (is.numeric(x.expand) && length(x.expand) == 1) {
-    x.expand <- expansion(mult = c(x.expand, x.expand))
+  if (is.numeric(category.expand)) {
+    category.expand <- expansion(mult = c(0, category.expand))
   }
-  if (is.numeric(y.expand)) {
-    y.expand <- expansion(mult = c(0, y.expand))
-  }
-  if (is.numeric(data %>% pull(y))) {
-    if (length(colour_set.fill) == 3) {
-      # 3 colours, so low, mid (default = 0) and high
-      if (names(colour_set.fill[2]) %like% "^[0-9.]+$") {
-        mid_point <- as.double(names(colour_set.fill[2]))
-      } else {
-        mid_point <- 0
-      }
-      scale_fill_gradient2(na.value = "white",
-                             low = colour_set.fill[1],
-                             mid = colour_set.fill[2],
-                             high = colour_set.fill[3],
-                             midpoint = mid_point,
-                             guide = guide_colourbar(ticks = FALSE,
-                                                     draw.ulim = TRUE,
-                                                     draw.llim = TRUE,
-                                                     reverse = ifelse(is.null(legend.reverse), TRUE, legend.reverse),
-                                                     title.theme = element_text(family = font.family,
-                                                                                face = "bold",
-                                                                                size = unit(10 * text.factor, 'pt'),
-                                                                                margin = margin(0, 0, 5, 0)),
-                                                     label.theme = element_text(family = font.family,
-                                                                                size = unit(9 * text.factor, 'pt')),
-                                                     nbin = legend.nbin,
-                                                     barheight = legend.barheight,
-                                                     barwidth = legend.barwidth,
-                                                     title = legend.title),
-                             labels = labels_fn(y.labels = y.labels, format.NL = format.NL, ...),
-                             breaks = breaks_fn(y.breaks = y.breaks, y.percent = y.percent, waiver = waiver(), ...),
-                             limits = limits_fn(y.limits = y.limits, y.percent = y.percent, ...),
-                             trans = y.trans)
+  
+  if (length(cols$colour_fill) == 3) {
+    # 3 colours, so low, mid (set as vector name) and high
+    if (!is.null(names(cols$colour_fill)) && names(cols$colour_fill[2]) %like% "^[0-9.]+$") {
+      mid_point <- as.double(names(cols$colour_fill[2]))
     } else {
-      # 2 colours, low and high
-      scale_fill_gradient(na.value = "white",
-                            low = colour_set.fill[1],
-                            high =  ifelse(length(colour_set.fill) == 3, colour_set.fill[3], colour_set.fill[2]),
-                            guide = guide_colourbar(ticks = FALSE,
-                                                    draw.ulim = TRUE,
-                                                    draw.llim = TRUE,
-                                                    reverse = ifelse(is.null(legend.reverse), TRUE, legend.reverse),
-                                                    title.theme = element_text(family = font.family,
-                                                                               face = "bold",
-                                                                               size = unit(10 * text.factor, 'pt'),
-                                                                               margin = margin(0, 0, 5, 0)),
-                                                    label.theme = element_text(family = font.family,
-                                                                               size = unit(9 * text.factor, 'pt')),
-                                                    nbin = legend.nbin,
-                                                    barheight = legend.barheight,
-                                                    barwidth = legend.barwidth,
-                                                    title = legend.title),
-                            labels = labels_fn(y.labels = y.labels, format.NL = format.NL, ...),
-                            breaks = breaks_fn(y.breaks = y.breaks, y.percent = y.percent, waiver = waiver(), ...),
-                            limits = limits_fn(y.limits = y.limits, y.percent = y.percent, ...),
-                            trans = y.trans)
+      # default will be set to the median
+      mid_point <- median(get_category(df), na.rm = TRUE)
     }
+    scale_fill_gradient2(na.value = "white",
+                         low = cols$colour_fill[1],
+                         mid = cols$colour_fill[2],
+                         high = cols$colour_fill[3],
+                         midpoint = mid_point,
+                         guide = guide_colourbar(ticks = FALSE,
+                                                 draw.ulim = TRUE,
+                                                 draw.llim = TRUE,
+                                                 reverse = isTRUE(legend.reverse),
+                                                 nbin = legend.nbin,
+                                                 barheight = legend.barheight,
+                                                 barwidth = legend.barwidth),
+                         labels = labels_fn(df = get_category(df),
+                                            category.labels = category.labels,
+                                            category.percent = category.percent,
+                                            stackedpercent = stackedpercent,
+                                            decimal.mark = decimal.mark,
+                                            big.mark = big.mark,
+                                            ...),
+                         breaks = breaks_fn(category.breaks = category.breaks,
+                                            category.percent = category.percent,
+                                            waiver = waiver(),
+                                            ...),
+                         limits = limits_fn(category.limits = category.limits,
+                                            category.percent = category.percent,
+                                            ...),
+                         trans = category.trans)
+  } else {
+    # 2 colours, low and high
+    if (length(cols$colour_fill) > 2) {
+      cols$colour_fill <- cols$colour_fill[1:2]
+    }
+    scale_fill_gradient(na.value = "white",
+                        low = cols$colour_fill[1],
+                        high =  cols$colour_fill[2],
+                        guide = guide_colourbar(ticks = FALSE,
+                                                draw.ulim = TRUE,
+                                                draw.llim = TRUE,
+                                                reverse = isTRUE(legend.reverse),
+                                                nbin = legend.nbin,
+                                                barheight = legend.barheight,
+                                                barwidth = legend.barwidth),
+                        labels = labels_fn(df = get_category(df),
+                                           category.labels = category.labels,
+                                           category.percent = category.percent,
+                                           stackedpercent = stackedpercent,
+                                           decimal.mark = decimal.mark,
+                                           big.mark = big.mark,
+                                           ...),
+                        breaks = breaks_fn(category.breaks = category.breaks,
+                                           category.percent = category.percent,
+                                           waiver = waiver(),
+                                           ...),
+                        limits = limits_fn(category.limits = category.limits,
+                                           category.percent = category.percent,
+                                           ...),
+                        trans = category.trans)
   }
 }
 
@@ -774,8 +798,8 @@ generate_geom <- function(geom,
     do.call(geom_fn,
             args = c(list(linetype = linetype,
                           size = size,
-                          na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)],
+                          na.rm = na.rm,
+                          colour = cols$colour),
                      list(fill = cols$colour_fill)[!has_category(df)]))
     
   } else {
@@ -792,11 +816,15 @@ generate_geom <- function(geom,
 
 #' @importFrom certestyle colourpicker add_white
 validate_colour <- function(df, colour, colour_fill, misses_colour_fill, horizontal, geom) {
-  
+
   if (geom_is_continuous(geom) && is.null(colour_fill) && any(colour %like% "certe")) {
     # exception for Certe: certeblauw (colour) -> certeblauw6 (colour_fill)
     colour_fill <- colourpicker(colour)
-    colour_fill[colour %like% "certe[a-z]*"] <- paste0(colour[colour %like% "certe[a-z]*"], "6")
+    if (geom == "geom_sf") {
+      colour_fill[colour %like% "certe[a-z]*"] <- paste0(colour[colour %like% "certe[a-z]*"], "3")
+    } else {
+      colour_fill[colour %like% "certe[a-z]*"] <- paste0(colour[colour %like% "certe[a-z]*"], "6")
+    }
   }
   if (isTRUE(misses_colour_fill) && is.null(colour_fill) && !geom_is_continuous(geom)) {
     colour_fill <- colour
@@ -824,6 +852,9 @@ validate_colour <- function(df, colour, colour_fill, misses_colour_fill, horizon
     if (geom_is_continuous(geom) && is.null(colour_fill)) {
       # specific treatment for continuous geoms (such as boxplots/violins/histograms/...)
       colour_fill <- add_white(colour, white = 0.35)
+    # } else if (geom == "geom_sf") {
+    #   colour_fill <- colourpicker(colour,
+    #                               length = ifelse(length(colour) == 1, length(unique(get_category(df))), 1))
     } else {
       colour_fill <- colourpicker(colour_fill,
                                   length = ifelse(length(colour_fill) == 1, length(unique(get_category(df))), 1))
@@ -845,6 +876,10 @@ validate_colour <- function(df, colour, colour_fill, misses_colour_fill, horizon
     if (length(colour_fill) < minimum_length) {
       colour_fill <- rep(colour_fill, minimum_length / length(colour_fill))
     }
+  }
+  
+  if (geom == "geom_sf" && !has_category(df)) {
+    colour_fill <- colour_fill[1]
   }
   
   list(colour = colour,
@@ -920,7 +955,7 @@ validate_theme <- function(theme,
     plot_warning("No valid ggplot2 theme, using ", font_blue("theme = ggplot2::theme_grey()"))
     theme <- NULL
   }
-  
+
   if (is_empty(theme)) {
     # turn to default ggplot2 theme, so we can at least:
     # - extend all element_text() classes with element_markdown()
@@ -929,18 +964,23 @@ validate_theme <- function(theme,
   }
   
   if (isTRUE(markdown)) {
-    # add 'element_markdown' to all text classes, which the ggtext pkg will use to print in markdown
+    # add 'element_markdown' to all titles, which the ggtext pkg will use to print in markdown
     # for this, the ggtext pkg has at least to be installed, but not loaded
-    attr_bak <- attributes(theme)
-    theme <- lapply(theme, function(el) {
-      if (inherits(el, "element_text")) {
+    add_markdown <- function(el) {
+      if (!is.null(el)) {
         class(el) <- c("element_markdown", class(el))
       }
       el
-    })
-    attributes(theme) <- attr_bak # restore class and all other attributes
+    }
+    theme$plot.title <- add_markdown(theme$plot.title)
+    theme$plot.subtitle <- add_markdown(theme$plot.subtitle)
+    theme$plot.caption <- add_markdown(theme$plot.caption)
+    theme$plot.tag <- add_markdown(theme$plot.tag)
+    theme$strip.text <- add_markdown(theme$strip.text)
+    theme$axis.title.x <- add_markdown(theme$axis.title.x)
+    # no y axis, so expressions can be used for labelling
   }
-  
+
   # set other properties to theme, set in plot2()
   if (isTRUE(horizontal)) {
     if (isTRUE(x.lbl_italic)) {
@@ -961,11 +1001,11 @@ validate_theme <- function(theme,
   if (!is.null(x.lbl_align)) {
     theme$axis.text.x$hjust <- x.lbl_align
   }
-  
+
   if (isTRUE(legend.italic)) {
     theme$legend.text$face <- "italic"
   }
-  
+
   theme$plot.title$colour <- colourpicker(title.colour)
   theme$plot.subtitle$colour <- colourpicker(subtitle.colour)
   # facet
@@ -981,7 +1021,7 @@ validate_theme <- function(theme,
   }
   theme$strip.text$margin <- margin(t = facet.margin, b = facet.margin / 2)
   theme$strip.text$size <- unit(facet.size, "pt")
-  
+
   # set the font family and font size, taking text_factor into account
   attr_bak <- attributes(theme)
   theme <- lapply(theme, function(el) {
@@ -992,12 +1032,11 @@ validate_theme <- function(theme,
         el$size <- as.double(el$size) * text_factor
         attributes(el$size) <- attr_el_bak
       }
-      class(el) <- c("element_markdown", class(el))
     }
     el
   })
   attributes(theme) <- attr_bak # restore class and all other attributes
-  tt <<- theme
+  
   # return the theme
   return(theme)
 }
@@ -1013,7 +1052,7 @@ validate_facet <- function(df,
                            facet.position,
                            horizontal) {
   scales <- "fixed"
-  if (isTRUE(facet.repeat_lbls_x) & isTRUE(facet.repeat_lbls_y)) {
+  if (isTRUE(facet.repeat_lbls_x) && isTRUE(facet.repeat_lbls_y)) {
     scales <- "free"
   } else if (isTRUE(facet.repeat_lbls_y)) {
     scales <- "free_y"
@@ -1086,7 +1125,7 @@ set_datalabels <- function(p,
     }
   }
   
-  if (!isTRUE(stacked) & !isTRUE(stackedpercent) & geom != "geom_sf") {
+  if (!isTRUE(stacked) && !isTRUE(stackedpercent) && geom != "geom_sf") {
     datalabels.fill <- colourpicker(datalabels.fill)
     datalabels.colour <- colourpicker(datalabels.colour)
   } else {
@@ -1094,7 +1133,7 @@ set_datalabels <- function(p,
     datalabels.colour <- colourpicker(datalabels.colour)
   }
   
-  is_sf <- geom == "geom_sf"
+  is_sf <- (geom == "geom_sf")
   
   # set label and text sizes
   text_horizontal <- 0.5
@@ -1128,7 +1167,7 @@ set_datalabels <- function(p,
   } else {
     geom_label_fn <- geom_sf_label
     geom_text_fn <- geom_sf_text
-    # thes functions from the 'sf' package fix invalid geometries
+    # these functions from the 'sf' package fix invalid geometries
     st_is_valid <- getExportedValue(name = "st_is_valid", ns = asNamespace("sf"))
     st_point <- getExportedValue(name = "st_point", ns = asNamespace("sf"))
     st_point_on_surface <- getExportedValue(name = "st_point_on_surface", ns = asNamespace("sf"))
@@ -1152,10 +1191,10 @@ set_datalabels <- function(p,
                           angle = datalabels.angle,
                           na.rm = TRUE),
                      # only when there's a category:
-                     list(position = position_fn)[has_category(df)],
+                     list(position = position_fn)[has_category(df) & !isTRUE(is_sf)],
                      # only when not stacked at all:
-                     list(label.padding = unit(0.25, "lines"))[!isTRUE(stacked) & !isTRUE(stackedpercent)],
-                     list(label.r = unit(0, "lines"))[!isTRUE(stacked) & !isTRUE(stackedpercent)],
+                     list(label.padding = unit(0.25, "lines"))[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
+                     list(label.r = unit(0, "lines"))[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
                      list(vjust = label_vertical)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
                      list(hjust = label_horizontal)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
                      # only when stackedpercent:
@@ -1172,7 +1211,7 @@ set_datalabels <- function(p,
                           angle = datalabels.angle,
                           na.rm = TRUE),
                      # only when there's a category:
-                     list(position = position_fn)[has_category(df)],
+                     list(position = position_fn)[has_category(df) & !isTRUE(is_sf)],
                      # only when not stacked at all:
                      list(vjust = text_vertical)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
                      list(hjust = text_horizontal)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
@@ -1183,7 +1222,7 @@ set_datalabels <- function(p,
                      list(fun.geometry = geometry_fix_fn)[isTRUE(is_sf)]))
   
   if (!isTRUE(is_sf)) {
-    if (!isTRUE(stacked) & !isTRUE(stackedpercent)) {
+    if (!isTRUE(stacked) && !isTRUE(stackedpercent)) {
       # move label layer to back + 1;
       # this will make the labels only interfere with plot lines,
       # not with the data (such as columns)
@@ -1222,10 +1261,12 @@ validate_sorting <- function(sort_method, horizontal) {
 #' @importFrom forcats fct_inorder fct_reorder
 #' @importFrom stringr str_sort
 sort_data <- function(original_values, sort_method, datapoints, summarise_function, horizontal, last_level) {
-  if (is.null(sort_method) || (isTRUE(sort_method) & is.factor(original_values) & !isTRUE(horizontal))) {
+  if (is.null(sort_method) ||
+      is.numeric(original_values) ||
+      ((isTRUE(sort_method) && is.factor(original_values) && !isTRUE(horizontal)))) {
     # don't sort at all
     return(original_values)
-  } else if (isTRUE(sort_method) & is.factor(original_values) & isTRUE(horizontal)) {
+  } else if (isTRUE(sort_method) && is.factor(original_values) && isTRUE(horizontal)) {
     # reverse the levels of the current factor since horizontal == TRUE
     return(factor(as.character(original_values),
                   levels = rev(levels(original_values)),

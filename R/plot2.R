@@ -117,6 +117,10 @@
 #'         smooth = TRUE,
 #'         title = "Titles/captions *support* **markdown**",
 #'         subtitle = "Axis titles contain the square notation: ^2")
+#'         
+#' # sf objects (geographic plots, 'simple features') are also supported
+#' netherlands %>% 
+#'   plot2(datalabels = TRUE)
 plot2 <- function(.data, ...) {
   # TO DO - copy arguments here from plot2.data.frame()
   UseMethod("plot2")
@@ -163,14 +167,20 @@ plot2.freq <- function(.data,
 #' @rdname plot2-methods
 #' @export
 plot2.sf <- function(.data,
-                     colour = "grey50",
-                     colour_fill = "white",
+                     x = NULL,
+                     y = NULL,
+                     colour = "grey25",
+                     colour_fill = c("white", "certeblauw"),
                      x.expand = 0,
                      y.expand = 0,
+                     x.title = NULL,
+                     y.title = NULL,
                      datalabels = FALSE,
                      datalabels.colour = "black",
                      size = 0.1,
                      legend.position = "right",
+                     legend.title = TRUE,
+                     legend.reverse = TRUE,
                      theme = theme_minimal2(panel.grid.major = element_blank(),
                                             panel.grid.minor = element_blank(),
                                             panel.border = element_blank(),
@@ -183,21 +193,35 @@ plot2.sf <- function(.data,
     stop("plotting 'sf' objects with plot2() requires the 'sf' package", call. = FALSE)
   }
   
-  plot2(as.data.frame(.data),
-        sf_column = attributes(.data)$sf_column,
-        x = "",
-        y = 0,
-        geom = "geom_sf",
-        colour = colour,
-        colour_fill = colour_fill,
-        x.expand = x.expand,
-        y.expand = y.expand,
-        datalabels = datalabels,
-        datalabels.colour = datalabels.colour,
-        size = size,
-        legend.position = legend.position,
-        theme = theme,
-        ...)
+  if (!is.null(x)) {
+    plot_warning("In 'sf' plots, ", font_blue("x"), " will be ignored - did you mean ", font_blue("category"), "?")
+  }
+  if (!is.null(y)) {
+    plot_warning("In 'sf' plots, ", font_blue("y"), " will be ignored - did you mean ", font_blue("category"), "?")
+  }
+  
+  .data %>% 
+    mutate(x = "", y = 0) %>% 
+    # remove 'sf' class here, or plot2.sf() will be called endlessly
+    structure(class = class(.)[class(.) != "sf"]) %>% 
+    plot2(sf_column = attributes(.data)$sf_column,
+          x = x,
+          y = y,
+          geom = "geom_sf",
+          colour = colour,
+          colour_fill = colour_fill,
+          x.expand = x_expand,
+          y.expand = y.expand,
+          x.title = x.title,
+          y.title = y.title,
+          datalabels = {{ datalabels }},
+          datalabels.colour = datalabels.colour,
+          size = size,
+          legend.position = legend.position,
+          legend.title = legend.title,
+          legend.reverse = legend.reverse,
+          theme = theme,
+          ...)
 }
 
 #' @rdname plot2-methods
@@ -269,6 +293,12 @@ plot2.data.frame <- function(.data = NULL,
                              y.expand = 0.25,
                              y.trans = "identity",
                              y.position = "left",
+                             category.labels = NULL,
+                             category.percent = FALSE,
+                             category.breaks = NULL,
+                             category.limits = NULL,
+                             category.expand = 0,
+                             category.trans = "identity",
                              x.sort = NULL,
                              category.sort = TRUE,
                              facet.sort = TRUE,
@@ -301,7 +331,7 @@ plot2.data.frame <- function(.data = NULL,
                              violin_scale = "count",
                              legend.position = "top",
                              legend.title = FALSE,
-                             legend.reverse = NULL,
+                             legend.reverse = FALSE,
                              legend.barheight = 5,
                              legend.barwidth = 1,
                              legend.nbin = 300,
@@ -369,15 +399,25 @@ plot2.data.frame <- function(.data = NULL,
   label_facet <- deparse(substitute(facet))
   
   # prepare data ----
-  df <- .data %>%
+  df <- .data
+  if (!is.null(dots$sf_column)) {
+    # we removed the 'sf' class in plot2.sf(), so that plot2.sf() would not be called endlessly
+    # add it here again
+    class(df) <- c("sf", class(df))
+  }
+  df <- df %>%
     mutate(`_var_y` = {{ y }},
            `_var_datalabels` = {{ datalabels }}) %>% 
     # add the three directions
-    add_direction({{ x }}, "x") %>% 
-    add_direction({{ category }}, "category") %>% 
-    add_direction({{ facet }}, "facet") %>% 
-    # remove any other S3 class, such as data.table and tbl_df
-    as.data.frame(stringsAsFactors = FALSE) %>% 
+    add_direction(direction = {{ x }},
+                  var_name = "x",
+                  sep = sep) %>% 
+    add_direction(direction = {{ category }}, 
+                  var_name = "category",
+                  sep = sep) %>% 
+    add_direction(direction = {{ facet }}, 
+                  var_name = "facet",
+                  sep = sep) %>% 
     # this part will transform the data as needed
     validate_data(misses_x = misses_x,
                   misses_category = misses_category,
@@ -420,6 +460,11 @@ plot2.data.frame <- function(.data = NULL,
     plot_message("Ignoring ", font_blue("y"), " for plot geom ", font_blue(gsub("geom_", "", geom)))
     df$`_var_y` <- df$`_var_x`
   }
+  # remove x from sf geom
+  if (geom == "geom_sf") {
+    df <- df %>% select(-`_var_x`)
+  }
+  
   
   # set default size and width ----
   size <- validate_size(size = size, geom = geom)
@@ -433,15 +478,14 @@ plot2.data.frame <- function(.data = NULL,
                           horizontal = horizontal,
                           geom = geom)
   
-  mapping <- aes()
   # generate mapping ----
-  print(has_x(df))
   if (geom == "geom_sf" && !is.null(dots$sf_column)) {
     mapping <- aes_string(geometry = dots$sf_column)
   } else if (!geom_is_continuous_x(geom)) {
     # histograms etc. have a continuous x variable, so only set y if not a histogram-like
     mapping <- aes(y = `_var_y`, group = 1)
   } else {
+    mapping <- aes()
     if (missing(zoom)) {
       zoom <- TRUE
     }
@@ -451,9 +495,15 @@ plot2.data.frame <- function(.data = NULL,
                                               group = `_var_x`))
   }
   if (has_category(df)) {
-    mapping <- utils::modifyList(mapping, aes(fill = `_var_category`,
-                                              colour = `_var_category`,
-                                              group = `_var_category`))
+    if (geom == "geom_sf") {
+      # no colour in sf's
+      mapping <- utils::modifyList(mapping, aes(fill = `_var_category`,
+                                                group = `_var_category`))
+    } else {
+      mapping <- utils::modifyList(mapping, aes(fill = `_var_category`,
+                                                colour = `_var_category`,
+                                                group = `_var_category`))
+    }
   }
   if (geom_is_continuous(geom)) {
     # remove the group from the mapping
@@ -504,11 +554,15 @@ plot2.data.frame <- function(.data = NULL,
                 list(colour = cols$colour[1L])[!has_category(df)]))
   }
   
-  # add colours
-  p <- p +
-    scale_colour_manual(values = cols$colour) +
-    scale_fill_manual(values = cols$colour_fill)
   
+  
+  # add colours
+  if (geom != "geom_sf") {
+    p <- p +
+      scale_colour_manual(values = cols$colour) +
+      scale_fill_manual(values = cols$colour_fill)
+  }
+
   # add axis labels ----
   p <- p +
     labs(x = get_x_name(df),
@@ -529,11 +583,28 @@ plot2.data.frame <- function(.data = NULL,
   }
   
   # add the right scales ----
-  # x axis
-  if (geom == "geom_sf") {
-    # p <- p + 
-    #   validate_sf_scale()
-  } else {
+  
+  if (has_category(df) && is.numeric(get_category(df))) {
+    p <- p + 
+      validate_category_scale(df = df,
+                              cols = cols,
+                              category.labels = category.labels,
+                              category.percent = category.percent,
+                              category.breaks = category.breaks,
+                              category.limits = category.limits,
+                              category.expand = category.expand,
+                              category.trans = category.trans,
+                              stackedpercent = stackedpercent,
+                              legend.nbin = legend.nbin,
+                              legend.barheight = legend.barheight,
+                              legend.barwidth = legend.barwidth,
+                              legend.reverse = legend.reverse,
+                              decimal.mark = decimal.mark,
+                              big.mark = big.mark,
+                              family = family)
+  }
+  if (geom != "geom_sf") {
+    # x axis
     p <- p + 
       validate_x_scale(df = df,
                        x.date_breaks = x.date_breaks,
@@ -548,7 +619,6 @@ plot2.data.frame <- function(.data = NULL,
                        big.mark = big.mark,
                        horizontal = horizontal,
                        zoom = zoom)
-    
     # y axis
     p <- p +
       validate_y_scale(df = df,
@@ -591,7 +661,7 @@ plot2.data.frame <- function(.data = NULL,
   if (!is_empty(theme)) {
     p <- p + theme
   }
-  
+
   # add titles ----
   if (!missing(x.title)) p <- p + labs(x = validate_titles(x.title)) # this will overwrite the var name
   if (!missing(y.title)) p <- p + labs(y = validate_titles(y.title)) # this will overwrite the var name

@@ -58,7 +58,7 @@ admitted_patients %>%
 
 # Setting the values
 
-# Sorting {sorting}
+# Sorting {.sorting}
 
 # Transforming
 
@@ -71,6 +71,7 @@ Objects of class `sf` (*simple feature*) are treated specially by the `ggplot2` 
 The `netherlands` data set is such an `sf` object:
 
 ```{r}
+library(sf)
 print(netherlands)
 ```
 

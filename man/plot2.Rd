@@ -115,4 +115,8 @@ mtcars \%>\%
         smooth = TRUE,
         title = "Titles/captions *support* **markdown**",
         subtitle = "Axis titles contain the square notation: ^2")
+        
+# sf objects (geographic plots, 'simple features') are also supported
+netherlands \%>\% 
+  plot2(datalabels = TRUE)
 }

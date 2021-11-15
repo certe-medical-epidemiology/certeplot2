@@ -17,7 +17,7 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-#' @importFrom certestyle font_black font_blue font_red
+#' @importFrom certestyle font_black font_blue font_red_bg font_white
 plot_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", geom = "info") {
   if (isTRUE(print)) {
     msg <- paste0(font_black(c(...), collapse = NULL), collapse = "")
@@ -30,7 +30,7 @@ plot_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") !
         icon <- font_blue("i")
       }
     } else {
-      icon <- font_red("!")
+      icon <- font_red_bg(font_white(" ! "))
     }
     message(paste(icon, font_black(msg)))
   }
@@ -208,7 +208,11 @@ geom_is_continuous_x <- function(geom) {
 
 #' @importFrom dplyr `%>%` group_by across group_size
 group_sizes <- function(df) {
-  df %>% 
-    group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df)))) %>%
-    group_size()
+  if (inherits(df, "sf")) {
+    nrow(df)
+  } else {
+    df %>% 
+      group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df)))) %>%
+      group_size()
+  }
 }
