@@ -45,10 +45,10 @@ jobs:
           - {os: macOS-latest,   r: '4.1',     allowfail: false}
           - {os: macOS-latest,   r: '4.0',     allowfail: false}
           - {os: macOS-latest,   r: '3.6',     allowfail: false}
-          - {os: ubuntu-20.04,   r: 'devel',   allowfail: true,  rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-20.04,   r: '4.1',     allowfail: false, rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-20.04,   r: '4.0',     allowfail: false, rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-20.04,   r: '3.6',     allowfail: false, rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-20.04,   r: 'devel',   allowfail: true, http-user-agent: 'release'}
+          - {os: ubuntu-20.04,   r: '4.1',     allowfail: false}
+          - {os: ubuntu-20.04,   r: '4.0',     allowfail: false}
+          - {os: ubuntu-20.04,   r: '3.6',     allowfail: false}
           - {os: windows-latest, r: 'devel',   allowfail: true}
           - {os: windows-latest, r: '4.1',     allowfail: false}
           - {os: windows-latest, r: '4.0',     allowfail: false}
@@ -57,11 +57,16 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      
     steps:
       - uses: actions/checkout@v2
 
+      - uses: r-lib/actions/setup-pandoc@v1
+
       - uses: r-lib/actions/setup-r@v1
         with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
           # be sure to enable our R-universe
           extra-repositories: 'https://certe-medical-epidemiology.r-universe.dev'

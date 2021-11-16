@@ -71,7 +71,7 @@ validate_geom <- function(geom, df = NULL) {
     geom <- gsub("s$", "", geom)
   }
   
-  valid_geoms <- ls(pattern = "^geom_", env = asNamespace("ggplot2"))
+  valid_geoms <- ls(pattern = "^geom_", envir = asNamespace("ggplot2"))
   if (!geom %in% valid_geoms) {
     if (any(valid_geoms %like% geom)) {
       geom <- valid_geoms[valid_geoms %like% geom][1L]
@@ -214,19 +214,19 @@ validate_data <- function(df,
   # add surrogate columns to df
   if (has_x(df) && !label_x %in% colnames(df) && label_x != "NULL") {
     df$`_label_x` <- get_x(df)
-    colnames(df)[colnames(df) == "_label_x"] <- label_x
+    colnames(df)[colnames(df) == "_label_x"] <- concat(label_x)
   }
   if (has_y(df) && !label_y %in% colnames(df) && label_y != "NULL") {
     df$`_label_y` <- get_y(df)
-    colnames(df)[colnames(df) == "_label_y"] <- label_y
+    colnames(df)[colnames(df) == "_label_y"] <- concat(label_y)
   }
   if (has_category(df) && !label_category %in% colnames(df) && label_category != "NULL") {
     df$`_label_category` <- get_category(df)
-    colnames(df)[colnames(df) == "_label_category"] <- label_category
+    colnames(df)[colnames(df) == "_label_category"] <- concat(label_category)
   }
   if (has_facet(df) && !label_facet %in% colnames(df) && label_facet != "NULL") {
     df$`_label_facet` <- get_facet(df)
-    colnames(df)[colnames(df) == "_label_facet"] <- label_facet
+    colnames(df)[colnames(df) == "_label_facet"] <- concat(label_facet)
   }
   
   # remove datalabels if all are FALSE
@@ -417,7 +417,6 @@ validate_y_scale <- function(df,
                              y.age,
                              y.breaks,
                              y.expand,
-                             y.fixed,
                              y.labels,
                              y.limits,
                              y.percent,
@@ -568,15 +567,17 @@ validate_y_scale <- function(df,
   )
 }
 
-#' @importFrom ggplot2 scale_fill_gradient2 scale_fill_gradient expansion guide_colourbar element_text
+#' @importFrom ggplot2 scale_colour_gradient2 scale_colour_gradient scale_colour_viridis_c expansion guide_colourbar element_text
 #' @importFrom certestyle format2
 validate_category_scale <- function(df,
+                                    geom,
                                     cols,
                                     category.labels,
                                     category.percent,
                                     category.breaks,
                                     category.limits,
                                     category.expand,
+                                    category.midpoint,
                                     category.trans,
                                     stackedpercent,
                                     legend.nbin,
@@ -620,71 +621,70 @@ validate_category_scale <- function(df,
     category.expand <- expansion(mult = c(0, category.expand))
   }
   
-  if (length(cols$colour_fill) == 3) {
+  if (geom_has_only_colour(geom)) {
+    aest <- c("colour", "fill")
+    cols_category <- cols$colour
+  } else {
+    aest <- "fill"
+    cols_category <- cols$colour_fill
+  }
+  
+  # general arguments for any scale function below (there called with do.cal())
+  args <- list(aesthetics = aest,
+               na.value = "white",
+               guide = guide_colourbar(ticks = FALSE,
+                                       draw.ulim = TRUE,
+                                       draw.llim = TRUE,
+                                       reverse = isTRUE(legend.reverse),
+                                       nbin = legend.nbin,
+                                       barheight = legend.barheight,
+                                       barwidth = legend.barwidth),
+               labels = labels_fn(df = get_category(df),
+                                  category.labels = category.labels,
+                                  category.percent = category.percent,
+                                  stackedpercent = stackedpercent,
+                                  decimal.mark = decimal.mark,
+                                  big.mark = big.mark,
+                                  ...),
+               breaks = breaks_fn(category.breaks = category.breaks,
+                                  category.percent = category.percent,
+                                  waiver = waiver(),
+                                  ...),
+               limits = limits_fn(category.limits = category.limits,
+                                  category.percent = category.percent,
+                                  ...),
+               trans = category.trans)
+  
+  # support divergent viridis scale
+  if (isTRUE(cols$viridis)) {
+    do.call(scale_colour_viridis_c,
+            args = args)
+    
+  } else if (length(cols_category) == 3) {
     # 3 colours, so low, mid (set as vector name) and high
-    if (!is.null(names(cols$colour_fill)) && names(cols$colour_fill[2]) %like% "^[0-9.]+$") {
-      mid_point <- as.double(names(cols$colour_fill[2]))
+    if (!is.null(category.midpoint)) {
+      mid_point <- as.double(category.midpoint)
     } else {
       # default will be set to the median
-      mid_point <- median(get_category(df), na.rm = TRUE)
+      mid_point <- stats::median(get_category(df), na.rm = TRUE)
+      plot_message("Using ", font_blue("category.midpoint =", round(mid_point, 2)),
+                   " (the median) for the ", font_blue("category"), " scale")
     }
-    scale_fill_gradient2(na.value = "white",
-                         low = cols$colour_fill[1],
-                         mid = cols$colour_fill[2],
-                         high = cols$colour_fill[3],
-                         midpoint = mid_point,
-                         guide = guide_colourbar(ticks = FALSE,
-                                                 draw.ulim = TRUE,
-                                                 draw.llim = TRUE,
-                                                 reverse = isTRUE(legend.reverse),
-                                                 nbin = legend.nbin,
-                                                 barheight = legend.barheight,
-                                                 barwidth = legend.barwidth),
-                         labels = labels_fn(df = get_category(df),
-                                            category.labels = category.labels,
-                                            category.percent = category.percent,
-                                            stackedpercent = stackedpercent,
-                                            decimal.mark = decimal.mark,
-                                            big.mark = big.mark,
-                                            ...),
-                         breaks = breaks_fn(category.breaks = category.breaks,
-                                            category.percent = category.percent,
-                                            waiver = waiver(),
-                                            ...),
-                         limits = limits_fn(category.limits = category.limits,
-                                            category.percent = category.percent,
-                                            ...),
-                         trans = category.trans)
+    do.call(scale_colour_gradient2,
+            args = c(list(low = cols_category[1],
+                          mid = cols_category[2],
+                          high = cols_category[3],
+                          midpoint = mid_point),
+                     args))
   } else {
     # 2 colours, low and high
-    if (length(cols$colour_fill) > 2) {
-      cols$colour_fill <- cols$colour_fill[1:2]
+    if (length(cols_category) > 2) {
+      cols_category <- c(cols_category[1], cols_category[length(cols_category)])
     }
-    scale_fill_gradient(na.value = "white",
-                        low = cols$colour_fill[1],
-                        high =  cols$colour_fill[2],
-                        guide = guide_colourbar(ticks = FALSE,
-                                                draw.ulim = TRUE,
-                                                draw.llim = TRUE,
-                                                reverse = isTRUE(legend.reverse),
-                                                nbin = legend.nbin,
-                                                barheight = legend.barheight,
-                                                barwidth = legend.barwidth),
-                        labels = labels_fn(df = get_category(df),
-                                           category.labels = category.labels,
-                                           category.percent = category.percent,
-                                           stackedpercent = stackedpercent,
-                                           decimal.mark = decimal.mark,
-                                           big.mark = big.mark,
-                                           ...),
-                        breaks = breaks_fn(category.breaks = category.breaks,
-                                           category.percent = category.percent,
-                                           waiver = waiver(),
-                                           ...),
-                        limits = limits_fn(category.limits = category.limits,
-                                           category.percent = category.percent,
-                                           ...),
-                        trans = category.trans)
+    do.call(scale_colour_gradient,
+            args = c(list(low = cols_category[1],
+                          high =  cols_category[2]),
+                     args))
   }
 }
 
@@ -815,8 +815,34 @@ generate_geom <- function(geom,
 }
 
 #' @importFrom certestyle colourpicker add_white
-validate_colour <- function(df, colour, colour_fill, misses_colour_fill, horizontal, geom) {
-
+validate_colour <- function(df, geom, colour, colour_fill, misses_colour_fill, horizontal) {
+  
+  if (geom_is_continuous(geom) && geom_has_only_colour(geom) && is.numeric(get_category(df))) {
+    if (identical(colour, "viridis") | identical(colour_fill, "viridis")) {
+      # choses for viridis, which will lead to scale_colour_viridis_c() in validate_category_scale()
+      # set the colours here just for the mapping (to allow extension with `+`)
+      return(list(colour = colourpicker(colour, 2),
+                  colour_fill = colourpicker(colour, 2),
+                  viridis = TRUE))
+    } else {
+      if (length(colour) == 1) {
+        # in something like point or jitter, start with white
+        colour <- c("white", colourpicker(colour))
+      } else if (length(colour) %in% c(2:3)) {
+        # two or three colours are supported in validate_category_scale()
+        colour <- colourpicker(colour)
+      } else {
+        # more colours than needed, take only first two
+        colour <- colourpicker(colour, 2)
+      }
+      if (is.null(colour_fill)) {
+        colour_fill <- colour
+      }
+      return(list(colour = colour,
+                  colour_fill = colour_fill))
+    }
+  }
+  
   if (geom_is_continuous(geom) && is.null(colour_fill) && any(colour %like% "certe")) {
     # exception for Certe: certeblauw (colour) -> certeblauw6 (colour_fill)
     colour_fill <- colourpicker(colour)
@@ -847,8 +873,9 @@ validate_colour <- function(df, colour, colour_fill, misses_colour_fill, horizon
     
   } else {
     # has also category
+    n_unique <- length(unique(get_category(df)))
     colour <- colourpicker(colour,
-                           length = ifelse(length(colour) == 1, length(unique(get_category(df))), 1))
+                           length = ifelse(length(colour) == 1, n_unique, 1))
     if (geom_is_continuous(geom) && is.null(colour_fill)) {
       # specific treatment for continuous geoms (such as boxplots/violins/histograms/...)
       colour_fill <- add_white(colour, white = 0.35)
@@ -857,7 +884,7 @@ validate_colour <- function(df, colour, colour_fill, misses_colour_fill, horizon
     #                               length = ifelse(length(colour) == 1, length(unique(get_category(df))), 1))
     } else {
       colour_fill <- colourpicker(colour_fill,
-                                  length = ifelse(length(colour_fill) == 1, length(unique(get_category(df))), 1))
+                                  length = ifelse(length(colour_fill) == 1, n_unique, 1))
     }
     
     if (isTRUE(horizontal)) {
@@ -978,7 +1005,7 @@ validate_theme <- function(theme,
     theme$plot.tag <- add_markdown(theme$plot.tag)
     theme$strip.text <- add_markdown(theme$strip.text)
     theme$axis.title.x <- add_markdown(theme$axis.title.x)
-    # no y axis, so expressions can be used for labelling
+    theme$axis.title.y <- add_markdown(theme$axis.title.y)
   }
 
   # set other properties to theme, set in plot2()

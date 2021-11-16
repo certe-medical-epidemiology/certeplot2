@@ -17,6 +17,14 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
+globalVariables(c(".",
+                  "n",
+                  "_var_category",
+                  "_var_datalabels",
+                  "_var_facet",
+                  "_var_x",
+                  "_var_y"))
+
 #' @importFrom certestyle font_black font_blue font_red_bg font_white
 plot_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", geom = "info") {
   if (isTRUE(print)) {
@@ -204,6 +212,10 @@ geom_is_continuous <- function(geom) {
 }
 geom_is_continuous_x <- function(geom) {
   geom %in% c("geom_histogram", "geom_density")
+}
+geom_has_only_colour <- function(geom) {
+  geom %in% c("geom_point", "geom_jitter", "geom_line", "geom_hline", "geom_vline",
+              "geom_path", "geom_qq_line", "geom_linerange", "geom_pointrange")
 }
 
 #' @importFrom dplyr `%>%` group_by across group_size

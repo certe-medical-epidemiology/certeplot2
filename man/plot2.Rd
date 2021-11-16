@@ -4,10 +4,360 @@
 \alias{plot2}
 \title{Conveniently Create a New \code{ggplot}}
 \usage{
-plot2(.data, ...)
+plot2(
+  .data,
+  x = NULL,
+  y = NULL,
+  category = NULL,
+  facet = NULL,
+  geom = NULL,
+  x.title = NULL,
+  y.title = NULL,
+  title = NULL,
+  subtitle = NULL,
+  caption = NULL,
+  tag = NULL,
+  title.linelength = 60,
+  title.colour = "black",
+  subtitle.linelength = 60,
+  subtitle.colour = "grey35",
+  na.replace = "(??)",
+  na.rm = FALSE,
+  facet.position = "top",
+  facet.fill = NULL,
+  facet.bold = TRUE,
+  facet.italic = FALSE,
+  facet.size = 10,
+  facet.margin = 8,
+  facet.repeat_lbls_x = TRUE,
+  facet.repeat_lbls_y = FALSE,
+  facet.fixed_y = FALSE,
+  facet.drop = FALSE,
+  facet.nrow = NULL,
+  facet.relative = FALSE,
+  x.date_breaks = NULL,
+  x.date_labels = NULL,
+  category.focus = NULL,
+  colour = "certe",
+  colour_fill = NULL,
+  x.lbl_angle = 0,
+  x.lbl_align = NULL,
+  x.lbl_italic = FALSE,
+  x.remove = FALSE,
+  x.position = "bottom",
+  x.max_items = Inf,
+  x.max_txt = "(rest, x \%n)",
+  category.max_items = Inf,
+  category.max_txt = "(rest, x \%n)",
+  facet.max_items = Inf,
+  facet.max_txt = "(rest, x \%n)",
+  x.breaks = NULL,
+  x.breaks_n = NULL,
+  x.trans = "identity",
+  x.expand = 0.5,
+  x.limits = NULL,
+  x.character = NULL,
+  y.remove = FALSE,
+  y.24h = FALSE,
+  y.age = FALSE,
+  y.percent = FALSE,
+  y.percent_break = 10,
+  y.breaks = NULL,
+  y.limits = NULL,
+  y.labels = NULL,
+  y.expand = 0.25,
+  y.trans = "identity",
+  y.position = "left",
+  category.labels = NULL,
+  category.percent = FALSE,
+  category.breaks = NULL,
+  category.limits = NULL,
+  category.expand = 0,
+  category.midpoint = NULL,
+  category.trans = "identity",
+  x.sort = NULL,
+  category.sort = TRUE,
+  facet.sort = TRUE,
+  datalabels = TRUE,
+  datalabels.round = ifelse(y.percent, 2, 1),
+  datalabels.colour = "grey25",
+  datalabels.fill = NULL,
+  datalabels.size = (3 * text_factor),
+  datalabels.angle = 0,
+  decimal.mark = ",",
+  big.mark = ".",
+  summarise_function = base::sum,
+  stacked = FALSE,
+  stackedpercent = FALSE,
+  horizontal = FALSE,
+  reverse = horizontal,
+  smooth = FALSE,
+  smooth.method = NULL,
+  smooth.formula = NULL,
+  smooth.se = TRUE,
+  smooth.level = 0.95,
+  smooth.alpha = 0.15,
+  smooth.size = 0.75,
+  smooth.linetype = 3,
+  size = NULL,
+  linetype = 1,
+  bins = NULL,
+  width = NULL,
+  jitter_seed = NA,
+  violin_scale = "count",
+  legend.position = "top",
+  legend.title = NULL,
+  legend.reverse = FALSE,
+  legend.barheight = 6,
+  legend.barwidth = 1.5,
+  legend.nbin = 300,
+  legend.italic = FALSE,
+  zoom = FALSE,
+  sep = "/",
+  print = FALSE,
+  text_factor = 1,
+  family = "Calibri",
+  theme = theme_minimal2(horizontal = horizontal),
+  markdown = TRUE,
+  x.category = NULL,
+  y.category = NULL,
+  ...
+)
 }
 \arguments{
 \item{.data}{data to plot}
+
+\item{x}{plotting 'direction': the x axis}
+
+\item{y}{values to use for plotting along the y axis}
+
+\item{category}{plotting 'direction': the category (called 'fill' and 'colour' in \code{ggplot2})}
+
+\item{facet}{plotting 'direction': the facet}
+
+\item{geom}{type of visualisation to use, supports all \code{ggplot2} geoms}
+
+\item{x.title}{text to show on the x asis}
+
+\item{y.title}{text to show on the y asis}
+
+\item{title}{title to show}
+
+\item{subtitle}{subtitle to show}
+
+\item{caption}{caption to show}
+
+\item{tag}{tag to show}
+
+\item{title.linelength}{maximum number of characters per line in the title, before a linebreak occurs}
+
+\item{title.colour}{text colour of the title}
+
+\item{subtitle.linelength}{maximum number of characters per line in the subtitle, before a linebreak occurs}
+
+\item{subtitle.colour}{text colour of the subtitle}
+
+\item{na.replace}{character to put in place of \code{NA} values if \code{na.rm = FALSE}}
+
+\item{na.rm}{remove \code{NA} values from showing in the plot}
+
+\item{facet.position}{text}
+
+\item{facet.fill}{text}
+
+\item{facet.bold}{text}
+
+\item{facet.italic}{text}
+
+\item{facet.size}{text}
+
+\item{facet.margin}{text}
+
+\item{facet.repeat_lbls_x}{text}
+
+\item{facet.repeat_lbls_y}{text}
+
+\item{facet.fixed_y}{text}
+
+\item{facet.drop}{text}
+
+\item{facet.nrow}{text}
+
+\item{facet.relative}{text}
+
+\item{x.date_breaks}{text}
+
+\item{x.date_labels}{text}
+
+\item{category.focus}{text}
+
+\item{colour}{text}
+
+\item{colour_fill}{text}
+
+\item{x.lbl_angle}{text}
+
+\item{x.lbl_align}{text}
+
+\item{x.lbl_italic}{text}
+
+\item{x.remove}{text}
+
+\item{x.position}{text}
+
+\item{x.max_items}{text}
+
+\item{x.max_txt}{text}
+
+\item{category.max_items}{text}
+
+\item{category.max_txt}{text}
+
+\item{facet.max_items}{text}
+
+\item{facet.max_txt}{text}
+
+\item{x.breaks}{text}
+
+\item{x.breaks_n}{text}
+
+\item{x.trans}{text}
+
+\item{x.expand}{text}
+
+\item{x.limits}{text}
+
+\item{x.character}{text}
+
+\item{y.remove}{text}
+
+\item{y.24h}{text}
+
+\item{y.age}{text}
+
+\item{y.percent}{text}
+
+\item{y.percent_break}{text}
+
+\item{y.breaks}{text}
+
+\item{y.limits}{text}
+
+\item{y.labels}{text}
+
+\item{y.expand}{text}
+
+\item{y.trans}{text}
+
+\item{y.position}{text}
+
+\item{category.labels}{text}
+
+\item{category.percent}{text}
+
+\item{category.breaks}{text}
+
+\item{category.limits}{text}
+
+\item{category.expand}{text}
+
+\item{category.midpoint}{text}
+
+\item{category.trans}{text}
+
+\item{x.sort}{text}
+
+\item{category.sort}{text}
+
+\item{facet.sort}{text}
+
+\item{datalabels}{text}
+
+\item{datalabels.round}{text}
+
+\item{datalabels.colour}{text}
+
+\item{datalabels.fill}{text}
+
+\item{datalabels.size}{text}
+
+\item{datalabels.angle}{text}
+
+\item{decimal.mark}{text}
+
+\item{big.mark}{text}
+
+\item{summarise_function}{text}
+
+\item{stacked}{text}
+
+\item{stackedpercent}{text}
+
+\item{horizontal}{text}
+
+\item{reverse}{text}
+
+\item{smooth}{text}
+
+\item{smooth.method}{text}
+
+\item{smooth.formula}{text}
+
+\item{smooth.se}{text}
+
+\item{smooth.level}{text}
+
+\item{smooth.alpha}{text}
+
+\item{smooth.size}{text}
+
+\item{smooth.linetype}{text}
+
+\item{size}{text}
+
+\item{linetype}{text}
+
+\item{bins}{text}
+
+\item{width}{text}
+
+\item{jitter_seed}{text}
+
+\item{violin_scale}{text}
+
+\item{legend.position}{text}
+
+\item{legend.title}{text}
+
+\item{legend.reverse}{text}
+
+\item{legend.barheight}{text}
+
+\item{legend.barwidth}{text}
+
+\item{legend.nbin}{text}
+
+\item{legend.italic}{text}
+
+\item{zoom}{a \link{logical} to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0}
+
+\item{sep}{separator character to use if multiple columns are given to either of the three directions: \code{x}, \code{category} and \code{facet}}
+
+\item{print}{a \link{logical} to indicate if the result should be \link[=print]{printed} instead of just returned}
+
+\item{text_factor}{text factor to use, which will apply to all texts shown in the plot}
+
+\item{family}{font family to use}
+
+\item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}}
+
+\item{markdown}{text}
+
+\item{x.category}{old argument for \code{facet}, now deprecated}
+
+\item{y.category}{old argument for \code{category}, now deprecated}
+
+\item{...}{arguments passed on to methods}
 }
 \value{
 The \code{\link[=plot2]{plot2()}} function adds new variables to the data for each mapping: any combination of \verb{_var_x}, \verb{_var_y}, \verb{_var_category}, \verb{_var_facet}. These columns are internally set as mapping with \code{\link[ggplot2:aes]{aes()}}.
@@ -37,7 +387,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. For \link{data.frame}s, \code{\link[=plot2]{plot2()}} currently has 116 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)
@@ -52,6 +402,19 @@ plot2(iris, zoom = TRUE)
 # if x and y are set, no addition mapping will be set:
 plot2(iris, Sepal.Width, Sepal.Length)
 plot2(iris, Species, Sepal.Length)
+
+# the arguments are in this order: x, y, category, facet
+plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species)
+
+plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species,
+      colour = "viridis") # set the viridis colours
+      
+plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species,
+      colour = c("white", "red", "black")) # set own colours
+      
+plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species,
+      colour = c("white", "red", "black"), # set own colours
+      category.midpoint = 3)               # with an own midpoint
 
 # change to any geom
 plot2(iris, Species, Sepal.Length, geom = "violin")
@@ -70,7 +433,7 @@ admitted_patients \%>\%
   
 admitted_patients \%>\%
   plot2(hospital, age, gender, ward)
-        
+
 admitted_patients \%>\%
   plot2(x = hospital,
         category = gender,
@@ -87,6 +450,7 @@ admitted_patients \%>\%
 # set in non-continuous geoms:
 patients_per_hospital_gender <- admitted_patients \%>\%
   count(hospital, gender)
+  
 head(patients_per_hospital_gender)
   
 patients_per_hospital_gender \%>\%
@@ -117,6 +481,8 @@ mtcars \%>\%
         subtitle = "Axis titles contain the square notation: ^2")
         
 # sf objects (geographic plots, 'simple features') are also supported
-netherlands \%>\% 
-  plot2(datalabels = TRUE)
+if (require("sf")) {
+  netherlands \%>\% 
+    plot2(datalabels = TRUE)
+}
 }

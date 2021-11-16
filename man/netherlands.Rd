@@ -5,7 +5,7 @@
 \alias{netherlands}
 \title{Example Geography Data Set: the Netherlands}
 \format{
-An \link{sf}/\link{data.frame} with 12 observations and 3 variables:
+A \link{data.frame} with 12 observations and 3 variables:
 \itemize{
 \item \code{province}\cr name of the Dutch province
 \item \code{area_km2}\cr area in square kilometres

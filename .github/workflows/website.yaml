@@ -43,6 +43,11 @@ jobs:
         with:
           extra-packages: pkgdown
           needs: website
+          
+      - name: Install fonts
+        run: |
+          extrafont::font_import(prompt = FALSE)
+        shell: Rscript {0}
 
       - name: Generate Dutch locale for website examples
         run: |

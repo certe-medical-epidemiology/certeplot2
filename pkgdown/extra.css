@@ -12,7 +12,7 @@ a, a code {
   color: #01617E !important;
 }
 .navbar-default {
-  background-color: #F0F8FB;
+  background-color: white;
   border-color: #01617E;
 }
 .label-default {
@@ -21,5 +21,5 @@ a, a code {
 .navbar-default .navbar-nav>.active>a,
 .navbar-default .navbar-nav>.active>a:focus,
 .navbar-default .navbar-nav>.active>a:hover {
-  background-color: white !important;
+  background-color: #F0F8FB !important;
 }
