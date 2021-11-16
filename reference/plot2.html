@@ -83,7 +83,7 @@ See plot2-methods for all implemented methods for different object classes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.15</span>
       </span>
     </div>
 
@@ -149,7 +149,125 @@ See plot2-methods for all implemented methods for different object classes." />
 <p>See <a href='plot2-methods.html'>plot2-methods</a> for all implemented methods for different object classes.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>.data</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>plot2</span><span class='op'>(</span>
+  <span class='va'>.data</span>,
+  x <span class='op'>=</span> <span class='cn'>NULL</span>,
+  y <span class='op'>=</span> <span class='cn'>NULL</span>,
+  category <span class='op'>=</span> <span class='cn'>NULL</span>,
+  facet <span class='op'>=</span> <span class='cn'>NULL</span>,
+  geom <span class='op'>=</span> <span class='cn'>NULL</span>,
+  x.title <span class='op'>=</span> <span class='cn'>NULL</span>,
+  y.title <span class='op'>=</span> <span class='cn'>NULL</span>,
+  title <span class='op'>=</span> <span class='cn'>NULL</span>,
+  subtitle <span class='op'>=</span> <span class='cn'>NULL</span>,
+  caption <span class='op'>=</span> <span class='cn'>NULL</span>,
+  tag <span class='op'>=</span> <span class='cn'>NULL</span>,
+  title.linelength <span class='op'>=</span> <span class='fl'>60</span>,
+  title.colour <span class='op'>=</span> <span class='st'>"black"</span>,
+  subtitle.linelength <span class='op'>=</span> <span class='fl'>60</span>,
+  subtitle.colour <span class='op'>=</span> <span class='st'>"grey35"</span>,
+  na.replace <span class='op'>=</span> <span class='st'>"(??)"</span>,
+  na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  facet.position <span class='op'>=</span> <span class='st'>"top"</span>,
+  facet.fill <span class='op'>=</span> <span class='cn'>NULL</span>,
+  facet.bold <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  facet.italic <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  facet.size <span class='op'>=</span> <span class='fl'>10</span>,
+  facet.margin <span class='op'>=</span> <span class='fl'>8</span>,
+  facet.repeat_lbls_x <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  facet.repeat_lbls_y <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  facet.fixed_y <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  facet.drop <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  facet.nrow <span class='op'>=</span> <span class='cn'>NULL</span>,
+  facet.relative <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  x.date_breaks <span class='op'>=</span> <span class='cn'>NULL</span>,
+  x.date_labels <span class='op'>=</span> <span class='cn'>NULL</span>,
+  category.focus <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colour <span class='op'>=</span> <span class='st'>"certe"</span>,
+  colour_fill <span class='op'>=</span> <span class='cn'>NULL</span>,
+  x.lbl_angle <span class='op'>=</span> <span class='fl'>0</span>,
+  x.lbl_align <span class='op'>=</span> <span class='cn'>NULL</span>,
+  x.lbl_italic <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  x.remove <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  x.position <span class='op'>=</span> <span class='st'>"bottom"</span>,
+  x.max_items <span class='op'>=</span> <span class='cn'>Inf</span>,
+  x.max_txt <span class='op'>=</span> <span class='st'>"(rest, x %n)"</span>,
+  category.max_items <span class='op'>=</span> <span class='cn'>Inf</span>,
+  category.max_txt <span class='op'>=</span> <span class='st'>"(rest, x %n)"</span>,
+  facet.max_items <span class='op'>=</span> <span class='cn'>Inf</span>,
+  facet.max_txt <span class='op'>=</span> <span class='st'>"(rest, x %n)"</span>,
+  x.breaks <span class='op'>=</span> <span class='cn'>NULL</span>,
+  x.breaks_n <span class='op'>=</span> <span class='cn'>NULL</span>,
+  x.trans <span class='op'>=</span> <span class='st'>"identity"</span>,
+  x.expand <span class='op'>=</span> <span class='fl'>0.5</span>,
+  x.limits <span class='op'>=</span> <span class='cn'>NULL</span>,
+  x.character <span class='op'>=</span> <span class='cn'>NULL</span>,
+  y.remove <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  y.24h <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  y.age <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  y.percent <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  y.percent_break <span class='op'>=</span> <span class='fl'>10</span>,
+  y.breaks <span class='op'>=</span> <span class='cn'>NULL</span>,
+  y.limits <span class='op'>=</span> <span class='cn'>NULL</span>,
+  y.labels <span class='op'>=</span> <span class='cn'>NULL</span>,
+  y.expand <span class='op'>=</span> <span class='fl'>0.25</span>,
+  y.trans <span class='op'>=</span> <span class='st'>"identity"</span>,
+  y.position <span class='op'>=</span> <span class='st'>"left"</span>,
+  category.labels <span class='op'>=</span> <span class='cn'>NULL</span>,
+  category.percent <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  category.breaks <span class='op'>=</span> <span class='cn'>NULL</span>,
+  category.limits <span class='op'>=</span> <span class='cn'>NULL</span>,
+  category.expand <span class='op'>=</span> <span class='fl'>0</span>,
+  category.midpoint <span class='op'>=</span> <span class='cn'>NULL</span>,
+  category.trans <span class='op'>=</span> <span class='st'>"identity"</span>,
+  x.sort <span class='op'>=</span> <span class='cn'>NULL</span>,
+  category.sort <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  facet.sort <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  datalabels <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  datalabels.round <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='va'>y.percent</span>, <span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>)</span>,
+  datalabels.colour <span class='op'>=</span> <span class='st'>"grey25"</span>,
+  datalabels.fill <span class='op'>=</span> <span class='cn'>NULL</span>,
+  datalabels.size <span class='op'>=</span> <span class='op'>(</span><span class='fl'>3</span> <span class='op'>*</span> <span class='va'>text_factor</span><span class='op'>)</span>,
+  datalabels.angle <span class='op'>=</span> <span class='fl'>0</span>,
+  decimal.mark <span class='op'>=</span> <span class='st'>","</span>,
+  big.mark <span class='op'>=</span> <span class='st'>"."</span>,
+  summarise_function <span class='op'>=</span> <span class='fu'>base</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>,
+  stacked <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  stackedpercent <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  horizontal <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  reverse <span class='op'>=</span> <span class='va'>horizontal</span>,
+  smooth <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  smooth.method <span class='op'>=</span> <span class='cn'>NULL</span>,
+  smooth.formula <span class='op'>=</span> <span class='cn'>NULL</span>,
+  smooth.se <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  smooth.level <span class='op'>=</span> <span class='fl'>0.95</span>,
+  smooth.alpha <span class='op'>=</span> <span class='fl'>0.15</span>,
+  smooth.size <span class='op'>=</span> <span class='fl'>0.75</span>,
+  smooth.linetype <span class='op'>=</span> <span class='fl'>3</span>,
+  size <span class='op'>=</span> <span class='cn'>NULL</span>,
+  linetype <span class='op'>=</span> <span class='fl'>1</span>,
+  bins <span class='op'>=</span> <span class='cn'>NULL</span>,
+  width <span class='op'>=</span> <span class='cn'>NULL</span>,
+  jitter_seed <span class='op'>=</span> <span class='cn'>NA</span>,
+  violin_scale <span class='op'>=</span> <span class='st'>"count"</span>,
+  legend.position <span class='op'>=</span> <span class='st'>"top"</span>,
+  legend.title <span class='op'>=</span> <span class='cn'>NULL</span>,
+  legend.reverse <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  legend.barheight <span class='op'>=</span> <span class='fl'>6</span>,
+  legend.barwidth <span class='op'>=</span> <span class='fl'>1.5</span>,
+  legend.nbin <span class='op'>=</span> <span class='fl'>300</span>,
+  legend.italic <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  zoom <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  sep <span class='op'>=</span> <span class='st'>"/"</span>,
+  print <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  text_factor <span class='op'>=</span> <span class='fl'>1</span>,
+  family <span class='op'>=</span> <span class='st'>"Calibri"</span>,
+  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span>horizontal <span class='op'>=</span> <span class='va'>horizontal</span><span class='op'>)</span>,
+  markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
+  y.category <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -157,6 +275,470 @@ See plot2-methods for all implemented methods for different object classes." />
     <tr>
       <th>.data</th>
       <td><p>data to plot</p></td>
+    </tr>
+    <tr>
+      <th>x</th>
+      <td><p>plotting 'direction': the x axis</p></td>
+    </tr>
+    <tr>
+      <th>y</th>
+      <td><p>values to use for plotting along the y axis</p></td>
+    </tr>
+    <tr>
+      <th>category</th>
+      <td><p>plotting 'direction': the category (called 'fill' and 'colour' in <code>ggplot2</code>)</p></td>
+    </tr>
+    <tr>
+      <th>facet</th>
+      <td><p>plotting 'direction': the facet</p></td>
+    </tr>
+    <tr>
+      <th>geom</th>
+      <td><p>type of visualisation to use, supports all <code>ggplot2</code> geoms</p></td>
+    </tr>
+    <tr>
+      <th>x.title</th>
+      <td><p>text to show on the x asis</p></td>
+    </tr>
+    <tr>
+      <th>y.title</th>
+      <td><p>text to show on the y asis</p></td>
+    </tr>
+    <tr>
+      <th>title</th>
+      <td><p>title to show</p></td>
+    </tr>
+    <tr>
+      <th>subtitle</th>
+      <td><p>subtitle to show</p></td>
+    </tr>
+    <tr>
+      <th>caption</th>
+      <td><p>caption to show</p></td>
+    </tr>
+    <tr>
+      <th>tag</th>
+      <td><p>tag to show</p></td>
+    </tr>
+    <tr>
+      <th>title.linelength</th>
+      <td><p>maximum number of characters per line in the title, before a linebreak occurs</p></td>
+    </tr>
+    <tr>
+      <th>title.colour</th>
+      <td><p>text colour of the title</p></td>
+    </tr>
+    <tr>
+      <th>subtitle.linelength</th>
+      <td><p>maximum number of characters per line in the subtitle, before a linebreak occurs</p></td>
+    </tr>
+    <tr>
+      <th>subtitle.colour</th>
+      <td><p>text colour of the subtitle</p></td>
+    </tr>
+    <tr>
+      <th>na.replace</th>
+      <td><p>character to put in place of <code>NA</code> values if <code>na.rm = FALSE</code></p></td>
+    </tr>
+    <tr>
+      <th>na.rm</th>
+      <td><p>remove <code>NA</code> values from showing in the plot</p></td>
+    </tr>
+    <tr>
+      <th>facet.position</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.fill</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.bold</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.italic</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.size</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.margin</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.repeat_lbls_x</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.repeat_lbls_y</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.fixed_y</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.drop</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.nrow</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.relative</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.date_breaks</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.date_labels</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>category.focus</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>colour</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>colour_fill</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.lbl_angle</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.lbl_align</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.lbl_italic</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.remove</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.position</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.max_items</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.max_txt</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>category.max_items</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>category.max_txt</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.max_items</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.max_txt</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.breaks</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.breaks_n</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.trans</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.expand</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.limits</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.character</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>y.remove</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>y.24h</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>y.age</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>y.percent</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>y.percent_break</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>y.breaks</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>y.limits</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>y.labels</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>y.expand</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>y.trans</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>y.position</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>category.labels</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>category.percent</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>category.breaks</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>category.limits</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>category.expand</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>category.midpoint</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>category.trans</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.sort</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>category.sort</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>facet.sort</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>datalabels</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>datalabels.round</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>datalabels.colour</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>datalabels.fill</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>datalabels.size</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>datalabels.angle</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>decimal.mark</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>big.mark</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>summarise_function</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>stacked</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>stackedpercent</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>horizontal</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>reverse</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>smooth</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>smooth.method</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>smooth.formula</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>smooth.se</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>smooth.level</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>smooth.alpha</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>smooth.size</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>smooth.linetype</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>size</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>linetype</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>bins</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>width</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>jitter_seed</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>violin_scale</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>legend.position</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>legend.title</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>legend.reverse</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>legend.barheight</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>legend.barwidth</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>legend.nbin</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>legend.italic</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>zoom</th>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0</p></td>
+    </tr>
+    <tr>
+      <th>sep</th>
+      <td><p>separator character to use if multiple columns are given to either of the three directions: <code>x</code>, <code>category</code> and <code>facet</code></p></td>
+    </tr>
+    <tr>
+      <th>print</th>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to indicate if the result should be <a href='https://rdrr.io/r/base/print.html'>printed</a> instead of just returned</p></td>
+    </tr>
+    <tr>
+      <th>text_factor</th>
+      <td><p>text factor to use, which will apply to all texts shown in the plot</p></td>
+    </tr>
+    <tr>
+      <th>family</th>
+      <td><p>font family to use</p></td>
+    </tr>
+    <tr>
+      <th>theme</th>
+      <td><p>a valid <code>ggplot2</code> <a href='https://ggplot2.tidyverse.org/reference/theme.html'>theme</a> to apply, or <code>NULL</code> to use the default <code>theme_grey()</code></p></td>
+    </tr>
+    <tr>
+      <th>markdown</th>
+      <td><p>text</p></td>
+    </tr>
+    <tr>
+      <th>x.category</th>
+      <td><p>old argument for <code>facet</code>, now deprecated</p></td>
+    </tr>
+    <tr>
+      <th>y.category</th>
+      <td><p>old argument for <code>category</code>, now deprecated</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>arguments passed on to methods</p></td>
     </tr>
     </table>
 
@@ -182,7 +764,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <li><p>Support for any <code>ggplot2</code> extension based on <code><a href='https://ggplot2.tidyverse.org/reference/fortify.html'>ggplot2::fortify()</a></code></p></li>
 </ul>
 
-<p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. <strong>Less typing, faster coding.</strong></p>
+<p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. For <a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a>s, <code>plot2()</code> currently has 116 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>iris</span><span class='op'>)</span></span>
@@ -219,9 +801,31 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
 <span class='r-plt img'><img src='plot2-4.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
+<span class='r-in'><span class='co'># the arguments are in this order: x, y, category, facet</span></span>
+<span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Sepal.Length</span>, <span class='va'>Sepal.Width</span>, <span class='va'>Petal.Length</span>, <span class='va'>Species</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-plt img'><img src='plot2-5.png' alt='' width='700' height='433' /></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Sepal.Length</span>, <span class='va'>Sepal.Width</span>, <span class='va'>Petal.Length</span>, <span class='va'>Species</span>,</span>
+<span class='r-in'>      colour <span class='op'>=</span> <span class='st'>"viridis"</span><span class='op'>)</span> <span class='co'># set the viridis colours</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-plt img'><img src='plot2-6.png' alt='' width='700' height='433' /></span>
+<span class='r-in'>      </span>
+<span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Sepal.Length</span>, <span class='va'>Sepal.Width</span>, <span class='va'>Petal.Length</span>, <span class='va'>Species</span>,</span>
+<span class='r-in'>      colour <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"white"</span>, <span class='st'>"red"</span>, <span class='st'>"black"</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># set own colours</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category.midpoint = 4.35</span><span style='color: #080808;'> (the median) for the </span><span style='color: #0000BB;'>category</span><span style='color: #080808;'> scale</span></span>
+<span class='r-plt img'><img src='plot2-7.png' alt='' width='700' height='433' /></span>
+<span class='r-in'>      </span>
+<span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Sepal.Length</span>, <span class='va'>Sepal.Width</span>, <span class='va'>Petal.Length</span>, <span class='va'>Species</span>,</span>
+<span class='r-in'>      colour <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"white"</span>, <span class='st'>"red"</span>, <span class='st'>"black"</span><span class='op'>)</span>, <span class='co'># set own colours</span></span>
+<span class='r-in'>      category.midpoint <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>               <span class='co'># with an own midpoint</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-plt img'><img src='plot2-8.png' alt='' width='700' height='433' /></span>
+<span class='r-in'></span>
 <span class='r-in'><span class='co'># change to any geom</span></span>
 <span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Species</span>, <span class='va'>Sepal.Length</span>, geom <span class='op'>=</span> <span class='st'>"violin"</span><span class='op'>)</span></span>
-<span class='r-plt img'><img src='plot2-5.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='plot2-9.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span>, warn.conflicts <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
 <span class='r-in'>  </span>
@@ -241,19 +845,19 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>hospital</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = age</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
-<span class='r-plt img'><img src='plot2-6.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='plot2-10.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># the arguments are in this order: x, y, category, facet</span></span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>hospital</span>, <span class='va'>age</span>, <span class='va'>gender</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
-<span class='r-plt img'><img src='plot2-7.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='plot2-11.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>hospital</span>, <span class='va'>age</span>, <span class='va'>gender</span>, <span class='va'>ward</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
-<span class='r-plt img'><img src='plot2-8.png' alt='' width='700' height='433' /></span>
-<span class='r-in'>        </span>
+<span class='r-plt img'><img src='plot2-12.png' alt='' width='700' height='433' /></span>
+<span class='r-in'></span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>hospital</span>,</span>
 <span class='r-in'>        category <span class='op'>=</span> <span class='va'>gender</span>,</span>
@@ -262,20 +866,21 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-in'>        y.age <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = age</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
-<span class='r-plt img'><img src='plot2-9.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='plot2-13.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>        </span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>age</span>, geom <span class='op'>=</span> <span class='st'>"hist"</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>bins = 19</span><span style='color: #080808;'> based on data</span></span>
-<span class='r-plt img'><img src='plot2-10.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='plot2-14.png' alt='' width='700' height='433' /></span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>age</span>, geom <span class='op'>=</span> <span class='st'>"density"</span><span class='op'>)</span></span>
-<span class='r-plt img'><img src='plot2-11.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='plot2-15.png' alt='' width='700' height='433' /></span>
 <span class='r-in'> </span>
 <span class='r-in'><span class='co'># the default geom is column, datalabels are automatically</span></span>
 <span class='r-in'><span class='co'># set in non-continuous geoms:</span></span>
 <span class='r-in'><span class='va'>patients_per_hospital_gender</span> <span class='op'>&lt;-</span> <span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/count.html'>count</a></span><span class='op'>(</span><span class='va'>hospital</span>, <span class='va'>gender</span><span class='op'>)</span></span>
+<span class='r-in'>  </span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>patients_per_hospital_gender</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 6 × 3</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   hospital gender     n</span>
@@ -293,7 +898,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = hospital</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = gender</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "col"</span><span style='color: #080808;'> as default</span></span>
-<span class='r-plt img'><img src='plot2-12.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='plot2-16.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='va'>patients_per_hospital_gender</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span>stacked <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
@@ -301,7 +906,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = hospital</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = gender</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "col"</span><span style='color: #080808;'> as default</span></span>
-<span class='r-plt img'><img src='plot2-13.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='plot2-17.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='va'>patients_per_hospital_gender</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span>stackedpercent <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
@@ -309,7 +914,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = hospital</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = gender</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "col"</span><span style='color: #080808;'> as default</span></span>
-<span class='r-plt img'><img src='plot2-14.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='plot2-18.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='co'># sort any direction</span></span>
 <span class='r-in'><span class='va'>patients_per_hospital_gender</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
@@ -318,7 +923,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = hospital</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = gender</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "col"</span><span style='color: #080808;'> as default</span></span>
-<span class='r-plt img'><img src='plot2-15.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='plot2-19.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='va'>patients_per_hospital_gender</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span>category.sort <span class='op'>=</span> <span class='st'>"desc"</span>,</span>
@@ -328,7 +933,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = hospital</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = gender</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "col"</span><span style='color: #080808;'> as default</span></span>
-<span class='r-plt img'><img src='plot2-16.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='plot2-20.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># plot2() supports all S3 extensions available through ggplot2::fortify():</span></span>
 <span class='r-in'><span class='va'>mtcars</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> </span>
@@ -340,15 +945,18 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-in'>        subtitle <span class='op'>=</span> <span class='st'>"Axis titles contain the square notation: ^2"</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> `geom_smooth()` using method = 'loess' and formula 'y ~ x'</span>
-<span class='r-plt img'><img src='plot2-17.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='plot2-21.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>        </span>
 <span class='r-in'><span class='co'># sf objects (geographic plots, 'simple features') are also supported</span></span>
-<span class='r-in'><span class='va'>netherlands</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> </span>
-<span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span>datalabels <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='st'><a href='https://r-spatial.github.io/sf/'>"sf"</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'>  <span class='va'>netherlands</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> </span>
+<span class='r-in'>    <span class='fu'>plot2</span><span class='op'>(</span>datalabels <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: sf</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Linking to GEOS 3.8.0, GDAL 3.0.4, PROJ 6.3.1</span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = area_km2</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>datalabels = province</span></span>
-<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error in .subset2(x, i, exact = exact):</span> attempt to select less than one element in get1index</span>
-<span class='r-plt img'><img src='plot2-18.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='plot2-22.png' alt='' width='700' height='433' /></span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
