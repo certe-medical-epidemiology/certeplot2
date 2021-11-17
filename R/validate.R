@@ -24,31 +24,31 @@ validate_geom <- function(geom, df = NULL) {
     if (!has_x(df)) {
       # only numeric values, make it a boxplot
       geom <- "geom_boxplot"
-      plot_message("Using ", font_blue("geom = \"", gsub("geom_", "", geom), "\"", collapse = NULL),
-                   font_black(" since there is no x axis"))
+      plot2_message("Using ", font_blue("geom = \"", gsub("geom_", "", geom), "\"", collapse = NULL),
+                    font_black(" since there is no x axis"))
     } else if (has_x(df) && is.numeric(get_x(df))) {
       # make it points if x and y are both numeric
       geom <- "geom_point"
-      plot_message("Using ", font_blue("geom = \"", gsub("geom_", "", geom), "\"", collapse = NULL), 
-                   font_black(" since both axes are numeric"))
+      plot2_message("Using ", font_blue("geom = \"", gsub("geom_", "", geom), "\"", collapse = NULL), 
+                    font_black(" since both axes are numeric"))
     } else {
       # check if y has multiple values across groups, then make it boxplot
       if (all(group_sizes(df) >= 3)) {
         geom <- "geom_boxplot"
-        plot_message("Using ", font_blue("geom = \"", gsub("geom_", "", geom), "\"", collapse = NULL),
-                     font_black(" since all groups have size >= 3"))
+        plot2_message("Using ", font_blue("geom = \"", gsub("geom_", "", geom), "\"", collapse = NULL),
+                      font_black(" since all groups have size >= 3"))
       } else {
         # otherwise: column
         geom <- "geom_col"
-        plot_message("Using ", font_blue("geom = \"", gsub("geom_", "", geom), "\"", collapse = NULL), 
-                     font_black(" as default"))
+        plot2_message("Using ", font_blue("geom = \"", gsub("geom_", "", geom), "\"", collapse = NULL), 
+                      font_black(" as default"))
       }
     }
   } else if (is.null(geom) && is.null(df)) {
     return("") # for quick validation
   } else {
     if (length(geom) > 1) {
-      plot_warning(font_blue("geom"), " can only be of length 1")
+      plot2_warning(font_blue("geom"), " can only be of length 1")
     }
     geom <- trimws(tolower(geom[1L]))
     geom <- gsub("[^a-z0-9_]", "", geom)
@@ -133,10 +133,10 @@ validate_data <- function(df,
       # first check if there is also no x axis
       if (!has_x(df)) {
         # make x first numeric column and y second numeric column
-        plot_message("Using ", font_blue("x = ", numeric_cols[1L], collapse = NULL))
+        plot2_message("Using ", font_blue("x = ", numeric_cols[1L], collapse = NULL))
         if (!geom_is_continuous_x(geom)) {
           # don't show when geom for density geoms - y will not be used
-          plot_message("Using ", font_blue("y = ", numeric_cols[2L], collapse = NULL))
+          plot2_message("Using ", font_blue("y = ", numeric_cols[2L], collapse = NULL))
         }
         df <- df %>% 
           mutate(`_var_x` = df %>% pull(numeric_cols[1L]),
@@ -144,7 +144,7 @@ validate_data <- function(df,
       } else {
         if (!geom_is_continuous_x(geom)) {
           # don't show when geom for density geoms - y will not be used
-          plot_message("Using ", font_blue("y = ", numeric_cols[1L], collapse = NULL))
+          plot2_message("Using ", font_blue("y = ", numeric_cols[1L], collapse = NULL))
         }
         df <- df %>% 
           mutate(`_var_y` = df %>% pull(numeric_cols[1L]))
@@ -153,7 +153,7 @@ validate_data <- function(df,
       # only one numeric column
       if (geom_is_continuous_x(geom)) {
         if (!has_x(df)) {
-          plot_message("Using ", font_blue("x = ", numeric_cols, collapse = NULL))
+          plot2_message("Using ", font_blue("x = ", numeric_cols, collapse = NULL))
           df <- df %>% 
             mutate(`_var_x` = df %>% pull(numeric_cols))
         }
@@ -164,7 +164,7 @@ validate_data <- function(df,
         if (has_x(df) && get_x_name(df) == numeric_cols) {
           stop("no numeric column found to use for y, aside from the column used for x (\"", get_x_name(df), "\")", call. = FALSE)
         }
-        plot_message("Using ", font_blue("y = ", numeric_cols, collapse = NULL))
+        plot2_message("Using ", font_blue("y = ", numeric_cols, collapse = NULL))
         df <- df %>% 
           mutate(`_var_y` = df %>% pull(numeric_cols))
       }
@@ -178,7 +178,7 @@ validate_data <- function(df,
     } else {
       x_col <- colnames(df)[1L]
     }
-    plot_message("Using ", font_blue("x = ", x_col, collapse = NULL))
+    plot2_message("Using ", font_blue("x = ", x_col, collapse = NULL))
     df <- df %>% 
       mutate(`_var_x` = df %>% pull(x_col))
   }
@@ -195,16 +195,27 @@ validate_data <- function(df,
       cols <- cols[!cols %in% c("_var_facet", get_facet_name(df))]
     }
     if (length(cols) > 0) {
-      plot_message("Using ", font_blue("category = ", cols[1L], collapse = NULL))
+      plot2_message("Using ", font_blue("category = ", cols[1L], collapse = NULL))
       df <- df %>% 
         mutate(`_var_category` = df %>% pull(cols[1L]))
     }
   }
   if (geom == "geom_sf" && misses_category && !has_category(df) && !is.na(numeric_cols[1L])) {
     # try to take the first numeric column for 'sf' plots
-    plot_message("Using ", font_blue("category = ", numeric_cols[1L], collapse = NULL))
+    plot2_message("Using ", font_blue("category = ", numeric_cols[1L], collapse = NULL))
     df <- df %>% 
       mutate(`_var_category` = df %>% pull(numeric_cols[1L]))
+  }
+  
+  # if given FALSE for a direction (e.g., category = FALSE), remove these columns
+  if (has_category(df) && all(get_category(df) == FALSE)){
+    df <- df %>% select(-`_var_category`)
+  }
+  if (has_facet(df) && all(get_facet(df) == FALSE)){
+    df <- df %>% select(-`_var_facet`)
+  }
+  if (has_datalabels(df) && all(get_datalabels(df) == FALSE)) {
+    df <- df %>% select(-`_var_datalabels`)
   }
   
   # add surrogate columns to df
@@ -225,30 +236,26 @@ validate_data <- function(df,
     colnames(df)[colnames(df) == "_label_facet"] <- concat(dots$label_facet)
   }
   
-  # remove datalabels if all are FALSE
-  if (has_datalabels(df) && all(get_datalabels(df) == FALSE)) {
-    df <- df %>% select(-`_var_datalabels`)
-  }
-  # keep datalabels if all are TRUE
-  if (has_datalabels(df) && all(get_datalabels(df) == TRUE)) {
-    if (geom == "geom_sf") {
-      # take values from first character column
-      character_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.character)))
-      character_cols <- character_cols[character_cols %unlike% "^_var_"]
-      if (!is.na(character_cols[1L])) {
-        plot_message("Using ", font_blue("datalabels = ", character_cols[1L], collapse = NULL))
-        df <- df %>% mutate(`_var_datalabels` = df %>% pull(character_cols[1L]))
-      } else {
-        plot_warning("No suitable column found for ", font_blue("datalabels = TRUE"))
-      }
-    } else {
-      # take values from y
-      df <- df %>% mutate(`_var_datalabels` = `_var_y`)
-    }
-  }
-  
-  # format datalabels
   if (has_datalabels(df)) {
+    if (all(get_datalabels(df) == TRUE)) {
+      # for when given: datalabels = TRUE, guess the results
+      if (geom == "geom_sf") {
+        # take values from first character column in case of sf plots
+        character_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.character)))
+        character_cols <- character_cols[character_cols %unlike% "^_var_"]
+        if (!is.na(character_cols[1L])) {
+          plot2_message("Using ", font_blue("datalabels = ", character_cols[1L], collapse = NULL))
+          df <- df %>% mutate(`_var_datalabels` = df %>% pull(character_cols[1L]))
+        } else {
+          plot2_warning("No suitable column found for ", font_blue("datalabels = TRUE"))
+          df <- df %>% select(-`_var_datalabels`)
+        }
+      } else {
+        # otherwise take values from the y column
+        df <- df %>% mutate(`_var_datalabels` = `_var_y`)
+      }
+    }
+    # format datalabels
     df <- df %>%
       mutate(`_var_datalabels` = format_datalabels(`_var_datalabels`, 
                                                    datalabels.round = dots$datalabels.round,
@@ -457,7 +464,7 @@ validate_y_scale <- function(df,
         labels_n <- 10
       }
       if (as.integer(labels_n) > 10) {
-        plot_warning("Printing at most 10 labels for ", font_blue("y"), ", set with ", font_blue("y.percent_break"))
+        plot2_warning("Printing at most 10 labels for ", font_blue("y"), ", set with ", font_blue("y.percent_break"))
         y.percent_break <- round((max(y.limits) - min(y.limits)) / 10, 2)
       }
       function(x, y_percent_break = y.percent_break, ...) {
@@ -666,8 +673,8 @@ validate_category_scale <- function(df,
     } else {
       # default will be set to the median
       mid_point <- stats::median(get_category(df), na.rm = TRUE)
-      plot_message("Using ", font_blue("category.midpoint =", round(mid_point, 2)),
-                   " (the median) for the ", font_blue("category"), " scale")
+      plot2_message("Using ", font_blue("category.midpoint =", round(mid_point, 2)),
+                    " (the median) for the ", font_blue("category"), " scale")
     }
     do.call(scale_colour_gradient2,
             args = c(list(low = cols_category[1],
@@ -703,7 +710,7 @@ generate_geom <- function(geom,
                           jitter_seed,
                           bins,
                           cols) {
-
+  
   if (geom == "geom_col") {
     geom <- "geom_bar"
   }
@@ -776,7 +783,7 @@ generate_geom <- function(geom,
     if (is.null(bins)) {
       # 30 is the geom_histogram default, we change it if 1/3 of unique values is <30
       bins <- ceiling(min(30, length(unique(get_x(df))) / 3))
-      plot_message("Using ", font_blue("bins =", bins), " based on data")
+      plot2_message("Using ", font_blue("bins =", bins), " based on data")
     }
     do.call(geom_fn,
             args = c(list(size = size,
@@ -803,7 +810,7 @@ generate_geom <- function(geom,
     
   } else {
     # try to put some arguments into the requested geom
-    plot_warning(font_blue("geom = \"", geom, "\"", collapse = ""), " is currently only loosely supported")
+    plot2_warning(font_blue("geom = \"", geom, "\"", collapse = ""), " is currently only loosely supported")
     do.call(geom_fn,
             args = c(list(width = width,
                           size = size,
@@ -878,9 +885,9 @@ validate_colour <- function(df, geom, colour, colour_fill, misses_colour_fill, h
     if (geom_is_continuous(geom) && is.null(colour_fill)) {
       # specific treatment for continuous geoms (such as boxplots/violins/histograms/...)
       colour_fill <- add_white(colour, white = 0.35)
-    # } else if (geom == "geom_sf") {
-    #   colour_fill <- colourpicker(colour,
-    #                               length = ifelse(length(colour) == 1, length(unique(get_category(df))), 1))
+      # } else if (geom == "geom_sf") {
+      #   colour_fill <- colourpicker(colour,
+      #                               length = ifelse(length(colour) == 1, length(unique(get_category(df))), 1))
     } else {
       colour_fill <- colourpicker(colour_fill,
                                   length = ifelse(length(colour_fill) == 1, n_unique, 1))
@@ -978,10 +985,10 @@ validate_theme <- function(theme,
                            subtitle.colour) {
   
   if (!is.null(theme) && !inherits(theme, "theme")) {
-    plot_warning("No valid ggplot2 theme, using ", font_blue("theme = ggplot2::theme_grey()"))
+    plot2_warning("No valid ggplot2 theme, using ", font_blue("theme = ggplot2::theme_grey()"))
     theme <- NULL
   }
-
+  
   if (is_empty(theme)) {
     # turn to default ggplot2 theme, so we can at least:
     # - extend all element_text() classes with element_markdown()
@@ -1007,7 +1014,7 @@ validate_theme <- function(theme,
     theme$axis.title.y <- add_markdown(theme$axis.title.y)
     theme$legend.title <- add_markdown(theme$legend.title)
   }
-
+  
   # set other properties to theme, set in plot2()
   if (isTRUE(horizontal)) {
     if (isTRUE(x.lbl_italic)) {
@@ -1028,11 +1035,11 @@ validate_theme <- function(theme,
   if (!is.null(x.lbl_align)) {
     theme$axis.text.x$hjust <- x.lbl_align
   }
-
+  
   if (isTRUE(legend.italic)) {
     theme$legend.text$face <- "italic"
   }
-
+  
   theme$plot.title$colour <- colourpicker(title.colour)
   theme$plot.subtitle$colour <- colourpicker(subtitle.colour)
   # facet
@@ -1048,7 +1055,7 @@ validate_theme <- function(theme,
   }
   theme$strip.text$margin <- margin(t = facet.margin, b = facet.margin / 2)
   theme$strip.text$size <- unit(facet.size, "pt")
-
+  
   # set the font family and font size, taking text_factor into account
   attr_bak <- attributes(theme)
   theme <- lapply(theme, function(el) {
@@ -1154,9 +1161,9 @@ set_datalabels <- function(p,
                            reverse,
                            horizontal,
                            misses_datalabels) {
-
+  
   if (isTRUE(misses_datalabels) && nrow(df) > 150) {
-    plot_warning("Omitting printing of ", nrow(df), " datalabels - use ", font_blue("datalabels = TRUE"), " to force printing")
+    plot2_warning("Omitting printing of ", nrow(df), " datalabels - use ", font_blue("datalabels = TRUE"), " to force printing")
     return(p)
   }
   
@@ -1389,7 +1396,7 @@ set_max_items <- function(df,
       return(values)
     }
     if (!is.factor(values)) {
-      plot_message("Maximising 'x', 'category' or 'facet' only works when they are sorted, or a factor")
+      plot2_message("Maximising 'x', 'category' or 'facet' only works when they are sorted, or a factor")
       return(values)
     }
     if (n_max < length(levels(values))) {
@@ -1491,18 +1498,21 @@ format_datalabels <- function(datalabels,
                               decimal.mark,
                               big.mark) {
   datalabels[as.character(datalabels) %in% c("", "0")] <- NA
-  datalabels_p <- trimws(format2(datalabels / sum(datalabels, na.rm = TRUE),
-                                 round = datalabels.round,
-                                 decimal.mark = decimal.mark,
-                                 big.mark = big.mark,
-                                 percent = TRUE))
-  datalabels_n <- trimws(format2(datalabels,
-                                 decimal.mark = decimal.mark,
-                                 big.mark = big.mark,
-                                 round = datalabels.round,
-                                 force.decimals = FALSE))
-  datalabels_out <- rep(datalabels.format, length(datalabels))
-  datalabels_out <- mapply(gsub, x = datalabels_out, pattern = "%n", replacement = datalabels_n, USE.NAMES = FALSE)
-  datalabels_out <- mapply(gsub, x = datalabels_out, pattern = "%p", replacement = datalabels_p, USE.NAMES = FALSE)
+  datalabels_out <- datalabels
+  if (!is.null(datalabels.format)) {
+    datalabels_p <- trimws(format2(datalabels_out / sum(datalabels_out, na.rm = TRUE),
+                                   round = datalabels.round,
+                                   decimal.mark = decimal.mark,
+                                   big.mark = big.mark,
+                                   percent = TRUE))
+    datalabels_n <- trimws(format2(datalabels_out,
+                                   decimal.mark = decimal.mark,
+                                   big.mark = big.mark,
+                                   round = datalabels.round,
+                                   force.decimals = FALSE))
+    datalabels_out <- rep(datalabels.format, length(datalabels_out))
+    datalabels_out <- mapply(gsub, x = datalabels_out, pattern = "%n", replacement = datalabels_n, USE.NAMES = FALSE)
+    datalabels_out <- mapply(gsub, x = datalabels_out, pattern = "%p", replacement = datalabels_p, USE.NAMES = FALSE)
+  }
   datalabels_out
 }

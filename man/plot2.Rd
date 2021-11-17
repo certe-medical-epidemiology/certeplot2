@@ -80,13 +80,13 @@ plot2(
   facet.sort = TRUE,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
-  datalabels.colour = "grey25",
   datalabels.format = "\%n",
+  datalabels.colour = "grey25",
   datalabels.fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
   decimal.mark = ",",
-  big.mark = ".",
+  big.mark = ifelse(decimal.mark == ",", ".", ","),
   summarise_function = base::sum,
   stacked = FALSE,
   stackedpercent = FALSE,
@@ -266,29 +266,23 @@ There is one special case: the shortcut \code{geom = "barpercent"}, which will s
 \item \code{"asc"} or \code{"alpha"}: sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{"desc"}: sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
-\item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest first)
-\item \code{"freq-asc"}: sort ascending like \code{"freq"} (lowest value first)
+\item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
+\item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (loewest value first)
 }}
 
-\item{datalabels}{text}
+\item{datalabels}{variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' plots, and values of \code{y} otherwise}
 
 \item{datalabels.round}{number of digits to round the datalabels}
 
-\item{datalabels.colour}{text}
+\item{datalabels.format}{format to use for datalabels - \code{"\%n"} will be replaced by the count number, \code{"\%p"} will be replaced by the percentage of the total count. Use \code{datalabels.format = NULL} to not transform the datalabels.}
 
-\item{datalabels.format}{format to use for datalabels - \code{"\%n"} will be replaced by the count number, \code{"\%p"} will be replaced by the percentage of the total count}
+\item{datalabels.colour, datalabels.fill, datalabels.size, datalabels.angle}{settings for the datalabels}
 
-\item{datalabels.fill}{text}
+\item{decimal.mark}{decimal mark, defaults to Dutch use (a comma)}
 
-\item{datalabels.size}{text}
+\item{big.mark}{thousands separator, defaults to Dutch use (a full stop)}
 
-\item{datalabels.angle}{text}
-
-\item{decimal.mark}{text}
-
-\item{big.mark}{text}
-
-\item{summarise_function}{text}
+\item{summarise_function}{a \link{function} to use if the data has to be summarised, see \emph{Examples}}
 
 \item{stacked}{text}
 
@@ -318,7 +312,7 @@ There is one special case: the shortcut \code{geom = "barpercent"}, which will s
 
 \item{zoom}{a \link{logical} to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0}
 
-\item{sep}{separator character to use if multiple columns are given to either of the three directions: \code{x}, \code{category} and \code{facet}}
+\item{sep}{separator character to use if multiple columns are given to either of the three directions: \code{x}, \code{category} and \code{facet}, e.g. \code{facet = c(column1, column2)}}
 
 \item{print}{a \link{logical} to indicate if the result should be \link[=print]{printed} instead of just returned}
 
@@ -369,7 +363,7 @@ The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} 
 \examples{
 head(iris)
 
-# no variables determined, plot2() tries for itself:
+# no variables determined, so plot2() will try for itself -
 # the geom will be points since the first two variables are numeric
 plot2(iris)
 
@@ -410,6 +404,11 @@ admitted_patients \%>\%
   
 admitted_patients \%>\%
   plot2(hospital, age, gender, ward)
+  
+# use summarise_function to apply a function for continuous data
+admitted_patients \%>\%
+  plot2(hospital, age, gender, ward,
+        geom = "col", summarise_function = median)
 
 admitted_patients \%>\%
   plot2(x = hospital,

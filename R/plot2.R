@@ -100,16 +100,13 @@
 #' - `"order"` or `"inorder"`: sort as `FALSE`
 #' - `"freq"` or `"freq-desc"`: sort descending according to the frequencies of `y` computed by `summarise_function` (highest value first)
 #' - `"freq-asc"`: sort ascending according to the frequencies of `y` computed by `summarise_function` (loewest value first)
-#' @param datalabels text
+#' @param datalabels variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' plots, and values of `y` otherwise
 #' @param datalabels.round number of digits to round the datalabels
-#' @param datalabels.format format to use for datalabels - `"%n"` will be replaced by the count number, `"%p"` will be replaced by the percentage of the total count
-#' @param datalabels.colour text
-#' @param datalabels.fill text
-#' @param datalabels.size text
-#' @param datalabels.angle text
-#' @param decimal.mark text
-#' @param big.mark text
-#' @param summarise_function text
+#' @param datalabels.format format to use for datalabels - `"%n"` will be replaced by the count number, `"%p"` will be replaced by the percentage of the total count. Use `datalabels.format = NULL` to not transform the datalabels.
+#' @param datalabels.colour,datalabels.fill,datalabels.size,datalabels.angle settings for the datalabels
+#' @param decimal.mark decimal mark, defaults to Dutch use (a comma)
+#' @param big.mark thousands separator, defaults to Dutch use (a full stop)
+#' @param summarise_function a [function] to use if the data has to be summarised, see *Examples*
 #' @param stacked text
 #' @param stackedpercent text
 #' @param horizontal a [logical] to turn the plot 90 defrees using [`coord_flip()`][ggplot2::coord_flip()]
@@ -124,7 +121,7 @@
 #' @param violin_scale scale to be set when using `geom = "violin"`, can also be set to `"area"`
 #' @param legend.position,legend.title,legend.reverse,legend.barheight,legend.barwidth,legend.nbin,legend.italic settings for the legend
 #' @param zoom a [logical] to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0
-#' @param sep separator character to use if multiple columns are given to either of the three directions: `x`, `category` and `facet`
+#' @param sep separator character to use if multiple columns are given to either of the three directions: `x`, `category` and `facet`, e.g. `facet = c(column1, column2)`
 #' @param print a [logical] to indicate if the result should be [printed][print()] instead of just returned
 #' @param text_factor text factor to use, which will apply to all texts shown in the plot
 #' @param family font family to use
@@ -154,7 +151,7 @@
 #' @examples
 #' head(iris)
 #' 
-#' # no variables determined, plot2() tries for itself:
+#' # no variables determined, so plot2() will try for itself -
 #' # the geom will be points since the first two variables are numeric
 #' plot2(iris)
 #' 
@@ -195,6 +192,11 @@
 #'   
 #' admitted_patients %>%
 #'   plot2(hospital, age, gender, ward)
+#'   
+#' # use summarise_function to apply a function for continuous data
+#' admitted_patients %>%
+#'   plot2(hospital, age, gender, ward,
+#'         geom = "col", summarise_function = median)
 #'
 #' admitted_patients %>%
 #'   plot2(x = hospital,
@@ -322,13 +324,13 @@ plot2 <- function(.data,
                   facet.sort = TRUE,
                   datalabels = TRUE,
                   datalabels.round = ifelse(y.percent, 2, 1),
-                  datalabels.colour = "grey25",
                   datalabels.format = "%n",
+                  datalabels.colour = "grey25",
                   datalabels.fill = NULL,
                   datalabels.size = (3 * text_factor),
                   datalabels.angle = 0,
                   decimal.mark = ",",
-                  big.mark = ".",
+                  big.mark = ifelse(decimal.mark == ",", ".", ","),
                   summarise_function = base::sum,
                   stacked = FALSE,
                   stackedpercent = FALSE,
@@ -511,36 +513,38 @@ plot2_exec <- function(.data,
   misses_subtitle <- isTRUE(dots$misses.subtitle)
   misses_tag <- isTRUE(dots$misses.tag)
   misses_caption <- isTRUE(dots$misses.caption)
+  misses_zoom <- isTRUE(dots$misses.zoom)
+  misses_y.percent <- isTRUE(dots$misses.y.percent)
   
   # old arguments, from previous package ----
   if (tryCatch(!is.null(y.category), error = function(e) TRUE)) {
-    plot_warning("Using ", font_red("'y.category' is deprecated"), " - use ", font_blue("'category'"), " instead")
+    plot2_warning("Using ", font_red("'y.category' is deprecated"), " - use ", font_blue("'category'"), " instead")
     .data <- .data %>% 
       mutate(across({{ y.category }}, .names = "_var_category_{col}")) %>% 
       summarise_variable("_var_category", sep = sep)
     category <- "_var_category"
   }
   if (tryCatch(!is.null(x.category), error = function(e) TRUE)) {
-    plot_warning("Using ", font_red("'x.category' is deprecated"), " - use ", font_blue("'facet'"), " instead")
+    plot2_warning("Using ", font_red("'x.category' is deprecated"), " - use ", font_blue("'facet'"), " instead")
     .data <- .data %>% 
       mutate(across({{ x.category }}, .names = "_var_facet_{col}")) %>% 
       summarise_variable("_var_facet", sep = sep)
     facet <- "_var_facet"
   }
   if (!is.null(dots$type)) {
-    plot_warning("Using ", font_red("'type' is deprecated"), " - use ", font_blue("'geom'"), " instead")
+    plot2_warning("Using ", font_red("'type' is deprecated"), " - use ", font_blue("'geom'"), " instead")
     geom <- dots$type
   }
   if (!is.null(dots$sort.x)) {
-    plot_warning("Using ", font_red("'sort.x' is deprecated"), " - use ", font_blue("'x.sort'"), " instead")
+    plot2_warning("Using ", font_red("'sort.x' is deprecated"), " - use ", font_blue("'x.sort'"), " instead")
     x.sort <- dots$sort.x
   }
   if (!is.null(dots$sort.category)) {
-    plot_warning("Using ", font_red("'sort.category' is deprecated"), " - use ", font_blue("'category.sort'"), " instead")
+    plot2_warning("Using ", font_red("'sort.category' is deprecated"), " - use ", font_blue("'category.sort'"), " instead")
     category.sort <- dots$sort.category
   }
   if (!is.null(dots$sort.facet)) {
-    plot_warning("Using ", font_red("'sort.facet' is deprecated"), " - use ", font_blue("'facet.sort'"), " instead")
+    plot2_warning("Using ", font_red("'sort.facet' is deprecated"), " - use ", font_blue("'facet.sort'"), " instead")
     facet.sort <- dots$sort.facet
   }
   if (!is.null(dots$category.title)) {
@@ -603,25 +607,25 @@ plot2_exec <- function(.data,
   geom <- validate_geom(geom = geom, df = df) # this will automatically determine the geom if is.null(geom)
   # transform data if not a continuous geom but group sizes are > 1
   if (any(group_sizes(df) > 1) && !geom_is_continuous(geom)) {
-    plot_message("Duplicate observations in discrete plot geom (", font_blue(geom), "), applying ",
-                 font_blue("summarise_function = " ), font_blue(dots$summarise_fn_name))
+    plot2_message("Duplicate observations in discrete plot geom (", font_blue(geom), "), applying ",
+                  font_blue("summarise_function = " ), font_blue(dots$summarise_fn_name))
     df <- summarise_data(df = df, summarise_function = summarise_function,
                          decimal.mark = decimal.mark, big.mark = big.mark,
                          datalabels.round = datalabels.round, datalabels.format = datalabels.format)
   }
+  
   # remove datalabels in continuous geoms
-  if (isTRUE(misses_datalabels) && geom_is_continuous(geom)) {
+  if (isTRUE(misses_datalabels) && geom_is_continuous(geom) && geom != "geom_sf") {
     df <- df %>% select(-`_var_datalabels`)
   }
   if (!isTRUE(misses_y) && geom_is_continuous_x(geom)) {
-    plot_message("Ignoring ", font_blue("y"), " for plot geom ", font_blue(gsub("geom_", "", geom)))
+    plot2_message("Ignoring ", font_blue("y"), " for plot geom ", font_blue(gsub("geom_", "", geom)))
     df$`_var_y` <- df$`_var_x`
   }
   # remove x from sf geom
   if (geom == "geom_sf") {
     df <- df %>% select(-`_var_x`)
   }
-  
   
   # set default size and width ----
   size <- validate_size(size = size, geom = geom)
@@ -719,7 +723,7 @@ plot2_exec <- function(.data,
   #     scale_colour_manual(values = cols$colour) +
   #     scale_fill_manual(values = cols$colour_fill)
   # }
-
+  
   # add axis labels ----
   p <- p +
     labs(x = get_x_name(df),
@@ -826,7 +830,7 @@ plot2_exec <- function(.data,
   if (!is_empty(theme)) {
     p <- p + theme
   }
-
+  
   # add titles ----
   if (!misses_x.title) p <- p + labs(x = validate_titles(x.title)) # this will overwrite the var name
   if (!misses_y.title) p <- p + labs(y = validate_titles(y.title)) # this will overwrite the var name

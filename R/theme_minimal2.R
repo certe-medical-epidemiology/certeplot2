@@ -18,12 +18,14 @@
 # ===================================================================== #
 
 #' An Even More Minimal Theme
+#' 
+#' This `ggplot2` theme provide even more white area and less clutter than [`theme_minimal()`][ggplot2::theme_minimal()].
 #' @param ... arguments passed on to [ggplot2::theme()]
 #' @importFrom ggplot2 element_text `%+replace%` theme_bw theme margin element_line element_blank unit element_rect
 #' @export
 #' @examples 
 #' plot2(iris)
-#' plot2(iris, x = Species)
+#' plot2(admitted_patients, x = hospital, category = gender)
 theme_minimal2 <- function(...) {
   t <- theme_bw(base_size = 11) %+replace%
     theme(
@@ -47,33 +49,27 @@ theme_minimal2 <- function(...) {
       panel.grid.minor.y = element_line(size = 0.25, colour = "grey85"),
       axis.line = element_line(size = 0.375, colour = "grey75"),
       axis.line.y = element_blank(),
-      plot.margin = unit(c(5,   # top
-                           5,   # right
-                           5,   # bottom
-                           5),  # left
-                         units = "pt"),
+      plot.margin = unit(c(5, 5, 5, 5), units = "pt"),
       plot.background = element_blank(),
       plot.subtitle = element_text(size = unit(11, "pt"),
-                                    #margin = margin(0, 0, ifelse(has_subtitle == TRUE, 15, 7), 0),
-                                    hjust = 0.5,
+                                   hjust = 0.5,
                                    margin = margin(5, 0, 10, 0)),
       plot.title = element_text(size = unit(13, "pt"),
-                                 #margin = margin(0, 0, ifelse(has_subtitle == TRUE, 7, 15), 0),
-                                 hjust = 0.5),
+                                hjust = 0.5),
       plot.caption = element_text(colour = "grey50",
-                                   size = unit(10, "pt"),
-                                   hjust = 1),
+                                  size = unit(10, "pt"),
+                                  hjust = 1),
       plot.tag = element_text(size = unit(14, "pt"),
-                               margin = margin(0, 0, 0, 0),
-                               hjust = 0,
-                               colour = "black",
-                               face = "bold"),
+                              margin = margin(0, 0, 0, 0),
+                              hjust = 0,
+                              colour = "black",
+                              face = "bold"),
       # for facet (facet_wrap):
       strip.background = element_rect(colour = "#FFFFFF00"),
       strip.switch.pad.wrap = unit(10, "pt"),
       strip.placement = "outside",
       complete = TRUE)
- 
+  
   if (length(list(...)) > 0) {
     t <- t %+replace%
       theme(...)

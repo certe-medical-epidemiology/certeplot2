@@ -16,11 +16,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+Start up by loading this package and the `dplyr` package to utilise the pipe (`%>%`):
+
+```{r setup, message = FALSE, warning = FALSE}
 library(certeplot2)
-library(ggplot2)
 library(dplyr)
 ```
+
+To work with `plot2()`, the `ggplot2` package must be installed but it does not need to be loaded.
 
 # Setting plot type / geom
 

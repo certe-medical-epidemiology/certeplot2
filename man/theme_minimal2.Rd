@@ -10,9 +10,9 @@ theme_minimal2(...)
 \item{...}{arguments passed on to \code{\link[ggplot2:theme]{ggplot2::theme()}}}
 }
 \description{
-An Even More Minimal Theme
+This \code{ggplot2} theme provide even more white area and less clutter than \code{\link[ggplot2:ggtheme]{theme_minimal()}}.
 }
 \examples{
 plot2(iris)
-plot2(iris, x = Species)
+plot2(admitted_patients, x = hospital, category = gender)
 }

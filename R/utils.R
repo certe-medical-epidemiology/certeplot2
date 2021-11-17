@@ -26,26 +26,27 @@ globalVariables(c(".",
                   "_var_y"))
 
 #' @importFrom certestyle font_black font_blue font_red_bg font_white font_bold
-plot_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", geom = "info") {
+plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", geom = "info") {
   if (isTRUE(print)) {
     msg <- paste0(font_black(c(...), collapse = NULL), collapse = "")
     # get info icon
-    if (geom == "info") {
-      if (isTRUE(base::l10n_info()$`UTF-8`) && interactive()) {
-        # \u2139 is a symbol officially named 'information source'
-        icon <- font_blue("\u2139")
-      } else {
-        icon <- font_blue("i")
-      }
+    if (isTRUE(base::l10n_info()$`UTF-8`) && interactive()) {
+      # \u2139 is a symbol officially named 'information source'
+      icon <- "\u2139"
     } else {
-      icon <- font_red_bg(font_white(font_bold(" ! ")))
+      icon <- "i"
+    }
+    if (geom == "info") {
+      icon <- font_blue(icon)
+    } else {
+      icon <- font_red(icon)
     }
     message(paste(icon, font_black(msg)))
   }
 }
 
-plot_warning <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "") {
-  plot_message(..., print = print, geom = "warning")
+plot2_warning <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "") {
+  plot2_message(..., print = print, geom = "warning")
 }
 
 summarise_variable <- function(df, var, sep) {
