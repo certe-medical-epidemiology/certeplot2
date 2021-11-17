@@ -82,24 +82,31 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.17</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
+  <a href="..//index.html">
     <span class="fa fa-home"></span>
      
     Home
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">
+  <a href="..//reference/index.html">
     <span class="fa fa-book-open"></span>
      
     Manual
+  </a>
+</li>
+<li>
+  <a href="..//articles/plot2.html">
+    <span class="fa fa-book-open"></span>
+     
+    Vignette
   </a>
 </li>
 <li>
@@ -139,7 +146,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Methods for <code><a href='plot2.html'>plot2()</a></code></h1>
-    <small class="dont-index">Source: <a href='https://github.com/certe-medical-epidemiology/certeplot2/blob/master/R/plot2-methods.R'><code>R/plot2-methods.R</code></a>, <a href='https://github.com/certe-medical-epidemiology/certeplot2/blob/master/R/plot2.R'><code>R/plot2.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/certe-medical-epidemiology/certeplot2/blob/master/R/plot2-methods.R'><code>R/plot2-methods.R</code></a></small>
     <div class="hidden name"><code>plot2-methods.Rd</code></div>
     </div>
 
@@ -224,12 +231,13 @@
   facet.sort <span class='op'>=</span> <span class='cn'>TRUE</span>,
   datalabels <span class='op'>=</span> <span class='cn'>TRUE</span>,
   datalabels.round <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='va'>y.percent</span>, <span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>)</span>,
+  datalabels.format <span class='op'>=</span> <span class='st'>"%n"</span>,
   datalabels.colour <span class='op'>=</span> <span class='st'>"grey25"</span>,
   datalabels.fill <span class='op'>=</span> <span class='cn'>NULL</span>,
   datalabels.size <span class='op'>=</span> <span class='op'>(</span><span class='fl'>3</span> <span class='op'>*</span> <span class='va'>text_factor</span><span class='op'>)</span>,
   datalabels.angle <span class='op'>=</span> <span class='fl'>0</span>,
   decimal.mark <span class='op'>=</span> <span class='st'>","</span>,
-  big.mark <span class='op'>=</span> <span class='st'>"."</span>,
+  big.mark <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='va'>decimal.mark</span> <span class='op'>==</span> <span class='st'>","</span>, <span class='st'>"."</span>, <span class='st'>","</span><span class='op'>)</span>,
   summarise_function <span class='op'>=</span> <span class='fu'>base</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>,
   stacked <span class='op'>=</span> <span class='cn'>FALSE</span>,
   stackedpercent <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -261,7 +269,7 @@
   print <span class='op'>=</span> <span class='cn'>FALSE</span>,
   text_factor <span class='op'>=</span> <span class='fl'>1</span>,
   family <span class='op'>=</span> <span class='st'>"Calibri"</span>,
-  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span>horizontal <span class='op'>=</span> <span class='va'>horizontal</span><span class='op'>)</span>,
+  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span><span class='op'>)</span>,
   markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
   x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.category <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -345,12 +353,13 @@
   facet.sort <span class='op'>=</span> <span class='cn'>TRUE</span>,
   datalabels <span class='op'>=</span> <span class='cn'>FALSE</span>,
   datalabels.round <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='va'>y.percent</span>, <span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>)</span>,
+  datalabels.format <span class='op'>=</span> <span class='st'>"%n"</span>,
   datalabels.colour <span class='op'>=</span> <span class='st'>"grey25"</span>,
   datalabels.fill <span class='op'>=</span> <span class='cn'>NULL</span>,
   datalabels.size <span class='op'>=</span> <span class='op'>(</span><span class='fl'>3</span> <span class='op'>*</span> <span class='va'>text_factor</span><span class='op'>)</span>,
   datalabels.angle <span class='op'>=</span> <span class='fl'>0</span>,
   decimal.mark <span class='op'>=</span> <span class='st'>","</span>,
-  big.mark <span class='op'>=</span> <span class='st'>"."</span>,
+  big.mark <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='va'>decimal.mark</span> <span class='op'>==</span> <span class='st'>","</span>, <span class='st'>"."</span>, <span class='st'>","</span><span class='op'>)</span>,
   summarise_function <span class='op'>=</span> <span class='fu'>base</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>,
   stacked <span class='op'>=</span> <span class='cn'>FALSE</span>,
   stackedpercent <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -382,7 +391,7 @@
   print <span class='op'>=</span> <span class='cn'>FALSE</span>,
   text_factor <span class='op'>=</span> <span class='fl'>1</span>,
   family <span class='op'>=</span> <span class='st'>"Calibri"</span>,
-  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span>horizontal <span class='op'>=</span> <span class='va'>horizontal</span><span class='op'>)</span>,
+  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span><span class='op'>)</span>,
   markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
   x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.category <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -466,12 +475,13 @@
   facet.sort <span class='op'>=</span> <span class='cn'>TRUE</span>,
   datalabels <span class='op'>=</span> <span class='cn'>TRUE</span>,
   datalabels.round <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='va'>y.percent</span>, <span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>)</span>,
+  datalabels.format <span class='op'>=</span> <span class='st'>"%n"</span>,
   datalabels.colour <span class='op'>=</span> <span class='st'>"grey25"</span>,
   datalabels.fill <span class='op'>=</span> <span class='cn'>NULL</span>,
   datalabels.size <span class='op'>=</span> <span class='op'>(</span><span class='fl'>3</span> <span class='op'>*</span> <span class='va'>text_factor</span><span class='op'>)</span>,
   datalabels.angle <span class='op'>=</span> <span class='fl'>0</span>,
   decimal.mark <span class='op'>=</span> <span class='st'>","</span>,
-  big.mark <span class='op'>=</span> <span class='st'>"."</span>,
+  big.mark <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='va'>decimal.mark</span> <span class='op'>==</span> <span class='st'>","</span>, <span class='st'>"."</span>, <span class='st'>","</span><span class='op'>)</span>,
   summarise_function <span class='op'>=</span> <span class='fu'>base</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>,
   stacked <span class='op'>=</span> <span class='cn'>FALSE</span>,
   stackedpercent <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -503,7 +513,7 @@
   print <span class='op'>=</span> <span class='cn'>FALSE</span>,
   text_factor <span class='op'>=</span> <span class='fl'>1</span>,
   family <span class='op'>=</span> <span class='st'>"Calibri"</span>,
-  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span>horizontal <span class='op'>=</span> <span class='va'>horizontal</span><span class='op'>)</span>,
+  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span><span class='op'>)</span>,
   markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
   x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.category <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -587,12 +597,13 @@
   facet.sort <span class='op'>=</span> <span class='cn'>TRUE</span>,
   datalabels <span class='op'>=</span> <span class='cn'>TRUE</span>,
   datalabels.round <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='va'>y.percent</span>, <span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>)</span>,
+  datalabels.format <span class='op'>=</span> <span class='cn'>NULL</span>,
   datalabels.colour <span class='op'>=</span> <span class='st'>"black"</span>,
   datalabels.fill <span class='op'>=</span> <span class='cn'>NULL</span>,
   datalabels.size <span class='op'>=</span> <span class='op'>(</span><span class='fl'>3</span> <span class='op'>*</span> <span class='va'>text_factor</span><span class='op'>)</span>,
   datalabels.angle <span class='op'>=</span> <span class='fl'>0</span>,
   decimal.mark <span class='op'>=</span> <span class='st'>","</span>,
-  big.mark <span class='op'>=</span> <span class='st'>"."</span>,
+  big.mark <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='va'>decimal.mark</span> <span class='op'>==</span> <span class='st'>","</span>, <span class='st'>"."</span>, <span class='st'>","</span><span class='op'>)</span>,
   summarise_function <span class='op'>=</span> <span class='fu'>base</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>,
   stacked <span class='op'>=</span> <span class='cn'>FALSE</span>,
   stackedpercent <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -614,7 +625,7 @@
   violin_scale <span class='op'>=</span> <span class='st'>"count"</span>,
   legend.position <span class='op'>=</span> <span class='st'>"right"</span>,
   legend.title <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  legend.reverse <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  legend.reverse <span class='op'>=</span> <span class='cn'>FALSE</span>,
   legend.barheight <span class='op'>=</span> <span class='fl'>6</span>,
   legend.barwidth <span class='op'>=</span> <span class='fl'>1.5</span>,
   legend.nbin <span class='op'>=</span> <span class='fl'>300</span>,
@@ -711,12 +722,13 @@
   facet.sort <span class='op'>=</span> <span class='cn'>TRUE</span>,
   datalabels <span class='op'>=</span> <span class='cn'>TRUE</span>,
   datalabels.round <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='va'>y.percent</span>, <span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>)</span>,
+  datalabels.format <span class='op'>=</span> <span class='st'>"%n"</span>,
   datalabels.colour <span class='op'>=</span> <span class='st'>"grey25"</span>,
   datalabels.fill <span class='op'>=</span> <span class='cn'>NULL</span>,
   datalabels.size <span class='op'>=</span> <span class='op'>(</span><span class='fl'>3</span> <span class='op'>*</span> <span class='va'>text_factor</span><span class='op'>)</span>,
   datalabels.angle <span class='op'>=</span> <span class='fl'>0</span>,
   decimal.mark <span class='op'>=</span> <span class='st'>","</span>,
-  big.mark <span class='op'>=</span> <span class='st'>"."</span>,
+  big.mark <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='va'>decimal.mark</span> <span class='op'>==</span> <span class='st'>","</span>, <span class='st'>"."</span>, <span class='st'>","</span><span class='op'>)</span>,
   summarise_function <span class='op'>=</span> <span class='fu'>base</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>,
   stacked <span class='op'>=</span> <span class='cn'>FALSE</span>,
   stackedpercent <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -748,7 +760,7 @@
   print <span class='op'>=</span> <span class='cn'>FALSE</span>,
   text_factor <span class='op'>=</span> <span class='fl'>1</span>,
   family <span class='op'>=</span> <span class='st'>"Calibri"</span>,
-  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span>horizontal <span class='op'>=</span> <span class='va'>horizontal</span><span class='op'>)</span>,
+  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span><span class='op'>)</span>,
   markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
   x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.category <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -780,7 +792,9 @@
     </tr>
     <tr>
       <th>geom</th>
-      <td><p>type of visualisation to use, supports all <code>ggplot2</code> geoms</p></td>
+      <td><p>type of visualisation to use, supports all <code>ggplot2</code> geoms. It will be determined automatically if left blank.</p>
+<p>In <code>ggplot2</code>, 'bars' and 'columns' are equal, while it is common to many people that bars are horizontal and columns are vertical. For this reason, <code>geom = "bar"</code> will set <code>geom = "col"</code> and <code>horizontal = TRUE</code>.</p>
+<p>There is one special case: the shortcut <code>geom = "barpercent"</code>, which will set <code>geom = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc</code> and <code>datalabels.format = "%n (%p)"</code>.</p></td>
     </tr>
     <tr>
       <th>x.title</th>
@@ -1012,79 +1026,110 @@
     </tr>
     <tr>
       <th>category.labels</th>
-      <td><p>text</p></td>
+      <td><p>settings for the plotting direction <code>category</code></p></td>
     </tr>
     <tr>
       <th>category.percent</th>
-      <td><p>text</p></td>
+      <td><p>settings for the plotting direction <code>category</code></p></td>
     </tr>
     <tr>
       <th>category.breaks</th>
-      <td><p>text</p></td>
+      <td><p>settings for the plotting direction <code>category</code></p></td>
     </tr>
     <tr>
       <th>category.limits</th>
-      <td><p>text</p></td>
+      <td><p>settings for the plotting direction <code>category</code></p></td>
     </tr>
     <tr>
       <th>category.expand</th>
-      <td><p>text</p></td>
+      <td><p>settings for the plotting direction <code>category</code></p></td>
     </tr>
     <tr>
       <th>category.midpoint</th>
-      <td><p>text</p></td>
+      <td><p>settings for the plotting direction <code>category</code></p></td>
     </tr>
     <tr>
       <th>category.trans</th>
-      <td><p>text</p></td>
+      <td><p>settings for the plotting direction <code>category</code></p></td>
     </tr>
     <tr>
       <th>x.sort</th>
-      <td><p>text</p></td>
+      <td><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href='https://rdrr.io/r/base/factor.html'>factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul>
+<li><p><code>TRUE</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a> on their levels, otherwise sort as <code>"asc"</code></p></li>
+<li><p><code>FALSE</code>: keep order as it is in the data</p></li>
+<li><p><code>NULL</code>: do not sort/transform at all</p></li>
+<li><p><code>"asc"</code> or <code>"alpha"</code>: sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<li><p><code>"desc"</code>: sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<li><p><code>"order"</code> or <code>"inorder"</code>: sort as <code>FALSE</code></p></li>
+<li><p><code>"freq"</code> or <code>"freq-desc"</code>: sort descending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (highest value first)</p></li>
+<li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (loewest value first)</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>category.sort</th>
-      <td><p>text</p></td>
+      <td><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href='https://rdrr.io/r/base/factor.html'>factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul>
+<li><p><code>TRUE</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a> on their levels, otherwise sort as <code>"asc"</code></p></li>
+<li><p><code>FALSE</code>: keep order as it is in the data</p></li>
+<li><p><code>NULL</code>: do not sort/transform at all</p></li>
+<li><p><code>"asc"</code> or <code>"alpha"</code>: sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<li><p><code>"desc"</code>: sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<li><p><code>"order"</code> or <code>"inorder"</code>: sort as <code>FALSE</code></p></li>
+<li><p><code>"freq"</code> or <code>"freq-desc"</code>: sort descending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (highest value first)</p></li>
+<li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (loewest value first)</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>facet.sort</th>
-      <td><p>text</p></td>
+      <td><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href='https://rdrr.io/r/base/factor.html'>factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul>
+<li><p><code>TRUE</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a> on their levels, otherwise sort as <code>"asc"</code></p></li>
+<li><p><code>FALSE</code>: keep order as it is in the data</p></li>
+<li><p><code>NULL</code>: do not sort/transform at all</p></li>
+<li><p><code>"asc"</code> or <code>"alpha"</code>: sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<li><p><code>"desc"</code>: sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<li><p><code>"order"</code> or <code>"inorder"</code>: sort as <code>FALSE</code></p></li>
+<li><p><code>"freq"</code> or <code>"freq-desc"</code>: sort descending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (highest value first)</p></li>
+<li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (loewest value first)</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>datalabels</th>
-      <td><p>text</p></td>
+      <td><p>variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' plots, and values of <code>y</code> otherwise</p></td>
     </tr>
     <tr>
       <th>datalabels.round</th>
-      <td><p>text</p></td>
+      <td><p>number of digits to round the datalabels</p></td>
+    </tr>
+    <tr>
+      <th>datalabels.format</th>
+      <td><p>format to use for datalabels - <code>"%n"</code> will be replaced by the count number, <code>"%p"</code> will be replaced by the percentage of the total count. Use <code>datalabels.format = NULL</code> to not transform the datalabels.</p></td>
     </tr>
     <tr>
       <th>datalabels.colour</th>
-      <td><p>text</p></td>
+      <td><p>settings for the datalabels</p></td>
     </tr>
     <tr>
       <th>datalabels.fill</th>
-      <td><p>text</p></td>
+      <td><p>settings for the datalabels</p></td>
     </tr>
     <tr>
       <th>datalabels.size</th>
-      <td><p>text</p></td>
+      <td><p>settings for the datalabels</p></td>
     </tr>
     <tr>
       <th>datalabels.angle</th>
-      <td><p>text</p></td>
+      <td><p>settings for the datalabels</p></td>
     </tr>
     <tr>
       <th>decimal.mark</th>
-      <td><p>text</p></td>
+      <td><p>decimal mark, defaults to Dutch use (a comma)</p></td>
     </tr>
     <tr>
       <th>big.mark</th>
-      <td><p>text</p></td>
+      <td><p>thousands separator, defaults to Dutch use (a full stop)</p></td>
     </tr>
     <tr>
       <th>summarise_function</th>
-      <td><p>text</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/function.html'>function</a> to use if the data has to be summarised, see <em>Examples</em></p></td>
     </tr>
     <tr>
       <th>stacked</th>
@@ -1096,95 +1141,95 @@
     </tr>
     <tr>
       <th>horizontal</th>
-      <td><p>text</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to turn the plot 90 defrees using <code><a href='https://ggplot2.tidyverse.org/reference/coord_flip.html'>coord_flip()</a></code></p></td>
     </tr>
     <tr>
       <th>reverse</th>
-      <td><p>text</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to reverse all values on the x axis</p></td>
     </tr>
     <tr>
       <th>smooth</th>
-      <td><p>text</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to add a smooth using <code><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth()</a></code></p></td>
     </tr>
     <tr>
       <th>smooth.method</th>
-      <td><p>text</p></td>
+      <td><p>settings for <code>smooth</code></p></td>
     </tr>
     <tr>
       <th>smooth.formula</th>
-      <td><p>text</p></td>
+      <td><p>settings for <code>smooth</code></p></td>
     </tr>
     <tr>
       <th>smooth.se</th>
-      <td><p>text</p></td>
+      <td><p>settings for <code>smooth</code></p></td>
     </tr>
     <tr>
       <th>smooth.level</th>
-      <td><p>text</p></td>
+      <td><p>settings for <code>smooth</code></p></td>
     </tr>
     <tr>
       <th>smooth.alpha</th>
-      <td><p>text</p></td>
+      <td><p>settings for <code>smooth</code></p></td>
     </tr>
     <tr>
       <th>smooth.size</th>
-      <td><p>text</p></td>
+      <td><p>settings for <code>smooth</code></p></td>
     </tr>
     <tr>
       <th>smooth.linetype</th>
-      <td><p>text</p></td>
+      <td><p>settings for <code>smooth</code></p></td>
     </tr>
     <tr>
       <th>size</th>
-      <td><p>text</p></td>
+      <td><p>size of the geom</p></td>
     </tr>
     <tr>
       <th>linetype</th>
-      <td><p>text</p></td>
+      <td><p>linetype of the geom, only suitable for geoms that draw lines</p></td>
     </tr>
     <tr>
       <th>bins</th>
-      <td><p>text</p></td>
+      <td><p>number of bins, only useful for <code>geom = "histogram"</code></p></td>
     </tr>
     <tr>
       <th>width</th>
-      <td><p>text</p></td>
+      <td><p>width of the geom</p></td>
     </tr>
     <tr>
       <th>jitter_seed</th>
-      <td><p>text</p></td>
+      <td><p>seed (randomisation factor) to be set when using <code>geom = "jitter"</code></p></td>
     </tr>
     <tr>
       <th>violin_scale</th>
-      <td><p>text</p></td>
+      <td><p>scale to be set when using <code>geom = "violin"</code>, can also be set to <code>"area"</code></p></td>
     </tr>
     <tr>
       <th>legend.position</th>
-      <td><p>text</p></td>
+      <td><p>settings for the legend</p></td>
     </tr>
     <tr>
       <th>legend.title</th>
-      <td><p>text</p></td>
+      <td><p>settings for the legend</p></td>
     </tr>
     <tr>
       <th>legend.reverse</th>
-      <td><p>text</p></td>
+      <td><p>settings for the legend</p></td>
     </tr>
     <tr>
       <th>legend.barheight</th>
-      <td><p>text</p></td>
+      <td><p>settings for the legend</p></td>
     </tr>
     <tr>
       <th>legend.barwidth</th>
-      <td><p>text</p></td>
+      <td><p>settings for the legend</p></td>
     </tr>
     <tr>
       <th>legend.nbin</th>
-      <td><p>text</p></td>
+      <td><p>settings for the legend</p></td>
     </tr>
     <tr>
       <th>legend.italic</th>
-      <td><p>text</p></td>
+      <td><p>settings for the legend</p></td>
     </tr>
     <tr>
       <th>zoom</th>
@@ -1192,7 +1237,7 @@
     </tr>
     <tr>
       <th>sep</th>
-      <td><p>separator character to use if multiple columns are given to either of the three directions: <code>x</code>, <code>category</code> and <code>facet</code></p></td>
+      <td><p>separator character to use if multiple columns are given to either of the three directions: <code>x</code>, <code>category</code> and <code>facet</code>, e.g. <code>facet = c(column1, column2)</code></p></td>
     </tr>
     <tr>
       <th>print</th>

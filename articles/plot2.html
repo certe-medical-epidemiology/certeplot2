@@ -39,24 +39,31 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.17</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
+  <a href="..//index.html">
     <span class="fa fa-home"></span>
      
     Home
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">
+  <a href="..//reference/index.html">
     <span class="fa fa-book-open"></span>
      
     Manual
+  </a>
+</li>
+<li>
+  <a href="..//articles/plot2.html">
+    <span class="fa fa-book-open"></span>
+     
+    Vignette
   </a>
 </li>
 <li>
@@ -105,18 +112,11 @@
 
     
     
+<p>Start up by loading this package and the <code>dplyr</code> package to utilise the pipe (<code>%&gt;%</code>):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/certe-medical-epidemiology/certeplot2">certeplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'dplyr'</span>
-<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     filter, lag</span>
-<span class="co">#&gt; The following objects are masked from 'package:base':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     intersect, setdiff, setequal, union</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://certe-medical-epidemiology.github.io/certeplot2">certeplot2</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></code></pre></div>
+<p>To work with <code><a href="../reference/plot2.html">plot2()</a></code>, the <code>ggplot2</code> package must be installed but it does not need to be loaded.</p>
 <div id="setting-plot-type-geom" class="section level1">
 <h1 class="hasAnchor">
 <a href="#setting-plot-type-geom" class="anchor"></a>Setting plot type / geom</h1>
@@ -128,32 +128,12 @@
 <h2 class="hasAnchor">
 <a href="#setting-multiple-columns" class="anchor"></a>Setting multiple columns</h2>
 <p>Support multiple columns, with <code>c(...)</code> or even Tidyverse selectors:</p>
-<div id="plot2" class="section level3">
-<h3 class="hasAnchor">
-<a href="#plot2" class="anchor"></a><code>plot2</code>
-</h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">hospital</span>, facet <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.character</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; i Using y = age</span>
 <span class="co">#&gt; i Using geom = "boxplot" since all groups have size &gt;= 3</span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
-</div>
-<div id="ggplot2" class="section level3">
-<h3 class="hasAnchor">
-<a href="#ggplot2" class="anchor"></a><code>ggplot2</code>
-</h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">hospital</span>, y <span class="op">=</span> <span class="va">age</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="co"># the facets require to call the data again</span>
-  <span class="co"># (or requires extensive mutate()/across() code)</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span>facets <span class="op">=</span> <span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-               <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="fu">where</span><span class="op">(</span><span class="va">is.character</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
-               <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="plot2_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
-</div>
 </div>
 <div id="the-x-axis" class="section level2">
 <h2 class="hasAnchor">
@@ -172,24 +152,34 @@
 <h1 class="hasAnchor">
 <a href="#setting-the-values" class="anchor"></a>Setting the values</h1>
 </div>
-<div id="sorting" class="section level1 sorting">
+<div id="sorting" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sorting" class="anchor"></a>Sorting</h1>
 </div>
-<div id="transforming" class="section level1">
+<div id="transforming-data" class="section level1">
 <h1 class="hasAnchor">
-<a href="#transforming" class="anchor"></a>Transforming</h1>
+<a href="#transforming-data" class="anchor"></a>Transforming data</h1>
 </div>
 <div id="legends" class="section level1">
 <h1 class="hasAnchor">
 <a href="#legends" class="anchor"></a>Legends</h1>
 </div>
+<div id="turning-the-plot-with-horizontal" class="section level1">
+<h1 class="hasAnchor">
+<a href="#turning-the-plot-with-horizontal" class="anchor"></a>Turning the plot with <code>horizontal</code>
+</h1>
+<ul>
+<li>changes with <code>coord_flip()</code>
+</li>
+<li>changes theme to exchange x and y properties</li>
+</ul>
+</div>
 <div id="plotting-geometries-sf-objects" class="section level1">
 <h1 class="hasAnchor">
 <a href="#plotting-geometries-sf-objects" class="anchor"></a>Plotting geometries (<code>sf</code> objects)</h1>
-<p>Objects of class <code>sf</code> (<em>simple feature</em>) are treated specially by the <code>ggplot2</code> package, although <code><a href="../reference/plot2.html">plot2()</a></code> handles these objects like any other data set. Instead it returns a <code>ggplot</code> object created with <code><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf()</a></code> internally, but most arguments are usable and even the <code><a href="../reference/theme_minimal2.html">theme_minimal2()</a></code> theme has good use for <code>sf</code> plots.</p>
+<p>Objects of class <code>sf</code> (<em>simple feature</em>) are treated specially by the <code>ggplot2</code> package, although <code><a href="../reference/plot2.html">plot2()</a></code> handles these objects like any other data set. Instead it returns a <code>ggplot</code> object created with <code>geom_sf()</code> internally, but most arguments are usable and even the <code><a href="../reference/theme_minimal2.html">theme_minimal2()</a></code> theme has good use for <code>sf</code> plots.</p>
 <p>The <code>netherlands</code> data set is such an <code>sf</code> object:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span>
 <span class="co">#&gt; Linking to GEOS 3.8.0, GDAL 3.0.4, PROJ 6.3.1</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">netherlands</span><span class="op">)</span>
@@ -211,11 +201,11 @@
 <span class="co">#&gt; 9   Zuid-Holland 2967.352 MULTIPOLYGON (((4.547322 52...</span>
 <span class="co">#&gt; 10       Zeeland 1838.376 MULTIPOLYGON (((3.842477 51...</span></code></pre></div>
 <p>How does it look?</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">netherlands</span><span class="op">)</span>
 <span class="co">#&gt; i Using category = area_km2</span>
 <span class="co">#&gt; i Using datalabels = province</span></code></pre></div>
-<p><img src="plot2_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p><img src="plot2_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 </div>
   </div>
 

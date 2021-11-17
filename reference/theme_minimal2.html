@@ -49,7 +49,7 @@
   
 
 <meta property="og:title" content="An Even More Minimal Theme — theme_minimal2" />
-<meta property="og:description" content="An Even More Minimal Theme" />
+<meta property="og:description" content="This ggplot2 theme provide even more white area and less clutter than theme_minimal()." />
 <meta property="og:image" content="https://certe-medical-epidemiology.github.io/certeplot2/logo.svg" />
 
 
@@ -82,24 +82,31 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.17</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
+  <a href="..//index.html">
     <span class="fa fa-home"></span>
      
     Home
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">
+  <a href="..//reference/index.html">
     <span class="fa fa-book-open"></span>
      
     Manual
+  </a>
+</li>
+<li>
+  <a href="..//articles/plot2.html">
+    <span class="fa fa-book-open"></span>
+     
+    Vignette
   </a>
 </li>
 <li>
@@ -144,18 +151,14 @@
     </div>
 
     <div class="ref-description">
-    <p>An Even More Minimal Theme</p>
+    <p>This <code>ggplot2</code> theme provide even more white area and less clutter than <code>theme_minimal()</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>theme_minimal2</span><span class='op'>(</span>horizontal <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>theme_minimal2</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>horizontal</th>
-      <td><p><a href='https://rdrr.io/r/base/logical.html'>logical</a> to indicate whether theme is applied to a horizontally orientated plot</p></td>
-    </tr>
     <tr>
       <th>...</th>
       <td><p>arguments passed on to <code><a href='https://ggplot2.tidyverse.org/reference/theme.html'>ggplot2::theme()</a></code></p></td>
@@ -170,8 +173,8 @@
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = Species</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
 <span class='r-plt img'><img src='theme_minimal2-1.png' alt='' width='700' height='433' /></span>
-<span class='r-in'><span class='fu'><a href='plot2.html'>plot2</a></span><span class='op'>(</span><span class='va'>iris</span>, x <span class='op'>=</span> <span class='va'>Species</span><span class='op'>)</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = Sepal.Length</span></span>
+<span class='r-in'><span class='fu'><a href='plot2.html'>plot2</a></span><span class='op'>(</span><span class='va'>admitted_patients</span>, x <span class='op'>=</span> <span class='va'>hospital</span>, category <span class='op'>=</span> <span class='va'>gender</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = age</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
 <span class='r-plt img'><img src='theme_minimal2-2.png' alt='' width='700' height='433' /></span>
 </pre>
