@@ -4,11 +4,9 @@
 \alias{theme_minimal2}
 \title{An Even More Minimal Theme}
 \usage{
-theme_minimal2(horizontal = FALSE, ...)
+theme_minimal2(...)
 }
 \arguments{
-\item{horizontal}{\link{logical} to indicate whether theme is applied to a horizontally orientated plot}
-
 \item{...}{arguments passed on to \code{\link[ggplot2:theme]{ggplot2::theme()}}}
 }
 \description{

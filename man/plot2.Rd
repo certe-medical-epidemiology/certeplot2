@@ -81,6 +81,7 @@ plot2(
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.colour = "grey25",
+  datalabels.format = "\%n",
   datalabels.fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
@@ -117,7 +118,7 @@ plot2(
   print = FALSE,
   text_factor = 1,
   family = "Calibri",
-  theme = theme_minimal2(horizontal = horizontal),
+  theme = theme_minimal2(),
   markdown = TRUE,
   x.category = NULL,
   y.category = NULL,
@@ -135,7 +136,11 @@ plot2(
 
 \item{facet}{plotting 'direction': the facet}
 
-\item{geom}{type of visualisation to use, supports all \code{ggplot2} geoms}
+\item{geom}{type of visualisation to use, supports all \code{ggplot2} geoms. It will be determined automatically if left blank.
+
+In \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that bars are horizontal and columns are vertical. For this reason, \code{geom = "bar"} will set \code{geom = "col"} and \code{horizontal = TRUE}.
+
+There is one special case: the shortcut \code{geom = "barpercent"}, which will set \code{geom = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \verb{x.sort = "freq-desc} and \code{datalabels.format = "\%n (\%p)"}.}
 
 \item{x.title}{text to show on the x asis}
 
@@ -251,31 +256,27 @@ plot2(
 
 \item{y.position}{text}
 
-\item{category.labels}{text}
+\item{category.labels, category.percent, category.breaks, category.limits, category.expand, category.midpoint, category.trans}{settings for the plotting direction \code{category}}
 
-\item{category.percent}{text}
-
-\item{category.breaks}{text}
-
-\item{category.limits}{text}
-
-\item{category.expand}{text}
-
-\item{category.midpoint}{text}
-
-\item{category.trans}{text}
-
-\item{x.sort}{text}
-
-\item{category.sort}{text}
-
-\item{facet.sort}{text}
+\item{x.sort, category.sort, facet.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
+\itemize{
+\item \code{TRUE}: sort \link{factor} on their levels, otherwise sort as \code{"asc"}
+\item \code{FALSE}: keep order as it is in the data
+\item \code{NULL}: do not sort/transform at all
+\item \code{"asc"} or \code{"alpha"}: sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
+\item \code{"desc"}: sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
+\item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
+\item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest first)
+\item \code{"freq-asc"}: sort ascending like \code{"freq"} (lowest value first)
+}}
 
 \item{datalabels}{text}
 
-\item{datalabels.round}{text}
+\item{datalabels.round}{number of digits to round the datalabels}
 
 \item{datalabels.colour}{text}
+
+\item{datalabels.format}{format to use for datalabels - \code{"\%n"} will be replaced by the count number, \code{"\%p"} will be replaced by the percentage of the total count}
 
 \item{datalabels.fill}{text}
 
@@ -293,51 +294,27 @@ plot2(
 
 \item{stackedpercent}{text}
 
-\item{horizontal}{text}
+\item{horizontal}{a \link{logical} to turn the plot 90 defrees using \code{\link[ggplot2:coord_flip]{coord_flip()}}}
 
-\item{reverse}{text}
+\item{reverse}{a \link{logical} to reverse all values on the x axis}
 
-\item{smooth}{text}
+\item{smooth}{a \link{logical} to add a smooth using \code{\link[ggplot2:geom_smooth]{geom_smooth()}}}
 
-\item{smooth.method}{text}
+\item{smooth.method, smooth.formula, smooth.se, smooth.level, smooth.alpha, smooth.size, smooth.linetype}{settings for \code{smooth}}
 
-\item{smooth.formula}{text}
+\item{size}{size of the geom}
 
-\item{smooth.se}{text}
+\item{linetype}{linetype of the geom, only suitable for geoms that draw lines}
 
-\item{smooth.level}{text}
+\item{bins}{number of bins, only useful for \code{geom = "histogram"}}
 
-\item{smooth.alpha}{text}
+\item{width}{width of the geom}
 
-\item{smooth.size}{text}
+\item{jitter_seed}{seed (randomisation factor) to be set when using \code{geom = "jitter"}}
 
-\item{smooth.linetype}{text}
+\item{violin_scale}{scale to be set when using \code{geom = "violin"}, can also be set to \code{"area"}}
 
-\item{size}{text}
-
-\item{linetype}{text}
-
-\item{bins}{text}
-
-\item{width}{text}
-
-\item{jitter_seed}{text}
-
-\item{violin_scale}{text}
-
-\item{legend.position}{text}
-
-\item{legend.title}{text}
-
-\item{legend.reverse}{text}
-
-\item{legend.barheight}{text}
-
-\item{legend.barwidth}{text}
-
-\item{legend.nbin}{text}
-
-\item{legend.italic}{text}
+\item{legend.position, legend.title, legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic}{settings for the legend}
 
 \item{zoom}{a \link{logical} to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0}
 
@@ -387,7 +364,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. For \link{data.frame}s, \code{\link[=plot2]{plot2()}} currently has 116 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. For \link{data.frame}s, \code{\link[=plot2]{plot2()}} currently has 117 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)

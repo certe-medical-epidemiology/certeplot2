@@ -18,15 +18,13 @@
 # ===================================================================== #
 
 #' An Even More Minimal Theme
-#' @param horizontal [logical] to indicate whether theme is applied to a horizontally orientated plot
 #' @param ... arguments passed on to [ggplot2::theme()]
 #' @importFrom ggplot2 element_text `%+replace%` theme_bw theme margin element_line element_blank unit element_rect
 #' @export
 #' @examples 
 #' plot2(iris)
 #' plot2(iris, x = Species)
-theme_minimal2 <- function(horizontal = FALSE, ...) {
-  
+theme_minimal2 <- function(...) {
   t <- theme_bw(base_size = 11) %+replace%
     theme(
       axis.text.x = element_text(margin = margin(3, 0, 0, 0)),
@@ -49,15 +47,16 @@ theme_minimal2 <- function(horizontal = FALSE, ...) {
       panel.grid.minor.y = element_line(size = 0.25, colour = "grey85"),
       axis.line = element_line(size = 0.375, colour = "grey75"),
       axis.line.y = element_blank(),
-      plot.margin = unit(c(5,                                  # top
-                           ifelse(isTRUE(horizontal), 25, 5),  # right
-                           5,                                  # bottom
-                           5),                                 # left
+      plot.margin = unit(c(5,   # top
+                           5,   # right
+                           5,   # bottom
+                           5),  # left
                          units = "pt"),
       plot.background = element_blank(),
       plot.subtitle = element_text(size = unit(11, "pt"),
                                     #margin = margin(0, 0, ifelse(has_subtitle == TRUE, 15, 7), 0),
-                                    hjust = 0.5),
+                                    hjust = 0.5,
+                                   margin = margin(5, 0, 10, 0)),
       plot.title = element_text(size = unit(13, "pt"),
                                  #margin = margin(0, 0, ifelse(has_subtitle == TRUE, 7, 15), 0),
                                  hjust = 0.5),
@@ -74,27 +73,7 @@ theme_minimal2 <- function(horizontal = FALSE, ...) {
       strip.switch.pad.wrap = unit(10, "pt"),
       strip.placement = "outside",
       complete = TRUE)
-  
-  # if (x.lbl.angle < 90 & x.lbl.angle > 10) {
-  #   t <- t +
-  #     theme(axis.text.x = element_text(margin = margin(-5, 0, 0, 0)))
-  # }
-  
-  if (isTRUE(horizontal)) {
-    t <- t %+replace%
-      theme(panel.grid.major.y = element_blank(),
-            panel.grid.minor.y = element_blank(),
-            panel.grid.major.x = element_line(size = 0.375, colour = "grey75"),
-            panel.grid.minor.x = element_line(size = 0.25, colour = "grey85"),
-            axis.ticks.x = element_blank(),
-            axis.ticks.y = element_line(size = 0.75, colour = "grey75"),
-            # text on y axis (what had been x axis) right aligned and less space
-            axis.text.y = element_text(hjust = 1.0, vjust = 0.3, margin = margin(0, 3, 0, 0)),
-            axis.text.x = element_text(margin = margin(0, 0, 0, 0)),
-            axis.line.y = element_line(size = 0.375, colour = "grey75"),
-            axis.line.x = element_blank())
-  }
-  
+ 
   if (length(list(...)) > 0) {
     t <- t %+replace%
       theme(...)

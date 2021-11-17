@@ -112,14 +112,10 @@ add_direction <- function(df, direction, var_name, sep) {
 }
 
 #' @importFrom dplyr `%>%` select pull mutate arrange across
-#' @importFrom certestyle format2 font_bold font_blue
+#' @importFrom certestyle font_bold font_blue
 validate_data <- function(df,
                           misses_x,
                           misses_category,
-                          label_x,
-                          label_y,
-                          label_category,
-                          label_facet,
                           ...) {
   
   dots <- list(...)
@@ -127,7 +123,7 @@ validate_data <- function(df,
   
   numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.numeric)))
   numeric_cols <- numeric_cols[numeric_cols %unlike% "^_var_"]
-
+  
   if (!has_y(df)) {
     # try to find numeric column for y
     if (is.na(numeric_cols[1L])) {
@@ -212,21 +208,21 @@ validate_data <- function(df,
   }
   
   # add surrogate columns to df
-  if (has_x(df) && !label_x %in% colnames(df) && label_x != "NULL") {
+  if (has_x(df) && !dots$label_x %in% colnames(df) && dots$label_x != "NULL") {
     df$`_label_x` <- get_x(df)
-    colnames(df)[colnames(df) == "_label_x"] <- concat(label_x)
+    colnames(df)[colnames(df) == "_label_x"] <- concat(dots$label_x)
   }
-  if (has_y(df) && !label_y %in% colnames(df) && label_y != "NULL") {
+  if (has_y(df) && !dots$label_y %in% colnames(df) && dots$label_y != "NULL") {
     df$`_label_y` <- get_y(df)
-    colnames(df)[colnames(df) == "_label_y"] <- concat(label_y)
+    colnames(df)[colnames(df) == "_label_y"] <- concat(dots$label_y)
   }
-  if (has_category(df) && !label_category %in% colnames(df) && label_category != "NULL") {
+  if (has_category(df) && !dots$label_category %in% colnames(df) && dots$label_category != "NULL") {
     df$`_label_category` <- get_category(df)
-    colnames(df)[colnames(df) == "_label_category"] <- concat(label_category)
+    colnames(df)[colnames(df) == "_label_category"] <- concat(dots$label_category)
   }
-  if (has_facet(df) && !label_facet %in% colnames(df) && label_facet != "NULL") {
+  if (has_facet(df) && !dots$label_facet %in% colnames(df) && dots$label_facet != "NULL") {
     df$`_label_facet` <- get_facet(df)
-    colnames(df)[colnames(df) == "_label_facet"] <- concat(label_facet)
+    colnames(df)[colnames(df) == "_label_facet"] <- concat(dots$label_facet)
   }
   
   # remove datalabels if all are FALSE
@@ -253,12 +249,12 @@ validate_data <- function(df,
   
   # format datalabels
   if (has_datalabels(df)) {
-    df$`_var_datalabels`[as.character(df$`_var_datalabels`) %in% c("", "0")] <- NA
-    df <- df %>% mutate(`_var_datalabels` = format2(`_var_datalabels`,
-                                                    decimal.mark = dots$decimal.mark,
-                                                    big.mark = dots$big.mark,
-                                                    round = dots$datalabels.round,
-                                                    force.decimals = FALSE))
+    df <- df %>%
+      mutate(`_var_datalabels` = format_datalabels(`_var_datalabels`, 
+                                                   datalabels.round = dots$datalabels.round,
+                                                   datalabels.format = dots$datalabels.format,
+                                                   decimal.mark = dots$decimal.mark,
+                                                   big.mark = dots$big.mark))
   }
   
   # apply sortings
@@ -298,7 +294,7 @@ validate_data <- function(df,
                         y = get_y(df),
                         x = get_x_name(df),
                         x.max_items = dots$x.max_items,
-                        x.max_txt = dots$x.max_text,
+                        x.max_txt = dots$x.max_txt,
                         category = get_category_name(df), 
                         category.max_items = dots$category.max_items,
                         category.max_txt = dots$category.max_txt,
@@ -309,7 +305,8 @@ validate_data <- function(df,
                         summarise_function = dots$summarise_function,
                         decimal.mark = dots$decimal.mark,
                         big.mark = dots$big.mark,
-                        datalabels.round = dots$datalabels.round)
+                        datalabels.round = dots$datalabels.round,
+                        datalabels.format = dots$datalabels.format)
     # sort on x, important when piping plot2()'s after plot2()'s
     df <- df %>% 
       arrange(across(`_var_x`))
@@ -322,6 +319,7 @@ validate_data <- function(df,
 #' @importFrom ggplot2 scale_x_discrete scale_x_date scale_x_datetime scale_x_discrete scale_x_continuous expansion waiver
 #' @importFrom scales reverse_trans
 #' @importFrom cleaner format_datetime
+#' @importFrom certestyle format2
 validate_x_scale <- function(df,
                              x.date_breaks,
                              x.date_labels,
@@ -412,6 +410,7 @@ validate_x_scale <- function(df,
 #' @importFrom ggplot2 waiver expansion scale_y_continuous
 #' @importFrom cleaner as.percentage
 #' @importFrom scales pretty_breaks
+#' @importFrom certestyle format2
 validate_y_scale <- function(df,
                              y.24h,
                              y.age,
@@ -1006,6 +1005,7 @@ validate_theme <- function(theme,
     theme$strip.text <- add_markdown(theme$strip.text)
     theme$axis.title.x <- add_markdown(theme$axis.title.x)
     theme$axis.title.y <- add_markdown(theme$axis.title.y)
+    theme$legend.title <- add_markdown(theme$legend.title)
   }
 
   # set other properties to theme, set in plot2()
@@ -1063,6 +1063,23 @@ validate_theme <- function(theme,
     el
   })
   attributes(theme) <- attr_bak # restore class and all other attributes
+  
+  # if horizontal, all x and y grid lines etc. should be exchanged
+  if (isTRUE(horizontal)) {
+    theme.bak <- theme
+    theme$panel.grid.major.x <- theme$panel.grid.major.y
+    theme$panel.grid.major.y <- theme.bak$panel.grid.major.x
+    theme$panel.grid.minor.x <- theme$panel.grid.minor.y
+    theme$panel.grid.minor.y <- theme.bak$panel.grid.minor.x
+    theme$axis.ticks.x <- theme$axis.ticks.y
+    theme$axis.ticks.y <- theme.bak$axis.ticks.x
+    theme$axis.text.x <- theme$axis.text.y
+    theme$axis.text.y <- theme.bak$axis.text.x
+    theme$axis.text.x <- theme$axis.text.y
+    theme$axis.text.y <- theme.bak$axis.text.x
+    theme$axis.line.x <- theme$axis.line.y
+    theme$axis.line.y <- theme.bak$axis.line.x
+  }
   
   # return the theme
   return(theme)
@@ -1342,13 +1359,23 @@ sort_data <- function(original_values, sort_method, datapoints, summarise_functi
 
 #' @importFrom forcats fct_relevel
 #' @importFrom dplyr `%>%` group_by across group_size mutate summarise
-set_max_items <- function(df, y,
-                          x, x.max_items, x.max_txt,
-                          category, category.max_items, category.max_txt,
-                          facet, facet.max_items, facet.max_txt,
-                          horizontal, geom, summarise_function,
-                          decimal.mark, big.mark, datalabels.round) {
-  
+set_max_items <- function(df,
+                          y,
+                          x,
+                          x.max_items,
+                          x.max_txt,
+                          category,
+                          category.max_items,
+                          category.max_txt,
+                          facet,
+                          facet.max_items,
+                          facet.max_txt,
+                          horizontal,
+                          summarise_function,
+                          decimal.mark,
+                          big.mark,
+                          datalabels.round,
+                          datalabels.format) {
   if (is.infinite(x.max_items) && is.infinite(category.max_items) && is.infinite(facet.max_items)) {
     return(df)
   }
@@ -1414,9 +1441,12 @@ set_max_items <- function(df, y,
   
   if (all(group_sizes(df) == 1)) {
     # summarise again
-    df <- summarise_data(df = df, summarise_function = summarise_function,
-                         decimal.mark = decimal.mark, big.mark = big.mark,
-                         datalabels.round = datalabels.round)
+    df <- summarise_data(df = df,
+                         summarise_function = summarise_function,
+                         decimal.mark = decimal.mark,
+                         big.mark = big.mark,
+                         datalabels.round = datalabels.round,
+                         datalabels.format = datalabels.format)
   }
   df
   
@@ -1426,7 +1456,9 @@ summarise_data <- function(df,
                            summarise_function,
                            decimal.mark,
                            big.mark,
-                           datalabels.round) {
+                           datalabels.round,
+                           datalabels.format) {
+  
   x <- get_x_name(df)
   y <- get_y_name(df)
   category <- get_category_name(df)
@@ -1442,13 +1474,35 @@ summarise_data <- function(df,
   if (!is.null(category)) df$`_var_category` <- df[, category, drop = TRUE]
   if (!is.null(facet)) df$`_var_facet` <- df[, facet, drop = TRUE]
   if (isTRUE(has_datalbls)) {
-    df$`_var_datalabels` <- df$`_var_y`
-    df$`_var_datalabels`[as.character(df$`_var_datalabels`) %in% c("", "0")] <- NA
-    df <- df %>% mutate(`_var_datalabels` = format2(`_var_datalabels`,
-                                                    decimal.mark = decimal.mark,
-                                                    big.mark = big.mark,
-                                                    round = datalabels.round,
-                                                    force.decimals = FALSE))
+    df <- df %>%
+      mutate(`_var_datalabels` = format_datalabels(`_var_y`,
+                                                   datalabels.round = datalabels.round,
+                                                   datalabels.format = datalabels.format,
+                                                   decimal.mark = decimal.mark,
+                                                   big.mark = big.mark))
   }
   df
+}
+
+#' @importFrom certestyle format2
+format_datalabels <- function(datalabels,
+                              datalabels.round,
+                              datalabels.format,
+                              decimal.mark,
+                              big.mark) {
+  datalabels[as.character(datalabels) %in% c("", "0")] <- NA
+  datalabels_p <- trimws(format2(datalabels / sum(datalabels, na.rm = TRUE),
+                                 round = datalabels.round,
+                                 decimal.mark = decimal.mark,
+                                 big.mark = big.mark,
+                                 percent = TRUE))
+  datalabels_n <- trimws(format2(datalabels,
+                                 decimal.mark = decimal.mark,
+                                 big.mark = big.mark,
+                                 round = datalabels.round,
+                                 force.decimals = FALSE))
+  datalabels_out <- rep(datalabels.format, length(datalabels))
+  datalabels_out <- mapply(gsub, x = datalabels_out, pattern = "%n", replacement = datalabels_n, USE.NAMES = FALSE)
+  datalabels_out <- mapply(gsub, x = datalabels_out, pattern = "%p", replacement = datalabels_p, USE.NAMES = FALSE)
+  datalabels_out
 }

@@ -30,24 +30,9 @@ library(dplyr)
 
 Support multiple columns, with `c(...)` or even Tidyverse selectors:
 
-### `plot2`
-
 ```{r}
 admitted_patients %>%
   plot2(x = hospital, facet = where(is.character))
-```
-
-### `ggplot2`
-
-```{r}
-admitted_patients %>%
-  ggplot(aes(x = hospital, y = age)) +
-  geom_boxplot() +
-  # the facets require to call the data again
-  # (or requires extensive mutate()/across() code)
-  facet_wrap(facets = admitted_patients %>%
-               select(where(is.character)) %>%
-               colnames())
 ```
 
 ## The x axis
@@ -58,11 +43,16 @@ admitted_patients %>%
 
 # Setting the values
 
-# Sorting {.sorting}
+# Sorting
 
-# Transforming
+# Transforming data
 
 # Legends
+
+# Turning the plot with `horizontal`
+
+* changes with `coord_flip()`
+* changes theme to exchange x and y properties
 
 # Plotting geometries (`sf` objects)
 

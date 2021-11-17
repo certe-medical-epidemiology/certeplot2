@@ -27,7 +27,11 @@
 #' @param y values to use for plotting along the y axis
 #' @param category plotting 'direction': the category (called 'fill' and 'colour' in `ggplot2`)
 #' @param facet plotting 'direction': the facet
-#' @param geom type of visualisation to use, supports all `ggplot2` geoms
+#' @param geom type of visualisation to use, supports all `ggplot2` geoms. It will be determined automatically if left blank.
+#' 
+#' In `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that bars are horizontal and columns are vertical. For this reason, `geom = "bar"` will set `geom = "col"` and `horizontal = TRUE`.
+#' 
+#' There is one special case: the shortcut `geom = "barpercent"`, which will set `geom = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc` and `datalabels.format = "%n (%p)"`.
 #' @param x.title text to show on the x asis
 #' @param y.title text to show on the y asis
 #' @param title title to show
@@ -85,18 +89,20 @@
 #' @param y.expand text
 #' @param y.trans text
 #' @param y.position text
-#' @param category.labels text
-#' @param category.percent text
-#' @param category.breaks text
-#' @param category.limits text
-#' @param category.expand text
-#' @param category.midpoint text
-#' @param category.trans text
-#' @param x.sort text
-#' @param category.sort text
-#' @param facet.sort text
+#' @param category.labels,category.percent,category.breaks,category.limits,category.expand,category.midpoint,category.trans settings for the plotting direction `category`
+#' @param x.sort,category.sort,facet.sort sorting of the plotting direction, defaults to `TRUE`, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered [factor], which `ggplot2` uses to orient the data. Valid values are:
+#' 
+#' - `TRUE`: sort [factor] on their levels, otherwise sort as `"asc"`
+#' - `FALSE`: keep order as it is in the data
+#' - `NULL`: do not sort/transform at all
+#' - `"asc"` or `"alpha"`: sort ascending on alphabet, while maintaining numbers in the text (*numeric* sort)
+#' - `"desc"`: sort descending on alphabet, while maintaining numbers in the text (*numeric* sort)
+#' - `"order"` or `"inorder"`: sort as `FALSE`
+#' - `"freq"` or `"freq-desc"`: sort descending according to the frequencies of `y` computed by `summarise_function` (highest value first)
+#' - `"freq-asc"`: sort ascending according to the frequencies of `y` computed by `summarise_function` (loewest value first)
 #' @param datalabels text
-#' @param datalabels.round text
+#' @param datalabels.round number of digits to round the datalabels
+#' @param datalabels.format format to use for datalabels - `"%n"` will be replaced by the count number, `"%p"` will be replaced by the percentage of the total count
 #' @param datalabels.colour text
 #' @param datalabels.fill text
 #' @param datalabels.size text
@@ -106,29 +112,17 @@
 #' @param summarise_function text
 #' @param stacked text
 #' @param stackedpercent text
-#' @param horizontal text
-#' @param reverse text
-#' @param smooth text
-#' @param smooth.method text
-#' @param smooth.formula text
-#' @param smooth.se text
-#' @param smooth.level text
-#' @param smooth.alpha text
-#' @param smooth.size text
-#' @param smooth.linetype text
-#' @param size text
-#' @param linetype text
-#' @param bins text
-#' @param width text
-#' @param jitter_seed text
-#' @param violin_scale text
-#' @param legend.position text
-#' @param legend.title text
-#' @param legend.reverse text
-#' @param legend.barheight text
-#' @param legend.barwidth text
-#' @param legend.nbin text
-#' @param legend.italic text
+#' @param horizontal a [logical] to turn the plot 90 defrees using [`coord_flip()`][ggplot2::coord_flip()]
+#' @param reverse a [logical] to reverse all values on the x axis
+#' @param smooth a [logical] to add a smooth using [`geom_smooth()`][ggplot2::geom_smooth()]
+#' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.size,smooth.linetype settings for `smooth`
+#' @param size size of the geom
+#' @param linetype linetype of the geom, only suitable for geoms that draw lines
+#' @param bins number of bins, only useful for `geom = "histogram"`
+#' @param width width of the geom
+#' @param jitter_seed seed (randomisation factor) to be set when using `geom = "jitter"`
+#' @param violin_scale scale to be set when using `geom = "violin"`, can also be set to `"area"`
+#' @param legend.position,legend.title,legend.reverse,legend.barheight,legend.barwidth,legend.nbin,legend.italic settings for the legend
 #' @param zoom a [logical] to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0
 #' @param sep separator character to use if multiple columns are given to either of the three directions: `x`, `category` and `facet`
 #' @param print a [logical] to indicate if the result should be [printed][print()] instead of just returned
@@ -329,6 +323,7 @@ plot2 <- function(.data,
                   datalabels = TRUE,
                   datalabels.round = ifelse(y.percent, 2, 1),
                   datalabels.colour = "grey25",
+                  datalabels.format = "%n",
                   datalabels.fill = NULL,
                   datalabels.size = (3 * text_factor),
                   datalabels.angle = 0,
@@ -365,7 +360,7 @@ plot2 <- function(.data,
                   print = FALSE,
                   text_factor = 1,
                   family = "Calibri",
-                  theme = theme_minimal2(horizontal = horizontal),
+                  theme = theme_minimal2(),
                   markdown = TRUE,
                   # old certetools pkg support
                   x.category = NULL,
@@ -374,129 +369,127 @@ plot2 <- function(.data,
   UseMethod("plot2")
 }
 
-#' @rdname plot2-methods
 #' @importFrom dplyr `%>%` mutate vars group_by across summarise
 #' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth guides guide_legend
 #' @importFrom certestyle format2 font_red font_black font_blue
-#' @export
-plot2.data.frame <- function(.data,
-                             x = NULL,
-                             y = NULL,
-                             category = NULL,
-                             facet = NULL,
-                             geom = NULL,
-                             x.title = NULL,
-                             y.title = NULL,
-                             title = NULL,
-                             subtitle = NULL,
-                             caption = NULL,
-                             tag = NULL,
-                             title.linelength = 60,
-                             title.colour = "black",
-                             subtitle.linelength = 60,
-                             subtitle.colour = "grey35",
-                             na.replace = "(??)",
-                             na.rm = FALSE,
-                             facet.position = "top",
-                             facet.fill = NULL,
-                             facet.bold = TRUE,
-                             facet.italic = FALSE,
-                             facet.size = 10,
-                             facet.margin = 8,
-                             facet.repeat_lbls_x = TRUE,
-                             facet.repeat_lbls_y = FALSE,
-                             facet.fixed_y = FALSE,
-                             facet.drop = FALSE,
-                             facet.nrow = NULL,
-                             facet.relative = FALSE,
-                             x.date_breaks = NULL,
-                             x.date_labels = NULL,
-                             category.focus = NULL,
-                             colour = "certe",
-                             colour_fill = NULL,
-                             x.lbl_angle = 0,
-                             x.lbl_align = NULL,
-                             x.lbl_italic = FALSE,
-                             x.remove = FALSE,
-                             x.position = "bottom",
-                             x.max_items = Inf,
-                             x.max_txt = "(rest, x %n)",
-                             category.max_items = Inf,
-                             category.max_txt = "(rest, x %n)",
-                             facet.max_items = Inf,
-                             facet.max_txt = "(rest, x %n)",
-                             x.breaks = NULL,
-                             x.breaks_n = NULL,
-                             x.trans = "identity",
-                             x.expand = 0.5,
-                             x.limits = NULL,
-                             x.character = NULL,
-                             y.remove = FALSE,
-                             y.24h = FALSE,
-                             y.age = FALSE,
-                             y.percent = FALSE,
-                             y.percent_break = 10,
-                             y.breaks = NULL,
-                             y.limits = NULL,
-                             y.labels = NULL,
-                             y.expand = 0.25,
-                             y.trans = "identity",
-                             y.position = "left",
-                             category.labels = NULL,
-                             category.percent = FALSE,
-                             category.breaks = NULL,
-                             category.limits = NULL,
-                             category.expand = 0,
-                             category.midpoint = NULL,
-                             category.trans = "identity",
-                             x.sort = NULL,
-                             category.sort = TRUE,
-                             facet.sort = TRUE,
-                             datalabels = TRUE,
-                             datalabels.round = ifelse(y.percent, 2, 1),
-                             datalabels.colour = "grey25",
-                             datalabels.fill = NULL,
-                             datalabels.size = (3 * text_factor),
-                             datalabels.angle = 0,
-                             decimal.mark = ",",
-                             big.mark = ".",
-                             summarise_function = base::sum,
-                             stacked = FALSE,
-                             stackedpercent = FALSE,
-                             horizontal = FALSE,
-                             reverse = horizontal,
-                             smooth = FALSE,
-                             smooth.method = NULL,
-                             smooth.formula = NULL,
-                             smooth.se = TRUE,
-                             smooth.level = 0.95,
-                             smooth.alpha = 0.15,
-                             smooth.size = 0.75,
-                             smooth.linetype = 3,
-                             size = NULL,
-                             linetype = 1,
-                             bins = NULL,
-                             width = NULL,
-                             jitter_seed = NA,
-                             violin_scale = "count",
-                             legend.position = "top",
-                             legend.title = NULL, # TRUE in numeric categories
-                             legend.reverse = FALSE,
-                             legend.barheight = 6,
-                             legend.barwidth = 1.5,
-                             legend.nbin = 300,
-                             legend.italic = FALSE,
-                             zoom = FALSE,
-                             sep = "/",
-                             print = FALSE,
-                             text_factor = 1,
-                             family = "Calibri",
-                             theme = theme_minimal2(horizontal = horizontal),
-                             markdown = TRUE,
-                             # old certetools pkg support
-                             x.category = NULL,
-                             y.category = NULL,
-                             ...) {
+plot2_exec <- function(.data,
+                       x,
+                       y,
+                       category,
+                       facet,
+                       geom,
+                       x.title,
+                       y.title,
+                       title,
+                       subtitle,
+                       caption,
+                       tag,
+                       title.linelength,
+                       title.colour,
+                       subtitle.linelength,
+                       subtitle.colour,
+                       na.replace,
+                       na.rm,
+                       facet.position,
+                       facet.fill,
+                       facet.bold,
+                       facet.italic,
+                       facet.size,
+                       facet.margin,
+                       facet.repeat_lbls_x,
+                       facet.repeat_lbls_y,
+                       facet.fixed_y,
+                       facet.drop,
+                       facet.nrow,
+                       facet.relative,
+                       x.date_breaks,
+                       x.date_labels,
+                       category.focus,
+                       colour,
+                       colour_fill,
+                       x.lbl_angle,
+                       x.lbl_align,
+                       x.lbl_italic,
+                       x.remove,
+                       x.position,
+                       x.max_items,
+                       x.max_txt,
+                       category.max_items,
+                       category.max_txt,
+                       facet.max_items,
+                       facet.max_txt,
+                       x.breaks,
+                       x.breaks_n,
+                       x.trans,
+                       x.expand,
+                       x.limits,
+                       x.character,
+                       y.remove,
+                       y.24h,
+                       y.age,
+                       y.percent,
+                       y.percent_break,
+                       y.breaks,
+                       y.limits,
+                       y.labels,
+                       y.expand,
+                       y.trans,
+                       y.position,
+                       category.labels,
+                       category.percent,
+                       category.breaks,
+                       category.limits,
+                       category.expand,
+                       category.midpoint,
+                       category.trans,
+                       x.sort,
+                       category.sort,
+                       facet.sort,
+                       datalabels,
+                       datalabels.round,
+                       datalabels.colour,
+                       datalabels.format,
+                       datalabels.fill,
+                       datalabels.size,
+                       datalabels.angle,
+                       decimal.mark,
+                       big.mark,
+                       summarise_function,
+                       stacked,
+                       stackedpercent,
+                       horizontal,
+                       reverse,
+                       smooth,
+                       smooth.method,
+                       smooth.formula,
+                       smooth.se,
+                       smooth.level,
+                       smooth.alpha,
+                       smooth.size,
+                       smooth.linetype,
+                       size,
+                       linetype,
+                       bins,
+                       width,
+                       jitter_seed,
+                       violin_scale,
+                       legend.position,
+                       legend.title,
+                       legend.reverse,
+                       legend.barheight,
+                       legend.barwidth,
+                       legend.nbin,
+                       legend.italic,
+                       zoom,
+                       sep,
+                       print,
+                       text_factor,
+                       family,
+                       theme,
+                       markdown,
+                       x.category,
+                       y.category,
+                       ...) {
   
   if (NROW(.data) == 0) {
     warning("No observations to plot.", call. = FALSE)
@@ -505,10 +498,19 @@ plot2.data.frame <- function(.data,
   
   dots <- list(...)
   
-  misses_x <- missing(x) || isTRUE(dots$misses.x)
-  misses_y <- missing(y) || isTRUE(dots$misses.y)
-  misses_category <- (missing(category) & missing(y.category)) || isTRUE(dots$misses.category)
-  misses_datalabels <- missing(datalabels) || isTRUE(dots$misses.datalabels)
+  # record missing arguments ----
+  misses_x <- isTRUE(dots$misses.x)
+  misses_y <- isTRUE(dots$misses.y)
+  misses_category <- isTRUE(dots$misses.category)
+  misses_facet <- isTRUE(dots$misses.facet)
+  misses_datalabels <- isTRUE(dots$misses.datalabels)
+  misses_colour_fill <- isTRUE(dots$misses.colour_fill)
+  misses_x.title <- isTRUE(dots$misses.x.title)
+  misses_y.title <- isTRUE(dots$misses.y.title)
+  misses_title <- isTRUE(dots$misses.title)
+  misses_subtitle <- isTRUE(dots$misses.subtitle)
+  misses_tag <- isTRUE(dots$misses.tag)
+  misses_caption <- isTRUE(dots$misses.caption)
   
   # old arguments, from previous package ----
   if (tryCatch(!is.null(y.category), error = function(e) TRUE)) {
@@ -525,7 +527,6 @@ plot2.data.frame <- function(.data,
       summarise_variable("_var_facet", sep = sep)
     facet <- "_var_facet"
   }
-  
   if (!is.null(dots$type)) {
     plot_warning("Using ", font_red("'type' is deprecated"), " - use ", font_blue("'geom'"), " instead")
     geom <- dots$type
@@ -542,20 +543,25 @@ plot2.data.frame <- function(.data,
     plot_warning("Using ", font_red("'sort.facet' is deprecated"), " - use ", font_blue("'facet.sort'"), " instead")
     facet.sort <- dots$sort.facet
   }
+  if (!is.null(dots$category.title)) {
+    legend.title <- dots$category.title
+  }
   
-  label_x <- deparse(substitute(x))
-  label_y <- deparse(substitute(y))
-  label_category <- deparse(substitute(category))
-  label_facet <- deparse(substitute(facet))
+  # prevalidate geoms for special types ----
+  if (isTRUE(geom[1L] %like% "barpercent")) {
+    if (is.infinite(x.max_items)) {
+      x.max_items <- 10
+      x.sort <- "freq-desc"
+      datalabels.format <- "%n (%p)"
+    }
+  }
+  if (isTRUE(geom[1L] %like% "bar")) {
+    geom <- "col"
+    horizontal <- TRUE
+  }
   
   # prepare data ----
-  df <- .data
-  if (!is.null(dots$sf_column)) {
-    # we removed the 'sf' class in plot2.sf(), so that plot2.sf() would not be called endlessly
-    # add it here again
-    class(df) <- c("sf", class(df))
-  }
-  df <- df %>%
+  df <- .data %>%
     mutate(`_var_y` = {{ y }},
            `_var_datalabels` = {{ datalabels }}) %>% 
     # add the three directions
@@ -571,14 +577,15 @@ plot2.data.frame <- function(.data,
     # this part will transform the data as needed
     validate_data(misses_x = misses_x,
                   misses_category = misses_category,
-                  label_x = label_x,
-                  label_y = label_y,
-                  label_category = label_category,
-                  label_facet = label_facet,
+                  label_x = dots$label_x,
+                  label_y = dots$label_y,
+                  label_category = dots$label_category,
+                  label_facet = dots$label_facet,
                   decimal.mark = decimal.mark,
                   big.mark = big.mark,
                   geom = geom,
                   datalabels.round = datalabels.round,
+                  datalabels.format = datalabels.format,
                   x.sort = x.sort,
                   category.sort = category.sort,
                   facet.sort = facet.sort,
@@ -596,11 +603,11 @@ plot2.data.frame <- function(.data,
   geom <- validate_geom(geom = geom, df = df) # this will automatically determine the geom if is.null(geom)
   # transform data if not a continuous geom but group sizes are > 1
   if (any(group_sizes(df) > 1) && !geom_is_continuous(geom)) {
-    plot_warning("Duplicate observations in discrete plot geom (", font_blue(geom), "), applying ",
-                 font_blue("summarise_function = " ), font_blue(deparse(substitute(summarise_function))))
+    plot_message("Duplicate observations in discrete plot geom (", font_blue(geom), "), applying ",
+                 font_blue("summarise_function = " ), font_blue(dots$summarise_fn_name))
     df <- summarise_data(df = df, summarise_function = summarise_function,
                          decimal.mark = decimal.mark, big.mark = big.mark,
-                         datalabels.round = datalabels.round)
+                         datalabels.round = datalabels.round, datalabels.format = datalabels.format)
   }
   # remove datalabels in continuous geoms
   if (isTRUE(misses_datalabels) && geom_is_continuous(geom)) {
@@ -625,7 +632,7 @@ plot2.data.frame <- function(.data,
                           geom = geom,
                           colour = colour,
                           colour_fill = colour_fill,
-                          misses_colour_fill = missing(colour_fill),
+                          misses_colour_fill = misses_colour_fill,
                           horizontal = horizontal)
   
   # generate mapping ----
@@ -636,7 +643,7 @@ plot2.data.frame <- function(.data,
     mapping <- aes(y = `_var_y`, group = 1)
   } else {
     mapping <- aes()
-    if (missing(zoom)) {
+    if (misses_zoom) {
       zoom <- TRUE
     }
   }
@@ -723,7 +730,7 @@ plot2.data.frame <- function(.data,
     if (geom %like% "density") {
       p <- p +
         labs(y = "Density")
-      if (missing(y.percent)) {
+      if (misses_y.percent) {
         y.percent <- TRUE
       }
     } else {
@@ -821,12 +828,12 @@ plot2.data.frame <- function(.data,
   }
 
   # add titles ----
-  if (!missing(x.title)) p <- p + labs(x = validate_titles(x.title)) # this will overwrite the var name
-  if (!missing(y.title)) p <- p + labs(y = validate_titles(y.title)) # this will overwrite the var name
-  if (!missing(title)) p <- p + labs(title = validate_titles(title, markdown = markdown, max_length = title.linelength))
-  if (!missing(subtitle)) p <- p + labs(subtitle = validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
-  if (!missing(tag)) p <- p + labs(tag = validate_titles(tag))
-  if (!missing(caption)) p <- p + labs(caption = validate_titles(caption))
+  if (!misses_x.title) p <- p + labs(x = validate_titles(x.title)) # this will overwrite the var name
+  if (!misses_y.title) p <- p + labs(y = validate_titles(y.title)) # this will overwrite the var name
+  if (!misses_title) p <- p + labs(title = validate_titles(title, markdown = markdown, max_length = title.linelength))
+  if (!misses_subtitle) p <- p + labs(subtitle = validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
+  if (!misses_tag) p <- p + labs(tag = validate_titles(tag))
+  if (!misses_caption) p <- p + labs(caption = validate_titles(caption))
   if (has_category(df)) {
     # legend
     if (isTRUE(legend.title)) {

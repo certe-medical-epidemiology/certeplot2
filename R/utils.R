@@ -25,7 +25,7 @@ globalVariables(c(".",
                   "_var_x",
                   "_var_y"))
 
-#' @importFrom certestyle font_black font_blue font_red_bg font_white
+#' @importFrom certestyle font_black font_blue font_red_bg font_white font_bold
 plot_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", geom = "info") {
   if (isTRUE(print)) {
     msg <- paste0(font_black(c(...), collapse = NULL), collapse = "")
@@ -38,7 +38,7 @@ plot_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") !
         icon <- font_blue("i")
       }
     } else {
-      icon <- font_red_bg(font_white(" ! "))
+      icon <- font_red_bg(font_white(font_bold(" ! ")))
     }
     message(paste(icon, font_black(msg)))
   }
