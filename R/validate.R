@@ -441,7 +441,10 @@ validate_y_scale <- function(df,
                         y.age = FALSE, y.percent = FALSE, y.percent_break = 10, y.24h = FALSE, y.limits = NULL,
                         ...) {
     data_min <- min(0, df) * -(1 + y.expand)
-    data_max <- max(df) * (1 + y.expand)
+    data_max <- max(df)
+    if (!inherits(df, c("Date", "POSIXt"))) {
+      data_max <- data_max * (1 + y.expand)
+    }
     
     if (!is.null(y.breaks)) {
       y.breaks
@@ -708,7 +711,7 @@ generate_geom <- function(geom,
                           na.rm,
                           violin_scale,
                           jitter_seed,
-                          bins,
+                          binwidth,
                           cols) {
   
   if (geom == "geom_col") {
@@ -780,14 +783,24 @@ generate_geom <- function(geom,
                      list(fill = cols$colour_fill)[!has_category(df)]))
     
   } else if (geom == "geom_histogram") {
-    if (is.null(bins)) {
-      # 30 is the geom_histogram default, we change it if 1/3 of unique values is <30
-      bins <- ceiling(min(30, length(unique(get_x(df))) / 3))
-      plot2_message("Using ", font_blue("bins =", bins), " based on data")
+    if (is.null(binwidth)) {
+      # take the range and divide by 12 as the default
+      values <- get_x(df)
+      values <- values[!is.infinite(values)]
+      binwidth <- as.double(diff(range(values, na.rm = TRUE))) / 12
+      if (binwidth < 0) {
+        binwidth <- round(binwidth, 3)
+      } else if (binwidth > 10) {
+        binwidth <- round(binwidth, 0)
+      } else {
+        binwidth <- round(binwidth, 1)
+      }
+      plot2_message("Using ", font_blue("binwidth =", binwidth),
+                    " based on ", font_blue("range(", get_x_name(df), ")", collapse = ""))
     }
     do.call(geom_fn,
             args = c(list(size = size,
-                          bins = bins,
+                          binwidth = binwidth,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
                      list(fill = cols$colour_fill)[!has_category(df)]))
@@ -1465,7 +1478,6 @@ summarise_data <- function(df,
                            big.mark,
                            datalabels.round,
                            datalabels.format) {
-  
   x <- get_x_name(df)
   y <- get_y_name(df)
   category <- get_category_name(df)
@@ -1499,7 +1511,7 @@ format_datalabels <- function(datalabels,
                               big.mark) {
   datalabels[as.character(datalabels) %in% c("", "0")] <- NA
   datalabels_out <- datalabels
-  if (!is.null(datalabels.format)) {
+  if (!is.null(datalabels.format) && !inherits(datalabels, c("Date", "POSIXt"))) {
     datalabels_p <- trimws(format2(datalabels_out / sum(datalabels_out, na.rm = TRUE),
                                    round = datalabels.round,
                                    decimal.mark = decimal.mark,

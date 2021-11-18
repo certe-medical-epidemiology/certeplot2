@@ -29,9 +29,9 @@
 #' @param facet plotting 'direction': the facet
 #' @param geom type of visualisation to use, supports all `ggplot2` geoms. It will be determined automatically if left blank.
 #' 
-#' In `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that bars are horizontal and columns are vertical. For this reason, `geom = "bar"` will set `geom = "col"` and `horizontal = TRUE`.
+#' In `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `geom = "bar"` will set `geom = "col"` and `horizontal = TRUE`.
 #' 
-#' There is one special case: the shortcut `geom = "barpercent"`, which will set `geom = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc` and `datalabels.format = "%n (%p)"`.
+#' There is one special case for this `geom` argument: the shortcut `geom = "barpercent"`, which will set `geom = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
 #' @param x.title text to show on the x asis
 #' @param y.title text to show on the y asis
 #' @param title title to show
@@ -111,11 +111,11 @@
 #' @param stackedpercent text
 #' @param horizontal a [logical] to turn the plot 90 defrees using [`coord_flip()`][ggplot2::coord_flip()]
 #' @param reverse a [logical] to reverse all values on the x axis
-#' @param smooth a [logical] to add a smooth using [`geom_smooth()`][ggplot2::geom_smooth()]
+#' @param smooth a [logical] to add a smooth. In histograms, this will add the density count as an overlaying line (default: `TRUE`). In all other cases, a smooth will be added using [`geom_smooth()`][ggplot2::geom_smooth()] (default: `FALSE`).
 #' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.size,smooth.linetype settings for `smooth`
 #' @param size size of the geom
 #' @param linetype linetype of the geom, only suitable for geoms that draw lines
-#' @param bins number of bins, only useful for `geom = "histogram"`
+#' @param binwidth width of bins (only useful for `geom = "histogram"`), can be specified as a numeric value or as a function that calculates width from `x`, see [`geom_histogram()`][ggplot2::geom_histogram()]
 #' @param width width of the geom
 #' @param jitter_seed seed (randomisation factor) to be set when using `geom = "jitter"`
 #' @param violin_scale scale to be set when using `geom = "violin"`, can also be set to `"area"`
@@ -336,7 +336,7 @@ plot2 <- function(.data,
                   stackedpercent = FALSE,
                   horizontal = FALSE,
                   reverse = horizontal,
-                  smooth = FALSE,
+                  smooth = NULL,
                   smooth.method = NULL,
                   smooth.formula = NULL,
                   smooth.se = TRUE,
@@ -346,7 +346,7 @@ plot2 <- function(.data,
                   smooth.linetype = 3,
                   size = NULL,
                   linetype = 1,
-                  bins = NULL,
+                  binwidth = NULL,
                   width = NULL,
                   jitter_seed = NA,
                   violin_scale = "count",
@@ -372,7 +372,7 @@ plot2 <- function(.data,
 }
 
 #' @importFrom dplyr `%>%` mutate vars group_by across summarise
-#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth guides guide_legend
+#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend
 #' @importFrom certestyle format2 font_red font_black font_blue
 plot2_exec <- function(.data,
                        x,
@@ -471,7 +471,7 @@ plot2_exec <- function(.data,
                        smooth.linetype,
                        size,
                        linetype,
-                       bins,
+                       binwidth,
                        width,
                        jitter_seed,
                        violin_scale,
@@ -555,9 +555,9 @@ plot2_exec <- function(.data,
   if (isTRUE(geom[1L] %like% "barpercent")) {
     if (is.infinite(x.max_items)) {
       x.max_items <- 10
-      x.sort <- "freq-desc"
-      datalabels.format <- "%n (%p)"
     }
+    x.sort <- "freq-desc"
+    datalabels.format <- "%n (%p)"
   }
   if (isTRUE(geom[1L] %like% "bar")) {
     geom <- "col"
@@ -568,7 +568,7 @@ plot2_exec <- function(.data,
   df <- .data %>%
     mutate(`_var_y` = {{ y }},
            `_var_datalabels` = {{ datalabels }}) %>% 
-    # add the three directions
+    # add the three directions, these functions also support Tidyverse selections: `facet = where(is.character)`
     add_direction(direction = {{ x }},
                   var_name = "x",
                   sep = sep) %>% 
@@ -697,32 +697,41 @@ plot2_exec <- function(.data,
                   na.rm = na.rm,
                   violin_scale = violin_scale,
                   jitter_seed = jitter_seed,
-                  bins = bins,
+                  binwidth = binwidth,
                   cols = cols)
-  if (isTRUE(smooth)) {
-    p <- p +
-      do.call(geom_smooth,
-              c(list(mapping = mapping,
-                     fill = "grey60",
-                     formula = smooth.formula,
-                     se = smooth.se,
-                     method = smooth.method,
-                     level = smooth.level,
-                     alpha = smooth.alpha,
-                     linetype = smooth.linetype,
-                     size = smooth.size,
-                     na.rm = na.rm),
-                list(colour = cols$colour[1L])[!has_category(df)]))
+  if (is.null(smooth) && geom == "geom_histogram") {
+    plot2_message("Assuming ", font_blue("smooth = TRUE"), " for ", font_blue("geom = \"histogram\""))
+    smooth <- TRUE
   }
-  
-  
-  
-  # # add colours
-  # if (geom != "geom_sf") {
-  #   p <- p +
-  #     scale_colour_manual(values = cols$colour) +
-  #     scale_fill_manual(values = cols$colour_fill)
-  # }
+  if (isTRUE(smooth)) {
+    if (geom == "geom_histogram") {
+      # add a density count
+      set_binwidth <- p$layers[[1]]$stat_params$binwidth
+      p <- p +
+        do.call(geom_density,
+                c(list(mapping = aes(y = ..count.. * set_binwidth),
+                       alpha = smooth.alpha,
+                       linetype = smooth.linetype,
+                       size = smooth.size,
+                       na.rm = na.rm),
+                  list(colour = cols$colour[1L])[!has_category(df)]))
+    } else {
+      # add smooth with geom_smooth()
+      p <- p +
+        do.call(geom_smooth,
+                c(list(mapping = mapping,
+                       fill = "grey60",
+                       formula = smooth.formula,
+                       se = smooth.se,
+                       method = smooth.method,
+                       level = smooth.level,
+                       alpha = smooth.alpha,
+                       linetype = smooth.linetype,
+                       size = smooth.size,
+                       na.rm = na.rm),
+                  list(colour = cols$colour[1L])[!has_category(df)]))
+    }
+  }
   
   # add axis labels ----
   p <- p +

@@ -97,7 +97,7 @@
   stackedpercent = FALSE,
   horizontal = FALSE,
   reverse = horizontal,
-  smooth = FALSE,
+  smooth = NULL,
   smooth.method = NULL,
   smooth.formula = NULL,
   smooth.se = TRUE,
@@ -107,7 +107,7 @@
   smooth.linetype = 3,
   size = NULL,
   linetype = 1,
-  bins = NULL,
+  binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
   violin_scale = "count",
@@ -218,7 +218,7 @@
   stackedpercent = FALSE,
   horizontal = FALSE,
   reverse = horizontal,
-  smooth = FALSE,
+  smooth = NULL,
   smooth.method = NULL,
   smooth.formula = NULL,
   smooth.se = TRUE,
@@ -228,7 +228,7 @@
   smooth.linetype = 3,
   size = NULL,
   linetype = 1,
-  bins = NULL,
+  binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
   violin_scale = "count",
@@ -339,7 +339,7 @@
   stackedpercent = FALSE,
   horizontal = FALSE,
   reverse = horizontal,
-  smooth = FALSE,
+  smooth = NULL,
   smooth.method = NULL,
   smooth.formula = NULL,
   smooth.se = TRUE,
@@ -349,7 +349,7 @@
   smooth.linetype = 3,
   size = NULL,
   linetype = 1,
-  bins = NULL,
+  binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
   violin_scale = "count",
@@ -460,7 +460,7 @@
   stackedpercent = FALSE,
   horizontal = FALSE,
   reverse = horizontal,
-  smooth = FALSE,
+  smooth = NULL,
   smooth.method = NULL,
   smooth.formula = NULL,
   smooth.se = TRUE,
@@ -470,7 +470,7 @@
   smooth.linetype = 3,
   size = 0.1,
   linetype = 1,
-  bins = NULL,
+  binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
   violin_scale = "count",
@@ -584,7 +584,7 @@
   stackedpercent = FALSE,
   horizontal = FALSE,
   reverse = horizontal,
-  smooth = FALSE,
+  smooth = NULL,
   smooth.method = NULL,
   smooth.formula = NULL,
   smooth.se = TRUE,
@@ -594,7 +594,7 @@
   smooth.linetype = 3,
   size = NULL,
   linetype = 1,
-  bins = NULL,
+  binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
   violin_scale = "count",
@@ -630,9 +630,9 @@
 
 \item{geom}{type of visualisation to use, supports all \code{ggplot2} geoms. It will be determined automatically if left blank.
 
-In \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that bars are horizontal and columns are vertical. For this reason, \code{geom = "bar"} will set \code{geom = "col"} and \code{horizontal = TRUE}.
+In \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{geom = "bar"} will set \code{geom = "col"} and \code{horizontal = TRUE}.
 
-There is one special case: the shortcut \code{geom = "barpercent"}, which will set \code{geom = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \verb{x.sort = "freq-desc} and \code{datalabels.format = "\%n (\%p)"}.}
+There is one special case for this \code{geom} argument: the shortcut \code{geom = "barpercent"}, which will set \code{geom = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.}
 
 \item{x.title}{text to show on the x asis}
 
@@ -826,7 +826,7 @@ There is one special case: the shortcut \code{geom = "barpercent"}, which will s
 
 \item{reverse}{a \link{logical} to reverse all values on the x axis}
 
-\item{smooth}{a \link{logical} to add a smooth using \code{\link[ggplot2:geom_smooth]{geom_smooth()}}}
+\item{smooth}{a \link{logical} to add a smooth. In histograms, this will add the density count as an overlaying line (default: \code{TRUE}). In all other cases, a smooth will be added using \code{\link[ggplot2:geom_smooth]{geom_smooth()}} (default: \code{FALSE}).}
 
 \item{smooth.method}{settings for \code{smooth}}
 
@@ -846,7 +846,7 @@ There is one special case: the shortcut \code{geom = "barpercent"}, which will s
 
 \item{linetype}{linetype of the geom, only suitable for geoms that draw lines}
 
-\item{bins}{number of bins, only useful for \code{geom = "histogram"}}
+\item{binwidth}{width of bins (only useful for \code{geom = "histogram"}), can be specified as a numeric value or as a function that calculates width from \code{x}, see \code{\link[ggplot2:geom_histogram]{geom_histogram()}}}
 
 \item{width}{width of the geom}
 
