@@ -82,28 +82,28 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.18</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home"></span>
      
     Home
   </a>
 </li>
 <li>
-  <a href="..//reference/index.html">
+  <a href="../reference/index.html">
     <span class="fa fa-book-open"></span>
      
     Manual
   </a>
 </li>
 <li>
-  <a href="..//articles/plot2.html">
+  <a href="../articles/plot2.html">
     <span class="fa fa-book-open"></span>
      
     Vignette
@@ -243,7 +243,7 @@
   stackedpercent <span class='op'>=</span> <span class='cn'>FALSE</span>,
   horizontal <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reverse <span class='op'>=</span> <span class='va'>horizontal</span>,
-  smooth <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  smooth <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.method <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.formula <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.se <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -253,7 +253,7 @@
   smooth.linetype <span class='op'>=</span> <span class='fl'>3</span>,
   size <span class='op'>=</span> <span class='cn'>NULL</span>,
   linetype <span class='op'>=</span> <span class='fl'>1</span>,
-  bins <span class='op'>=</span> <span class='cn'>NULL</span>,
+  binwidth <span class='op'>=</span> <span class='cn'>NULL</span>,
   width <span class='op'>=</span> <span class='cn'>NULL</span>,
   jitter_seed <span class='op'>=</span> <span class='cn'>NA</span>,
   violin_scale <span class='op'>=</span> <span class='st'>"count"</span>,
@@ -365,7 +365,7 @@
   stackedpercent <span class='op'>=</span> <span class='cn'>FALSE</span>,
   horizontal <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reverse <span class='op'>=</span> <span class='va'>horizontal</span>,
-  smooth <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  smooth <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.method <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.formula <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.se <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -375,7 +375,7 @@
   smooth.linetype <span class='op'>=</span> <span class='fl'>3</span>,
   size <span class='op'>=</span> <span class='cn'>NULL</span>,
   linetype <span class='op'>=</span> <span class='fl'>1</span>,
-  bins <span class='op'>=</span> <span class='cn'>NULL</span>,
+  binwidth <span class='op'>=</span> <span class='cn'>NULL</span>,
   width <span class='op'>=</span> <span class='cn'>NULL</span>,
   jitter_seed <span class='op'>=</span> <span class='cn'>NA</span>,
   violin_scale <span class='op'>=</span> <span class='st'>"count"</span>,
@@ -487,7 +487,7 @@
   stackedpercent <span class='op'>=</span> <span class='cn'>FALSE</span>,
   horizontal <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reverse <span class='op'>=</span> <span class='va'>horizontal</span>,
-  smooth <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  smooth <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.method <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.formula <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.se <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -497,7 +497,7 @@
   smooth.linetype <span class='op'>=</span> <span class='fl'>3</span>,
   size <span class='op'>=</span> <span class='cn'>NULL</span>,
   linetype <span class='op'>=</span> <span class='fl'>1</span>,
-  bins <span class='op'>=</span> <span class='cn'>NULL</span>,
+  binwidth <span class='op'>=</span> <span class='cn'>NULL</span>,
   width <span class='op'>=</span> <span class='cn'>NULL</span>,
   jitter_seed <span class='op'>=</span> <span class='cn'>NA</span>,
   violin_scale <span class='op'>=</span> <span class='st'>"count"</span>,
@@ -609,7 +609,7 @@
   stackedpercent <span class='op'>=</span> <span class='cn'>FALSE</span>,
   horizontal <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reverse <span class='op'>=</span> <span class='va'>horizontal</span>,
-  smooth <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  smooth <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.method <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.formula <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.se <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -619,7 +619,7 @@
   smooth.linetype <span class='op'>=</span> <span class='fl'>3</span>,
   size <span class='op'>=</span> <span class='fl'>0.1</span>,
   linetype <span class='op'>=</span> <span class='fl'>1</span>,
-  bins <span class='op'>=</span> <span class='cn'>NULL</span>,
+  binwidth <span class='op'>=</span> <span class='cn'>NULL</span>,
   width <span class='op'>=</span> <span class='cn'>NULL</span>,
   jitter_seed <span class='op'>=</span> <span class='cn'>NA</span>,
   violin_scale <span class='op'>=</span> <span class='st'>"count"</span>,
@@ -734,7 +734,7 @@
   stackedpercent <span class='op'>=</span> <span class='cn'>FALSE</span>,
   horizontal <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reverse <span class='op'>=</span> <span class='va'>horizontal</span>,
-  smooth <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  smooth <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.method <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.formula <span class='op'>=</span> <span class='cn'>NULL</span>,
   smooth.se <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -744,7 +744,7 @@
   smooth.linetype <span class='op'>=</span> <span class='fl'>3</span>,
   size <span class='op'>=</span> <span class='cn'>NULL</span>,
   linetype <span class='op'>=</span> <span class='fl'>1</span>,
-  bins <span class='op'>=</span> <span class='cn'>NULL</span>,
+  binwidth <span class='op'>=</span> <span class='cn'>NULL</span>,
   width <span class='op'>=</span> <span class='cn'>NULL</span>,
   jitter_seed <span class='op'>=</span> <span class='cn'>NA</span>,
   violin_scale <span class='op'>=</span> <span class='st'>"count"</span>,
@@ -793,8 +793,8 @@
     <tr>
       <th>geom</th>
       <td><p>type of visualisation to use, supports all <code>ggplot2</code> geoms. It will be determined automatically if left blank.</p>
-<p>In <code>ggplot2</code>, 'bars' and 'columns' are equal, while it is common to many people that bars are horizontal and columns are vertical. For this reason, <code>geom = "bar"</code> will set <code>geom = "col"</code> and <code>horizontal = TRUE</code>.</p>
-<p>There is one special case: the shortcut <code>geom = "barpercent"</code>, which will set <code>geom = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc</code> and <code>datalabels.format = "%n (%p)"</code>.</p></td>
+<p>In <code>ggplot2</code>, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, <code>geom = "bar"</code> will set <code>geom = "col"</code> and <code>horizontal = TRUE</code>.</p>
+<p>There is one special case for this <code>geom</code> argument: the shortcut <code>geom = "barpercent"</code>, which will set <code>geom = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc"</code> and <code>datalabels.format = "%n (%p)"</code>.</p></td>
     </tr>
     <tr>
       <th>x.title</th>
@@ -1149,7 +1149,7 @@
     </tr>
     <tr>
       <th>smooth</th>
-      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to add a smooth using <code><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth()</a></code></p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to add a smooth. In histograms, this will add the density count as an overlaying line (default: <code>TRUE</code>). In all other cases, a smooth will be added using <code><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth()</a></code> (default: <code>FALSE</code>).</p></td>
     </tr>
     <tr>
       <th>smooth.method</th>
@@ -1188,8 +1188,8 @@
       <td><p>linetype of the geom, only suitable for geoms that draw lines</p></td>
     </tr>
     <tr>
-      <th>bins</th>
-      <td><p>number of bins, only useful for <code>geom = "histogram"</code></p></td>
+      <th>binwidth</th>
+      <td><p>width of bins (only useful for <code>geom = "histogram"</code>), can be specified as a numeric value or as a function that calculates width from <code>x</code>, see <code><a href='https://ggplot2.tidyverse.org/reference/geom_histogram.html'>geom_histogram()</a></code></p></td>
     </tr>
     <tr>
       <th>width</th>
