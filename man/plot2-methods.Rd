@@ -15,7 +15,7 @@
   y = NULL,
   category = NULL,
   facet = NULL,
-  geom = NULL,
+  type = NULL,
   x.title = NULL,
   y.title = NULL,
   title = NULL,
@@ -136,7 +136,7 @@
   y = NULL,
   category = NULL,
   facet = NULL,
-  geom = "geom_point",
+  type = "geom_point",
   x.title = NULL,
   y.title = NULL,
   title = NULL,
@@ -257,7 +257,7 @@
   y = .data$count,
   category = NULL,
   facet = NULL,
-  geom = NULL,
+  type = NULL,
   x.title = "Item",
   y.title = "Count",
   title = NULL,
@@ -378,7 +378,7 @@
   y = NULL,
   category = NULL,
   facet = NULL,
-  geom = NULL,
+  type = NULL,
   x.title = NULL,
   y.title = NULL,
   title = NULL,
@@ -502,7 +502,7 @@
   y = NULL,
   category = NULL,
   facet = NULL,
-  geom = NULL,
+  type = NULL,
   x.title = NULL,
   y.title = NULL,
   title = NULL,
@@ -627,6 +627,12 @@
 \item{category}{plotting 'direction': the category (called 'fill' and 'colour' in \code{ggplot2})}
 
 \item{facet}{plotting 'direction': the facet}
+
+\item{type}{type of visualisation to use, supports all \code{ggplot2} geoms. It will be determined automatically if left blank.
+
+In \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{type = "bar"} will set \code{type = "col"} and \code{horizontal = TRUE}.
+
+There is one special case for this \code{type} argument: the shortcut \code{type = "barpercent"}, which will set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.}
 
 \item{x.title}{text to show on the x asis}
 
