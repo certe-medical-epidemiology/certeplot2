@@ -685,7 +685,7 @@ plot2_exec <- function(.data,
                    colour = cols$colour)
   }
   p <- p +
-    generate_geom(geom = type,
+    generate_geom(type = type,
                   df = df,
                   stacked = stacked,
                   stackedpercent = stackedpercent,
