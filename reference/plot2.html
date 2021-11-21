@@ -162,7 +162,7 @@ See plot2-methods for all implemented methods for different object classes." />
   y <span class='op'>=</span> <span class='cn'>NULL</span>,
   category <span class='op'>=</span> <span class='cn'>NULL</span>,
   facet <span class='op'>=</span> <span class='cn'>NULL</span>,
-  geom <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='cn'>NULL</span>,
   x.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   title <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -301,10 +301,10 @@ See plot2-methods for all implemented methods for different object classes." />
       <td><p>plotting 'direction': the facet</p></td>
     </tr>
     <tr>
-      <th>geom</th>
+      <th>type</th>
       <td><p>type of visualisation to use, supports all <code>ggplot2</code> geoms. It will be determined automatically if left blank.</p>
-<p>In <code>ggplot2</code>, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, <code>geom = "bar"</code> will set <code>geom = "col"</code> and <code>horizontal = TRUE</code>.</p>
-<p>There is one special case for this <code>geom</code> argument: the shortcut <code>geom = "barpercent"</code>, which will set <code>geom = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc"</code> and <code>datalabels.format = "%n (%p)"</code>.</p></td>
+<p>In <code>ggplot2</code>, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, <code>type = "bar"</code> will set <code>type = "col"</code> and <code>horizontal = TRUE</code>.</p>
+<p>There is one special case for this <code>type</code> argument: the shortcut <code>type = "barpercent"</code>, which will set <code>type = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc"</code> and <code>datalabels.format = "%n (%p)"</code>.</p></td>
     </tr>
     <tr>
       <th>x.title</th>
@@ -613,7 +613,7 @@ See plot2-methods for all implemented methods for different object classes." />
     </tr>
     <tr>
       <th>binwidth</th>
-      <td><p>width of bins (only useful for <code>geom = "histogram"</code>), can be specified as a numeric value or as a function that calculates width from <code>x</code>, see <code><a href='https://ggplot2.tidyverse.org/reference/geom_histogram.html'>geom_histogram()</a></code></p></td>
+      <td><p>width of bins (only useful for <code>type = "histogram"</code>), can be specified as a numeric value or as a function that calculates width from <code>x</code>, see <code><a href='https://ggplot2.tidyverse.org/reference/geom_histogram.html'>geom_histogram()</a></code></p></td>
     </tr>
     <tr>
       <th>width</th>
@@ -621,11 +621,11 @@ See plot2-methods for all implemented methods for different object classes." />
     </tr>
     <tr>
       <th>jitter_seed</th>
-      <td><p>seed (randomisation factor) to be set when using <code>geom = "jitter"</code></p></td>
+      <td><p>seed (randomisation factor) to be set when using <code>type = "jitter"</code></p></td>
     </tr>
     <tr>
       <th>violin_scale</th>
-      <td><p>scale to be set when using <code>geom = "violin"</code>, can also be set to <code>"area"</code></p></td>
+      <td><p>scale to be set when using <code>type = "violin"</code>, can also be set to <code>"area"</code></p></td>
     </tr>
     <tr>
       <th>legend.position, legend.title, legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic</th>
@@ -708,12 +708,12 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 6          5.4         3.9          1.7         0.4  setosa</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># no variables determined, so plot2() will try for itself -</span></span>
-<span class='r-in'><span class='co'># the geom will be points since the first two variables are numeric</span></span>
+<span class='r-in'><span class='co'># the type will be points since the first two variables are numeric</span></span>
 <span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = Sepal.Length</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = Sepal.Width</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = Species</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
 <span class='r-plt img'><img src='plot2-1.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># only view the data part, like ggplot2 normally does</span></span>
@@ -721,41 +721,41 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = Sepal.Length</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = Sepal.Width</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = Species</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
 <span class='r-plt img'><img src='plot2-2.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># if x and y are set, no addition mapping will be set:</span></span>
 <span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Sepal.Width</span>, <span class='va'>Sepal.Length</span><span class='op'>)</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
 <span class='r-plt img'><img src='plot2-3.png' alt='' width='700' height='433' /></span>
 <span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Species</span>, <span class='va'>Sepal.Length</span><span class='op'>)</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
 <span class='r-plt img'><img src='plot2-4.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># the arguments are in this order: x, y, category, facet</span></span>
 <span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Sepal.Length</span>, <span class='va'>Sepal.Width</span>, <span class='va'>Petal.Length</span>, <span class='va'>Species</span><span class='op'>)</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
 <span class='r-plt img'><img src='plot2-5.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Sepal.Length</span>, <span class='va'>Sepal.Width</span>, <span class='va'>Petal.Length</span>, <span class='va'>Species</span>,</span>
 <span class='r-in'>      colour <span class='op'>=</span> <span class='st'>"viridis"</span><span class='op'>)</span> <span class='co'># set the viridis colours</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
 <span class='r-plt img'><img src='plot2-6.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>      </span>
 <span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Sepal.Length</span>, <span class='va'>Sepal.Width</span>, <span class='va'>Petal.Length</span>, <span class='va'>Species</span>,</span>
 <span class='r-in'>      colour <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"white"</span>, <span class='st'>"red"</span>, <span class='st'>"black"</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># set own colours</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category.midpoint = 4.35</span><span style='color: #080808;'> (the median) for the </span><span style='color: #0000BB;'>category</span><span style='color: #080808;'> scale</span></span>
 <span class='r-plt img'><img src='plot2-7.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>      </span>
 <span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Sepal.Length</span>, <span class='va'>Sepal.Width</span>, <span class='va'>Petal.Length</span>, <span class='va'>Species</span>,</span>
 <span class='r-in'>      colour <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"white"</span>, <span class='st'>"red"</span>, <span class='st'>"black"</span><span class='op'>)</span>, <span class='co'># set own colours</span></span>
 <span class='r-in'>      category.midpoint <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>               <span class='co'># with an own midpoint</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
 <span class='r-plt img'><img src='plot2-8.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
-<span class='r-in'><span class='co'># change to any geom</span></span>
-<span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Species</span>, <span class='va'>Sepal.Length</span>, geom <span class='op'>=</span> <span class='st'>"violin"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># change to any type</span></span>
+<span class='r-in'><span class='fu'>plot2</span><span class='op'>(</span><span class='va'>iris</span>, <span class='va'>Species</span>, <span class='va'>Sepal.Length</span>, type <span class='op'>=</span> <span class='st'>"violin"</span><span class='op'>)</span></span>
 <span class='r-plt img'><img src='plot2-9.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span>, warn.conflicts <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
@@ -775,25 +775,25 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>hospital</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = age</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
 <span class='r-plt img'><img src='plot2-10.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># the arguments are in this order: x, y, category, facet</span></span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>hospital</span>, <span class='va'>age</span>, <span class='va'>gender</span><span class='op'>)</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
 <span class='r-plt img'><img src='plot2-11.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>hospital</span>, <span class='va'>age</span>, <span class='va'>gender</span>, <span class='va'>ward</span><span class='op'>)</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
 <span class='r-plt img'><img src='plot2-12.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='co'># use summarise_function to apply a function for continuous data</span></span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>hospital</span>, <span class='va'>age</span>, <span class='va'>gender</span>, <span class='va'>ward</span>,</span>
-<span class='r-in'>        geom <span class='op'>=</span> <span class='st'>"col"</span>, summarise_function <span class='op'>=</span> <span class='va'>median</span><span class='op'>)</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Duplicate observations in discrete plot geom (</span><span style='color: #0000BB;'>geom_col</span><span style='color: #080808;'>), applying </span><span style='color: #0000BB;'>summarise_function = median</span></span>
+<span class='r-in'>        type <span class='op'>=</span> <span class='st'>"col"</span>, summarise_function <span class='op'>=</span> <span class='va'>median</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Duplicate observations in discrete plot type (</span><span style='color: #0000BB;'>geom_col</span><span style='color: #080808;'>), applying </span><span style='color: #0000BB;'>summarise_function = median</span></span>
 <span class='r-plt img'><img src='plot2-13.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
@@ -803,20 +803,20 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-in'>        colour_fill <span class='op'>=</span> <span class='st'>"white"</span>,</span>
 <span class='r-in'>        y.age <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = age</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "boxplot"</span><span style='color: #080808;'> since all groups have size &gt;= 3</span></span>
 <span class='r-plt img'><img src='plot2-14.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>        </span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
-<span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>age</span>, geom <span class='op'>=</span> <span class='st'>"hist"</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>age</span>, type <span class='op'>=</span> <span class='st'>"hist"</span><span class='op'>)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>binwidth = 7.8</span><span style='color: #080808;'> based on </span><span style='color: #0000BB;'>range(age)</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Assuming </span><span style='color: #0000BB;'>smooth = TRUE</span><span style='color: #080808;'> for </span><span style='color: #0000BB;'>geom = "histogram"</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Assuming </span><span style='color: #0000BB;'>smooth = TRUE</span><span style='color: #080808;'> for </span><span style='color: #0000BB;'>type = "histogram"</span></span>
 <span class='r-plt img'><img src='plot2-15.png' alt='' width='700' height='433' /></span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
-<span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>age</span>, geom <span class='op'>=</span> <span class='st'>"density"</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>age</span>, type <span class='op'>=</span> <span class='st'>"density"</span><span class='op'>)</span></span>
 <span class='r-plt img'><img src='plot2-16.png' alt='' width='700' height='433' /></span>
 <span class='r-in'> </span>
-<span class='r-in'><span class='co'># the default geom is column, datalabels are automatically</span></span>
-<span class='r-in'><span class='co'># set in non-continuous geoms:</span></span>
+<span class='r-in'><span class='co'># the default type is column, datalabels are automatically</span></span>
+<span class='r-in'><span class='co'># set in non-continuous types:</span></span>
 <span class='r-in'><span class='va'>patients_per_hospital_gender</span> <span class='op'>&lt;-</span> <span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/count.html'>count</a></span><span class='op'>(</span><span class='va'>hospital</span>, <span class='va'>gender</span><span class='op'>)</span></span>
 <span class='r-in'>  </span>
@@ -836,7 +836,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = n</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = hospital</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = gender</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "col"</span><span style='color: #080808;'> as default</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "col"</span><span style='color: #080808;'> as default</span></span>
 <span class='r-plt img'><img src='plot2-17.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='va'>patients_per_hospital_gender</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
@@ -844,7 +844,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = n</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = hospital</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = gender</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "col"</span><span style='color: #080808;'> as default</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "col"</span><span style='color: #080808;'> as default</span></span>
 <span class='r-plt img'><img src='plot2-18.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='va'>patients_per_hospital_gender</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
@@ -852,7 +852,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = n</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = hospital</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = gender</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "col"</span><span style='color: #080808;'> as default</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "col"</span><span style='color: #080808;'> as default</span></span>
 <span class='r-plt img'><img src='plot2-19.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='co'># sort any direction</span></span>
@@ -861,7 +861,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = n</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = hospital</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = gender</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "col"</span><span style='color: #080808;'> as default</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "col"</span><span style='color: #080808;'> as default</span></span>
 <span class='r-plt img'><img src='plot2-20.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='va'>patients_per_hospital_gender</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
@@ -871,7 +871,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = n</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = hospital</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = gender</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "col"</span><span style='color: #080808;'> as default</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "col"</span><span style='color: #080808;'> as default</span></span>
 <span class='r-plt img'><img src='plot2-21.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># plot2() supports all S3 extensions available through ggplot2::fortify():</span></span>
@@ -882,7 +882,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-in'>        smooth <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
 <span class='r-in'>        title <span class='op'>=</span> <span class='st'>"Titles/captions *support* **markdown**"</span>,</span>
 <span class='r-in'>        subtitle <span class='op'>=</span> <span class='st'>"Axis titles contain the square notation: ^2"</span><span class='op'>)</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>geom = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> `geom_smooth()` using method = 'loess' and formula 'y ~ x'</span>
 <span class='r-plt img'><img src='plot2-22.png' alt='' width='700' height='433' /></span>
 <span class='r-in'>        </span>

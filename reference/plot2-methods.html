@@ -161,7 +161,7 @@
   y <span class='op'>=</span> <span class='cn'>NULL</span>,
   category <span class='op'>=</span> <span class='cn'>NULL</span>,
   facet <span class='op'>=</span> <span class='cn'>NULL</span>,
-  geom <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='cn'>NULL</span>,
   x.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   title <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -283,7 +283,7 @@
   y <span class='op'>=</span> <span class='cn'>NULL</span>,
   category <span class='op'>=</span> <span class='cn'>NULL</span>,
   facet <span class='op'>=</span> <span class='cn'>NULL</span>,
-  geom <span class='op'>=</span> <span class='st'>"geom_point"</span>,
+  type <span class='op'>=</span> <span class='st'>"geom_point"</span>,
   x.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   title <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -405,7 +405,7 @@
   y <span class='op'>=</span> <span class='va'>.data</span><span class='op'>$</span><span class='va'>count</span>,
   category <span class='op'>=</span> <span class='cn'>NULL</span>,
   facet <span class='op'>=</span> <span class='cn'>NULL</span>,
-  geom <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='cn'>NULL</span>,
   x.title <span class='op'>=</span> <span class='st'>"Item"</span>,
   y.title <span class='op'>=</span> <span class='st'>"Count"</span>,
   title <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -527,7 +527,7 @@
   y <span class='op'>=</span> <span class='cn'>NULL</span>,
   category <span class='op'>=</span> <span class='cn'>NULL</span>,
   facet <span class='op'>=</span> <span class='cn'>NULL</span>,
-  geom <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='cn'>NULL</span>,
   x.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   title <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -652,7 +652,7 @@
   y <span class='op'>=</span> <span class='cn'>NULL</span>,
   category <span class='op'>=</span> <span class='cn'>NULL</span>,
   facet <span class='op'>=</span> <span class='cn'>NULL</span>,
-  geom <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='cn'>NULL</span>,
   x.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   title <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -791,10 +791,10 @@
       <td><p>plotting 'direction': the facet</p></td>
     </tr>
     <tr>
-      <th>geom</th>
+      <th>type</th>
       <td><p>type of visualisation to use, supports all <code>ggplot2</code> geoms. It will be determined automatically if left blank.</p>
-<p>In <code>ggplot2</code>, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, <code>geom = "bar"</code> will set <code>geom = "col"</code> and <code>horizontal = TRUE</code>.</p>
-<p>There is one special case for this <code>geom</code> argument: the shortcut <code>geom = "barpercent"</code>, which will set <code>geom = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc"</code> and <code>datalabels.format = "%n (%p)"</code>.</p></td>
+<p>In <code>ggplot2</code>, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, <code>type = "bar"</code> will set <code>type = "col"</code> and <code>horizontal = TRUE</code>.</p>
+<p>There is one special case for this <code>type</code> argument: the shortcut <code>type = "barpercent"</code>, which will set <code>type = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc"</code> and <code>datalabels.format = "%n (%p)"</code>.</p></td>
     </tr>
     <tr>
       <th>x.title</th>
@@ -1189,7 +1189,7 @@
     </tr>
     <tr>
       <th>binwidth</th>
-      <td><p>width of bins (only useful for <code>geom = "histogram"</code>), can be specified as a numeric value or as a function that calculates width from <code>x</code>, see <code><a href='https://ggplot2.tidyverse.org/reference/geom_histogram.html'>geom_histogram()</a></code></p></td>
+      <td><p>width of bins (only useful for <code>type = "histogram"</code>), can be specified as a numeric value or as a function that calculates width from <code>x</code>, see <code><a href='https://ggplot2.tidyverse.org/reference/geom_histogram.html'>geom_histogram()</a></code></p></td>
     </tr>
     <tr>
       <th>width</th>
@@ -1197,11 +1197,11 @@
     </tr>
     <tr>
       <th>jitter_seed</th>
-      <td><p>seed (randomisation factor) to be set when using <code>geom = "jitter"</code></p></td>
+      <td><p>seed (randomisation factor) to be set when using <code>type = "jitter"</code></p></td>
     </tr>
     <tr>
       <th>violin_scale</th>
-      <td><p>scale to be set when using <code>geom = "violin"</code>, can also be set to <code>"area"</code></p></td>
+      <td><p>scale to be set when using <code>type = "violin"</code>, can also be set to <code>"area"</code></p></td>
     </tr>
     <tr>
       <th>legend.position</th>
