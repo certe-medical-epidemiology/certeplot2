@@ -628,12 +628,6 @@
 
 \item{facet}{plotting 'direction': the facet}
 
-\item{geom}{type of visualisation to use, supports all \code{ggplot2} geoms. It will be determined automatically if left blank.
-
-In \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{geom = "bar"} will set \code{geom = "col"} and \code{horizontal = TRUE}.
-
-There is one special case for this \code{geom} argument: the shortcut \code{geom = "barpercent"}, which will set \code{geom = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.}
-
 \item{x.title}{text to show on the x asis}
 
 \item{y.title}{text to show on the y asis}
@@ -846,13 +840,13 @@ There is one special case for this \code{geom} argument: the shortcut \code{geom
 
 \item{linetype}{linetype of the geom, only suitable for geoms that draw lines}
 
-\item{binwidth}{width of bins (only useful for \code{geom = "histogram"}), can be specified as a numeric value or as a function that calculates width from \code{x}, see \code{\link[ggplot2:geom_histogram]{geom_histogram()}}}
+\item{binwidth}{width of bins (only useful for \code{type = "histogram"}), can be specified as a numeric value or as a function that calculates width from \code{x}, see \code{\link[ggplot2:geom_histogram]{geom_histogram()}}}
 
 \item{width}{width of the geom}
 
-\item{jitter_seed}{seed (randomisation factor) to be set when using \code{geom = "jitter"}}
+\item{jitter_seed}{seed (randomisation factor) to be set when using \code{type = "jitter"}}
 
-\item{violin_scale}{scale to be set when using \code{geom = "violin"}, can also be set to \code{"area"}}
+\item{violin_scale}{scale to be set when using \code{type = "violin"}, can also be set to \code{"area"}}
 
 \item{legend.position}{settings for the legend}
 

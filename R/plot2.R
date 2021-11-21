@@ -27,11 +27,11 @@
 #' @param y values to use for plotting along the y axis
 #' @param category plotting 'direction': the category (called 'fill' and 'colour' in `ggplot2`)
 #' @param facet plotting 'direction': the facet
-#' @param geom type of visualisation to use, supports all `ggplot2` geoms. It will be determined automatically if left blank.
+#' @param type type of visualisation to use, supports all `ggplot2` geoms. It will be determined automatically if left blank.
 #' 
-#' In `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `geom = "bar"` will set `geom = "col"` and `horizontal = TRUE`.
+#' In `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `type = "bar"` will set `type = "col"` and `horizontal = TRUE`.
 #' 
-#' There is one special case for this `geom` argument: the shortcut `geom = "barpercent"`, which will set `geom = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
+#' There is one special case for this `type` argument: the shortcut `type = "barpercent"`, which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
 #' @param x.title text to show on the x asis
 #' @param y.title text to show on the y asis
 #' @param title title to show
@@ -115,10 +115,10 @@
 #' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.size,smooth.linetype settings for `smooth`
 #' @param size size of the geom
 #' @param linetype linetype of the geom, only suitable for geoms that draw lines
-#' @param binwidth width of bins (only useful for `geom = "histogram"`), can be specified as a numeric value or as a function that calculates width from `x`, see [`geom_histogram()`][ggplot2::geom_histogram()]
+#' @param binwidth width of bins (only useful for `type = "histogram"`), can be specified as a numeric value or as a function that calculates width from `x`, see [`geom_histogram()`][ggplot2::geom_histogram()]
 #' @param width width of the geom
-#' @param jitter_seed seed (randomisation factor) to be set when using `geom = "jitter"`
-#' @param violin_scale scale to be set when using `geom = "violin"`, can also be set to `"area"`
+#' @param jitter_seed seed (randomisation factor) to be set when using `type = "jitter"`
+#' @param violin_scale scale to be set when using `type = "violin"`, can also be set to `"area"`
 #' @param legend.position,legend.title,legend.reverse,legend.barheight,legend.barwidth,legend.nbin,legend.italic settings for the legend
 #' @param zoom a [logical] to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0
 #' @param sep separator character to use if multiple columns are given to either of the three directions: `x`, `category` and `facet`, e.g. `facet = c(column1, column2)`
@@ -152,7 +152,7 @@
 #' head(iris)
 #' 
 #' # no variables determined, so plot2() will try for itself -
-#' # the geom will be points since the first two variables are numeric
+#' # the type will be points since the first two variables are numeric
 #' plot2(iris)
 #' 
 #' # only view the data part, like ggplot2 normally does
@@ -175,8 +175,8 @@
 #'       colour = c("white", "red", "black"), # set own colours
 #'       category.midpoint = 3)               # with an own midpoint
 #' 
-#' # change to any geom
-#' plot2(iris, Species, Sepal.Length, geom = "violin")
+#' # change to any type
+#' plot2(iris, Species, Sepal.Length, type = "violin")
 #' 
 #' library(dplyr, warn.conflicts = FALSE)
 #'   
@@ -196,7 +196,7 @@
 #' # use summarise_function to apply a function for continuous data
 #' admitted_patients %>%
 #'   plot2(hospital, age, gender, ward,
-#'         geom = "col", summarise_function = median)
+#'         type = "col", summarise_function = median)
 #'
 #' admitted_patients %>%
 #'   plot2(x = hospital,
@@ -206,12 +206,12 @@
 #'         y.age = TRUE)
 #'         
 #' admitted_patients %>%
-#'   plot2(age, geom = "hist")
+#'   plot2(age, type = "hist")
 #' admitted_patients %>%
-#'   plot2(age, geom = "density")
+#'   plot2(age, type = "density")
 #'  
-#' # the default geom is column, datalabels are automatically
-#' # set in non-continuous geoms:
+#' # the default type is column, datalabels are automatically
+#' # set in non-continuous types:
 #' patients_per_hospital_gender <- admitted_patients %>%
 #'   count(hospital, gender)
 #'   
@@ -254,7 +254,7 @@ plot2 <- function(.data,
                   y = NULL,
                   category = NULL,
                   facet = NULL,
-                  geom = NULL,
+                  type = NULL,
                   x.title = NULL,
                   y.title = NULL,
                   title = NULL,
@@ -379,7 +379,7 @@ plot2_exec <- function(.data,
                        y,
                        category,
                        facet,
-                       geom,
+                       type,
                        x.title,
                        y.title,
                        title,
@@ -532,8 +532,8 @@ plot2_exec <- function(.data,
     facet <- "_var_facet"
   }
   if (!is.null(dots$type)) {
-    plot2_warning("Using ", font_red("'type' is deprecated"), " - use ", font_blue("'geom'"), " instead")
-    geom <- dots$type
+    plot2_warning("Using ", font_red("'type' is deprecated"), " - use ", font_blue("'type'"), " instead")
+    type <- dots$type
   }
   if (!is.null(dots$sort.x)) {
     plot2_warning("Using ", font_red("'sort.x' is deprecated"), " - use ", font_blue("'x.sort'"), " instead")
@@ -551,16 +551,16 @@ plot2_exec <- function(.data,
     legend.title <- dots$category.title
   }
   
-  # prevalidate geoms for special types ----
-  if (isTRUE(geom[1L] %like% "barpercent")) {
+  # prevalidate types for special types ----
+  if (isTRUE(type[1L] %like% "barpercent")) {
     if (is.infinite(x.max_items)) {
       x.max_items <- 10
     }
     x.sort <- "freq-desc"
     datalabels.format <- "%n (%p)"
   }
-  if (isTRUE(geom[1L] %like% "bar")) {
-    geom <- "col"
+  if (isTRUE(type[1L] %like% "bar")) {
+    type <- "col"
     horizontal <- TRUE
   }
   
@@ -587,7 +587,7 @@ plot2_exec <- function(.data,
                   label_facet = dots$label_facet,
                   decimal.mark = decimal.mark,
                   big.mark = big.mark,
-                  geom = geom,
+                  type = type,
                   datalabels.round = datalabels.round,
                   datalabels.format = datalabels.format,
                   x.sort = x.sort,
@@ -603,11 +603,11 @@ plot2_exec <- function(.data,
                   facet.max_txt = facet.max_txt,
                   ...)
   
-  # validate geom ----
-  geom <- validate_geom(geom = geom, df = df) # this will automatically determine the geom if is.null(geom)
+  # validate type ----
+  type <- validate_type(type = type, df = df) # this will automatically determine the type if is.null(type)
   # transform data if not a continuous geom but group sizes are > 1
-  if (any(group_sizes(df) > 1) && !geom_is_continuous(geom)) {
-    plot2_message("Duplicate observations in discrete plot geom (", font_blue(geom), "), applying ",
+  if (any(group_sizes(df) > 1) && !geom_is_continuous(type)) {
+    plot2_message("Duplicate observations in discrete plot type (", font_blue(type), "), applying ",
                   font_blue("summarise_function = " ), font_blue(dots$summarise_fn_name))
     df <- summarise_data(df = df, summarise_function = summarise_function,
                          decimal.mark = decimal.mark, big.mark = big.mark,
@@ -615,34 +615,34 @@ plot2_exec <- function(.data,
   }
   
   # remove datalabels in continuous geoms
-  if (isTRUE(misses_datalabels) && geom_is_continuous(geom) && geom != "geom_sf") {
+  if (isTRUE(misses_datalabels) && geom_is_continuous(type) && type != "geom_sf") {
     df <- df %>% select(-`_var_datalabels`)
   }
-  if (!isTRUE(misses_y) && geom_is_continuous_x(geom)) {
-    plot2_message("Ignoring ", font_blue("y"), " for plot geom ", font_blue(gsub("geom_", "", geom)))
+  if (!isTRUE(misses_y) && geom_is_continuous_x(type)) {
+    plot2_message("Ignoring ", font_blue("y"), " for plot type ", font_blue(gsub("geom_", "", type)))
     df$`_var_y` <- df$`_var_x`
   }
   # remove x from sf geom
-  if (geom == "geom_sf") {
+  if (type == "geom_sf") {
     df <- df %>% select(-`_var_x`)
   }
   
   # set default size and width ----
-  size <- validate_size(size = size, geom = geom)
-  width <- validate_width(width = width, geom = geom)
+  size <- validate_size(size = size, type = type)
+  width <- validate_width(width = width, type = type)
   
   # generate colour vectors ----
   cols <- validate_colour(df = df,
-                          geom = geom,
+                          type = type,
                           colour = colour,
                           colour_fill = colour_fill,
                           misses_colour_fill = misses_colour_fill,
                           horizontal = horizontal)
   
   # generate mapping ----
-  if (geom == "geom_sf" && !is.null(dots$sf_column)) {
+  if (type == "geom_sf" && !is.null(dots$sf_column)) {
     mapping <- aes_string(geometry = dots$sf_column)
-  } else if (!geom_is_continuous_x(geom)) {
+  } else if (!geom_is_continuous_x(type)) {
     # histograms etc. have a continuous x variable, so only set y if not a histogram-like
     mapping <- aes(y = `_var_y`, group = 1)
   } else {
@@ -656,7 +656,7 @@ plot2_exec <- function(.data,
                                               group = `_var_x`))
   }
   if (has_category(df)) {
-    if (geom == "geom_sf") {
+    if (type == "geom_sf") {
       # no colour in sf's
       mapping <- utils::modifyList(mapping, aes(fill = `_var_category`,
                                                 group = `_var_category`))
@@ -666,7 +666,7 @@ plot2_exec <- function(.data,
                                                 group = `_var_category`))
     }
   }
-  if (geom_is_continuous(geom)) {
+  if (geom_is_continuous(type)) {
     # remove the group from the mapping
     mapping <- utils::modifyList(mapping, aes(group = NULL))
   }
@@ -675,7 +675,7 @@ plot2_exec <- function(.data,
   p <- ggplot(data = df, mapping = mapping, colour = cols$colour, fill = cols$colour_fill)
   
   # generate geom ----
-  if (geom == "geom_boxplot") {
+  if (type == "geom_boxplot") {
     # first add the whiskers
     p <- p +
       stat_boxplot(geom = "errorbar",
@@ -685,7 +685,7 @@ plot2_exec <- function(.data,
                    colour = cols$colour)
   }
   p <- p +
-    generate_geom(geom = geom,
+    generate_geom(geom = type,
                   df = df,
                   stacked = stacked,
                   stackedpercent = stackedpercent,
@@ -699,12 +699,12 @@ plot2_exec <- function(.data,
                   jitter_seed = jitter_seed,
                   binwidth = binwidth,
                   cols = cols)
-  if (is.null(smooth) && geom == "geom_histogram") {
-    plot2_message("Assuming ", font_blue("smooth = TRUE"), " for ", font_blue("geom = \"histogram\""))
+  if (is.null(smooth) && type == "geom_histogram") {
+    plot2_message("Assuming ", font_blue("smooth = TRUE"), " for ", font_blue("type = \"histogram\""))
     smooth <- TRUE
   }
   if (isTRUE(smooth)) {
-    if (geom == "geom_histogram") {
+    if (type == "geom_histogram") {
       # add a density count
       set_binwidth <- p$layers[[1]]$stat_params$binwidth
       p <- p +
@@ -739,8 +739,8 @@ plot2_exec <- function(.data,
          y = get_y_name(df),
          fill = get_category_name(df),
          colour = get_category_name(df)) # will return NULL if not available, so always works
-  if (geom_is_continuous_x(geom)) {
-    if (geom %like% "density") {
+  if (geom_is_continuous_x(type)) {
+    if (type %like% "density") {
       p <- p +
         labs(y = "Density")
       if (misses_y.percent) {
@@ -757,7 +757,7 @@ plot2_exec <- function(.data,
   if (has_category(df) && is.numeric(get_category(df))) {
     p <- p + 
       validate_category_scale(df = df,
-                              geom = geom,
+                              type = type,
                               cols = cols,
                               category.labels = category.labels,
                               category.percent = category.percent,
@@ -777,12 +777,12 @@ plot2_exec <- function(.data,
     if (is.null(legend.title)) {
       legend.title <- TRUE
     }
-  } else if (geom != "geom_sf") {
+  } else if (type != "geom_sf") {
     p <- p +
       scale_colour_manual(values = cols$colour) +
       scale_fill_manual(values = cols$colour_fill)
   }
-  if (geom != "geom_sf") {
+  if (type != "geom_sf") {
     # x axis
     p <- p + 
       validate_x_scale(df = df,
@@ -885,7 +885,7 @@ plot2_exec <- function(.data,
   if (has_facet(df)) {
     p <- p +
       validate_facet(df = df,
-                     geom = geom,
+                     type = type,
                      facet.repeat_lbls_x = facet.repeat_lbls_x,
                      facet.repeat_lbls_y = facet.repeat_lbls_y,
                      facet.relative = facet.relative,
@@ -899,7 +899,7 @@ plot2_exec <- function(.data,
   if (has_datalabels(df)) {
     p <- set_datalabels(p = p,
                         df = df,
-                        geom = geom,
+                        type = type,
                         width = width,
                         stacked = stacked,
                         stackedpercent = stackedpercent,

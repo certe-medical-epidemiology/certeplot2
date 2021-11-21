@@ -10,7 +10,7 @@ plot2(
   y = NULL,
   category = NULL,
   facet = NULL,
-  geom = NULL,
+  type = NULL,
   x.title = NULL,
   y.title = NULL,
   title = NULL,
@@ -136,11 +136,11 @@ plot2(
 
 \item{facet}{plotting 'direction': the facet}
 
-\item{geom}{type of visualisation to use, supports all \code{ggplot2} geoms. It will be determined automatically if left blank.
+\item{type}{type of visualisation to use, supports all \code{ggplot2} geoms. It will be determined automatically if left blank.
 
-In \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{geom = "bar"} will set \code{geom = "col"} and \code{horizontal = TRUE}.
+In \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{type = "bar"} will set \code{type = "col"} and \code{horizontal = TRUE}.
 
-There is one special case for this \code{geom} argument: the shortcut \code{geom = "barpercent"}, which will set \code{geom = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.}
+There is one special case for this \code{type} argument: the shortcut \code{type = "barpercent"}, which will set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.}
 
 \item{x.title}{text to show on the x asis}
 
@@ -300,13 +300,13 @@ There is one special case for this \code{geom} argument: the shortcut \code{geom
 
 \item{linetype}{linetype of the geom, only suitable for geoms that draw lines}
 
-\item{binwidth}{width of bins (only useful for \code{geom = "histogram"}), can be specified as a numeric value or as a function that calculates width from \code{x}, see \code{\link[ggplot2:geom_histogram]{geom_histogram()}}}
+\item{binwidth}{width of bins (only useful for \code{type = "histogram"}), can be specified as a numeric value or as a function that calculates width from \code{x}, see \code{\link[ggplot2:geom_histogram]{geom_histogram()}}}
 
 \item{width}{width of the geom}
 
-\item{jitter_seed}{seed (randomisation factor) to be set when using \code{geom = "jitter"}}
+\item{jitter_seed}{seed (randomisation factor) to be set when using \code{type = "jitter"}}
 
-\item{violin_scale}{scale to be set when using \code{geom = "violin"}, can also be set to \code{"area"}}
+\item{violin_scale}{scale to be set when using \code{type = "violin"}, can also be set to \code{"area"}}
 
 \item{legend.position, legend.title, legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic}{settings for the legend}
 
@@ -364,7 +364,7 @@ The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} 
 head(iris)
 
 # no variables determined, so plot2() will try for itself -
-# the geom will be points since the first two variables are numeric
+# the type will be points since the first two variables are numeric
 plot2(iris)
 
 # only view the data part, like ggplot2 normally does
@@ -387,8 +387,8 @@ plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species,
       colour = c("white", "red", "black"), # set own colours
       category.midpoint = 3)               # with an own midpoint
 
-# change to any geom
-plot2(iris, Species, Sepal.Length, geom = "violin")
+# change to any type
+plot2(iris, Species, Sepal.Length, type = "violin")
 
 library(dplyr, warn.conflicts = FALSE)
   
@@ -408,7 +408,7 @@ admitted_patients \%>\%
 # use summarise_function to apply a function for continuous data
 admitted_patients \%>\%
   plot2(hospital, age, gender, ward,
-        geom = "col", summarise_function = median)
+        type = "col", summarise_function = median)
 
 admitted_patients \%>\%
   plot2(x = hospital,
@@ -418,12 +418,12 @@ admitted_patients \%>\%
         y.age = TRUE)
         
 admitted_patients \%>\%
-  plot2(age, geom = "hist")
+  plot2(age, type = "hist")
 admitted_patients \%>\%
-  plot2(age, geom = "density")
+  plot2(age, type = "density")
  
-# the default geom is column, datalabels are automatically
-# set in non-continuous geoms:
+# the default type is column, datalabels are automatically
+# set in non-continuous types:
 patients_per_hospital_gender <- admitted_patients \%>\%
   count(hospital, gender)
   
