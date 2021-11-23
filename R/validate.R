@@ -375,9 +375,13 @@ validate_x_scale <- function(df,
       auto_breaks_labels <- determine_date_breaks_labels(get_x(df))
       if (is.null(x.date_breaks)) {
         x.date_breaks <- auto_breaks_labels$breaks
+        plot2_message("Using ", font_blue("x.date_breaks = \"", x.date_breaks, "\"", collapse = ""),
+                      " based on data")
       }
       if (is.null(x.date_labels)) {
         x.date_labels <- auto_breaks_labels$labels
+        plot2_message("Using ", font_blue("x.date_labels = \"", x.date_labels, "\"", collapse = ""),
+                      " based on data")
       }
     }
     if (inherits(get_x(df), "Date")) {
@@ -482,8 +486,10 @@ validate_y_scale <- function(df,
       seq(from = 0,
           to = 1,
           by = 0.1)
+    } else if (is.integer(df)) {
+      # this will print integers as integers, so no decimal numbers
+      function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 3))))
     } else {
-      # this makes sure that integers will actually print as integers
       pretty_breaks()
     }
   }
@@ -787,7 +793,7 @@ generate_geom <- function(geom,
       # take the range and divide by 12 as the default
       values <- get_x(df)
       values <- values[!is.infinite(values)]
-      binwidth <- as.double(diff(range(values, na.rm = TRUE))) / 12
+      binwidth <- as.double(diff(range(values, na.rm = TRUE))) / (12 + min(10, length(unique(values)) / 25))
       if (binwidth < 0) {
         binwidth <- round(binwidth, 3)
       } else if (binwidth > 10) {
@@ -795,8 +801,7 @@ generate_geom <- function(geom,
       } else {
         binwidth <- round(binwidth, 1)
       }
-      plot2_message("Using ", font_blue("binwidth =", binwidth),
-                    " based on ", font_blue("range(", get_x_name(df), ")", collapse = ""))
+      plot2_message("Using ", font_blue("binwidth =", binwidth), " based on data")
     }
     do.call(geom_fn,
             args = c(list(size = size,
@@ -1024,6 +1029,7 @@ validate_theme <- function(theme,
     theme$plot.tag <- add_markdown(theme$plot.tag)
     theme$strip.text <- add_markdown(theme$strip.text)
     theme$axis.title.x <- add_markdown(theme$axis.title.x)
+    theme$axis.text.x <- add_markdown(theme$axis.text.x) # values of the x axis
     theme$axis.title.y <- add_markdown(theme$axis.title.y)
     theme$legend.title <- add_markdown(theme$legend.title)
   }

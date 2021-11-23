@@ -195,11 +195,15 @@ determine_date_breaks_labels <- function(x) {
   } else if (diff_range < 1095) {
     # 3 years
     out <- list(breaks = "6 months",
-                labels = "mmm 'yy")
-  } else {
-    # rest
+                labels = "mmm yyyy")
+  } else if (diff_range < 2556) {
+    # 7 years
     out <- list(breaks = "1 year",
-                labels = "mmm 'yy")
+                labels = "mmm yyyy")
+  } else {
+    # even longer, all other cases
+    out <- list(breaks = "2 years",
+                labels = "yyyy")
   }
   out
 }

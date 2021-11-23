@@ -115,7 +115,7 @@
 #' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.size,smooth.linetype settings for `smooth`
 #' @param size size of the geom
 #' @param linetype linetype of the geom, only suitable for geoms that draw lines
-#' @param binwidth width of bins (only useful for `geom = "histogram"`), can be specified as a numeric value or as a function that calculates width from `x`, see [`geom_histogram()`][ggplot2::geom_histogram()]
+#' @param binwidth width of bins (only useful for `geom = "histogram"`), can be specified as a numeric value or as a function that calculates width from `x`, see [`geom_histogram()`][ggplot2::geom_histogram()]. It defaults to approx. `diff(range(x)) / 12`.
 #' @param width width of the geom
 #' @param jitter_seed seed (randomisation factor) to be set when using `geom = "jitter"`
 #' @param violin_scale scale to be set when using `geom = "violin"`, can also be set to `"area"`
