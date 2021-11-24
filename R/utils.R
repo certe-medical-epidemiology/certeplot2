@@ -18,6 +18,8 @@
 # ===================================================================== #
 
 globalVariables(c(".",
+                  "..count..",
+                  "geom",
                   "n",
                   "_var_category",
                   "_var_datalabels",
@@ -80,9 +82,13 @@ get_column_name <- function(df, column_var) {
   names(out)[out & names(out) %unlike% "^_var_"][1L]
 }
 
-get_x <- function(df) {
+get_x <- function(df, na.rm = FALSE) {
   if (has_x(df)) {
-    df$`_var_x`
+    out <- df$`_var_x`
+    if (isTRUE(na.rm)) {
+      out <- out[!is.na(out)]
+    }
+    out
   } else {
     NULL
   }

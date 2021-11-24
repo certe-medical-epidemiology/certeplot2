@@ -15,7 +15,7 @@
   y = NULL,
   category = NULL,
   facet = NULL,
-  geom = NULL,
+  type = NULL,
   x.title = NULL,
   y.title = NULL,
   title = NULL,
@@ -136,7 +136,7 @@
   y = NULL,
   category = NULL,
   facet = NULL,
-  geom = "geom_point",
+  type = "point",
   x.title = NULL,
   y.title = NULL,
   title = NULL,
@@ -257,7 +257,7 @@
   y = .data$count,
   category = NULL,
   facet = NULL,
-  geom = NULL,
+  type = NULL,
   x.title = "Item",
   y.title = "Count",
   title = NULL,
@@ -378,7 +378,7 @@
   y = NULL,
   category = NULL,
   facet = NULL,
-  geom = NULL,
+  type = NULL,
   x.title = NULL,
   y.title = NULL,
   title = NULL,
@@ -502,7 +502,7 @@
   y = NULL,
   category = NULL,
   facet = NULL,
-  geom = NULL,
+  type = NULL,
   x.title = NULL,
   y.title = NULL,
   title = NULL,
@@ -628,15 +628,16 @@
 
 \item{facet}{plotting 'direction': the facet}
 
-\item{geom}{type of visualisation to use, supports all \code{ggplot2} geoms. It will be determined automatically if left blank.
+\item{type}{type of visualisation to use. This can be:
+\itemize{
+\item A \code{ggplot2} geom name, all geoms are supported. Full function names can be used (e.g., \code{"geom_histogram"}), but they can also be abbreviated (e.g., \code{"h"}, \code{"hist"}). These geoms can be abbreviated by their first character: area (\code{"a"}), boxplot (\code{"b"}), column (\code{"c"}), histogram (\code{"h"}), jitter (\code{"j"}), line (\code{"l"}), point (\code{"p"}), ribbon (\code{"r"}), violin (\code{"v"}). \strong{Please note:} in \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{type = "bar"} will set \code{type = "col"} and \code{horizontal = TRUE}.
+\item A shortcut. There is currently one supported shortcut: \code{"barpercent"}, which will set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
+\item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X axis or if the length of unique values per X axis item is at least 3, \code{"point"} if both the Y and X axes are numeric, and \code{"col"} otherwise.
+}}
 
-In \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{geom = "bar"} will set \code{geom = "col"} and \code{horizontal = TRUE}.
+\item{x.title}{text to show on the x axis}
 
-There is one special case for this \code{geom} argument: the shortcut \code{geom = "barpercent"}, which will set \code{geom = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.}
-
-\item{x.title}{text to show on the x asis}
-
-\item{y.title}{text to show on the y asis}
+\item{y.title}{text to show on the y axis}
 
 \item{title}{title to show}
 
@@ -658,95 +659,95 @@ There is one special case for this \code{geom} argument: the shortcut \code{geom
 
 \item{na.rm}{remove \code{NA} values from showing in the plot}
 
-\item{facet.position}{text}
+\item{facet.position}{settings for the plotting direction \code{facet}}
 
-\item{facet.fill}{text}
+\item{facet.fill}{settings for the plotting direction \code{facet}}
 
-\item{facet.bold}{text}
+\item{facet.bold}{settings for the plotting direction \code{facet}}
 
-\item{facet.italic}{text}
+\item{facet.italic}{settings for the plotting direction \code{facet}}
 
-\item{facet.size}{text}
+\item{facet.size}{settings for the plotting direction \code{facet}}
 
-\item{facet.margin}{text}
+\item{facet.margin}{settings for the plotting direction \code{facet}}
 
-\item{facet.repeat_lbls_x}{text}
+\item{facet.repeat_lbls_x}{settings for the plotting direction \code{facet}}
 
-\item{facet.repeat_lbls_y}{text}
+\item{facet.repeat_lbls_y}{settings for the plotting direction \code{facet}}
 
-\item{facet.fixed_y}{text}
+\item{facet.fixed_y}{settings for the plotting direction \code{facet}}
 
-\item{facet.drop}{text}
+\item{facet.drop}{settings for the plotting direction \code{facet}}
 
-\item{facet.nrow}{text}
+\item{facet.nrow}{settings for the plotting direction \code{facet}}
 
-\item{facet.relative}{text}
+\item{facet.relative}{settings for the plotting direction \code{facet}}
 
-\item{x.date_breaks}{text}
+\item{x.date_breaks}{breaks to use when the x axis contains dates, will be determined automatically if left blank}
 
-\item{x.date_labels}{text}
+\item{x.date_labels}{labels to use when the x axis contains dates, will be determined automatically if left blank}
 
-\item{category.focus}{text}
+\item{category.focus}{a value of \code{category} that should be highlighted, meaning that all other values in \code{category} will be greyed out. This can also be a numeric value between 1 and the length of unique values of \code{category}, e.g. \code{category.focus = 2} to focus on the second legend item.}
 
-\item{colour}{text}
+\item{colour}{colour(s) to set, will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}} and defaults to Certe colours. This can be a named vector to match values of \code{category}, see \emph{Examples}. Using a named vector can also be used to manually sort the values of \code{category}.}
 
-\item{colour_fill}{text}
+\item{colour_fill}{colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}}}
 
-\item{x.lbl_angle}{text}
+\item{x.lbl_angle}{angle to use for the x axis in a counter-clockwise direction (i.e., a value of \code{90} will orient the axis labels from bottom to top, a value of \code{270} will orient the axis labels from top to bottom)}
 
-\item{x.lbl_align}{text}
+\item{x.lbl_align}{alignment for the x axis between \code{0} (left aligned) and \code{1} (right aligned)}
 
-\item{x.lbl_italic}{text}
+\item{x.lbl_italic}{a \link{logical} to indicate whether the x labels should in in \emph{italics}}
 
-\item{x.remove}{text}
+\item{x.remove}{a \link{logical} to indicate whether the x labels and title should be removed}
 
-\item{x.position}{text}
+\item{x.position}{position of the x axis, defaults to \code{"bottom"}}
 
-\item{x.max_items}{text}
+\item{x.max_items}{number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the \code{summarise_function} function. \strong{Please note:} the sorting will be applied first, allowing to e.g. plot the top \emph{n} most frequent values of the x axis by combining \code{x.sort = "freq-desc"} with \verb{x.max_items =} \emph{n}.}
 
-\item{x.max_txt}{text}
+\item{x.max_txt}{the text to use of values not included number of \verb{*.max_items}. The placeholder \verb{\%n} will be replaced with the outcome of the \code{summarise_function} function, the placeholder \verb{\%p} will be replaced with the percentage.}
 
-\item{category.max_items}{text}
+\item{category.max_items}{number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the \code{summarise_function} function. \strong{Please note:} the sorting will be applied first, allowing to e.g. plot the top \emph{n} most frequent values of the x axis by combining \code{x.sort = "freq-desc"} with \verb{x.max_items =} \emph{n}.}
 
-\item{category.max_txt}{text}
+\item{category.max_txt}{the text to use of values not included number of \verb{*.max_items}. The placeholder \verb{\%n} will be replaced with the outcome of the \code{summarise_function} function, the placeholder \verb{\%p} will be replaced with the percentage.}
 
-\item{facet.max_items}{text}
+\item{facet.max_items}{number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the \code{summarise_function} function. \strong{Please note:} the sorting will be applied first, allowing to e.g. plot the top \emph{n} most frequent values of the x axis by combining \code{x.sort = "freq-desc"} with \verb{x.max_items =} \emph{n}.}
 
-\item{facet.max_txt}{text}
+\item{facet.max_txt}{the text to use of values not included number of \verb{*.max_items}. The placeholder \verb{\%n} will be replaced with the outcome of the \code{summarise_function} function, the placeholder \verb{\%p} will be replaced with the percentage.}
 
-\item{x.breaks}{text}
+\item{x.breaks}{a breaks function or numeric vector to use for the x axis}
 
-\item{x.breaks_n}{text}
+\item{x.breaks_n}{number of breaks to use for the x axis}
 
-\item{x.trans}{text}
+\item{x.trans}{a transformation function to use for the x axis, e.g. \code{"log2"}}
 
-\item{x.expand}{text}
+\item{x.expand}{expansion to use for the x axis, can be length 1 or 2}
 
-\item{x.limits}{text}
+\item{x.limits}{limits to use for the x axis, can be length 1 or 2}
 
-\item{x.character}{text}
+\item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (x values between 2000 and 2050)}
 
-\item{y.remove}{text}
+\item{y.remove}{a \link{logical} to indicate whether the y labels and title should be removed}
 
-\item{y.24h}{text}
+\item{y.24h}{a \link{logical} to indicate whether the y labels and breaks should be formatted as 24-hour sequences}
 
-\item{y.age}{text}
+\item{y.age}{a \link{logical} to indicate whether the y labels and breaks should be formatted as ages in years}
 
-\item{y.percent}{text}
+\item{y.percent}{a \link{logical} to indicate whether the y labels should be formatted as percentages}
 
-\item{y.percent_break}{text}
+\item{y.percent_break}{number of percentages on which the y axis should have breaks}
 
-\item{y.breaks}{text}
+\item{y.breaks}{a breaks function or numeric vector to use for the y axis}
 
-\item{y.limits}{text}
+\item{y.limits}{limits to use for the y axis, can be length 1 or 2}
 
-\item{y.labels}{text}
+\item{y.labels}{a labels function or character vector to use for the y axis}
 
-\item{y.expand}{text}
+\item{y.expand}{expansion to use for the y axis, can be length 1 or 2}
 
-\item{y.trans}{text}
+\item{y.trans}{a transformation function to use for the y axis, e.g. \code{"log2"}}
 
-\item{y.position}{text}
+\item{y.position}{position of the x axis, defaults to \code{"left"}}
 
 \item{category.labels}{settings for the plotting direction \code{category}}
 
@@ -846,13 +847,13 @@ There is one special case for this \code{geom} argument: the shortcut \code{geom
 
 \item{linetype}{linetype of the geom, only suitable for geoms that draw lines}
 
-\item{binwidth}{width of bins (only useful for \code{geom = "histogram"}), can be specified as a numeric value or as a function that calculates width from \code{x}, see \code{\link[ggplot2:geom_histogram]{geom_histogram()}}}
+\item{binwidth}{width of bins (only useful for \code{geom = "histogram"}), can be specified as a numeric value or as a function that calculates width from \code{x}, see \code{\link[ggplot2:geom_histogram]{geom_histogram()}}. It defaults to approx. \code{diff(range(x))} divided by 12 to 22 based on the data.}
 
 \item{width}{width of the geom}
 
-\item{jitter_seed}{seed (randomisation factor) to be set when using \code{geom = "jitter"}}
+\item{jitter_seed}{seed (randomisation factor) to be set when using \code{type = "jitter"}}
 
-\item{violin_scale}{scale to be set when using \code{geom = "violin"}, can also be set to \code{"area"}}
+\item{violin_scale}{scale to be set when using \code{type = "violin"}, can also be set to \code{"area"}}
 
 \item{legend.position}{settings for the legend}
 

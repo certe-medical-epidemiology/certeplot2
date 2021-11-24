@@ -10,7 +10,7 @@ plot2(
   y = NULL,
   category = NULL,
   facet = NULL,
-  geom = NULL,
+  type = NULL,
   x.title = NULL,
   y.title = NULL,
   title = NULL,
@@ -136,15 +136,16 @@ plot2(
 
 \item{facet}{plotting 'direction': the facet}
 
-\item{geom}{type of visualisation to use, supports all \code{ggplot2} geoms. It will be determined automatically if left blank.
+\item{type}{type of visualisation to use. This can be:
+\itemize{
+\item A \code{ggplot2} geom name, all geoms are supported. Full function names can be used (e.g., \code{"geom_histogram"}), but they can also be abbreviated (e.g., \code{"h"}, \code{"hist"}). These geoms can be abbreviated by their first character: area (\code{"a"}), boxplot (\code{"b"}), column (\code{"c"}), histogram (\code{"h"}), jitter (\code{"j"}), line (\code{"l"}), point (\code{"p"}), ribbon (\code{"r"}), violin (\code{"v"}). \strong{Please note:} in \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{type = "bar"} will set \code{type = "col"} and \code{horizontal = TRUE}.
+\item A shortcut. There is currently one supported shortcut: \code{"barpercent"}, which will set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
+\item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X axis or if the length of unique values per X axis item is at least 3, \code{"point"} if both the Y and X axes are numeric, and \code{"col"} otherwise.
+}}
 
-In \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{geom = "bar"} will set \code{geom = "col"} and \code{horizontal = TRUE}.
+\item{x.title}{text to show on the x axis}
 
-There is one special case for this \code{geom} argument: the shortcut \code{geom = "barpercent"}, which will set \code{geom = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.}
-
-\item{x.title}{text to show on the x asis}
-
-\item{y.title}{text to show on the y asis}
+\item{y.title}{text to show on the y axis}
 
 \item{title}{title to show}
 
@@ -166,95 +167,65 @@ There is one special case for this \code{geom} argument: the shortcut \code{geom
 
 \item{na.rm}{remove \code{NA} values from showing in the plot}
 
-\item{facet.position}{text}
+\item{facet.position, facet.fill, facet.bold, facet.italic, facet.size, facet.margin, facet.repeat_lbls_x, facet.repeat_lbls_y, facet.fixed_y, facet.drop, facet.nrow, facet.relative}{settings for the plotting direction \code{facet}}
 
-\item{facet.fill}{text}
+\item{x.date_breaks}{breaks to use when the x axis contains dates, will be determined automatically if left blank}
 
-\item{facet.bold}{text}
+\item{x.date_labels}{labels to use when the x axis contains dates, will be determined automatically if left blank}
 
-\item{facet.italic}{text}
+\item{category.focus}{a value of \code{category} that should be highlighted, meaning that all other values in \code{category} will be greyed out. This can also be a numeric value between 1 and the length of unique values of \code{category}, e.g. \code{category.focus = 2} to focus on the second legend item.}
 
-\item{facet.size}{text}
+\item{colour}{colour(s) to set, will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}} and defaults to Certe colours. This can be a named vector to match values of \code{category}, see \emph{Examples}. Using a named vector can also be used to manually sort the values of \code{category}.}
 
-\item{facet.margin}{text}
+\item{colour_fill}{colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}}}
 
-\item{facet.repeat_lbls_x}{text}
+\item{x.lbl_angle}{angle to use for the x axis in a counter-clockwise direction (i.e., a value of \code{90} will orient the axis labels from bottom to top, a value of \code{270} will orient the axis labels from top to bottom)}
 
-\item{facet.repeat_lbls_y}{text}
+\item{x.lbl_align}{alignment for the x axis between \code{0} (left aligned) and \code{1} (right aligned)}
 
-\item{facet.fixed_y}{text}
+\item{x.lbl_italic}{a \link{logical} to indicate whether the x labels should in in \emph{italics}}
 
-\item{facet.drop}{text}
+\item{x.remove}{a \link{logical} to indicate whether the x labels and title should be removed}
 
-\item{facet.nrow}{text}
+\item{x.position}{position of the x axis, defaults to \code{"bottom"}}
 
-\item{facet.relative}{text}
+\item{x.max_items, category.max_items, facet.max_items}{number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the \code{summarise_function} function. \strong{Please note:} the sorting will be applied first, allowing to e.g. plot the top \emph{n} most frequent values of the x axis by combining \code{x.sort = "freq-desc"} with \verb{x.max_items =} \emph{n}.}
 
-\item{x.date_breaks}{text}
+\item{x.max_txt, category.max_txt, facet.max_txt}{the text to use of values not included number of \verb{*.max_items}. The placeholder \verb{\%n} will be replaced with the outcome of the \code{summarise_function} function, the placeholder \verb{\%p} will be replaced with the percentage.}
 
-\item{x.date_labels}{text}
+\item{x.breaks}{a breaks function or numeric vector to use for the x axis}
 
-\item{category.focus}{text}
+\item{x.breaks_n}{number of breaks to use for the x axis}
 
-\item{colour}{text}
+\item{x.trans}{a transformation function to use for the x axis, e.g. \code{"log2"}}
 
-\item{colour_fill}{text}
+\item{x.expand}{expansion to use for the x axis, can be length 1 or 2}
 
-\item{x.lbl_angle}{text}
+\item{x.limits}{limits to use for the x axis, can be length 1 or 2}
 
-\item{x.lbl_align}{text}
+\item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (x values between 2000 and 2050)}
 
-\item{x.lbl_italic}{text}
+\item{y.remove}{a \link{logical} to indicate whether the y labels and title should be removed}
 
-\item{x.remove}{text}
+\item{y.24h}{a \link{logical} to indicate whether the y labels and breaks should be formatted as 24-hour sequences}
 
-\item{x.position}{text}
+\item{y.age}{a \link{logical} to indicate whether the y labels and breaks should be formatted as ages in years}
 
-\item{x.max_items}{text}
+\item{y.percent}{a \link{logical} to indicate whether the y labels should be formatted as percentages}
 
-\item{x.max_txt}{text}
+\item{y.percent_break}{number of percentages on which the y axis should have breaks}
 
-\item{category.max_items}{text}
+\item{y.breaks}{a breaks function or numeric vector to use for the y axis}
 
-\item{category.max_txt}{text}
+\item{y.limits}{limits to use for the y axis, can be length 1 or 2}
 
-\item{facet.max_items}{text}
+\item{y.labels}{a labels function or character vector to use for the y axis}
 
-\item{facet.max_txt}{text}
+\item{y.expand}{expansion to use for the y axis, can be length 1 or 2}
 
-\item{x.breaks}{text}
+\item{y.trans}{a transformation function to use for the y axis, e.g. \code{"log2"}}
 
-\item{x.breaks_n}{text}
-
-\item{x.trans}{text}
-
-\item{x.expand}{text}
-
-\item{x.limits}{text}
-
-\item{x.character}{text}
-
-\item{y.remove}{text}
-
-\item{y.24h}{text}
-
-\item{y.age}{text}
-
-\item{y.percent}{text}
-
-\item{y.percent_break}{text}
-
-\item{y.breaks}{text}
-
-\item{y.limits}{text}
-
-\item{y.labels}{text}
-
-\item{y.expand}{text}
-
-\item{y.trans}{text}
-
-\item{y.position}{text}
+\item{y.position}{position of the x axis, defaults to \code{"left"}}
 
 \item{category.labels, category.percent, category.breaks, category.limits, category.expand, category.midpoint, category.trans}{settings for the plotting direction \code{category}}
 
@@ -300,13 +271,13 @@ There is one special case for this \code{geom} argument: the shortcut \code{geom
 
 \item{linetype}{linetype of the geom, only suitable for geoms that draw lines}
 
-\item{binwidth}{width of bins (only useful for \code{geom = "histogram"}), can be specified as a numeric value or as a function that calculates width from \code{x}, see \code{\link[ggplot2:geom_histogram]{geom_histogram()}}}
+\item{binwidth}{width of bins (only useful for \code{geom = "histogram"}), can be specified as a numeric value or as a function that calculates width from \code{x}, see \code{\link[ggplot2:geom_histogram]{geom_histogram()}}. It defaults to approx. \code{diff(range(x))} divided by 12 to 22 based on the data.}
 
 \item{width}{width of the geom}
 
-\item{jitter_seed}{seed (randomisation factor) to be set when using \code{geom = "jitter"}}
+\item{jitter_seed}{seed (randomisation factor) to be set when using \code{type = "jitter"}}
 
-\item{violin_scale}{scale to be set when using \code{geom = "violin"}, can also be set to \code{"area"}}
+\item{violin_scale}{scale to be set when using \code{type = "violin"}, can also be set to \code{"area"}}
 
 \item{legend.position, legend.title, legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic}{settings for the legend}
 
@@ -364,7 +335,7 @@ The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} 
 head(iris)
 
 # no variables determined, so plot2() will try for itself -
-# the geom will be points since the first two variables are numeric
+# the type will be points since the first two variables are numeric
 plot2(iris)
 
 # only view the data part, like ggplot2 normally does
@@ -387,8 +358,8 @@ plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species,
       colour = c("white", "red", "black"), # set own colours
       category.midpoint = 3)               # with an own midpoint
 
-# change to any geom
-plot2(iris, Species, Sepal.Length, geom = "violin")
+# change to any type
+plot2(iris, Species, Sepal.Length, type = "violin")
 
 library(dplyr, warn.conflicts = FALSE)
   
@@ -408,7 +379,7 @@ admitted_patients \%>\%
 # use summarise_function to apply a function for continuous data
 admitted_patients \%>\%
   plot2(hospital, age, gender, ward,
-        geom = "col", summarise_function = median)
+        type = "col", summarise_function = median)
 
 admitted_patients \%>\%
   plot2(x = hospital,
@@ -418,12 +389,12 @@ admitted_patients \%>\%
         y.age = TRUE)
         
 admitted_patients \%>\%
-  plot2(age, geom = "hist")
+  plot2(age, type = "hist")
 admitted_patients \%>\%
-  plot2(age, geom = "density")
+  plot2(age, type = "density")
  
-# the default geom is column, datalabels are automatically
-# set in non-continuous geoms:
+# the default type is column, datalabels are automatically
+# set in non-continuous types:
 patients_per_hospital_gender <- admitted_patients \%>\%
   count(hospital, gender)
   

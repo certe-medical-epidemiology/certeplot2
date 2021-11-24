@@ -27,13 +27,15 @@
 #' @param y values to use for plotting along the y axis
 #' @param category plotting 'direction': the category (called 'fill' and 'colour' in `ggplot2`)
 #' @param facet plotting 'direction': the facet
-#' @param geom type of visualisation to use, supports all `ggplot2` geoms. It will be determined automatically if left blank.
+#' @param type type of visualisation to use. This can be:
 #' 
-#' In `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `geom = "bar"` will set `geom = "col"` and `horizontal = TRUE`.
+#' * A `ggplot2` geom name, all geoms are supported. Full function names can be used (e.g., `"geom_histogram"`), but they can also be abbreviated (e.g., `"h"`, `"hist"`). These geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), violin (`"v"`). **Please note:** in `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `type = "bar"` will set `type = "col"` and `horizontal = TRUE`.
 #' 
-#' There is one special case for this `geom` argument: the shortcut `geom = "barpercent"`, which will set `geom = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
-#' @param x.title text to show on the x asis
-#' @param y.title text to show on the y asis
+#' * A shortcut. There is currently one supported shortcut: `"barpercent"`, which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
+#' 
+#' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and `"col"` otherwise.
+#' @param x.title text to show on the x axis
+#' @param y.title text to show on the y axis
 #' @param title title to show
 #' @param subtitle subtitle to show
 #' @param caption caption to show
@@ -44,52 +46,37 @@
 #' @param subtitle.colour text colour of the subtitle
 #' @param na.replace character to put in place of `NA` values if `na.rm = FALSE`
 #' @param na.rm remove `NA` values from showing in the plot
-#' @param facet.position text
-#' @param facet.fill text
-#' @param facet.bold text
-#' @param facet.italic text
-#' @param facet.size text
-#' @param facet.margin text
-#' @param facet.repeat_lbls_x text
-#' @param facet.repeat_lbls_y text
-#' @param facet.fixed_y text
-#' @param facet.drop text
-#' @param facet.nrow text
-#' @param facet.relative text
-#' @param x.date_breaks text
-#' @param x.date_labels text
-#' @param category.focus text
-#' @param colour text
-#' @param colour_fill text
-#' @param x.lbl_angle text
-#' @param x.lbl_align text
-#' @param x.lbl_italic text
-#' @param x.remove text
-#' @param x.position text
-#' @param x.max_items text
-#' @param x.max_txt text
-#' @param category.max_items text
-#' @param category.max_txt text
-#' @param facet.max_items text
-#' @param facet.max_txt text
-#' @param x.breaks text
-#' @param x.breaks_n text
-#' @param x.trans text
-#' @param x.expand text
-#' @param x.limits text
-#' @param x.character text
-#' @param y.remove text
-#' @param y.24h text
-#' @param y.age text
-#' @param y.percent text
-#' @param y.percent_break text
-#' @param y.breaks text
-#' @param y.limits text
-#' @param y.labels text
-#' @param y.expand text
-#' @param y.trans text
-#' @param y.position text
+#' @param facet.position,facet.fill,facet.bold,facet.italic,facet.size,facet.margin,facet.repeat_lbls_x,facet.repeat_lbls_y,facet.fixed_y,facet.drop,facet.nrow,facet.relative settings for the plotting direction `facet`
+#' @param x.date_breaks breaks to use when the x axis contains dates, will be determined automatically if left blank
+#' @param x.date_labels labels to use when the x axis contains dates, will be determined automatically if left blank
+#' @param category.focus a value of `category` that should be highlighted, meaning that all other values in `category` will be greyed out. This can also be a numeric value between 1 and the length of unique values of `category`, e.g. `category.focus = 2` to focus on the second legend item.
+#' @param colour colour(s) to set, will be evaluated with [`colourpicker()`][certestyle::colourpicker()] and defaults to Certe colours. This can be a named vector to match values of `category`, see *Examples*. Using a named vector can also be used to manually sort the values of `category`.
+#' @param colour_fill colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
+#' @param x.lbl_angle angle to use for the x axis in a counter-clockwise direction (i.e., a value of `90` will orient the axis labels from bottom to top, a value of `270` will orient the axis labels from top to bottom)
+#' @param x.lbl_align alignment for the x axis between `0` (left aligned) and `1` (right aligned)
+#' @param x.lbl_italic a [logical] to indicate whether the x labels should in in *italics*
+#' @param x.remove a [logical] to indicate whether the x labels and title should be removed
+#' @param x.position position of the x axis, defaults to `"bottom"`
+#' @param x.breaks a breaks function or numeric vector to use for the x axis
+#' @param x.breaks_n number of breaks to use for the x axis
+#' @param x.trans a transformation function to use for the x axis, e.g. `"log2"`
+#' @param x.expand expansion to use for the x axis, can be length 1 or 2
+#' @param x.limits limits to use for the x axis, can be length 1 or 2
+#' @param x.character a [logical] to indicate whether the values of the x axis should be forced to [character]. The default is `FALSE`, except for years (x values between 2000 and 2050)
+#' @param y.remove a [logical] to indicate whether the y labels and title should be removed
+#' @param y.24h a [logical] to indicate whether the y labels and breaks should be formatted as 24-hour sequences
+#' @param y.age a [logical] to indicate whether the y labels and breaks should be formatted as ages in years
+#' @param y.percent a [logical] to indicate whether the y labels should be formatted as percentages
+#' @param y.percent_break number of percentages on which the y axis should have breaks
+#' @param y.breaks a breaks function or numeric vector to use for the y axis
+#' @param y.limits limits to use for the y axis, can be length 1 or 2
+#' @param y.labels a labels function or character vector to use for the y axis
+#' @param y.expand expansion to use for the y axis, can be length 1 or 2
+#' @param y.trans a transformation function to use for the y axis, e.g. `"log2"`
+#' @param y.position position of the x axis, defaults to `"left"`
 #' @param category.labels,category.percent,category.breaks,category.limits,category.expand,category.midpoint,category.trans settings for the plotting direction `category`
+#' @param x.max_items,category.max_items,facet.max_items number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the `summarise_function` function. **Please note:** the sorting will be applied first, allowing to e.g. plot the top *n* most frequent values of the x axis by combining `x.sort = "freq-desc"` with `x.max_items =` *n*.
+#' @param x.max_txt,category.max_txt,facet.max_txt the text to use of values not included number of `*.max_items`. The placeholder `%n` will be replaced with the outcome of the `summarise_function` function, the placeholder `%p` will be replaced with the percentage.
 #' @param x.sort,category.sort,facet.sort sorting of the plotting direction, defaults to `TRUE`, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered [factor], which `ggplot2` uses to orient the data. Valid values are:
 #' 
 #' - `TRUE`: sort [factor] on their levels, otherwise sort as `"asc"`
@@ -115,10 +102,10 @@
 #' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.size,smooth.linetype settings for `smooth`
 #' @param size size of the geom
 #' @param linetype linetype of the geom, only suitable for geoms that draw lines
-#' @param binwidth width of bins (only useful for `geom = "histogram"`), can be specified as a numeric value or as a function that calculates width from `x`, see [`geom_histogram()`][ggplot2::geom_histogram()]. It defaults to approx. `diff(range(x)) / 12`.
+#' @param binwidth width of bins (only useful for `geom = "histogram"`), can be specified as a numeric value or as a function that calculates width from `x`, see [`geom_histogram()`][ggplot2::geom_histogram()]. It defaults to approx. `diff(range(x))` divided by 12 to 22 based on the data.
 #' @param width width of the geom
-#' @param jitter_seed seed (randomisation factor) to be set when using `geom = "jitter"`
-#' @param violin_scale scale to be set when using `geom = "violin"`, can also be set to `"area"`
+#' @param jitter_seed seed (randomisation factor) to be set when using `type = "jitter"`
+#' @param violin_scale scale to be set when using `type = "violin"`, can also be set to `"area"`
 #' @param legend.position,legend.title,legend.reverse,legend.barheight,legend.barwidth,legend.nbin,legend.italic settings for the legend
 #' @param zoom a [logical] to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0
 #' @param sep separator character to use if multiple columns are given to either of the three directions: `x`, `category` and `facet`, e.g. `facet = c(column1, column2)`
@@ -152,7 +139,7 @@
 #' head(iris)
 #' 
 #' # no variables determined, so plot2() will try for itself -
-#' # the geom will be points since the first two variables are numeric
+#' # the type will be points since the first two variables are numeric
 #' plot2(iris)
 #' 
 #' # only view the data part, like ggplot2 normally does
@@ -175,8 +162,8 @@
 #'       colour = c("white", "red", "black"), # set own colours
 #'       category.midpoint = 3)               # with an own midpoint
 #' 
-#' # change to any geom
-#' plot2(iris, Species, Sepal.Length, geom = "violin")
+#' # change to any type
+#' plot2(iris, Species, Sepal.Length, type = "violin")
 #' 
 #' library(dplyr, warn.conflicts = FALSE)
 #'   
@@ -196,7 +183,7 @@
 #' # use summarise_function to apply a function for continuous data
 #' admitted_patients %>%
 #'   plot2(hospital, age, gender, ward,
-#'         geom = "col", summarise_function = median)
+#'         type = "col", summarise_function = median)
 #'
 #' admitted_patients %>%
 #'   plot2(x = hospital,
@@ -206,12 +193,12 @@
 #'         y.age = TRUE)
 #'         
 #' admitted_patients %>%
-#'   plot2(age, geom = "hist")
+#'   plot2(age, type = "hist")
 #' admitted_patients %>%
-#'   plot2(age, geom = "density")
+#'   plot2(age, type = "density")
 #'  
-#' # the default geom is column, datalabels are automatically
-#' # set in non-continuous geoms:
+#' # the default type is column, datalabels are automatically
+#' # set in non-continuous types:
 #' patients_per_hospital_gender <- admitted_patients %>%
 #'   count(hospital, gender)
 #'   
@@ -254,7 +241,7 @@ plot2 <- function(.data,
                   y = NULL,
                   category = NULL,
                   facet = NULL,
-                  geom = NULL,
+                  type = NULL,
                   x.title = NULL,
                   y.title = NULL,
                   title = NULL,
@@ -379,7 +366,7 @@ plot2_exec <- function(.data,
                        y,
                        category,
                        facet,
-                       geom,
+                       type,
                        x.title,
                        y.title,
                        title,
@@ -518,49 +505,53 @@ plot2_exec <- function(.data,
   
   # old arguments, from previous package ----
   if (tryCatch(!is.null(y.category), error = function(e) TRUE)) {
-    plot2_warning("Using ", font_red("'y.category' is deprecated"), " - use ", font_blue("'category'"), " instead")
+    plot2_warning("Using ", font_red("'y.category' is deprecated"), 
+                  " - use ", font_blue("'category'"), " instead")
     .data <- .data %>% 
       mutate(across({{ y.category }}, .names = "_var_category_{col}")) %>% 
       summarise_variable("_var_category", sep = sep)
     category <- "_var_category"
   }
   if (tryCatch(!is.null(x.category), error = function(e) TRUE)) {
-    plot2_warning("Using ", font_red("'x.category' is deprecated"), " - use ", font_blue("'facet'"), " instead")
+    plot2_warning("Using ", font_red("'x.category' is deprecated"), 
+                  " - use ", font_blue("'facet'"), " instead")
     .data <- .data %>% 
       mutate(across({{ x.category }}, .names = "_var_facet_{col}")) %>% 
       summarise_variable("_var_facet", sep = sep)
     facet <- "_var_facet"
   }
-  if (!is.null(dots$type)) {
-    plot2_warning("Using ", font_red("'type' is deprecated"), " - use ", font_blue("'geom'"), " instead")
-    geom <- dots$type
-  }
   if (!is.null(dots$sort.x)) {
-    plot2_warning("Using ", font_red("'sort.x' is deprecated"), " - use ", font_blue("'x.sort'"), " instead")
+    plot2_warning("Using ", font_red("'sort.x' is deprecated"),
+                  " - use ", font_blue("'x.sort'"), " instead")
     x.sort <- dots$sort.x
   }
   if (!is.null(dots$sort.category)) {
-    plot2_warning("Using ", font_red("'sort.category' is deprecated"), " - use ", font_blue("'category.sort'"), " instead")
+    plot2_warning("Using ", font_red("'sort.category' is deprecated"),
+                  " - use ", font_blue("'category.sort'"), " instead")
     category.sort <- dots$sort.category
   }
   if (!is.null(dots$sort.facet)) {
-    plot2_warning("Using ", font_red("'sort.facet' is deprecated"), " - use ", font_blue("'facet.sort'"), " instead")
+    plot2_warning("Using ", font_red("'sort.facet' is deprecated"),
+                  " - use ", font_blue("'facet.sort'"), " instead")
     facet.sort <- dots$sort.facet
   }
   if (!is.null(dots$category.title)) {
+    # category.title does not really exist, what we know what was meant instead:
     legend.title <- dots$category.title
   }
   
-  # prevalidate geoms for special types ----
-  if (isTRUE(geom[1L] %like% "barpercent")) {
+  # prevalidate types for special types ----
+  if (isTRUE(type[1L] %like% "^(barpercent|bp)$")) {
     if (is.infinite(x.max_items)) {
       x.max_items <- 10
     }
     x.sort <- "freq-desc"
     datalabels.format <- "%n (%p)"
+    type <- "col"
+    horizontal <- TRUE
   }
-  if (isTRUE(geom[1L] %like% "bar")) {
-    geom <- "col"
+  if (isTRUE(type[1L] %like% "bar")) {
+    type <- "col"
     horizontal <- TRUE
   }
   
@@ -587,7 +578,7 @@ plot2_exec <- function(.data,
                   label_facet = dots$label_facet,
                   decimal.mark = decimal.mark,
                   big.mark = big.mark,
-                  geom = geom,
+                  type = type,
                   datalabels.round = datalabels.round,
                   datalabels.format = datalabels.format,
                   x.sort = x.sort,
@@ -597,17 +588,18 @@ plot2_exec <- function(.data,
                   horizontal = horizontal,
                   x.max_items = x.max_items,
                   x.max_txt = x.max_txt,
+                  x.character = x.character,
                   category.max_items = category.max_items,
                   category.max_txt = category.max_txt,
                   facet.max_items = facet.max_items,
                   facet.max_txt = facet.max_txt,
                   ...)
   
-  # validate geom ----
-  geom <- validate_geom(geom = geom, df = df) # this will automatically determine the geom if is.null(geom)
+  # validate type ----
+  type <- validate_type(type = type, df = df) # this will automatically determine the type if is.null(type)
   # transform data if not a continuous geom but group sizes are > 1
-  if (any(group_sizes(df) > 1) && !geom_is_continuous(geom)) {
-    plot2_message("Duplicate observations in discrete plot geom (", font_blue(geom), "), applying ",
+  if (any(group_sizes(df) > 1) && !geom_is_continuous(type)) {
+    plot2_message("Duplicate observations in discrete plot type (", font_blue(type), "), applying ",
                   font_blue("summarise_function = " ), font_blue(dots$summarise_fn_name))
     df <- summarise_data(df = df, summarise_function = summarise_function,
                          decimal.mark = decimal.mark, big.mark = big.mark,
@@ -615,34 +607,51 @@ plot2_exec <- function(.data,
   }
   
   # remove datalabels in continuous geoms
-  if (isTRUE(misses_datalabels) && geom_is_continuous(geom) && geom != "geom_sf") {
+  if (isTRUE(misses_datalabels) && (geom_is_continuous(type) | type %like% "path|line") && type != "geom_sf") {
     df <- df %>% select(-`_var_datalabels`)
   }
-  if (!isTRUE(misses_y) && geom_is_continuous_x(geom)) {
-    plot2_message("Ignoring ", font_blue("y"), " for plot geom ", font_blue(gsub("geom_", "", geom)))
+  if (!isTRUE(misses_y) && geom_is_continuous_x(type)) {
+    plot2_message("Ignoring ", font_blue("y"), " for plot type ", font_blue(gsub("geom_", "", type)))
     df$`_var_y` <- df$`_var_x`
   }
   # remove x from sf geom
-  if (geom == "geom_sf") {
+  if (type == "geom_sf") {
     df <- df %>% select(-`_var_x`)
   }
   
   # set default size and width ----
-  size <- validate_size(size = size, geom = geom)
-  width <- validate_width(width = width, geom = geom)
+  size <- validate_size(size = size, type = type)
+  width <- validate_width(width = width, type = type)
   
   # generate colour vectors ----
+  if (has_category(df) && !is.null(category.focus)) {
+    category.focus <- category.focus[1L]
+    # check if value is actually in category
+    if (!category.focus %in% get_category(df) && !is.numeric(category.focus)) {
+      plot2_warning("Value \"", category.focus, "\" not found in ", font_blue("category"))
+    } else {
+      category_unique <- sort(unique(get_category(df)))
+      if (is.numeric(category.focus)) {
+        # support `category.focus = 3` to choose the third value
+        category.focus <- category_unique[category.focus]
+      }
+      cols <- rep(as.character(colourpicker("grey85")), length(category_unique))
+      nms <- as.character(category_unique)
+      cols[nms == category.focus] <- colourpicker(colour[1L])
+      colour <- stats::setNames(cols, nms)
+    }
+  }
   cols <- validate_colour(df = df,
-                          geom = geom,
+                          type = type,
                           colour = colour,
                           colour_fill = colour_fill,
                           misses_colour_fill = misses_colour_fill,
                           horizontal = horizontal)
   
   # generate mapping ----
-  if (geom == "geom_sf" && !is.null(dots$sf_column)) {
+  if (type == "geom_sf" && !is.null(dots$sf_column)) {
     mapping <- aes_string(geometry = dots$sf_column)
-  } else if (!geom_is_continuous_x(geom)) {
+  } else if (!geom_is_continuous_x(type)) {
     # histograms etc. have a continuous x variable, so only set y if not a histogram-like
     mapping <- aes(y = `_var_y`, group = 1)
   } else {
@@ -656,7 +665,7 @@ plot2_exec <- function(.data,
                                               group = `_var_x`))
   }
   if (has_category(df)) {
-    if (geom == "geom_sf") {
+    if (type == "geom_sf") {
       # no colour in sf's
       mapping <- utils::modifyList(mapping, aes(fill = `_var_category`,
                                                 group = `_var_category`))
@@ -666,7 +675,7 @@ plot2_exec <- function(.data,
                                                 group = `_var_category`))
     }
   }
-  if (geom_is_continuous(geom)) {
+  if (geom_is_continuous(type)) {
     # remove the group from the mapping
     mapping <- utils::modifyList(mapping, aes(group = NULL))
   }
@@ -675,7 +684,7 @@ plot2_exec <- function(.data,
   p <- ggplot(data = df, mapping = mapping, colour = cols$colour, fill = cols$colour_fill)
   
   # generate geom ----
-  if (geom == "geom_boxplot") {
+  if (type == "geom_boxplot") {
     # first add the whiskers
     p <- p +
       stat_boxplot(geom = "errorbar",
@@ -685,7 +694,7 @@ plot2_exec <- function(.data,
                    colour = cols$colour)
   }
   p <- p +
-    generate_geom(geom = geom,
+    generate_geom(type = type,
                   df = df,
                   stacked = stacked,
                   stackedpercent = stackedpercent,
@@ -699,12 +708,12 @@ plot2_exec <- function(.data,
                   jitter_seed = jitter_seed,
                   binwidth = binwidth,
                   cols = cols)
-  if (is.null(smooth) && geom == "geom_histogram") {
-    plot2_message("Assuming ", font_blue("smooth = TRUE"), " for ", font_blue("geom = \"histogram\""))
+  if (is.null(smooth) && type == "geom_histogram") {
+    plot2_message("Assuming ", font_blue("smooth = TRUE"), " for ", font_blue("type = \"histogram\""))
     smooth <- TRUE
   }
   if (isTRUE(smooth)) {
-    if (geom == "geom_histogram") {
+    if (type == "geom_histogram") {
       # add a density count
       set_binwidth <- p$layers[[1]]$stat_params$binwidth
       p <- p +
@@ -739,8 +748,8 @@ plot2_exec <- function(.data,
          y = get_y_name(df),
          fill = get_category_name(df),
          colour = get_category_name(df)) # will return NULL if not available, so always works
-  if (geom_is_continuous_x(geom)) {
-    if (geom %like% "density") {
+  if (geom_is_continuous_x(type)) {
+    if (type %like% "density") {
       p <- p +
         labs(y = "Density")
       if (misses_y.percent) {
@@ -757,7 +766,7 @@ plot2_exec <- function(.data,
   if (has_category(df) && is.numeric(get_category(df))) {
     p <- p + 
       validate_category_scale(df = df,
-                              geom = geom,
+                              type = type,
                               cols = cols,
                               category.labels = category.labels,
                               category.percent = category.percent,
@@ -777,12 +786,12 @@ plot2_exec <- function(.data,
     if (is.null(legend.title)) {
       legend.title <- TRUE
     }
-  } else if (geom != "geom_sf") {
+  } else if (type != "geom_sf") {
     p <- p +
       scale_colour_manual(values = cols$colour) +
       scale_fill_manual(values = cols$colour_fill)
   }
-  if (geom != "geom_sf") {
+  if (type != "geom_sf") {
     # x axis
     p <- p + 
       validate_x_scale(df = df,
@@ -885,7 +894,7 @@ plot2_exec <- function(.data,
   if (has_facet(df)) {
     p <- p +
       validate_facet(df = df,
-                     geom = geom,
+                     type = type,
                      facet.repeat_lbls_x = facet.repeat_lbls_x,
                      facet.repeat_lbls_y = facet.repeat_lbls_y,
                      facet.relative = facet.relative,
@@ -899,7 +908,7 @@ plot2_exec <- function(.data,
   if (has_datalabels(df)) {
     p <- set_datalabels(p = p,
                         df = df,
-                        geom = geom,
+                        type = type,
                         width = width,
                         stacked = stacked,
                         stackedpercent = stackedpercent,

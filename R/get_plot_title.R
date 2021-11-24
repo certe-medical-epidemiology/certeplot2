@@ -17,11 +17,11 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-#' Retrieve Plot Title
+#' Get Plot Title
 #' 
-#' Retrieve the title of the plot, or a default value.
+#' Get the title of the plot, or a default value.
 #' @param plot a `ggplot2` plot
-#' @param valid_filename a [logical] to indicate whether the returned values should be a valid filename, defaults to `TRUE`
+#' @param valid_filename a [logical] to indicate whether the returned value should be a valid filename, defaults to `TRUE`
 #' @param default the default value, if a plot title is absent
 #' @importFrom ggplot2 is.ggplot
 #' @export
@@ -35,7 +35,7 @@
 #' get_plot_title(p)
 get_plot_title <- function(plot,
                            valid_filename = TRUE,
-                           default = format(Sys.time(), "%Y_%m_%d_%H%M%S")) {
+                           default = NA_character_) {
   
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
@@ -67,10 +67,11 @@ get_plot_title <- function(plot,
     }
   }
   caption <- plot$labels$caption
-  if (!is.null(caption)) {
-    if (caption %like% "^[0-9a-f]+$") {
-      title <- paste0(title, " (", caption, ")")
+  if (!is.null(caption) && caption %like% "^[0-9a-f]+$") {
+    if (is.na(title)) {
+      title <- NULL
     }
+    title <- trimws(paste(title, "-", caption))
   }
   title
 }

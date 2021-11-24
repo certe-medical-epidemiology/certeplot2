@@ -2,23 +2,19 @@
 % Please edit documentation in R/get_plot_title.R
 \name{get_plot_title}
 \alias{get_plot_title}
-\title{Retrieve Plot Title}
+\title{Get Plot Title}
 \usage{
-get_plot_title(
-  plot,
-  valid_filename = TRUE,
-  default = format(Sys.time(), "\%Y_\%m_\%d_\%H\%M\%S")
-)
+get_plot_title(plot, valid_filename = TRUE, default = NA_character_)
 }
 \arguments{
 \item{plot}{a \code{ggplot2} plot}
 
-\item{valid_filename}{a \link{logical} to indicate whether the returned values should be a valid filename, defaults to \code{TRUE}}
+\item{valid_filename}{a \link{logical} to indicate whether the returned value should be a valid filename, defaults to \code{TRUE}}
 
 \item{default}{the default value, if a plot title is absent}
 }
 \description{
-Retrieve the title of the plot, or a default value.
+Get the title of the plot, or a default value.
 }
 \examples{
 p <- plot2(mtcars, title = "Plotting **mpg** vs. **cyl**!")
