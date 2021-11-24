@@ -83,7 +83,7 @@ See plot2-methods for all implemented methods for different object classes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.20</span>
       </span>
     </div>
 
@@ -302,17 +302,19 @@ See plot2-methods for all implemented methods for different object classes." />
     </tr>
     <tr>
       <th>type</th>
-      <td><p>type of visualisation to use, supports all <code>ggplot2</code> geoms. It will be determined automatically if left blank.</p>
-<p>In <code>ggplot2</code>, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, <code>type = "bar"</code> will set <code>type = "col"</code> and <code>horizontal = TRUE</code>.</p>
-<p>There is one special case for this <code>type</code> argument: the shortcut <code>type = "barpercent"</code>, which will set <code>type = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc"</code> and <code>datalabels.format = "%n (%p)"</code>.</p></td>
+      <td><p>type of visualisation to use. This can be:</p><ul>
+<li><p>A <code>ggplot2</code> geom name, all geoms are supported. Full function names can be used (e.g., <code>"geom_histogram"</code>), but they can also be abbreviated (e.g., <code>"h"</code>, <code>"hist"</code>). These geoms can be abbreviated by their first character: area (<code>"a"</code>), boxplot (<code>"b"</code>), column (<code>"c"</code>), histogram (<code>"h"</code>), jitter (<code>"j"</code>), line (<code>"l"</code>), point (<code>"p"</code>), ribbon (<code>"r"</code>), violin (<code>"v"</code>). <strong>Please note:</strong> in <code>ggplot2</code>, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, <code>type = "bar"</code> will set <code>type = "col"</code> and <code>horizontal = TRUE</code>.</p></li>
+<li><p>A shortcut. There is currently one supported shortcut: <code>"barpercent"</code>, which will set <code>type = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc"</code> and <code>datalabels.format = "%n (%p)"</code>.</p></li>
+<li><p>Left blank. In this case, the type will be determined automatically: <code>"boxplot"</code> if there is no X axis or if the length of unique values per X axis item is at least 3, <code>"point"</code> if both the Y and X axes are numeric, and <code>"col"</code> otherwise.</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>x.title</th>
-      <td><p>text to show on the x asis</p></td>
+      <td><p>text to show on the x axis</p></td>
     </tr>
     <tr>
       <th>y.title</th>
-      <td><p>text to show on the y asis</p></td>
+      <td><p>text to show on the y axis</p></td>
     </tr>
     <tr>
       <th>title</th>
@@ -355,184 +357,124 @@ See plot2-methods for all implemented methods for different object classes." />
       <td><p>remove <code>NA</code> values from showing in the plot</p></td>
     </tr>
     <tr>
-      <th>facet.position</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>facet.fill</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>facet.bold</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>facet.italic</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>facet.size</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>facet.margin</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>facet.repeat_lbls_x</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>facet.repeat_lbls_y</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>facet.fixed_y</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>facet.drop</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>facet.nrow</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>facet.relative</th>
-      <td><p>text</p></td>
+      <th>facet.position, facet.fill, facet.bold, facet.italic, facet.size, facet.margin, facet.repeat_lbls_x, facet.repeat_lbls_y, facet.fixed_y, facet.drop, facet.nrow, facet.relative</th>
+      <td><p>settings for the plotting direction <code>facet</code></p></td>
     </tr>
     <tr>
       <th>x.date_breaks</th>
-      <td><p>text</p></td>
+      <td><p>breaks to use when the x axis contains dates, will be determined automatically if left blank</p></td>
     </tr>
     <tr>
       <th>x.date_labels</th>
-      <td><p>text</p></td>
+      <td><p>labels to use when the x axis contains dates, will be determined automatically if left blank</p></td>
     </tr>
     <tr>
       <th>category.focus</th>
-      <td><p>text</p></td>
+      <td><p>a value of <code>category</code> that should be highlighted, meaning that all other values in <code>category</code> will be greyed out. This can also be a numeric value between 1 and the length of unique values of <code>category</code>, e.g. <code>category.focus = 2</code> to focus on the second legend item.</p></td>
     </tr>
     <tr>
       <th>colour</th>
-      <td><p>text</p></td>
+      <td><p>colour(s) to set, will be evaluated with <code><a href='https://certe-medical-epidemiology.github.io/certestyle/reference/colourpicker.html'>colourpicker()</a></code> and defaults to Certe colours. This can be a named vector to match values of <code>category</code>, see <em>Examples</em>. Using a named vector can also be used to manually sort the values of <code>category</code>.</p></td>
     </tr>
     <tr>
       <th>colour_fill</th>
-      <td><p>text</p></td>
+      <td><p>colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with <code><a href='https://certe-medical-epidemiology.github.io/certestyle/reference/colourpicker.html'>colourpicker()</a></code></p></td>
     </tr>
     <tr>
       <th>x.lbl_angle</th>
-      <td><p>text</p></td>
+      <td><p>angle to use for the x axis in a counter-clockwise direction (i.e., a value of <code>90</code> will orient the axis labels from bottom to top, a value of <code>270</code> will orient the axis labels from top to bottom)</p></td>
     </tr>
     <tr>
       <th>x.lbl_align</th>
-      <td><p>text</p></td>
+      <td><p>alignment for the x axis between <code>0</code> (left aligned) and <code>1</code> (right aligned)</p></td>
     </tr>
     <tr>
       <th>x.lbl_italic</th>
-      <td><p>text</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to indicate whether the x labels should in in <em>italics</em></p></td>
     </tr>
     <tr>
       <th>x.remove</th>
-      <td><p>text</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to indicate whether the x labels and title should be removed</p></td>
     </tr>
     <tr>
       <th>x.position</th>
-      <td><p>text</p></td>
+      <td><p>position of the x axis, defaults to <code>"bottom"</code></p></td>
     </tr>
     <tr>
-      <th>x.max_items</th>
-      <td><p>text</p></td>
+      <th>x.max_items, category.max_items, facet.max_items</th>
+      <td><p>number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the <code>summarise_function</code> function. <strong>Please note:</strong> the sorting will be applied first, allowing to e.g. plot the top <em>n</em> most frequent values of the x axis by combining <code>x.sort = "freq-desc"</code> with <code>x.max_items =</code> <em>n</em>.</p></td>
     </tr>
     <tr>
-      <th>x.max_txt</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>category.max_items</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>category.max_txt</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>facet.max_items</th>
-      <td><p>text</p></td>
-    </tr>
-    <tr>
-      <th>facet.max_txt</th>
-      <td><p>text</p></td>
+      <th>x.max_txt, category.max_txt, facet.max_txt</th>
+      <td><p>the text to use of values not included number of <code>*.max_items</code>. The placeholder <code>%n</code> will be replaced with the outcome of the <code>summarise_function</code> function, the placeholder <code>%p</code> will be replaced with the percentage.</p></td>
     </tr>
     <tr>
       <th>x.breaks</th>
-      <td><p>text</p></td>
+      <td><p>a breaks function or numeric vector to use for the x axis</p></td>
     </tr>
     <tr>
       <th>x.breaks_n</th>
-      <td><p>text</p></td>
+      <td><p>number of breaks to use for the x axis</p></td>
     </tr>
     <tr>
       <th>x.trans</th>
-      <td><p>text</p></td>
+      <td><p>a transformation function to use for the x axis, e.g. <code>"log2"</code></p></td>
     </tr>
     <tr>
       <th>x.expand</th>
-      <td><p>text</p></td>
+      <td><p>expansion to use for the x axis, can be length 1 or 2</p></td>
     </tr>
     <tr>
       <th>x.limits</th>
-      <td><p>text</p></td>
+      <td><p>limits to use for the x axis, can be length 1 or 2</p></td>
     </tr>
     <tr>
       <th>x.character</th>
-      <td><p>text</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to indicate whether the values of the x axis should be forced to <a href='https://rdrr.io/r/base/character.html'>character</a>. The default is <code>FALSE</code>, except for years (x values between 2000 and 2050)</p></td>
     </tr>
     <tr>
       <th>y.remove</th>
-      <td><p>text</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to indicate whether the y labels and title should be removed</p></td>
     </tr>
     <tr>
       <th>y.24h</th>
-      <td><p>text</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to indicate whether the y labels and breaks should be formatted as 24-hour sequences</p></td>
     </tr>
     <tr>
       <th>y.age</th>
-      <td><p>text</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to indicate whether the y labels and breaks should be formatted as ages in years</p></td>
     </tr>
     <tr>
       <th>y.percent</th>
-      <td><p>text</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to indicate whether the y labels should be formatted as percentages</p></td>
     </tr>
     <tr>
       <th>y.percent_break</th>
-      <td><p>text</p></td>
+      <td><p>number of percentages on which the y axis should have breaks</p></td>
     </tr>
     <tr>
       <th>y.breaks</th>
-      <td><p>text</p></td>
+      <td><p>a breaks function or numeric vector to use for the y axis</p></td>
     </tr>
     <tr>
       <th>y.limits</th>
-      <td><p>text</p></td>
+      <td><p>limits to use for the y axis, can be length 1 or 2</p></td>
     </tr>
     <tr>
       <th>y.labels</th>
-      <td><p>text</p></td>
+      <td><p>a labels function or character vector to use for the y axis</p></td>
     </tr>
     <tr>
       <th>y.expand</th>
-      <td><p>text</p></td>
+      <td><p>expansion to use for the y axis, can be length 1 or 2</p></td>
     </tr>
     <tr>
       <th>y.trans</th>
-      <td><p>text</p></td>
+      <td><p>a transformation function to use for the y axis, e.g. <code>"log2"</code></p></td>
     </tr>
     <tr>
       <th>y.position</th>
-      <td><p>text</p></td>
+      <td><p>position of the x axis, defaults to <code>"left"</code></p></td>
     </tr>
     <tr>
       <th>category.labels, category.percent, category.breaks, category.limits, category.expand, category.midpoint, category.trans</th>
@@ -613,7 +555,7 @@ See plot2-methods for all implemented methods for different object classes." />
     </tr>
     <tr>
       <th>binwidth</th>
-      <td><p>width of bins (only useful for <code>type = "histogram"</code>), can be specified as a numeric value or as a function that calculates width from <code>x</code>, see <code><a href='https://ggplot2.tidyverse.org/reference/geom_histogram.html'>geom_histogram()</a></code></p></td>
+      <td><p>width of bins (only useful for <code>geom = "histogram"</code>), can be specified as a numeric value or as a function that calculates width from <code>x</code>, see <code><a href='https://ggplot2.tidyverse.org/reference/geom_histogram.html'>geom_histogram()</a></code>. It defaults to approx. <code>diff(range(x))</code> divided by 12 to 22 based on the data.</p></td>
     </tr>
     <tr>
       <th>width</th>
@@ -808,7 +750,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-in'>        </span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='va'>age</span>, type <span class='op'>=</span> <span class='st'>"hist"</span><span class='op'>)</span></span>
-<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>binwidth = 7.8</span><span style='color: #080808;'> based on </span><span style='color: #0000BB;'>range(age)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>binwidth = 6.4</span><span style='color: #080808;'> based on data</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Assuming </span><span style='color: #0000BB;'>smooth = TRUE</span><span style='color: #080808;'> for </span><span style='color: #0000BB;'>type = "histogram"</span></span>
 <span class='r-plt img'><img src='plot2-15.png' alt='' width='700' height='433' /></span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Example Data Set with Admitted Patients — admitted_patients • certeplot2</title>
+<title>Get Plot Title — get_plot_title • certeplot2</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,8 +48,8 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Example Data Set with Admitted Patients — admitted_patients" />
-<meta property="og:description" content="An auto-generated, fictitious data set containing patients admitted to hospitals." />
+<meta property="og:title" content="Get Plot Title — get_plot_title" />
+<meta property="og:description" content="Get the title of the plot, or a default value." />
 <meta property="og:image" content="https://certe-medical-epidemiology.github.io/certeplot2/logo.svg" />
 
 
@@ -145,30 +145,53 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Example Data Set with Admitted Patients</h1>
-    <small class="dont-index">Source: <a href='https://github.com/certe-medical-epidemiology/certeplot2/blob/master/R/data.R'><code>R/data.R</code></a></small>
-    <div class="hidden name"><code>admitted_patients.Rd</code></div>
+    <h1>Get Plot Title</h1>
+    <small class="dont-index">Source: <a href='https://github.com/certe-medical-epidemiology/certeplot2/blob/master/R/get_plot_title.R'><code>R/get_plot_title.R</code></a></small>
+    <div class="hidden name"><code>get_plot_title.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>An auto-generated, fictitious data set containing patients admitted to hospitals.</p>
+    <p>Get the title of the plot, or a default value.</p>
     </div>
 
-    <pre class="usage"><span class='va'>admitted_patients</span></pre>
+    <pre class="usage"><span class='fu'>get_plot_title</span><span class='op'>(</span><span class='va'>plot</span>, valid_filename <span class='op'>=</span> <span class='cn'>TRUE</span>, default <span class='op'>=</span> <span class='cn'>NA_character_</span><span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>plot</th>
+      <td><p>a <code>ggplot2</code> plot</p></td>
+    </tr>
+    <tr>
+      <th>valid_filename</th>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to indicate whether the returned value should be a valid filename, defaults to <code>TRUE</code></p></td>
+    </tr>
+    <tr>
+      <th>default</th>
+      <td><p>the default value, if a plot title is absent</p></td>
+    </tr>
+    </table>
 
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
-
-    <p>A tibble/<a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a> with 250 observations and 6 variables:</p><ul>
-<li><p><code>date</code><br /> date of hospital admission</p></li>
-<li><p><code>gender</code><br /> gender of the patient</p></li>
-<li><p><code>age</code><br /> age of the patient</p></li>
-<li><p><code>age_group</code><br /> age group of the age of the patient, generated with <code>AMR::age_groups()</code></p></li>
-<li><p><code>hospital</code><br /> ID of the hospital, from A to D</p></li>
-<li><p><code>ward</code><br /> type of ward, either ICU or Non-ICU</p></li>
-</ul>
-
-
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class='r-in'><span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='plot2.html'>plot2</a></span><span class='op'>(</span><span class='va'>mtcars</span>, title <span class='op'>=</span> <span class='st'>"Plotting **mpg** vs. **cyl**!"</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = mpg</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = cyl</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-in'><span class='fu'>get_plot_title</span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "plotting_mpg_vs_cyl"</span>
+<span class='r-in'><span class='fu'>get_plot_title</span><span class='op'>(</span><span class='va'>p</span>, valid_filename <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Plotting **mpg** vs. **cyl**!"</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='plot2.html'>plot2</a></span><span class='op'>(</span><span class='va'>mtcars</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = mpg</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = cyl</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "point"</span><span style='color: #080808;'> since both axes are numeric</span></span>
+<span class='r-in'><span class='co'># default is date and time:</span></span>
+<span class='r-in'><span class='fu'>get_plot_title</span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] NA</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
