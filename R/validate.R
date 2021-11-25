@@ -373,7 +373,7 @@ validate_data <- function(df,
 #' @importFrom scales reverse_trans
 #' @importFrom cleaner format_datetime
 #' @importFrom certestyle format2
-validate_x_scale <- function(df,
+validate_x_scale <- function(values,
                              x.date_breaks,
                              x.date_labels,
                              x.breaks,
@@ -386,9 +386,7 @@ validate_x_scale <- function(df,
                              big.mark,
                              horizontal,
                              zoom) {
-  if (!has_x(df)) {
-    scale_x_discrete(labels = NULL, breaks = NULL)
-  } else {
+ 
     if (isTRUE(zoom)) {
       x.limits <- c(NA_real_, NA_real_)
     }
@@ -396,12 +394,12 @@ validate_x_scale <- function(df,
       if (length(x.limits) != 2) {
         stop("`x.limits` must be of length 2", call. = FALSE)
       }
-      if (inherits(get_x(df), "Date")) {
+      if (inherits(values, "Date")) {
         x.limits <- as.Date(x.limits, origin = "1970-01-01")
-      } else if (inherits(get_x(df), "POSIXt")) {
+      } else if (inherits(values, "POSIXt")) {
         x.limits <- as.POSIXct(x.limits, origin = "1970-01-01")
       }
-      if (inherits(get_x(df), c("Date", "POSIXt"))) {
+      if (inherits(values, c("Date", "POSIXt"))) {
         # edit limits so x.limits has one spare one at each side
         x.limits[1] <- x.limits[1] - 1
         x.limits[2] <- x.limits[2] + 1
@@ -417,8 +415,8 @@ validate_x_scale <- function(df,
       }
       x.expand <- expansion(add = x.expand)
     }
-    if (inherits(get_x(df), c("Date", "POSIXt"))) {
-      auto_breaks_labels <- determine_date_breaks_labels(get_x(df))
+    if (inherits(values, c("Date", "POSIXt"))) {
+      auto_breaks_labels <- determine_date_breaks_labels(values)
       if (is.null(x.date_breaks)) {
         x.date_breaks <- auto_breaks_labels$breaks
         plot2_message("Using ", font_blue("x.date_breaks = \"", x.date_breaks, "\"", collapse = ""),
@@ -430,27 +428,27 @@ validate_x_scale <- function(df,
                       " based on data")
       }
     }
-    if (inherits(get_x(df), "Date")) {
+    if (inherits(values, "Date")) {
       scale_x_date(position = x.position,
                    date_breaks = x.date_breaks,
                    date_labels = format_datetime(x.date_labels),
                    expand = x.expand,
                    limits = x.limits)
-    } else if (inherits(get_x(df), "POSIXt")) {
+    } else if (inherits(values, "POSIXt")) {
       scale_x_datetime(position = x.position,
                        date_breaks = x.date_breaks,
                        date_labels = format_datetime(x.date_labels),
                        expand = x.expand,
                        limits = x.limits)
     } else {
-      if (!is.numeric(get_x(df))) {
+      if (!is.numeric(values)) {
         scale_x_discrete(position = x.position)
       } else {
         if (x.trans == "identity" && isTRUE(horizontal)) {
           x.trans <- reverse_trans()
         }
         if (is.null(x.limits)) {
-          x.limits <- c(ifelse(min(get_x(df)) < 0, NA_real_, 0), NA)
+          x.limits <- c(ifelse(min(values) < 0, NA_real_, 0), NA)
         }
         scale_x_continuous(labels = function(x, ...) format2(x, decimal.mark = decimal.mark, big.mark = big.mark),
                            breaks = if (!is.null(x.breaks)) x.breaks else waiver(),
@@ -460,7 +458,6 @@ validate_x_scale <- function(df,
                            limits = x.limits,
                            expand = expansion(mult = c(0.05, 0.05)))
       }
-    }
   }
 }
 
@@ -468,7 +465,7 @@ validate_x_scale <- function(df,
 #' @importFrom cleaner as.percentage
 #' @importFrom scales pretty_breaks
 #' @importFrom certestyle format2
-validate_y_scale <- function(df,
+validate_y_scale <- function(values,
                              y.24h,
                              y.age,
                              y.breaks,
@@ -485,13 +482,14 @@ validate_y_scale <- function(df,
                              big.mark,
                              zoom,
                              ...) {
-  breaks_fn <- function(df, waiver,
+  
+  breaks_fn <- function(values, waiver,
                         y.breaks = NULL, y.expand = 0.25, stackedpercent = FALSE,
                         y.age = FALSE, y.percent = FALSE, y.percent_break = 10, y.24h = FALSE, y.limits = NULL,
                         ...) {
-    data_min <- min(0, df) * -(1 + y.expand)
-    data_max <- max(df)
-    if (!inherits(df, c("Date", "POSIXt"))) {
+    data_min <- min(0, values) * -(1 + y.expand)
+    data_max <- max(values)
+    if (!inherits(values, c("Date", "POSIXt"))) {
       data_max <- data_max * (1 + y.expand)
     }
     
@@ -544,15 +542,15 @@ validate_y_scale <- function(df,
       seq(from = 0,
           to = 1,
           by = 0.1)
-    } else if (is.integer(df)) {
-      # this will print integers as integers, so no decimal numbers
+    } else if (all(values %% 1 == 0) && data_max < 12) {
+      # whole numbers - only strip decimal numbers if total y range is low
       function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 3))))
     } else {
       pretty_breaks()
     }
   }
   
-  labels_fn <- function(df, waiver,
+  labels_fn <- function(values, waiver,
                         y.labels,
                         y.age, y.percent, y.24h, stackedpercent,
                         decimal.mark, big.mark, ...) {
@@ -570,31 +568,31 @@ validate_y_scale <- function(df,
     }
   }
   
-  limits_fn <- function(df, y.limits,
+  limits_fn <- function(values, y.limits,
                         y.expand, facet.fixed_y, y.age,
                         ...) {
     if (!is.null(y.limits)) {
       y.limits
     } else if (isTRUE(y.age)) {
       # geen functie dus, maar vector forceren
-      c(0, max(df) * (1 + y.expand))
+      c(0, max(values) * (1 + y.expand))
     } else if (isTRUE(facet.fixed_y)) {
       # geen functie dus, maar vector forceren
-      c(NA, max(df) * (1 + y.expand))
+      c(NA, max(values) * (1 + y.expand))
     } else {
       function(x, y_expand = y.expand, ...) c(min(0, x), max(x))
     }
   }
   
-  expand_fn <- function(df, y.expand, y.age, stackedpercent, ...) {
+  expand_fn <- function(values, y.expand, y.age, stackedpercent, ...) {
     if (is.function(y.expand)) {
       y.expand
     } else if (isTRUE(y.age) | isTRUE(stackedpercent)) {
       expansion(mult = c(0, 0))
     } else {
       # ingestelde percentage toevoegen aan bovenkant bij positieve waarden en aan onderkant bij negatieve waarden
-      expansion(mult = c(ifelse(any(df < 0), y.expand, 0),
-                         ifelse(any(df > 0), y.expand, 0)))
+      expansion(mult = c(ifelse(any(values < 0), y.expand, 0),
+                         ifelse(any(values > 0), y.expand, 0)))
     }
   }
   
@@ -603,7 +601,7 @@ validate_y_scale <- function(df,
   }
   
   scale_y_continuous(
-    breaks = breaks_fn(df = get_y(df),
+    breaks = breaks_fn(values = values,
                        waiver = waiver(),
                        y.breaks = y.breaks,
                        y.expand = y.expand,
@@ -614,7 +612,7 @@ validate_y_scale <- function(df,
                        y.24h = y.24h,
                        y.limits = y.limits,
                        ...),
-    labels = labels_fn(df = get_y(df),
+    labels = labels_fn(values = values,
                        waiver = waiver(),
                        y.labels,
                        y.percent = y.percent,
@@ -624,13 +622,13 @@ validate_y_scale <- function(df,
                        decimal.mark = decimal.mark,
                        big.mark = big.mark,
                        ...),
-    limits = limits_fn(df = get_y(df),
+    limits = limits_fn(values = values,
                        y.limits,
                        y.expand = y.expand,
                        facet.fixed_y = facet.fixed_y,
                        y.age = y.age,
                        ...),
-    expand = expand_fn(df = get_y(df),
+    expand = expand_fn(values = values,
                        y.expand = y.expand,
                        y.age = y.age,
                        stackedpercent = stackedpercent,
@@ -642,7 +640,7 @@ validate_y_scale <- function(df,
 
 #' @importFrom ggplot2 scale_colour_gradient2 scale_colour_gradient scale_colour_viridis_c expansion guide_colourbar element_text
 #' @importFrom certestyle format2
-validate_category_scale <- function(df,
+validate_category_scale <- function(values,
                                     type,
                                     cols,
                                     category.labels,
@@ -663,7 +661,7 @@ validate_category_scale <- function(df,
                                     ...) {
   # only for a numeric category scale
   
-  labels_fn <- function(df, category.labels, category.percent, stackedpercent, decimal.mark, big.mark, ...) {
+  labels_fn <- function(values, category.labels, category.percent, stackedpercent, decimal.mark, big.mark, ...) {
     if (!is.null(category.labels)) {
       category.labels
     } else if (isTRUE(category.percent) | isTRUE(stackedpercent)) {
@@ -712,7 +710,7 @@ validate_category_scale <- function(df,
                                        nbin = legend.nbin,
                                        barheight = legend.barheight,
                                        barwidth = legend.barwidth),
-               labels = labels_fn(df = get_category(df),
+               labels = labels_fn(values = values,
                                   category.labels = category.labels,
                                   category.percent = category.percent,
                                   stackedpercent = stackedpercent,
@@ -1088,12 +1086,13 @@ validate_theme <- function(theme,
     theme$plot.tag <- add_markdown(theme$plot.tag)
     theme$strip.text <- add_markdown(theme$strip.text)
     theme$axis.title.x <- add_markdown(theme$axis.title.x)
+    theme$axis.title.y <- add_markdown(theme$axis.title.y)
+    theme$legend.title <- add_markdown(theme$legend.title)
     if (type != "geom_sf"){
       # values of the x axis
       theme$axis.text.x <- add_markdown(theme$axis.text.x)
+      theme$legend.text <- add_markdown(theme$legend.text)
     }
-    theme$axis.title.y <- add_markdown(theme$axis.title.y)
-    theme$legend.title <- add_markdown(theme$legend.title)
   }
   
   # set other properties to theme, that are set in plot2(...)

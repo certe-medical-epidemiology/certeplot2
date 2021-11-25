@@ -19,9 +19,10 @@ Get the title of the plot, or a default value.
 \examples{
 p <- plot2(mtcars, title = "Plotting **mpg** vs. **cyl**!")
 get_plot_title(p)
+
 get_plot_title(p, valid_filename = FALSE)
 
 p <- plot2(mtcars)
-# default is date and time:
+# default is NA:
 get_plot_title(p)
 }

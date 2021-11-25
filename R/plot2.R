@@ -142,6 +142,7 @@
 #' # no variables determined, so plot2() will try for itself -
 #' # the type will be points since the first two variables are numeric
 #' plot2(iris)
+#' plot2(iris, theme = NULL, legend.position = "r")
 #' 
 #' # only view the data part, like ggplot2 normally does
 #' plot2(iris, zoom = TRUE)
@@ -226,9 +227,11 @@
 #' # plot2() supports all S3 extensions available through ggplot2::fortify():
 #' mtcars %>% 
 #'   lm(mpg ~ hp, data = .) %>% 
-#'   plot2(x = mpg ^ 2,
-#'         y = hp ^ 3,
+#'   plot2(x = mpg ^ -3,
+#'         y = hp ^ 2,
 #'         smooth = TRUE,
+#'         mooth.method = "lm",
+#'         smooth.formula = "y ~ log(x)",
 #'         title = "Titles/captions *support* **markdown**",
 #'         subtitle = "Axis titles contain the square notation: ^2")
 #'         
@@ -243,7 +246,7 @@
 #'   example_isolates %>% 
 #'     select(mo, penicillins()) %>% 
 #'     bug_drug_combinations(FUN = mo_gramstain) %>%
-#'     plot2()
+#'     plot2(y.percent_break = 0.25)
 #' }
 plot2 <- function(.data,
                   x = NULL,
@@ -370,7 +373,7 @@ plot2 <- function(.data,
 
 #' @importFrom dplyr `%>%` mutate vars group_by across summarise
 #' @importFrom forcats fct_relabel
-#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend
+#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete
 #' @importFrom certestyle format2 font_red font_black font_blue
 plot2_exec <- function(.data,
                        x,
@@ -611,9 +614,7 @@ plot2_exec <- function(.data,
   
   # apply taxonomic italics ----
   if (isTRUE(taxonomy_italic) && isTRUE(markdown)) {
-    if (!"AMR" %in% rownames(utils::installed.packages())) {
-      plot2_warning("Adjusting taxonomic names of microorganisms requires the 'AMR' package")
-    } else {
+    if ("AMR" %in% rownames(utils::installed.packages())) {
       requireNamespace("AMR")
       taxonomic_nms <- unique(c(AMR::microorganisms$family,
                                 AMR::microorganisms$genus,
@@ -632,7 +633,7 @@ plot2_exec <- function(.data,
                    nm <- paste0(nm, collapse = " ")
                    nm <- gsub("(.*)([A-Z][.]) [*]([a-z]+)[*](.*)", "\\1*\\2 \\3*\\4", nm, perl = TRUE)
                  } else if (length(nm) == 0) {
-                   # this is because of `strplit("", " ")`
+                   # this is because of `strsplit("", " ")`
                    nm <- ""
                  }
                  nm
@@ -822,7 +823,7 @@ plot2_exec <- function(.data,
   
   if (has_category(df) && is.numeric(get_category(df))) {
     p <- p + 
-      validate_category_scale(df = df,
+      validate_category_scale(values = get_category(df),
                               type = type,
                               cols = cols,
                               category.labels = category.labels,
@@ -849,39 +850,45 @@ plot2_exec <- function(.data,
       scale_fill_manual(values = cols$colour_fill)
   }
   if (type != "geom_sf") {
-    # x axis
-    p <- p + 
-      validate_x_scale(df = df,
-                       x.date_breaks = x.date_breaks,
-                       x.date_labels = x.date_labels,
-                       x.breaks = x.breaks,
-                       x.expand = x.expand,
-                       x.breaks_n = x.breaks_n,
-                       x.limits = x.limits,
-                       x.position = x.position,
-                       x.trans = x.trans,
-                       decimal.mark = decimal.mark,
-                       big.mark = big.mark,
-                       horizontal = horizontal,
-                       zoom = zoom)
-    # y axis
-    p <- p +
-      validate_y_scale(df = df,
-                       y.24h = y.24h,
-                       y.age = y.age,
-                       y.breaks = y.breaks,
-                       y.expand = y.expand,
-                       y.labels = y.labels,
-                       y.limits = y.limits,
-                       y.percent = y.percent,
-                       y.percent_break = y.percent_break,
-                       y.position = y.position,
-                       y.trans = y.trans,
-                       stackedpercent = stackedpercent,
-                       facet.fixed_y = facet.fixed_y,
-                       decimal.mark = decimal.mark,
-                       big.mark = big.mark,
-                       zoom = zoom)
+    if (has_x(df)) {
+      p <- p + 
+        validate_x_scale(values = get_x(df),
+                         x.date_breaks = x.date_breaks,
+                         x.date_labels = x.date_labels,
+                         x.breaks = x.breaks,
+                         x.expand = x.expand,
+                         x.breaks_n = x.breaks_n,
+                         x.limits = x.limits,
+                         x.position = x.position,
+                         x.trans = x.trans,
+                         decimal.mark = decimal.mark,
+                         big.mark = big.mark,
+                         horizontal = horizontal,
+                         zoom = zoom)
+    } else {
+      # no x
+      p <- p +
+        scale_x_discrete(labels = NULL, breaks = NULL)
+    }
+    if (has_y(df)) {
+      p <- p +
+        validate_y_scale(values = get_y(df),
+                         y.24h = y.24h,
+                         y.age = y.age,
+                         y.breaks = y.breaks,
+                         y.expand = y.expand,
+                         y.labels = y.labels,
+                         y.limits = y.limits,
+                         y.percent = y.percent,
+                         y.percent_break = y.percent_break,
+                         y.position = y.position,
+                         y.trans = y.trans,
+                         stackedpercent = stackedpercent,
+                         facet.fixed_y = facet.fixed_y,
+                         decimal.mark = decimal.mark,
+                         big.mark = big.mark,
+                         zoom = zoom)
+    }
   }
   
   # validate theme and add markdown support ----

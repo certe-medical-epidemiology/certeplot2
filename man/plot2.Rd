@@ -340,6 +340,7 @@ head(iris)
 # no variables determined, so plot2() will try for itself -
 # the type will be points since the first two variables are numeric
 plot2(iris)
+plot2(iris, theme = NULL, legend.position = "r")
 
 # only view the data part, like ggplot2 normally does
 plot2(iris, zoom = TRUE)
@@ -424,9 +425,11 @@ patients_per_hospital_gender \%>\%
 # plot2() supports all S3 extensions available through ggplot2::fortify():
 mtcars \%>\% 
   lm(mpg ~ hp, data = .) \%>\% 
-  plot2(x = mpg ^ 2,
-        y = hp ^ 3,
+  plot2(x = mpg ^ -3,
+        y = hp ^ 2,
         smooth = TRUE,
+        mooth.method = "lm",
+        smooth.formula = "y ~ log(x)",
         title = "Titles/captions *support* **markdown**",
         subtitle = "Axis titles contain the square notation: ^2")
         
@@ -441,6 +444,6 @@ if (require("AMR")) {
   example_isolates \%>\% 
     select(mo, penicillins()) \%>\% 
     bug_drug_combinations(FUN = mo_gramstain) \%>\%
-    plot2()
+    plot2(y.percent_break = 0.25)
 }
 }
