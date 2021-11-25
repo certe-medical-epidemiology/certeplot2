@@ -113,7 +113,8 @@
 #' @param text_factor text factor to use, which will apply to all texts shown in the plot
 #' @param family font family to use
 #' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]
-#' @param markdown text
+#' @param markdown a [logical] to turn all labels and titles into markdown-supported labels, by extending their S3 classes with `"element_markdown"`, a feature of the [`ggtext` package][ggtext::element_markdown()]
+#' @param taxonomy_italic a [logical] to transform all labels and titles into italics that are in the `microorganisms` data set of the `AMR` package
 #' @param x.category old argument for `facet`, now deprecated
 #' @param y.category old argument for `category`, now deprecated
 #' @param ... arguments passed on to methods
@@ -236,6 +237,14 @@
 #'   netherlands %>% 
 #'     plot2(datalabels = TRUE)
 #' }
+#' 
+#' # Antimicrobial Resistance (AMR) data analysis requires the `AMR` package:
+#' if (require("AMR")) {
+#'   example_isolates %>% 
+#'     select(mo, penicillins()) %>% 
+#'     bug_drug_combinations(FUN = mo_gramstain) %>%
+#'     plot2()
+#' }
 plot2 <- function(.data,
                   x = NULL,
                   y = NULL,
@@ -292,7 +301,7 @@ plot2 <- function(.data,
                   y.24h = FALSE,
                   y.age = FALSE,
                   y.percent = FALSE,
-                  y.percent_break = 10,
+                  y.percent_break = 0.1,
                   y.breaks = NULL,
                   y.limits = NULL,
                   y.labels = NULL,
@@ -351,6 +360,7 @@ plot2 <- function(.data,
                   family = "Calibri",
                   theme = theme_minimal2(),
                   markdown = TRUE,
+                  taxonomy_italic = markdown,
                   # old certetools pkg support
                   x.category = NULL,
                   y.category = NULL,
@@ -359,6 +369,7 @@ plot2 <- function(.data,
 }
 
 #' @importFrom dplyr `%>%` mutate vars group_by across summarise
+#' @importFrom forcats fct_relabel
 #' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend
 #' @importFrom certestyle format2 font_red font_black font_blue
 plot2_exec <- function(.data,
@@ -476,6 +487,7 @@ plot2_exec <- function(.data,
                        family,
                        theme,
                        markdown,
+                       taxonomy_italic,
                        x.category,
                        y.category,
                        ...) {
@@ -541,7 +553,9 @@ plot2_exec <- function(.data,
   }
   
   # prevalidate types for special types ----
+  type_backup <- type
   if (isTRUE(type[1L] %like% "^(barpercent|bp)$")) {
+    type_backup <- "barpercent"
     if (is.infinite(x.max_items)) {
       x.max_items <- 10
     }
@@ -595,17 +609,57 @@ plot2_exec <- function(.data,
                   facet.max_txt = facet.max_txt,
                   ...)
   
+  # apply taxonomic italics ----
+  if (isTRUE(taxonomy_italic) && isTRUE(markdown)) {
+    if (!"AMR" %in% rownames(utils::installed.packages())) {
+      plot2_warning("Adjusting taxonomic names of microorganisms requires the 'AMR' package")
+    } else {
+      requireNamespace("AMR")
+      taxonomic_nms <- unique(c(AMR::microorganisms$family,
+                                AMR::microorganisms$genus,
+                                AMR::microorganisms$species,
+                                AMR::microorganisms$subspecies,
+                                AMR::microorganisms.old$fullname))
+      make_taxonomy_italic <- function(x, nms = taxonomic_nms) {
+        if (is.null(x)) {
+          return(NULL)
+        }
+        vapply(FUN.VALUE = character(1),
+               X = strsplit(x, " "),
+               FUN = function(nm) {
+                 if (!all(is.na(nm))) {
+                   nm[nm %in% nms] <- paste0("*", nm[nm %in% nms], "*")
+                   nm <- paste0(nm, collapse = " ")
+                   nm <- gsub("(.*)([A-Z][.]) [*]([a-z]+)[*](.*)", "\\1*\\2 \\3*\\4", nm, perl = TRUE)
+                 }
+                 nm
+               },
+               USE.NAMES = FALSE)
+      }
+      df <- df %>%
+        mutate(across(where(is.character), make_taxonomy_italic),
+               across(where(is.factor), ~fct_relabel(.x, make_taxonomy_italic)))
+      if (!misses_x.title) x.title <- make_taxonomy_italic(validate_titles(x.title))
+      if (!misses_y.title) y.title <- make_taxonomy_italic(validate_titles(y.title))
+      if (!misses_title) title <- make_taxonomy_italic(validate_titles(title))
+      if (!misses_subtitle) subtitle <- make_taxonomy_italic(validate_titles(subtitle))
+      if (!misses_tag) tag <- make_taxonomy_italic(validate_titles(tag))
+      if (!misses_caption) caption <- make_taxonomy_italic(validate_titles(caption))
+    }
+  }
+  
   # validate type ----
   type <- validate_type(type = type, df = df) # this will automatically determine the type if is.null(type)
   # transform data if not a continuous geom but group sizes are > 1
   if (any(group_sizes(df) > 1) && !geom_is_continuous(type)) {
-    plot2_message("Duplicate observations in discrete plot type (", font_blue(type), "), applying ",
-                  font_blue("summarise_function = " ), font_blue(dots$summarise_fn_name))
+    if (type_backup != "barpercent") {
+      plot2_message("Duplicate observations in discrete plot type (", font_blue(type), "), applying ",
+                    font_blue("summarise_function = " ), font_blue(dots$summarise_fn_name))
+    }
     df <- summarise_data(df = df, summarise_function = summarise_function,
                          decimal.mark = decimal.mark, big.mark = big.mark,
                          datalabels.round = datalabels.round, datalabels.format = datalabels.format)
   }
-  
   # remove datalabels in continuous geoms
   if (isTRUE(misses_datalabels) && (geom_is_continuous(type) | type %like% "path|line") && type != "geom_sf") {
     df <- df %>% select(-`_var_datalabels`)

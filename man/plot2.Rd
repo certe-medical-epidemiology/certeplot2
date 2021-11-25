@@ -61,7 +61,7 @@ plot2(
   y.24h = FALSE,
   y.age = FALSE,
   y.percent = FALSE,
-  y.percent_break = 10,
+  y.percent_break = 0.1,
   y.breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
@@ -120,6 +120,7 @@ plot2(
   family = "Calibri",
   theme = theme_minimal2(),
   markdown = TRUE,
+  taxonomy_italic = markdown,
   x.category = NULL,
   y.category = NULL,
   ...
@@ -293,7 +294,9 @@ plot2(
 
 \item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}}
 
-\item{markdown}{text}
+\item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{"element_markdown"}, a feature of the \link[ggtext:element_markdown]{\code{ggtext} package}}
+
+\item{taxonomy_italic}{a \link{logical} to transform all labels and titles into italics that are in the \code{microorganisms} data set of the \code{AMR} package}
 
 \item{x.category}{old argument for \code{facet}, now deprecated}
 
@@ -329,7 +332,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. For \link{data.frame}s, \code{\link[=plot2]{plot2()}} currently has 117 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. For \link{data.frame}s, \code{\link[=plot2]{plot2()}} currently has 118 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)
@@ -431,5 +434,13 @@ mtcars \%>\%
 if (require("sf")) {
   netherlands \%>\% 
     plot2(datalabels = TRUE)
+}
+
+# Antimicrobial Resistance (AMR) data analysis requires the `AMR` package:
+if (require("AMR")) {
+  example_isolates \%>\% 
+    select(mo, penicillins()) \%>\% 
+    bug_drug_combinations(FUN = mo_gramstain) \%>\%
+    plot2()
 }
 }

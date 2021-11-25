@@ -7,6 +7,7 @@
 \alias{plot2.freq}
 \alias{plot2.sf}
 \alias{plot2.data.frame}
+\alias{plot2.bug_drug_combinations}
 \title{Methods for \code{\link[=plot2]{plot2()}}}
 \usage{
 \method{plot2}{default}(
@@ -66,7 +67,7 @@
   y.24h = FALSE,
   y.age = FALSE,
   y.percent = FALSE,
-  y.percent_break = 10,
+  y.percent_break = 0.1,
   y.breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
@@ -125,6 +126,7 @@
   family = "Calibri",
   theme = theme_minimal2(),
   markdown = TRUE,
+  taxonomy_italic = markdown,
   x.category = NULL,
   y.category = NULL,
   ...
@@ -187,7 +189,7 @@
   y.24h = FALSE,
   y.age = FALSE,
   y.percent = FALSE,
-  y.percent_break = 10,
+  y.percent_break = 0.1,
   y.breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
@@ -246,6 +248,7 @@
   family = "Calibri",
   theme = theme_minimal2(),
   markdown = TRUE,
+  taxonomy_italic = markdown,
   x.category = NULL,
   y.category = NULL,
   ...
@@ -308,7 +311,7 @@
   y.24h = FALSE,
   y.age = FALSE,
   y.percent = FALSE,
-  y.percent_break = 10,
+  y.percent_break = 0.1,
   y.breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
@@ -367,6 +370,7 @@
   family = "Calibri",
   theme = theme_minimal2(),
   markdown = TRUE,
+  taxonomy_italic = markdown,
   x.category = NULL,
   y.category = NULL,
   ...
@@ -429,7 +433,7 @@
   y.24h = FALSE,
   y.age = FALSE,
   y.percent = FALSE,
-  y.percent_break = 10,
+  y.percent_break = 0.1,
   y.breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
@@ -491,6 +495,7 @@
     axis.text = element_blank(), axis.line = element_blank(), axis.ticks =
     element_blank()),
   markdown = TRUE,
+  taxonomy_italic = markdown,
   x.category = NULL,
   y.category = NULL,
   ...
@@ -553,7 +558,7 @@
   y.24h = FALSE,
   y.age = FALSE,
   y.percent = FALSE,
-  y.percent_break = 10,
+  y.percent_break = 0.1,
   y.breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
@@ -612,8 +617,133 @@
   family = "Calibri",
   theme = theme_minimal2(),
   markdown = TRUE,
+  taxonomy_italic = markdown,
   x.category = NULL,
   y.category = NULL,
+  ...
+)
+
+\method{plot2}{bug_drug_combinations}(
+  .data,
+  x = ab,
+  y = value,
+  category = name,
+  facet = mo,
+  type = "column",
+  x.title = "",
+  y.title = "",
+  title = NULL,
+  subtitle = NULL,
+  caption = NULL,
+  tag = NULL,
+  title.linelength = 60,
+  title.colour = "black",
+  subtitle.linelength = 60,
+  subtitle.colour = "grey35",
+  na.replace = "(??)",
+  na.rm = FALSE,
+  facet.position = "top",
+  facet.fill = NULL,
+  facet.bold = TRUE,
+  facet.italic = FALSE,
+  facet.size = 10,
+  facet.margin = 8,
+  facet.repeat_lbls_x = TRUE,
+  facet.repeat_lbls_y = FALSE,
+  facet.fixed_y = FALSE,
+  facet.drop = FALSE,
+  facet.nrow = NULL,
+  facet.relative = FALSE,
+  x.date_breaks = NULL,
+  x.date_labels = NULL,
+  category.focus = NULL,
+  colour = setNames(colourpicker("certe_rsi2", 3), c("R", "I", "S")),
+  colour_fill = NULL,
+  x.lbl_angle = ifelse(horizontal, 0, 90),
+  x.lbl_align = NULL,
+  x.lbl_italic = FALSE,
+  x.remove = FALSE,
+  x.position = "bottom",
+  x.max_items = Inf,
+  x.max_txt = "(rest, x \%n)",
+  category.max_items = Inf,
+  category.max_txt = "(rest, x \%n)",
+  facet.max_items = Inf,
+  facet.max_txt = "(rest, x \%n)",
+  x.breaks = NULL,
+  x.breaks_n = NULL,
+  x.trans = "identity",
+  x.expand = 0.5,
+  x.limits = NULL,
+  x.character = NULL,
+  y.remove = FALSE,
+  y.24h = FALSE,
+  y.age = FALSE,
+  y.percent = FALSE,
+  y.percent_break = 0.1,
+  y.breaks = NULL,
+  y.limits = NULL,
+  y.labels = NULL,
+  y.expand = 0.25,
+  y.trans = "identity",
+  y.position = "left",
+  category.labels = NULL,
+  category.percent = FALSE,
+  category.breaks = NULL,
+  category.limits = NULL,
+  category.expand = 0,
+  category.midpoint = NULL,
+  category.trans = "identity",
+  x.sort = NULL,
+  category.sort = FALSE,
+  facet.sort = TRUE,
+  datalabels = TRUE,
+  datalabels.round = ifelse(y.percent, 2, 1),
+  datalabels.format = "\%n",
+  datalabels.colour = "grey25",
+  datalabels.fill = NULL,
+  datalabels.size = (3 * text_factor),
+  datalabels.angle = 0,
+  decimal.mark = ",",
+  big.mark = ifelse(decimal.mark == ",", ".", ","),
+  summarise_function = base::sum,
+  stacked = FALSE,
+  stackedpercent = TRUE,
+  horizontal = TRUE,
+  reverse = TRUE,
+  smooth = NULL,
+  smooth.method = NULL,
+  smooth.formula = NULL,
+  smooth.se = TRUE,
+  smooth.level = 0.95,
+  smooth.alpha = 0.15,
+  smooth.size = 0.75,
+  smooth.linetype = 3,
+  size = NULL,
+  linetype = 1,
+  binwidth = NULL,
+  width = NULL,
+  jitter_seed = NA,
+  violin_scale = "count",
+  legend.position = "top",
+  legend.title = NULL,
+  legend.reverse = FALSE,
+  legend.barheight = 6,
+  legend.barwidth = 1.5,
+  legend.nbin = 300,
+  legend.italic = FALSE,
+  zoom = FALSE,
+  sep = "/",
+  print = FALSE,
+  text_factor = 1,
+  family = "Calibri",
+  theme = theme_minimal2(),
+  markdown = TRUE,
+  taxonomy_italic = markdown,
+  x.category = NULL,
+  y.category = NULL,
+  minimum = 30,
+  remove_intrinsic_resistant = TRUE,
   ...
 )
 }
@@ -881,13 +1011,19 @@
 
 \item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}}
 
-\item{markdown}{text}
+\item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{"element_markdown"}, a feature of the \link[ggtext:element_markdown]{\code{ggtext} package}}
+
+\item{taxonomy_italic}{a \link{logical} to transform all labels and titles into italics that are in the \code{microorganisms} data set of the \code{AMR} package}
 
 \item{x.category}{old argument for \code{facet}, now deprecated}
 
 \item{y.category}{old argument for \code{category}, now deprecated}
 
 \item{...}{arguments passed on to methods}
+
+\item{minimum}{minimum number of results, defaults to \code{30}}
+
+\item{remove_intrinsic_resistant}{a \link{logical} to indicate that rows with 100\% resistance must be removed from the data set before plotting}
 }
 \description{
 These are the implemented methods for different S3 classes to be used in \code{\link[=plot2]{plot2()}}. Since they have an extensive list of arguments, they are placed here on a separate manual page.

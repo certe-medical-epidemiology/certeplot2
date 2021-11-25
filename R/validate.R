@@ -271,6 +271,28 @@ validate_data <- function(df,
                                                    big.mark = dots$big.mark))
   }
   
+  if (is.null(dots$x.character) &&
+      has_x(df) &&
+      is.numeric(get_x(df)) &&
+      all(get_x(df, na.rm = TRUE) >= 2000) &&
+      all(get_x(df, na.rm = TRUE) <= 2050)) {
+    plot2_message("Assuming ", font_blue("x.character = TRUE"),
+                  " since the ", font_blue("x"), " labels seem to be years")
+    dots$x.character <- TRUE
+  } else if (has_x(df) && 
+             is.numeric(get_x(df)) &&
+             !geom_is_continuous(type)) {
+    plot2_message("Assuming ", font_blue("x.character = TRUE"),
+                  " for discrete plot type (", font_blue(type), ")",
+                  " since ", font_blue(get_x_name(df)), " is numeric")
+    dots$x.character <- TRUE
+  }
+  if (isTRUE(dots$x.character)) {
+    # df[, get_x_name(df)] <- as.character(df[, get_x_name(df), drop = TRUE])
+    df <- df %>%
+      mutate(`_var_x` = as.character(`_var_x`))
+  }
+  
   # apply sortings
   if (has_x(df) && type != "geom_sf") {
     if (is.null(dots$x.sort) && inherits(get_x(df), c("character", "factor"))) {
@@ -301,22 +323,6 @@ validate_data <- function(df,
                                       summarise_function = dots$summarise_function,
                                       horizontal = FALSE)) # never reversely sort when horizontal
   }
-  
-  if (is.null(dots$x.character) &&
-      has_x(df) &&
-      is.numeric(get_x(df)) &&
-      all(get_x(df, na.rm = TRUE) >= 2000) &&
-      all(get_x(df, na.rm = TRUE) <= 2050)) {
-    plot2_message("Assuming ", font_blue("x.character = TRUE"),
-                  " since the ", font_blue("x"), " labels seem to be years")
-    dots$x.character <- TRUE
-  }
-  if (isTRUE(dots$x.character)) {
-    # df[, get_x_name(df)] <- as.character(df[, get_x_name(df), drop = TRUE])
-    df <- df %>%
-      mutate(`_var_x` = as.character(`_var_x`))
-  }
-  
   
   if (type != "geom_sf") {
     # apply limitations (have to been after sorting, e.g. on frequency)
@@ -462,7 +468,6 @@ validate_y_scale <- function(df,
                              big.mark,
                              zoom,
                              ...) {
-  
   breaks_fn <- function(df, waiver,
                         y.breaks = NULL, y.expand = 0.25, stackedpercent = FALSE,
                         y.age = FALSE, y.percent = FALSE, y.percent_break = 10, y.24h = FALSE, y.limits = NULL,
@@ -471,6 +476,12 @@ validate_y_scale <- function(df,
     data_max <- max(df)
     if (!inherits(df, c("Date", "POSIXt"))) {
       data_max <- data_max * (1 + y.expand)
+    }
+    
+    if (y.percent_break >= 1) {
+      # for `y.percent_break = 25`, probably `y.percent_break = 0.25` was meant
+      y.percent_break <- y.percent_break / 100
+      plot2_message("Assuming ", font_blue("y.percent_break = ", y.percent_break, collapse = ""))
     }
     
     if (!is.null(y.breaks)) {
@@ -484,6 +495,13 @@ validate_y_scale <- function(df,
       function(x, ...) seq(from = min(0, x),
                            to = max(x),
                            by = 24)
+    } else if (isTRUE(stackedpercent)) {
+      # special case of y.percent, where the y scale is always 0 to 1
+      function(x, y_percent_break = y.percent_break, ...) {
+        seq(from = min(0, x),
+            to = max(x),
+            by = y_percent_break)
+      }
     } else if (isTRUE(y.percent)) {
       # calculate how many labels will be printed, keep around 10
       if (is.null(y.limits)) {
@@ -1057,7 +1075,7 @@ validate_theme <- function(theme,
     theme$legend.title <- add_markdown(theme$legend.title)
   }
   
-  # set other properties to theme, set in plot2()
+  # set other properties to theme, that are set in plot2(...)
   if (isTRUE(horizontal)) {
     if (isTRUE(x.lbl_italic)) {
       theme$axis.text.y$face <- "italic"
@@ -1073,7 +1091,23 @@ validate_theme <- function(theme,
       theme$axis.text.x <- element_blank()
     }
   }
+  
   theme$axis.text.x$angle <- x.lbl_angle
+  if (is.null(x.lbl_align) && x.lbl_angle != 0) {
+    # determine the better alignment
+    if (abs(x.lbl_angle) %in% c(0:10, 171:190, 351:360)) {
+      x.lbl_align <- 0.5 # centre
+    }
+    if (abs(x.lbl_angle) %in% c(191:350)) {
+      x.lbl_align <- 0 # left
+    }
+    if (abs(x.lbl_angle) %in% c(11:170)) {
+      x.lbl_align <- 1 # right
+    }
+    if (x.lbl_angle < 0) {
+      x.lbl_align <- 1 - x.lbl_align
+    }
+  }
   if (!is.null(x.lbl_align)) {
     theme$axis.text.x$hjust <- x.lbl_align
   }
@@ -1122,10 +1156,6 @@ validate_theme <- function(theme,
     theme$panel.grid.minor.y <- theme.bak$panel.grid.minor.x
     theme$axis.ticks.x <- theme$axis.ticks.y
     theme$axis.ticks.y <- theme.bak$axis.ticks.x
-    theme$axis.text.x <- theme$axis.text.y
-    theme$axis.text.y <- theme.bak$axis.text.x
-    theme$axis.text.x <- theme$axis.text.y
-    theme$axis.text.y <- theme.bak$axis.text.x
     theme$axis.line.x <- theme$axis.line.y
     theme$axis.line.y <- theme.bak$axis.line.x
   }
@@ -1275,8 +1305,10 @@ set_datalabels <- function(p,
   p <- p +
     # set background label
     do.call(geom_label_fn,
-            args = c(list(mapping = aes(label = paste0(`_var_datalabels`,
-                                                       strrep("-", ceiling(nchar(`_var_datalabels`) * 0.33)))),
+            args = c(list(mapping = aes(label = ifelse(is.na(`_var_datalabels`),
+                                                       NA_character_,
+                                                       paste0(`_var_datalabels`,
+                                                              strrep("-", ceiling(nchar(`_var_datalabels`) * 0.33))))),
                           colour = NA,
                           fill = datalabels.fill,
                           size = datalabels.size,
