@@ -113,7 +113,7 @@
 #' @param text_factor text factor to use, which will apply to all texts shown in the plot
 #' @param family font family to use
 #' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]
-#' @param markdown a [logical] to turn all labels and titles into markdown-supported labels, by extending their S3 classes with `"element_markdown"`, a feature of the [`ggtext` package][ggtext::element_markdown()]
+#' @param markdown a [logical] to turn all labels and titles into markdown-supported labels, by extending their S3 classes with [`"element_markdown"`][ggtext::element_markdown()], a feature of the `ggtext` package
 #' @param taxonomy_italic a [logical] to transform all labels and titles into italics that are in the `microorganisms` data set of the `AMR` package
 #' @param x.category old argument for `facet`, now deprecated
 #' @param y.category old argument for `category`, now deprecated
@@ -631,6 +631,9 @@ plot2_exec <- function(.data,
                    nm[nm %in% nms] <- paste0("*", nm[nm %in% nms], "*")
                    nm <- paste0(nm, collapse = " ")
                    nm <- gsub("(.*)([A-Z][.]) [*]([a-z]+)[*](.*)", "\\1*\\2 \\3*\\4", nm, perl = TRUE)
+                 } else if (length(nm) == 0) {
+                   # this is because of `strplit("", " ")`
+                   nm <- ""
                  }
                  nm
                },
@@ -652,7 +655,7 @@ plot2_exec <- function(.data,
   type <- validate_type(type = type, df = df) # this will automatically determine the type if is.null(type)
   # transform data if not a continuous geom but group sizes are > 1
   if (any(group_sizes(df) > 1) && !geom_is_continuous(type)) {
-    if (type_backup != "barpercent") {
+    if (identical(type_backup, "barpercent")) {
       plot2_message("Duplicate observations in discrete plot type (", font_blue(type), "), applying ",
                     font_blue("summarise_function = " ), font_blue(dots$summarise_fn_name))
     }
@@ -883,6 +886,7 @@ plot2_exec <- function(.data,
   
   # validate theme and add markdown support ----
   theme <- validate_theme(theme = theme,
+                          type = type,
                           markdown = markdown,
                           text_factor = text_factor,
                           family = family,
@@ -977,6 +981,8 @@ plot2_exec <- function(.data,
   }
   
   # turn plot horizontal if required ----
+  # up until this point, a lot has been done already for `horizontal`.
+  # such as switching some x and y axis properties of the theme
   if (isTRUE(horizontal)) {
     p <- p + coord_flip()
   }

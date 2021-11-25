@@ -1026,6 +1026,7 @@ validate_titles <- function(text, markdown = TRUE, max_length = NULL) {
 #' @importFrom ggtext element_markdown
 #' @importFrom certestyle colourpicker
 validate_theme <- function(theme,
+                           type,
                            markdown,
                            text_factor,
                            family,
@@ -1070,7 +1071,10 @@ validate_theme <- function(theme,
     theme$plot.tag <- add_markdown(theme$plot.tag)
     theme$strip.text <- add_markdown(theme$strip.text)
     theme$axis.title.x <- add_markdown(theme$axis.title.x)
-    theme$axis.text.x <- add_markdown(theme$axis.text.x) # values of the x axis
+    if (type != "geom_sf"){
+      # values of the x axis
+      theme$axis.text.x <- add_markdown(theme$axis.text.x)
+    }
     theme$axis.title.y <- add_markdown(theme$axis.title.y)
     theme$legend.title <- add_markdown(theme$legend.title)
   }

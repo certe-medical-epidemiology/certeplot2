@@ -816,6 +816,7 @@ plot2.freq <- function(.data,
 }
 
 #' @rdname plot2-methods
+#' @details For geographic information system (GIS) analysis, use the `sf` package with a data set containing geometries. The result can be used as input for [plot2()].
 #' @export
 plot2.sf <- function(.data,
                      x = NULL,
@@ -1368,6 +1369,7 @@ plot2.data.frame <- function(.data,
 
 #' @rdname plot2-methods
 #' @importFrom dplyr `%>%` filter mutate select
+#' @details For antimicrobial resistance (AMR) data analysis, use the [`bug_drug_combinations()`][AMR::bug_drug_combinations()] function from the `AMR` package on a data set with antibiograms. The result can be used as input for [plot2()].
 #' @param minimum minimum number of results, defaults to `30`
 #' @param remove_intrinsic_resistant a [logical] to indicate that rows with 100% resistance must be removed from the data set before plotting
 #' @export
@@ -1404,8 +1406,8 @@ plot2.bug_drug_combinations <- function(.data,
                                         x.date_breaks = NULL,
                                         x.date_labels = NULL,
                                         category.focus = NULL,
-                                        colour = setNames(colourpicker("certe_rsi2", 3),
-                                                          c("R", "I", "S")),
+                                        colour = stats::setNames(colourpicker("certe_rsi2", 3),
+                                                                 c("R", "I", "S")),
                                         colour_fill = NULL,
                                         x.lbl_angle = ifelse(horizontal, 0, 90),
                                         x.lbl_align = NULL,

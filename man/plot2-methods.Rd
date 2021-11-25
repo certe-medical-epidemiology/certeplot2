@@ -657,7 +657,7 @@
   x.date_breaks = NULL,
   x.date_labels = NULL,
   category.focus = NULL,
-  colour = setNames(colourpicker("certe_rsi2", 3), c("R", "I", "S")),
+  colour = stats::setNames(colourpicker("certe_rsi2", 3), c("R", "I", "S")),
   colour_fill = NULL,
   x.lbl_angle = ifelse(horizontal, 0, 90),
   x.lbl_align = NULL,
@@ -1011,7 +1011,7 @@
 
 \item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}}
 
-\item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{"element_markdown"}, a feature of the \link[ggtext:element_markdown]{\code{ggtext} package}}
+\item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{\link[ggtext:element_markdown]{"element_markdown"}}, a feature of the \code{ggtext} package}
 
 \item{taxonomy_italic}{a \link{logical} to transform all labels and titles into italics that are in the \code{microorganisms} data set of the \code{AMR} package}
 
@@ -1027,4 +1027,9 @@
 }
 \description{
 These are the implemented methods for different S3 classes to be used in \code{\link[=plot2]{plot2()}}. Since they have an extensive list of arguments, they are placed here on a separate manual page.
+}
+\details{
+For geographic information system (GIS) analysis, use the \code{sf} package with a data set containing geometries. The result can be used as input for \code{\link[=plot2]{plot2()}}.
+
+For antimicrobial resistance (AMR) data analysis, use the \code{\link[AMR:bug_drug_combinations]{bug_drug_combinations()}} function from the \code{AMR} package on a data set with antibiograms. The result can be used as input for \code{\link[=plot2]{plot2()}}.
 }

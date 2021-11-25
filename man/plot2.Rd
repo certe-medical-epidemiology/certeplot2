@@ -294,7 +294,7 @@ plot2(
 
 \item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}}
 
-\item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{"element_markdown"}, a feature of the \link[ggtext:element_markdown]{\code{ggtext} package}}
+\item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{\link[ggtext:element_markdown]{"element_markdown"}}, a feature of the \code{ggtext} package}
 
 \item{taxonomy_italic}{a \link{logical} to transform all labels and titles into italics that are in the \code{microorganisms} data set of the \code{AMR} package}
 
