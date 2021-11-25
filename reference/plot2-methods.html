@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.23</span>
       </span>
     </div>
 
@@ -1187,11 +1187,11 @@
     <tr>
       <th>x.sort</th>
       <td><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href='https://rdrr.io/r/base/factor.html'>factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul>
-<li><p><code>TRUE</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a> on their levels, otherwise sort as <code>"asc"</code></p></li>
-<li><p><code>FALSE</code>: keep order as it is in the data</p></li>
+<li><p><code>TRUE</code>: sort as <code>"asc"</code></p></li>
+<li><p><code>FALSE</code>: sort according to the order in the data</p></li>
 <li><p><code>NULL</code>: do not sort/transform at all</p></li>
-<li><p><code>"asc"</code> or <code>"alpha"</code>: sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
-<li><p><code>"desc"</code>: sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<li><p><code>"asc"</code> or <code>"alpha"</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a>s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<li><p><code>"desc"</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a>s on their <a href='https://rdrr.io/r/base/rev.html'>reversed</a> levels, otherwise sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
 <li><p><code>"order"</code> or <code>"inorder"</code>: sort as <code>FALSE</code></p></li>
 <li><p><code>"freq"</code> or <code>"freq-desc"</code>: sort descending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (highest value first)</p></li>
 <li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (loewest value first)</p></li>
@@ -1200,11 +1200,11 @@
     <tr>
       <th>category.sort</th>
       <td><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href='https://rdrr.io/r/base/factor.html'>factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul>
-<li><p><code>TRUE</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a> on their levels, otherwise sort as <code>"asc"</code></p></li>
-<li><p><code>FALSE</code>: keep order as it is in the data</p></li>
+<li><p><code>TRUE</code>: sort as <code>"asc"</code></p></li>
+<li><p><code>FALSE</code>: sort according to the order in the data</p></li>
 <li><p><code>NULL</code>: do not sort/transform at all</p></li>
-<li><p><code>"asc"</code> or <code>"alpha"</code>: sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
-<li><p><code>"desc"</code>: sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<li><p><code>"asc"</code> or <code>"alpha"</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a>s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<li><p><code>"desc"</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a>s on their <a href='https://rdrr.io/r/base/rev.html'>reversed</a> levels, otherwise sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
 <li><p><code>"order"</code> or <code>"inorder"</code>: sort as <code>FALSE</code></p></li>
 <li><p><code>"freq"</code> or <code>"freq-desc"</code>: sort descending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (highest value first)</p></li>
 <li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (loewest value first)</p></li>
@@ -1213,11 +1213,11 @@
     <tr>
       <th>facet.sort</th>
       <td><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href='https://rdrr.io/r/base/factor.html'>factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul>
-<li><p><code>TRUE</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a> on their levels, otherwise sort as <code>"asc"</code></p></li>
-<li><p><code>FALSE</code>: keep order as it is in the data</p></li>
+<li><p><code>TRUE</code>: sort as <code>"asc"</code></p></li>
+<li><p><code>FALSE</code>: sort according to the order in the data</p></li>
 <li><p><code>NULL</code>: do not sort/transform at all</p></li>
-<li><p><code>"asc"</code> or <code>"alpha"</code>: sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
-<li><p><code>"desc"</code>: sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<li><p><code>"asc"</code> or <code>"alpha"</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a>s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<li><p><code>"desc"</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a>s on their <a href='https://rdrr.io/r/base/rev.html'>reversed</a> levels, otherwise sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
 <li><p><code>"order"</code> or <code>"inorder"</code>: sort as <code>FALSE</code></p></li>
 <li><p><code>"freq"</code> or <code>"freq-desc"</code>: sort descending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (highest value first)</p></li>
 <li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (loewest value first)</p></li>
@@ -1265,19 +1265,19 @@
     </tr>
     <tr>
       <th>stacked</th>
-      <td><p>text</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to indicate that values must be stacked</p></td>
     </tr>
     <tr>
       <th>stackedpercent</th>
-      <td><p>text</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to indicate that values must be 100% stacked</p></td>
     </tr>
     <tr>
       <th>horizontal</th>
-      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to turn the plot 90 defrees using <code><a href='https://ggplot2.tidyverse.org/reference/coord_flip.html'>coord_flip()</a></code></p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to turn the plot 90 degrees using <code><a href='https://ggplot2.tidyverse.org/reference/coord_flip.html'>coord_flip()</a></code>. This option also updates some theme options, so that e.g., <code>x.lbl_italic</code> will still apply to the original x axis.</p></td>
     </tr>
     <tr>
       <th>reverse</th>
-      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to reverse all values on the x axis</p></td>
+      <td><p>a <a href='https://rdrr.io/r/base/logical.html'>logical</a> to reverse all values of <code>category</code></p></td>
     </tr>
     <tr>
       <th>smooth</th>
