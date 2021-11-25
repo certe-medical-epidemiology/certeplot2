@@ -1088,10 +1088,14 @@ validate_theme <- function(theme,
     theme$axis.title.x <- add_markdown(theme$axis.title.x)
     theme$axis.title.y <- add_markdown(theme$axis.title.y)
     theme$legend.title <- add_markdown(theme$legend.title)
-    if (type != "geom_sf"){
-      # values of the x axis
-      theme$axis.text.x <- add_markdown(theme$axis.text.x)
+    if (type != "geom_sf") {
       theme$legend.text <- add_markdown(theme$legend.text)
+      if (isTRUE(horizontal)) {
+        theme$axis.text.y <- add_markdown(theme$axis.text.y)
+      } else {
+        # values of the x axis
+        theme$axis.text.x <- add_markdown(theme$axis.text.x)
+      }
     }
   }
   

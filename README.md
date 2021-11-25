@@ -5,11 +5,44 @@
 [![R-CMD-check](https://github.com/certe-medical-epidemiology/certeplot2/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/certe-medical-epidemiology/certeplot2/actions/workflows/R-CMD-check.yaml)
 [![CodeFactor](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certeplot2/badge/main)](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certeplot2/overview/main)
 
-<img src="https://certe-medical-epidemiology.github.io/certeplot2/logo.svg" alt="The certeplot2 R package" style="width: 181px; height: 209px;">
+This is a Certe R Package for fast and convenient plotting, by providing wrappers around 'tidyverse' packages such as 'ggplot2', while also providing plotting in the Certe organisational style. This package is part of the 'certedata' universe.
 
-### General Information
+You can [read the manual with explanation about all functions](https://certe-medical-epidemiology.github.io/certeplot2/reference), or install this particular R package using:
 
-This is an R package developed by [**Certe**](https://www.certe.nl), a non-profit medical laboratory in the Northern Netherlands that provides routine diagnostic tests for clinical chemistry and clinical microbiology, as well as medical logistics and a thrombosis service. Their department of Medical Epidemiology, which developed this R package, conducts (and develops new methods for) medical data analyses, for both routine workflows and scientific research.
+```r
+install.packages("certeplot2", repos = "https://certe-medical-epidemiology.r-universe.dev")
+```
+
+### About the 'certedata' universe
+
+<div style="position: relative; height: 295px;">
+  <a href="https://certe-medical-epidemiology.github.io/certedata/" target="_blank">
+    <img src="https://certe-medical-epidemiology.github.io/certedata/logo.svg" alt="The certedata R package" style="position: absolute; left: 0px; top: 0px; width: 136px; height: 156px;">
+  </a>
+  <a href="https://certe-medical-epidemiology.github.io/certestyle/" target="_blank">
+    <img src="https://certe-medical-epidemiology.github.io/certestyle/logo.svg" alt="The certestyle R package" style="position: absolute; left: 135px; top: 0px; width: 136px; height: 156px;">
+  </a>
+  <a href="https://certe-medical-epidemiology.github.io/certetoolbox/" target="_blank">
+    <img src="https://certe-medical-epidemiology.github.io/certetoolbox/logo.svg" alt="The certetoolbox R package" style="position: absolute; left: 270px; top: 0px; width: 136px; height: 156px;">
+  </a>
+  <a href="https://certe-medical-epidemiology.github.io/certemail/" target="_blank">
+    <img src="https://certe-medical-epidemiology.github.io/certemail/logo.svg" alt="The certemail R package" style="position: absolute; left: 405px; top: 0px; width: 136px; height: 156px;">
+  </a>
+  <a href="https://certe-medical-epidemiology.github.io/certeplot2/" target="_blank">
+    <img src="https://certe-medical-epidemiology.github.io/certeplot2/logo.svg" alt="The certeplot2 R package" style="position: absolute; left: 67.5px; top: 122px; width: 136px; height: 156px;">
+  </a>
+  <a href="https://certe-medical-epidemiology.github.io/certedb/" target="_blank">
+    <img src="https://certe-medical-epidemiology.github.io/certedb/logo.svg" alt="The certedb R package" style="position: absolute; left: 202.5px; top: 122px; width: 136px; height: 156px;">
+  </a>
+  <a href="https://certe-medical-epidemiology.github.io/certeprojects/" target="_blank">
+    <img src="https://certe-medical-epidemiology.github.io/certeprojects/logo.svg" alt="The certeprojects R package" style="position: absolute; left: 337.5px; top: 122px; width: 136px; height: 156px;">
+  </a>
+  <a href="https://certe-medical-epidemiology.github.io/certestats/" target="_blank">
+    <img src="https://certe-medical-epidemiology.github.io/certestats/logo.svg" alt="The certestats R package" style="position: absolute; left: 472.5px; top: 122px; width: 136px; height: 156px;">
+  </a>
+</div>
+
+These are R packages developed by [**Certe**](https://www.certe.nl), a non-profit medical laboratory in the Northern Netherlands that provides routine diagnostic tests for clinical chemistry and clinical microbiology, as well as medical logistics and a thrombosis service. Their department of Medical Epidemiology, which developed this R package, conducts (and develops new methods for) medical data analyses, for both routine workflows and scientific research.
 
 For all our packages, please visit [our GitHub organisation overview](https://github.com/certe-medical-epidemiology). Our R packages are not on CRAN since their use is primarily intended for own staff, but they are publicly available to support open science. 
 
@@ -27,33 +60,9 @@ options(repos = c(
 install.packages("certedata")
 ```
 
-<div style="position: relative; height: 275px;">
-  <a href="https://certe-medical-epidemiology.github.io/certedata/" target="_blank">
-    <img src="https://certe-medical-epidemiology.github.io/certedata/logo.svg" alt="The certedata R package" style="position: absolute; left: 0px; top: 0px; width: 136px; height: 156px;">
-  </a>
-  <a href="https://certe-medical-epidemiology.github.io/certestyle/" target="_blank">
-    <img src="https://certe-medical-epidemiology.github.io/certestyle/logo.svg" alt="The certestyle R package" style="position: absolute; left: 135px; top: 0px; width: 136px; height: 156px;">
-  </a>
-  <a href="https://certe-medical-epidemiology.github.io/certetoolbox/" target="_blank">
-    <img src="https://certe-medical-epidemiology.github.io/certetoolbox/logo.svg" alt="The certetoolbox R package" style="position: absolute; left: 270px; top: 0px; width: 136px; height: 156px;">
-  </a>
-  <a href="https://certe-medical-epidemiology.github.io/certemail/" target="_blank">
-    <img src="https://certe-medical-epidemiology.github.io/certemail/logo.svg" alt="The certemail R package" style="position: absolute; left: 405px; top: 0px; width: 136px; height: 156px;">
-  </a>
-  <a href="https://certe-medical-epidemiology.github.io/certeprojects/" target="_blank">
-    <img src="https://certe-medical-epidemiology.github.io/certeprojects/logo.svg" alt="The certeprojects R package" style="position: absolute; left: 67.5px; top: 122px; width: 136px; height: 156px;">
-  </a>
-  <a href="https://certe-medical-epidemiology.github.io/certedb/" target="_blank">
-    <img src="https://certe-medical-epidemiology.github.io/certedb/logo.svg" alt="The certedb R package" style="position: absolute; left: 202.5px; top: 122px; width: 136px; height: 156px;">
-  </a>
-  <a href="https://certe-medical-epidemiology.github.io/certeplot2/" target="_blank">
-    <img src="https://certe-medical-epidemiology.github.io/certeplot2/logo.svg" alt="The certeplot2 R package" style="position: absolute; left: 337.5px; top: 122px; width: 136px; height: 156px;">
-  </a>
-</div>
-
 ### Copyright regarding this software
 
-We believe open science matters, which is why this package is available on GitHub.
+We believe open science matters, which is why this package is publicly available on GitHub.
 
 This R package is free, open-source software and licensed under the [GNU General Public License v2.0 (GPL-2)](./LICENSE.md). In a nutshell, this means that this package:
 
