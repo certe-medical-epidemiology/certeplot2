@@ -895,11 +895,11 @@
 
 \item{x.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
 \itemize{
-\item \code{TRUE}: sort \link{factor} on their levels, otherwise sort as \code{"asc"}
-\item \code{FALSE}: keep order as it is in the data
+\item \code{TRUE}: sort as \code{"asc"}
+\item \code{FALSE}: sort according to the order in the data
 \item \code{NULL}: do not sort/transform at all
-\item \code{"asc"} or \code{"alpha"}: sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
-\item \code{"desc"}: sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
+\item \code{"asc"} or \code{"alpha"}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
+\item \code{"desc"}: sort \link{factor}s on their \link[=rev]{reversed} levels, otherwise sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
 \item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
 \item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (loewest value first)
@@ -907,11 +907,11 @@
 
 \item{category.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
 \itemize{
-\item \code{TRUE}: sort \link{factor} on their levels, otherwise sort as \code{"asc"}
-\item \code{FALSE}: keep order as it is in the data
+\item \code{TRUE}: sort as \code{"asc"}
+\item \code{FALSE}: sort according to the order in the data
 \item \code{NULL}: do not sort/transform at all
-\item \code{"asc"} or \code{"alpha"}: sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
-\item \code{"desc"}: sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
+\item \code{"asc"} or \code{"alpha"}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
+\item \code{"desc"}: sort \link{factor}s on their \link[=rev]{reversed} levels, otherwise sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
 \item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
 \item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (loewest value first)
@@ -919,11 +919,11 @@
 
 \item{facet.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
 \itemize{
-\item \code{TRUE}: sort \link{factor} on their levels, otherwise sort as \code{"asc"}
-\item \code{FALSE}: keep order as it is in the data
+\item \code{TRUE}: sort as \code{"asc"}
+\item \code{FALSE}: sort according to the order in the data
 \item \code{NULL}: do not sort/transform at all
-\item \code{"asc"} or \code{"alpha"}: sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
-\item \code{"desc"}: sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
+\item \code{"asc"} or \code{"alpha"}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
+\item \code{"desc"}: sort \link{factor}s on their \link[=rev]{reversed} levels, otherwise sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
 \item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
 \item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (loewest value first)
@@ -949,13 +949,13 @@
 
 \item{summarise_function}{a \link{function} to use if the data has to be summarised, see \emph{Examples}}
 
-\item{stacked}{text}
+\item{stacked}{a \link{logical} to indicate that values must be stacked}
 
-\item{stackedpercent}{text}
+\item{stackedpercent}{a \link{logical} to indicate that values must be 100\% stacked}
 
-\item{horizontal}{a \link{logical} to turn the plot 90 defrees using \code{\link[ggplot2:coord_flip]{coord_flip()}}}
+\item{horizontal}{a \link{logical} to turn the plot 90 degrees using \code{\link[ggplot2:coord_flip]{coord_flip()}}. This option also updates some theme options, so that e.g., \code{x.lbl_italic} will still apply to the original x axis.}
 
-\item{reverse}{a \link{logical} to reverse all values on the x axis}
+\item{reverse}{a \link{logical} to reverse all values of \code{category}}
 
 \item{smooth}{a \link{logical} to add a smooth. In histograms, this will add the density count as an overlaying line (default: \code{TRUE}). In all other cases, a smooth will be added using \code{\link[ggplot2:geom_smooth]{geom_smooth()}} (default: \code{FALSE}).}
 

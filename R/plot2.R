@@ -79,11 +79,11 @@
 #' @param x.max_txt,category.max_txt,facet.max_txt the text to use of values not included number of `*.max_items`. The placeholder `%n` will be replaced with the outcome of the `summarise_function` function, the placeholder `%p` will be replaced with the percentage.
 #' @param x.sort,category.sort,facet.sort sorting of the plotting direction, defaults to `TRUE`, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered [factor], which `ggplot2` uses to orient the data. Valid values are:
 #' 
-#' - `TRUE`: sort [factor] on their levels, otherwise sort as `"asc"`
-#' - `FALSE`: keep order as it is in the data
+#' - `TRUE`: sort as `"asc"`
+#' - `FALSE`: sort according to the order in the data
 #' - `NULL`: do not sort/transform at all
-#' - `"asc"` or `"alpha"`: sort ascending on alphabet, while maintaining numbers in the text (*numeric* sort)
-#' - `"desc"`: sort descending on alphabet, while maintaining numbers in the text (*numeric* sort)
+#' - `"asc"` or `"alpha"`: sort [factor]s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (*numeric* sort)
+#' - `"desc"`: sort [factor]s on their [reversed][rev()] levels, otherwise sort descending on alphabet, while maintaining numbers in the text (*numeric* sort)
 #' - `"order"` or `"inorder"`: sort as `FALSE`
 #' - `"freq"` or `"freq-desc"`: sort descending according to the frequencies of `y` computed by `summarise_function` (highest value first)
 #' - `"freq-asc"`: sort ascending according to the frequencies of `y` computed by `summarise_function` (loewest value first)
@@ -94,10 +94,10 @@
 #' @param decimal.mark decimal mark, defaults to Dutch use (a comma)
 #' @param big.mark thousands separator, defaults to Dutch use (a full stop)
 #' @param summarise_function a [function] to use if the data has to be summarised, see *Examples*
-#' @param stacked text
-#' @param stackedpercent text
-#' @param horizontal a [logical] to turn the plot 90 defrees using [`coord_flip()`][ggplot2::coord_flip()]
-#' @param reverse a [logical] to reverse all values on the x axis
+#' @param stacked a [logical] to indicate that values must be stacked
+#' @param stackedpercent a [logical] to indicate that values must be 100% stacked
+#' @param horizontal a [logical] to turn the plot 90 degrees using [`coord_flip()`][ggplot2::coord_flip()]. This option also updates some theme options, so that e.g., `x.lbl_italic` will still apply to the original x axis.
+#' @param reverse a [logical] to reverse all values of `category`
 #' @param smooth a [logical] to add a smooth. In histograms, this will add the density count as an overlaying line (default: `TRUE`). In all other cases, a smooth will be added using [`geom_smooth()`][ggplot2::geom_smooth()] (default: `FALSE`).
 #' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.size,smooth.linetype settings for `smooth`
 #' @param size size of the geom
@@ -134,7 +134,7 @@
 #'   * Support for any `ggplot2` extension based on [ggplot2::fortify()]
 #'   
 #' The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. For [data.frame]s, [plot2()] currently has `r length(formals(plot2.data.frame)) - 1` arguments, all with a default value. **Less typing, faster coding.**
-#' @return The [plot2()] function adds new variables to the data for each mapping: any combination of `_var_x`, `_var_y`, `_var_category`, `_var_facet`. These columns are internally set as mapping with [`aes()`][ggplot2::aes()].
+#' @return The [plot2()] function adds new variables to the data for each mapping: any combination of `_var_x`, `_var_y`, `_var_category`, `_var_facet` and `_var_datalabels`. These columns are internally set as mapping using [`aes()`][ggplot2::aes()].
 #' @export
 #' @examples
 #' head(iris)

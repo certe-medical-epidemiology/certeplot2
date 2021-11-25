@@ -27,10 +27,16 @@ validate_type <- function(type, df = NULL) {
       plot2_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL),
                     font_black(" since there is no x axis"))
     } else if (has_x(df) && is.numeric(get_x(df))) {
-      # make it points if x and y are both numeric
-      type <- "geom_point"
-      plot2_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL), 
-                    font_black(" since both axes are numeric"))
+      if (identical(get_x(df), get_y(df))) {
+        # both x and y are numeric - if they are equal then use histogram
+        # see plot_message below 'since the variable ... is the only numeric variable'
+        type <- "geom_histogram"
+      } else {
+        # make it points if x and y are both numeric
+        type <- "geom_point"
+        plot2_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL), 
+                      font_black(" since both axes are numeric"))
+      }
     } else {
       # check if y has multiple values across groups, then make it boxplot
       if (all(group_sizes(df) >= 3)) {
@@ -169,11 +175,21 @@ validate_data <- function(df,
           mutate(`_var_y` = df %>% pull(`_var_x`))
       } else {
         if (has_x(df) && get_x_name(df) == numeric_cols) {
-          stop("no numeric column found to use for y, aside from the column used for x (\"", get_x_name(df), "\")", call. = FALSE)
+          if (type == "") {
+            plot2_message("Assuming ", font_blue("type = \"histogram\""),
+                          " since the ", font_blue("x"), " variable (", font_blue(get_x_name(df)), ") is the only numeric variable")
+            type <- "geom_histogram"
+            df <- df %>% 
+              mutate(`_var_y` = df %>% pull(`_var_x`))
+          } else {
+            stop("No variable found for y, since the x variable (", get_x_name(df),
+                 ") is the only numeric variable in the data set.\nDid you mean type = \"histogram\"?", call. = FALSE)
+          }
+        } else {
+          plot2_message("Using ", font_blue("y = ", numeric_cols, collapse = NULL))
+          df <- df %>% 
+            mutate(`_var_y` = df %>% pull(numeric_cols))
         }
-        plot2_message("Using ", font_blue("y = ", numeric_cols, collapse = NULL))
-        df <- df %>% 
-          mutate(`_var_y` = df %>% pull(numeric_cols))
       }
     }
   }
@@ -281,6 +297,7 @@ validate_data <- function(df,
     dots$x.character <- TRUE
   } else if (has_x(df) && 
              is.numeric(get_x(df)) &&
+             type != "" &&
              !geom_is_continuous(type)) {
     plot2_message("Assuming ", font_blue("x.character = TRUE"),
                   " for discrete plot type (", font_blue(type), ")",
@@ -1395,21 +1412,39 @@ sort_data <- function(original_values, sort_method, datapoints, summarise_functi
       ((isTRUE(sort_method) && is.factor(original_values) && !isTRUE(horizontal)))) {
     # don't sort at all
     return(original_values)
-  } else if (isTRUE(sort_method) && is.factor(original_values) && isTRUE(horizontal)) {
-    # reverse the levels of the current factor since horizontal == TRUE
-    return(factor(as.character(original_values),
-                  levels = rev(levels(original_values)),
-                  ordered = is.ordered(original_values)))
+  }
+
+  # set up sort_method
+  sort_method.bak <- sort_method[1L]
+  sort_method <- validate_sorting(sort_method = sort_method, horizontal = horizontal)
+
+  # factors get a special treatment - they are sorted on their levels
+  if (is.factor(original_values)) {
+    if (sort_method %in% c("alpha", "alpha-asc", "asc")) {
+      if (isTRUE(horizontal)) {
+        lvls <- rev(levels(original_values))
+      } else {
+        lvls <- levels(original_values)
+      }
+      return(factor(as.character(original_values),
+                    levels = lvls,
+                    ordered = is.ordered(original_values)))
+    } else if (sort_method %in% c("alpha-desc", "desc")) {
+      if (isTRUE(horizontal)) {
+        lvls <- levels(original_values)
+      } else {
+        lvls <- rev(levels(original_values))
+      }
+      return(factor(as.character(original_values),
+                    levels = lvls,
+                    ordered = is.ordered(original_values)))
+    }
   }
   
   if (!is.numeric(original_values)) {
     # force characters for anything else than numbers
     original_values <- as.character(original_values)
   }
-  
-  # set up sort_method
-  sort_method.bak <- sort_method[1L]
-  sort_method <- validate_sorting(sort_method = sort_method, horizontal = horizontal)
   
   # start the sorting
   numeric_sort <- any(original_values %like% "[0-9]", na.rm = TRUE)
