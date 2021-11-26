@@ -231,10 +231,10 @@ validate_data <- function(df,
   }
   
   # if given FALSE for a direction (e.g., category = FALSE), remove these columns
-  if (has_category(df) && all(get_category(df) == FALSE)){
+  if (has_category(df) && all(get_category(df) == FALSE)) {
     df <- df %>% select(-`_var_category`)
   }
-  if (has_facet(df) && all(get_facet(df) == FALSE)){
+  if (has_facet(df) && all(get_facet(df) == FALSE)) {
     df <- df %>% select(-`_var_facet`)
   }
   if (has_datalabels(df) && all(get_datalabels(df) == FALSE)) {
@@ -305,7 +305,6 @@ validate_data <- function(df,
     dots$x.character <- TRUE
   }
   if (isTRUE(dots$x.character)) {
-    # df[, get_x_name(df)] <- as.character(df[, get_x_name(df), drop = TRUE])
     df <- df %>%
       mutate(`_var_x` = as.character(`_var_x`))
   }
@@ -386,78 +385,78 @@ validate_x_scale <- function(values,
                              big.mark,
                              horizontal,
                              zoom) {
- 
-    if (isTRUE(zoom)) {
-      x.limits <- c(NA_real_, NA_real_)
-    }
-    if (!is.null(x.limits)) {
-      if (length(x.limits) != 2) {
-        stop("`x.limits` must be of length 2", call. = FALSE)
-      }
-      if (inherits(values, "Date")) {
-        x.limits <- as.Date(x.limits, origin = "1970-01-01")
-      } else if (inherits(values, "POSIXt")) {
-        x.limits <- as.POSIXct(x.limits, origin = "1970-01-01")
-      }
-      if (inherits(values, c("Date", "POSIXt"))) {
-        # edit limits so x.limits has one spare one at each side
-        x.limits[1] <- x.limits[1] - 1
-        x.limits[2] <- x.limits[2] + 1
-        # strip that extra ones from x.expand, so that all columns will plot
-        if (!is.function(x.expand)) {
-          x.expand <- x.expand - 1
-        }
-      }
-    }
-    if (!is.function(x.expand)) {
-      if (length(x.expand) == 1) {
-        x.expand <- c(x.expand, x.expand)
-      }
-      x.expand <- expansion(add = x.expand)
-    }
-    if (inherits(values, c("Date", "POSIXt"))) {
-      auto_breaks_labels <- determine_date_breaks_labels(values)
-      if (is.null(x.date_breaks)) {
-        x.date_breaks <- auto_breaks_labels$breaks
-        plot2_message("Using ", font_blue("x.date_breaks = \"", x.date_breaks, "\"", collapse = ""),
-                      " based on data")
-      }
-      if (is.null(x.date_labels)) {
-        x.date_labels <- auto_breaks_labels$labels
-        plot2_message("Using ", font_blue("x.date_labels = \"", x.date_labels, "\"", collapse = ""),
-                      " based on data")
-      }
+  
+  if (isTRUE(zoom)) {
+    x.limits <- c(NA_real_, NA_real_)
+  }
+  if (!is.null(x.limits)) {
+    if (length(x.limits) != 2) {
+      stop("`x.limits` must be of length 2", call. = FALSE)
     }
     if (inherits(values, "Date")) {
-      scale_x_date(position = x.position,
-                   date_breaks = x.date_breaks,
-                   date_labels = format_datetime(x.date_labels),
-                   expand = x.expand,
-                   limits = x.limits)
+      x.limits <- as.Date(x.limits, origin = "1970-01-01")
     } else if (inherits(values, "POSIXt")) {
-      scale_x_datetime(position = x.position,
-                       date_breaks = x.date_breaks,
-                       date_labels = format_datetime(x.date_labels),
-                       expand = x.expand,
-                       limits = x.limits)
-    } else {
-      if (!is.numeric(values)) {
-        scale_x_discrete(position = x.position)
-      } else {
-        if (x.trans == "identity" && isTRUE(horizontal)) {
-          x.trans <- reverse_trans()
-        }
-        if (is.null(x.limits)) {
-          x.limits <- c(ifelse(min(values) < 0, NA_real_, 0), NA)
-        }
-        scale_x_continuous(labels = function(x, ...) format2(x, decimal.mark = decimal.mark, big.mark = big.mark),
-                           breaks = if (!is.null(x.breaks)) x.breaks else waiver(),
-                           n.breaks = x.breaks_n,
-                           trans = x.trans,
-                           position = x.position,
-                           limits = x.limits,
-                           expand = expansion(mult = c(0.05, 0.05)))
+      x.limits <- as.POSIXct(x.limits, origin = "1970-01-01")
+    }
+    if (inherits(values, c("Date", "POSIXt"))) {
+      # edit limits so x.limits has one spare one at each side
+      x.limits[1] <- x.limits[1] - 1
+      x.limits[2] <- x.limits[2] + 1
+      # strip that extra ones from x.expand, so that all columns will plot
+      if (!is.function(x.expand)) {
+        x.expand <- x.expand - 1
       }
+    }
+  }
+  if (!is.function(x.expand)) {
+    if (length(x.expand) == 1) {
+      x.expand <- c(x.expand, x.expand)
+    }
+    x.expand <- expansion(add = x.expand)
+  }
+  if (inherits(values, c("Date", "POSIXt"))) {
+    auto_breaks_labels <- determine_date_breaks_labels(values)
+    if (is.null(x.date_breaks)) {
+      x.date_breaks <- auto_breaks_labels$breaks
+      plot2_message("Using ", font_blue("x.date_breaks = \"", x.date_breaks, "\"", collapse = ""),
+                    " based on data")
+    }
+    if (is.null(x.date_labels)) {
+      x.date_labels <- auto_breaks_labels$labels
+      plot2_message("Using ", font_blue("x.date_labels = \"", x.date_labels, "\"", collapse = ""),
+                    " based on data")
+    }
+  }
+  if (inherits(values, "Date")) {
+    scale_x_date(position = x.position,
+                 date_breaks = x.date_breaks,
+                 date_labels = format_datetime(x.date_labels),
+                 expand = x.expand,
+                 limits = x.limits)
+  } else if (inherits(values, "POSIXt")) {
+    scale_x_datetime(position = x.position,
+                     date_breaks = x.date_breaks,
+                     date_labels = format_datetime(x.date_labels),
+                     expand = x.expand,
+                     limits = x.limits)
+  } else {
+    if (!is.numeric(values)) {
+      scale_x_discrete(position = x.position)
+    } else {
+      if (x.trans == "identity" && isTRUE(horizontal)) {
+        x.trans <- reverse_trans()
+      }
+      if (is.null(x.limits)) {
+        x.limits <- c(ifelse(min(values) < 0, NA_real_, 0), NA)
+      }
+      scale_x_continuous(labels = function(x, ...) format2(x, decimal.mark = decimal.mark, big.mark = big.mark),
+                         breaks = if (!is.null(x.breaks)) x.breaks else waiver(),
+                         n.breaks = x.breaks_n,
+                         trans = x.trans,
+                         position = x.position,
+                         limits = x.limits,
+                         expand = expansion(mult = c(0.05, 0.05)))
+    }
   }
 }
 
@@ -542,7 +541,7 @@ validate_y_scale <- function(values,
       seq(from = 0,
           to = 1,
           by = 0.1)
-    } else if (all(values %% 1 == 0) && data_max < 12) {
+    } else if (all(values %% 1 == 0) && data_max < 5) {
       # whole numbers - only strip decimal numbers if total y range is low
       function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 3))))
     } else {
@@ -737,7 +736,7 @@ validate_category_scale <- function(values,
       mid_point <- as.double(category.midpoint)
     } else {
       # default will be set to the median
-      mid_point <- stats::median(get_category(df), na.rm = TRUE)
+      mid_point <- stats::median(values, na.rm = TRUE)
       plot2_message("Using ", font_blue("category.midpoint =", round(mid_point, 2)),
                     " (the median) for the ", font_blue("category"), " scale")
     }
@@ -1089,8 +1088,8 @@ validate_theme <- function(theme,
     theme$axis.title.y <- add_markdown(theme$axis.title.y)
     theme$legend.title <- add_markdown(theme$legend.title)
     if (type != "geom_sf") {
-      theme$legend.text <- add_markdown(theme$legend.text)
       if (isTRUE(horizontal)) {
+        # values of the turned x axis
         theme$axis.text.y <- add_markdown(theme$axis.text.y)
       } else {
         # values of the x axis
@@ -1416,11 +1415,11 @@ sort_data <- function(original_values, sort_method, datapoints, summarise_functi
     # don't sort at all
     return(original_values)
   }
-
+  
   # set up sort_method
   sort_method.bak <- sort_method[1L]
   sort_method <- validate_sorting(sort_method = sort_method, horizontal = horizontal)
-
+  
   # factors get a special treatment - they are sorted on their levels
   if (is.factor(original_values)) {
     if (sort_method %in% c("alpha", "alpha-asc", "asc")) {

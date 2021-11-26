@@ -111,7 +111,7 @@
 #' @param sep separator character to use if multiple columns are given to either of the three directions: `x`, `category` and `facet`, e.g. `facet = c(column1, column2)`
 #' @param print a [logical] to indicate if the result should be [printed][print()] instead of just returned
 #' @param text_factor text factor to use, which will apply to all texts shown in the plot
-#' @param family font family to use
+#' @param family font family to use, can be set with `options(plot2.family = "...")`
 #' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]
 #' @param markdown a [logical] to turn all labels and titles into markdown-supported labels, by extending their S3 classes with [`"element_markdown"`][ggtext::element_markdown()], a feature of the `ggtext` package
 #' @param taxonomy_italic a [logical] to transform all labels and titles into italics that are in the `microorganisms` data set of the `AMR` package
@@ -169,7 +169,7 @@
 #' 
 #' library(dplyr, warn.conflicts = FALSE)
 #'   
-#' head(admitted_patients)
+#' admitted_patients
 #' 
 #' # if there are more Y values than groups, the default will be boxplot
 #' admitted_patients %>%
@@ -204,7 +204,7 @@
 #' patients_per_hospital_gender <- admitted_patients %>%
 #'   count(hospital, gender)
 #'   
-#' head(patients_per_hospital_gender)
+#' patients_per_hospital_gender
 #'   
 #' patients_per_hospital_gender %>%
 #'   plot2()
@@ -360,7 +360,7 @@ plot2 <- function(.data,
                   sep = "/",
                   print = FALSE,
                   text_factor = 1,
-                  family = "Calibri",
+                  family = getOption("plot2.family"),
                   theme = theme_minimal2(),
                   markdown = TRUE,
                   taxonomy_italic = markdown,
@@ -676,7 +676,6 @@ plot2_exec <- function(.data,
   if (type == "geom_sf") {
     df <- df %>% select(-`_var_x`)
   }
-  
   # set default size and width ----
   size <- validate_size(size = size, type = type)
   width <- validate_width(width = width, type = type)
@@ -820,9 +819,11 @@ plot2_exec <- function(.data,
   }
   
   # add the right scales ----
-  
+  if (is.null(family)) {
+    family <- ""
+  }
   if (has_category(df) && is.numeric(get_category(df))) {
-    p <- p + 
+    p <- p +
       validate_category_scale(values = get_category(df),
                               type = type,
                               cols = cols,

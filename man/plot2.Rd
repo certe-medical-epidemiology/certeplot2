@@ -117,7 +117,7 @@ plot2(
   sep = "/",
   print = FALSE,
   text_factor = 1,
-  family = "Calibri",
+  family = getOption("plot2.family"),
   theme = theme_minimal2(),
   markdown = TRUE,
   taxonomy_italic = markdown,
@@ -290,7 +290,7 @@ plot2(
 
 \item{text_factor}{text factor to use, which will apply to all texts shown in the plot}
 
-\item{family}{font family to use}
+\item{family}{font family to use, can be set with \code{options(plot2.family = "...")}}
 
 \item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}}
 
