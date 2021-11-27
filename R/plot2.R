@@ -576,7 +576,7 @@ plot2_exec <- function(.data,
   df <- .data %>%
     mutate(`_var_y` = {{ y }},
            `_var_datalabels` = {{ datalabels }}) %>% 
-    # add the three directions, these functions also support Tidyverse selections: `facet = where(is.character)`
+    # add the three directions, these functions also support tidyverse selections: `facet = where(is.character)`
     add_direction(direction = {{ x }},
                   var_name = "x",
                   sep = sep) %>% 

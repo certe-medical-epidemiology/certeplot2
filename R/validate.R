@@ -116,8 +116,10 @@ validate_data <- function(df,
   
   numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.numeric)))
   numeric_cols <- numeric_cols[numeric_cols %unlike% "^_var_"]
-  character_factor_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(x) is.character(x) | is.factor(x))))
-  character_factor_cols <- character_factor_cols[character_factor_cols %unlike% "^_var_"]
+  character_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.character)))
+  character_cols <- character_cols[character_cols %unlike% "^_var_"]
+  non_numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(x) !is.numeric(x))))
+  non_numeric_cols <- non_numeric_cols[non_numeric_cols %unlike% "^_var_"]
   
   if (!has_y(df) && "n" %in% numeric_cols && is.numeric(df$n)) {
     # give preference to "n" for the y axis
@@ -162,11 +164,11 @@ validate_data <- function(df,
         # don't show when type for density geoms - y will not be used
         df <- df %>% 
           mutate(`_var_y` = df %>% pull(`_var_x`))
-      } else if (!has_x(df) && type == "" && length(character_factor_cols) == 0) {
+      } else if (!has_x(df) && type == "" && length(non_numeric_cols) == 0) {
         # has no x and no y, make it a histogram
         plot2_message("Using ", font_blue("x = ", numeric_cols, collapse = NULL))
         plot2_message("Assuming ", font_blue("type = \"histogram\""),
-                      " since the data has only numeric variable and no character/factor variables")
+                      " since the data has only one numeric variable and no other variables")
         type <- "geom_histogram"
         df <- df %>% 
           mutate(`_var_x` = df %>% pull(numeric_cols),
@@ -262,8 +264,6 @@ validate_data <- function(df,
       # for when given: datalabels = TRUE, guess the results
       if (type == "geom_sf") {
         # take values from first character column in case of sf plots
-        character_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.character)))
-        character_cols <- character_cols[character_cols %unlike% "^_var_"]
         if (!is.na(character_cols[1L])) {
           plot2_message("Using ", font_blue("datalabels = ", character_cols[1L], collapse = NULL))
           df <- df %>% mutate(`_var_datalabels` = df %>% pull(character_cols[1L]))

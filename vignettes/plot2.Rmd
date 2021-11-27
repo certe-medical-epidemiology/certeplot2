@@ -10,15 +10,21 @@ editor_options:
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4,
   collapse = TRUE,
   comment = "#>"
 )
+library(certeplot2)
+args <- names(formals(plot2))
+args <- args[!args %in% c("x.category", "y.category")]
+x_settings <- args[grepl("^x[.]", args)]
+category_settings <- args[grepl("^category[.]", args)]
+facet_settings <- args[grepl("^facet[.]", args)]
 ```
 
 # Introduction
 
-Plotting with `plot2()` - **Less typing, faster coding**
+*Plotting with `plot2()` - **Less typing, faster coding***
 
 The `plot2()` function is a convenient wrapper around many `ggplot2` functions such as `ggplot()`, `aes()`, `geom_col()`, `facet_wrap()`, `labs()`, etc., and provides:
 
@@ -36,17 +42,19 @@ The `plot2()` function is a convenient wrapper around many `ggplot2` functions s
     * Labels with data values can easily be printed and are automatically determined
   * Support for any `ggplot2` extension based on `ggplot2::fortify()`
   
-The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. The default `plot2()` function currently has `r length(formals(plot2)) - 1` arguments, all with a default value. **Less typing, faster coding.**
+The `ggplot2` package in conjunction with the `dplyr`, `forcats` and `cleaner` packages can provide above functionalities, but *the goal of the `plot2()` function is to generalise this into one function*. The default `plot2()` function currently has `r length(args)` arguments, all with a default value. **Less typing, faster coding.**
+
+Every `plot2` is just a `ggplot` object, and thus extendible and editable with any other `ggplot2` function, using `+` (per the `ggplot2` convention`).
 
 ### Initialisation
 
-To begin, load the package:
+To start, load the package:
 
-```{r setup, message = FALSE, warning = FALSE}
+```{r}
 library(certeplot2)
 ```
 
-The `ggplot2` package must (of course) be installed, but it does not need to be loaded using `library()`. The same goes for other tidyverse packages, such as `dplyr`, `forcats` and `tidyr`. They are only used internally and not required to load before using the `plot2()` function.
+The `ggplot2` package must (of course) be installed, but it does not need to be loaded using `library()`. The same goes for other tidyverse packages, such as `dplyr`, `forcats` and `stringr`. They are only used internally and not required to load before using the `plot2()` function.
 
 # Setting plot type / geom
 
@@ -60,7 +68,7 @@ data.frame(x = c(1:10),
   plot2()
 ```
 
-If the x axis are factors or characters, the type will be column:
+If the x axis is of class `factor` or `character`, the type will be column:
 
 ```{r}
 data.frame(x = letters[1:10],
@@ -73,6 +81,7 @@ Notice how the y axis starts at `y = 0` and all columns have datalabels (since t
 If the y axis is absent and the x axis is numeric, the default will be a histogram:
 
 ```{r}
+# rnorm() here generates a thousand random values according to a normal distribution
 data.frame(x = rnorm(1000, mean = 10)) %>% 
   plot2()
 ```
@@ -80,7 +89,9 @@ data.frame(x = rnorm(1000, mean = 10)) %>%
 If there are multiple y values for each x, the default will be a boxplot:
 
 ```{r}
-data.frame(x = rep(letters[1:3], 4),
+data.frame(x = c("a", "a", "a", "a",
+                 "b", "b", "b", "b",
+                 "c", "c", "c", "c"),
            y = rnorm(12, mean = 10)) %>% 
   plot2()
 ```
@@ -88,33 +99,107 @@ data.frame(x = rep(letters[1:3], 4),
 The `type` arguments accepts any (abbreviation of) `ggplot2` geoms:
 
 ```{r}
-data.frame(x = rep(letters[1:3], 4),
+data.frame(x = c("a", "a", "a", "a",
+                 "b", "b", "b", "b",
+                 "c", "c", "c", "c"),
            y = rnorm(12, mean = 10)) %>% 
-  plot2(type = "violin") # can also be "v"
+  plot2(type = "violin") # can also be "v" or "geom_violin"
 
-data.frame(x = rep(letters[1:3], 4),
+data.frame(x = c("a", "a", "a", "a",
+                 "b", "b", "b", "b",
+                 "c", "c", "c", "c"),
            y = rnorm(12, mean = 10)) %>% 
   plot2(type = "j") # abbreviation of "jitter"
 ```
 
-# Setting the 3 directions 
+# Setting the 3 plotting directions 
+
+`plot2()` comes with three different plotting directions: `x`, `category` and `facet`. The `x` direction plots along the x axis, the `category` plots using the legend (and replaces `ggplot2`'s *colour* and *fill*), and the `facet` direction plots using facets.
+
+In `ggplot2()`, everything set in `aes()` will in fact become such a direction. `plot2()` provides no support for plotting categorically using e.g., *shape*, *linetype* or *size*.
+
+### Tidy evaluation
+
+All plotting directions in `plot2()` support tidy evaluation. This means that pretty much any input can be given, and `plot2()` (or actually, the `rlang` package) handles everything for you:
+
+```{r}
+mtcars %>% plot2(mpg, hp)
+               # |    ^ this is y
+               # ^ this is x
+```
+
+Tidy evaluation allows for in-place transformations as well:
+
+```{r}
+my_y_values <- mtcars$hp ^ 3
+mtcars %>%
+  plot2(x = mpg ^ 2,
+        y = my_y_values)
+```
+
+## The `x` direction
+
+The x axis is the most commonly used way to categorise values of *y* according to another variable. All arguments of `plot2()` that start with `x.` are for adjusting settings of the x axis. These are: `r paste0("'", sort(x_settings), "'", collapse = ", ")`.
+
+### `x` labels
+
+Many of these arguments are determined based on the input data. For example, `x.date_breaks` and `x.date_labels` are automatically determined if they are left blank:
+
+```{r}
+library(cleaner) # 'cleaner' has a rdate() function for random dates
+data.frame(x = rdate(100, min = "2016-01-01", max = "2021-12-31"),
+           y = rnorm(100, mean = 10)) %>% 
+  plot2(type = "p")
+
+data.frame(x = rdate(100, min = "2021-06-01", max = "2021-12-31"),
+           y = rnorm(100, mean = 10)) %>% 
+  plot2(type = "p")
+
+data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
+           y = rnorm(100, mean = 10)) %>% 
+  plot2(type = "p")
+```
+
+If you have crowded x labels, it's easy to turn them:
+
+```{r}
+data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
+           y = rnorm(100, mean = 10)) %>% 
+  plot2(x.date_breaks = "1 day",
+        x.date_labels = "ddd d mmm yyyy",
+        type = "p",
+        title = "Change this...")
+
+data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
+           y = rnorm(100, mean = 10)) %>% 
+  plot2(x.date_breaks = "1 day",
+        x.date_labels = "ddd d mmm yyyy",
+        x.lbl_angle = 90, # <- only requires this argument
+        type = "p",
+        title = "... into this:")
+```
+
+These arguments automatically pop up if you press <kbd>tab</kbd> after typing `plot2(x.)`:
+
+![Settings of the x axis.](x_elements.png)
+
+This means that users no longer need to memorise many `ggplot2` functions *and* their arguments to actually make one tiny adjustment. So, this 'library' with all settings and options is constantly available for all who code, lowering the bar for beginners as well.
+
+## The `category` direction
+
+## The `facet` direction
 
 ## Setting multiple columns {.tabset}
 
-Support multiple columns, with `c(...)` or even Tidyverse selectors:
+Support multiple columns, with `c(...)` or even tidyverse selectors:
 
 ```{r}
 admitted_patients %>%
   plot2(x = hospital, facet = where(is.character))
 ```
 
-## The x axis
 
-## The category
-
-## The facet
-
-# Setting the values
+# Setting the values of `y`
 
 # Sorting
 
