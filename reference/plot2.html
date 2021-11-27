@@ -83,7 +83,7 @@ See plot2-methods for all implemented methods for different object classes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.26</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.29</span>
       </span>
     </div>
 
@@ -272,7 +272,7 @@ See plot2-methods for all implemented methods for different object classes." />
   family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"plot2.family"</span><span class='op'>)</span>,
   theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span><span class='op'>)</span>,
   markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  taxonomy_italic <span class='op'>=</span> <span class='va'>markdown</span>,
+  taxonomy_italic <span class='op'>=</span> <span class='cn'>FALSE</span>,
   x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.category <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
@@ -713,16 +713,21 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-in'></span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span>, warn.conflicts <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
 <span class='r-in'>  </span>
-<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>admitted_patients</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 6 × 6</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   date       gender   age age_group hospital ward   </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;date&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;ord&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> 2002-02-18 M         82 75+       B        Non-ICU</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span> 2002-02-21 M         64 55-74     D        Non-ICU</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span> 2002-02-24 M          0 0-11      C        Non-ICU</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span> 2002-04-14 M         73 55-74     C        Non-ICU</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>5</span> 2002-04-14 M         72 55-74     C        Non-ICU</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>6</span> 2002-04-26 M         79 75+       D        Non-ICU</span>
+<span class='r-in'><span class='va'>admitted_patients</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 250 × 6</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    date       gender   age age_group hospital ward   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;date&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;ord&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> 2002-02-18 M         82 75+       B        Non-ICU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> 2002-02-21 M         64 55-74     D        Non-ICU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> 2002-02-24 M          0 0-11      C        Non-ICU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> 2002-04-14 M         73 55-74     C        Non-ICU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> 2002-04-14 M         72 55-74     C        Non-ICU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> 2002-04-26 M         79 75+       D        Non-ICU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> 2002-05-04 F         46 25-54     B        ICU    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> 2002-07-15 M         84 75+       A        ICU    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> 2002-07-15 F         67 55-74     B        ICU    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> 2002-08-31 F         80 75+       B        ICU    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 240 more rows</span></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># if there are more Y values than groups, the default will be boxplot</span></span>
 <span class='r-in'><span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
@@ -772,8 +777,8 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-in'><span class='va'>patients_per_hospital_gender</span> <span class='op'>&lt;-</span> <span class='va'>admitted_patients</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/count.html'>count</a></span><span class='op'>(</span><span class='va'>hospital</span>, <span class='va'>gender</span><span class='op'>)</span></span>
 <span class='r-in'>  </span>
-<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>patients_per_hospital_gender</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 6 × 3</span></span>
+<span class='r-in'><span class='va'>patients_per_hospital_gender</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 8 × 3</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   hospital gender     n</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span> A        F         12</span>
@@ -782,6 +787,8 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span> B        M         40</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>5</span> C        F         36</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>6</span> C        M         34</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>7</span> D        F         32</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>8</span> D        M         42</span>
 <span class='r-in'>  </span>
 <span class='r-in'><span class='va'>patients_per_hospital_gender</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>  <span class='fu'>plot2</span><span class='op'>(</span><span class='op'>)</span></span>

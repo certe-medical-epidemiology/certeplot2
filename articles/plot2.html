@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>plot2() plotting • certeplot2</title>
+<title>plot2() • certeplot2</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="plot2() plotting">
+<meta property="og:title" content="plot2()">
 <meta property="og:description" content="certeplot2">
 <meta property="og:image" content="https://certe-medical-epidemiology.github.io/certeplot2/logo.svg">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.26</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.29</span>
       </span>
     </div>
 
@@ -102,7 +102,7 @@
       </header><script src="plot2_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>plot2() plotting</h1>
+      <h1 data-toc-skip>plot2()</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/certe-medical-epidemiology/certeplot2/blob/master/vignettes/plot2.Rmd"><code>vignettes/plot2.Rmd</code></a></small>
@@ -112,46 +112,227 @@
 
     
     
-<p>Start up by loading this package and the <code>dplyr</code> package to utilise the pipe (<code>%&gt;%</code>):</p>
+<div id="introduction" class="section level1">
+<h1 class="hasAnchor">
+<a href="#introduction" class="anchor"></a>Introduction</h1>
+<p><em>Plotting with <code><a href="../reference/plot2.html">plot2()</a></code> - <strong>Less typing, faster coding</strong></em></p>
+<p>The <code><a href="../reference/plot2.html">plot2()</a></code> function is a convenient wrapper around many <code>ggplot2</code> functions such as <code>ggplot()</code>, <code>aes()</code>, <code>geom_col()</code>, <code>facet_wrap()</code>, <code>labs()</code>, etc., and provides:</p>
+<ul>
+<li>Writing as few lines of codes as possible</li>
+<li>Easy plotting in three ‘directions’: <code>x</code> (the regular x axis), <code>category</code> (replaces ‘fill’ and ‘colour’) and <code>facet</code>
+</li>
+<li>Automatic setting of these ‘directions’ based on the input data</li>
+<li>Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the ‘direction’: <code>x.sort</code>, <code>category.sort</code> and <code>facet.sort</code>
+</li>
+<li>Easy limiting values, e.g. by setting <code>x.max_items = 5</code> or <code>category.max_items = 5</code>
+</li>
+<li>Markdown support for any label, with any theme</li>
+<li>An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: <code><a href="../reference/theme_minimal2.html">theme_minimal2()</a></code>
+</li>
+<li>Some conveniences from Microsoft Excel:
+<ul>
+<li>The y axis starts at 0 if possible</li>
+<li>The y scale expands at the top to be better able to interpret all data points</li>
+<li>Date breaks can be written in a human-readable format (such as “d mmm yyyy”)</li>
+<li>Labels with data values can easily be printed and are automatically determined</li>
+</ul>
+</li>
+<li>Support for any <code>ggplot2</code> extension based on <code><a href="https://ggplot2.tidyverse.org/reference/fortify.html">ggplot2::fortify()</a></code>
+</li>
+</ul>
+<p>The <code>ggplot2</code> package in conjunction with the <code>dplyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but <em>the goal of the <code><a href="../reference/plot2.html">plot2()</a></code> function is to generalise this into one function</em>. The default <code><a href="../reference/plot2.html">plot2()</a></code> function currently has 117 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
+<p>Every <code>plot2</code> is just a <code>ggplot</code> object, and thus extendible and editable with any other <code>ggplot2</code> function, using <code>+</code> (per the <code>ggplot2</code> convention`).</p>
+<div id="initialisation" class="section level3">
+<h3 class="hasAnchor">
+<a href="#initialisation" class="anchor"></a>Initialisation</h3>
+<p>To start, load the package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://certe-medical-epidemiology.github.io/certeplot2">certeplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></code></pre></div>
-<p>To work with <code><a href="../reference/plot2.html">plot2()</a></code>, the <code>ggplot2</code> package must be installed but it does not need to be loaded.</p>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://certe-medical-epidemiology.github.io/certeplot2">certeplot2</a></span><span class="op">)</span></code></pre></div>
+<p>The <code>ggplot2</code> package must (of course) be installed, but it does not need to be loaded using <code><a href="https://rdrr.io/r/base/library.html">library()</a></code>. The same goes for other tidyverse packages, such as <code>dplyr</code>, <code>forcats</code> and <code>stringr</code>. They are only used internally and not required to load before using the <code><a href="../reference/plot2.html">plot2()</a></code> function.</p>
+</div>
+</div>
 <div id="setting-plot-type-geom" class="section level1">
 <h1 class="hasAnchor">
 <a href="#setting-plot-type-geom" class="anchor"></a>Setting plot type / geom</h1>
+<p><code><a href="../reference/plot2.html">plot2()</a></code> was designed to help you with creating plots by doing code suggestions, much to the contrary of <code>ggplot2</code>, where every detail has to be defined manually.</p>
+<p>To start with, the plot <strong>type</strong> will be determined automatically if left blank. For example, it will be numeric if both the x and y axes are numeric:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>,
+           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">11</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co">#&gt; i Using x = x</span>
+<span class="co">#&gt; i Using y = y</span>
+<span class="co">#&gt; i Using type = "point" since both axes are numeric</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
+<p>If the x axis is of class <code>factor</code> or <code>character</code>, the type will be column:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>,
+           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">11</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co">#&gt; i Using y = y</span>
+<span class="co">#&gt; i Using x = x</span>
+<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-4-1.png" width="576"></p>
+<p>Notice how the y axis starts at <code>y = 0</code> and all columns have datalabels (since the default value for the <code>datalabels</code> argument is <code>TRUE</code> for a discrete x axis).</p>
+<p>If the y axis is absent and the x axis is numeric, the default will be a histogram:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># rnorm() here generates a thousand random values according to a normal distribution</span>
+<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">1000</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co">#&gt; i Using x = x</span>
+<span class="co">#&gt; i Assuming type = "histogram" since the data has only one numeric variable and no other variables</span>
+<span class="co">#&gt; i Using binwidth = 0.3 based on data</span>
+<span class="co">#&gt; i Assuming smooth = TRUE for type = "histogram"</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-5-1.png" width="576"></p>
+<p>If there are multiple y values for each x, the default will be a boxplot:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>,
+                 <span class="st">"b"</span>, <span class="st">"b"</span>, <span class="st">"b"</span>, <span class="st">"b"</span>,
+                 <span class="st">"c"</span>, <span class="st">"c"</span>, <span class="st">"c"</span>, <span class="st">"c"</span><span class="op">)</span>,
+           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co">#&gt; i Using y = y</span>
+<span class="co">#&gt; i Using x = x</span>
+<span class="co">#&gt; i Using type = "boxplot" since all groups have size &gt;= 3</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-6-1.png" width="576"></p>
+<p>The <code>type</code> arguments accepts any (abbreviation of) <code>ggplot2</code> geoms:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>,
+                 <span class="st">"b"</span>, <span class="st">"b"</span>, <span class="st">"b"</span>, <span class="st">"b"</span>,
+                 <span class="st">"c"</span>, <span class="st">"c"</span>, <span class="st">"c"</span>, <span class="st">"c"</span><span class="op">)</span>,
+           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"violin"</span><span class="op">)</span> <span class="co"># can also be "v" or "geom_violin"</span>
+<span class="co">#&gt; i Using y = y</span>
+<span class="co">#&gt; i Using x = x</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-7-1.png" width="576"></p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>,
+                 <span class="st">"b"</span>, <span class="st">"b"</span>, <span class="st">"b"</span>, <span class="st">"b"</span>,
+                 <span class="st">"c"</span>, <span class="st">"c"</span>, <span class="st">"c"</span>, <span class="st">"c"</span><span class="op">)</span>,
+           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"j"</span><span class="op">)</span> <span class="co"># abbreviation of "jitter"</span>
+<span class="co">#&gt; i Using y = y</span>
+<span class="co">#&gt; i Using x = x</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-7-2.png" width="576"></p>
 </div>
-<div id="setting-the-3-directions" class="section level1">
+<div id="setting-the-3-plotting-directions" class="section level1">
 <h1 class="hasAnchor">
-<a href="#setting-the-3-directions" class="anchor"></a>Setting the 3 directions</h1>
+<a href="#setting-the-3-plotting-directions" class="anchor"></a>Setting the 3 plotting directions</h1>
+<p><code><a href="../reference/plot2.html">plot2()</a></code> comes with three different plotting directions: <code>x</code>, <code>category</code> and <code>facet</code>. The <code>x</code> direction plots along the x axis, the <code>category</code> plots using the legend (and replaces <code>ggplot2</code>’s <em>colour</em> and <em>fill</em>), and the <code>facet</code> direction plots using facets.</p>
+<p>In <code>ggplot2()</code>, everything set in <code>aes()</code> will in fact become such a direction. <code><a href="../reference/plot2.html">plot2()</a></code> provides no support for plotting categorically using e.g., <em>shape</em>, <em>linetype</em> or <em>size</em>.</p>
+<div id="tidy-evaluation" class="section level3">
+<h3 class="hasAnchor">
+<a href="#tidy-evaluation" class="anchor"></a>Tidy evaluation</h3>
+<p>All plotting directions in <code><a href="../reference/plot2.html">plot2()</a></code> support tidy evaluation. This means that pretty much any input can be given, and <code><a href="../reference/plot2.html">plot2()</a></code> (or actually, the <code>rlang</code> package) handles everything for you:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mtcars</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">hp</span><span class="op">)</span>
+<span class="co">#&gt; i Using type = "point" since both axes are numeric</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-8-1.png" width="576"></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R">               <span class="co"># |    ^ this is y</span>
+               <span class="co"># ^ this is x</span></code></pre></div>
+<p>Tidy evaluation allows for in-place transformations as well:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">my_y_values</span> <span class="op">&lt;-</span> <span class="va">mtcars</span><span class="op">$</span><span class="va">hp</span> <span class="op">^</span> <span class="fl">3</span>
+<span class="va">mtcars</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mpg</span> <span class="op">^</span> <span class="fl">2</span>,
+        y <span class="op">=</span> <span class="va">my_y_values</span><span class="op">)</span>
+<span class="co">#&gt; i Using type = "point" since both axes are numeric</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-9-1.png" width="576"></p>
+</div>
+<div id="the-x-direction" class="section level2">
+<h2 class="hasAnchor">
+<a href="#the-x-direction" class="anchor"></a>The <code>x</code> direction</h2>
+<p>The x axis is the most commonly used way to categorise values of <em>y</em> according to another variable. All arguments of <code><a href="../reference/plot2.html">plot2()</a></code> that start with <code>x.</code> are for adjusting settings of the x axis. These are: ‘x.breaks’, ‘x.breaks_n’, ‘x.character’, ‘x.date_breaks’, ‘x.date_labels’, ‘x.expand’, ‘x.lbl_align’, ‘x.lbl_angle’, ‘x.lbl_italic’, ‘x.limits’, ‘x.max_items’, ‘x.max_txt’, ‘x.position’, ‘x.remove’, ‘x.sort’, ‘x.title’, ‘x.trans’.</p>
+<div id="x-labels" class="section level3">
+<h3 class="hasAnchor">
+<a href="#x-labels" class="anchor"></a><code>x</code> labels</h3>
+<p>Many of these arguments are determined based on the input data. For example, <code>x.date_breaks</code> and <code>x.date_labels</code> are automatically determined if they are left blank:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/msberends/cleaner">cleaner</a></span><span class="op">)</span> <span class="co"># 'cleaner' has a rdate() function for random dates</span>
+<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/cleaner/man/rdate.html">rdate</a></span><span class="op">(</span><span class="fl">100</span>, min <span class="op">=</span> <span class="st">"2016-01-01"</span>, max <span class="op">=</span> <span class="st">"2021-12-31"</span><span class="op">)</span>,
+           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span>
+<span class="co">#&gt; i Using y = y</span>
+<span class="co">#&gt; i Using x = x</span>
+<span class="co">#&gt; i Using x.date_breaks = "1 year" based on data</span>
+<span class="co">#&gt; i Using x.date_labels = "mmm yyyy" based on data</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-10-1.png" width="576"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/cleaner/man/rdate.html">rdate</a></span><span class="op">(</span><span class="fl">100</span>, min <span class="op">=</span> <span class="st">"2021-06-01"</span>, max <span class="op">=</span> <span class="st">"2021-12-31"</span><span class="op">)</span>,
+           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span>
+<span class="co">#&gt; i Using y = y</span>
+<span class="co">#&gt; i Using x = x</span>
+<span class="co">#&gt; i Using x.date_breaks = "1 month" based on data</span>
+<span class="co">#&gt; i Using x.date_labels = "mmmm yyyy" based on data</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-10-2.png" width="576"></p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/cleaner/man/rdate.html">rdate</a></span><span class="op">(</span><span class="fl">100</span>, min <span class="op">=</span> <span class="st">"2021-12-01"</span>, max <span class="op">=</span> <span class="st">"2021-12-31"</span><span class="op">)</span>,
+           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span>
+<span class="co">#&gt; i Using y = y</span>
+<span class="co">#&gt; i Using x = x</span>
+<span class="co">#&gt; i Using x.date_breaks = "4 days" based on data</span>
+<span class="co">#&gt; i Using x.date_labels = "d mmm" based on data</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-10-3.png" width="576"></p>
+<p>If you have crowded x labels, it’s easy to turn them:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/cleaner/man/rdate.html">rdate</a></span><span class="op">(</span><span class="fl">100</span>, min <span class="op">=</span> <span class="st">"2021-12-01"</span>, max <span class="op">=</span> <span class="st">"2021-12-31"</span><span class="op">)</span>,
+           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>x.date_breaks <span class="op">=</span> <span class="st">"1 day"</span>,
+        x.date_labels <span class="op">=</span> <span class="st">"ddd d mmm yyyy"</span>,
+        type <span class="op">=</span> <span class="st">"p"</span>,
+        title <span class="op">=</span> <span class="st">"Change this..."</span><span class="op">)</span>
+<span class="co">#&gt; i Using y = y</span>
+<span class="co">#&gt; i Using x = x</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-11-1.png" width="576"></p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/cleaner/man/rdate.html">rdate</a></span><span class="op">(</span><span class="fl">100</span>, min <span class="op">=</span> <span class="st">"2021-12-01"</span>, max <span class="op">=</span> <span class="st">"2021-12-31"</span><span class="op">)</span>,
+           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>x.date_breaks <span class="op">=</span> <span class="st">"1 day"</span>,
+        x.date_labels <span class="op">=</span> <span class="st">"ddd d mmm yyyy"</span>,
+        x.lbl_angle <span class="op">=</span> <span class="fl">90</span>, <span class="co"># &lt;- only requires this argument</span>
+        type <span class="op">=</span> <span class="st">"p"</span>,
+        title <span class="op">=</span> <span class="st">"... into this:"</span><span class="op">)</span>
+<span class="co">#&gt; i Using y = y</span>
+<span class="co">#&gt; i Using x = x</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-11-2.png" width="576"></p>
+<p>These arguments automatically pop up if you press <kbd>tab</kbd> after typing <code>plot2(x.)</code>:</p>
+<div class="figure">
+<img src="x_elements.png" alt=""><p class="caption">Settings of the x axis.</p>
+</div>
+<p>This means that users no longer need to memorise many <code>ggplot2</code> functions <em>and</em> their arguments to actually make one tiny adjustment. So, this ‘library’ with all settings and options is constantly available for all who code, lowering the bar for beginners as well.</p>
+</div>
+</div>
+<div id="the-category-direction" class="section level2">
+<h2 class="hasAnchor">
+<a href="#the-category-direction" class="anchor"></a>The <code>category</code> direction</h2>
+</div>
+<div id="the-facet-direction" class="section level2">
+<h2 class="hasAnchor">
+<a href="#the-facet-direction" class="anchor"></a>The <code>facet</code> direction</h2>
+</div>
 <div id="setting-multiple-columns" class="section level2 tabset">
 <h2 class="hasAnchor">
 <a href="#setting-multiple-columns" class="anchor"></a>Setting multiple columns</h2>
-<p>Support multiple columns, with <code>c(...)</code> or even Tidyverse selectors:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<p>Support multiple columns, with <code>c(...)</code> or even tidyverse selectors:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">hospital</span>, facet <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.character</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; i Using y = age</span>
-<span class="co">#&gt; Loading required namespace: AMR</span>
 <span class="co">#&gt; i Using type = "boxplot" since all groups have size &gt;= 3</span></code></pre></div>
-<p><img src="plot2_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
-</div>
-<div id="the-x-axis" class="section level2">
-<h2 class="hasAnchor">
-<a href="#the-x-axis" class="anchor"></a>The x axis</h2>
-</div>
-<div id="the-category" class="section level2">
-<h2 class="hasAnchor">
-<a href="#the-category" class="anchor"></a>The category</h2>
-</div>
-<div id="the-facet" class="section level2">
-<h2 class="hasAnchor">
-<a href="#the-facet" class="anchor"></a>The facet</h2>
+<p><img src="plot2_files/figure-html/unnamed-chunk-12-1.png" width="576"></p>
 </div>
 </div>
-<div id="setting-the-values" class="section level1">
+<div id="setting-the-values-of-y" class="section level1">
 <h1 class="hasAnchor">
-<a href="#setting-the-values" class="anchor"></a>Setting the values</h1>
+<a href="#setting-the-values-of-y" class="anchor"></a>Setting the values of <code>y</code>
+</h1>
 </div>
 <div id="sorting" class="section level1">
 <h1 class="hasAnchor">
@@ -180,7 +361,7 @@
 <a href="#plotting-geometries-sf-objects" class="anchor"></a>Plotting geometries (<code>sf</code> objects)</h1>
 <p>Objects of class <code>sf</code> (<em>simple feature</em>) are treated specially by the <code>ggplot2</code> package, although <code><a href="../reference/plot2.html">plot2()</a></code> handles these objects like any other data set. Instead it returns a <code>ggplot</code> object created with <code>geom_sf()</code> internally, but most arguments are usable and even the <code><a href="../reference/theme_minimal2.html">theme_minimal2()</a></code> theme has good use for <code>sf</code> plots.</p>
 <p>The <code>netherlands</code> data set is such an <code>sf</code> object:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span>
 <span class="co">#&gt; Linking to GEOS 3.8.0, GDAL 3.0.4, PROJ 6.3.1</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">netherlands</span><span class="op">)</span>
@@ -202,11 +383,11 @@
 <span class="co">#&gt; 9   Zuid-Holland 2967.352 MULTIPOLYGON (((4.547322 52...</span>
 <span class="co">#&gt; 10       Zeeland 1838.376 MULTIPOLYGON (((3.842477 51...</span></code></pre></div>
 <p>How does it look?</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">netherlands</span><span class="op">)</span>
 <span class="co">#&gt; i Using category = area_km2</span>
 <span class="co">#&gt; i Using datalabels = province</span></code></pre></div>
-<p><img src="plot2_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p><img src="plot2_files/figure-html/unnamed-chunk-14-1.png" width="576"></p>
 </div>
   </div>
 
