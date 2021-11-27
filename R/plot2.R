@@ -133,7 +133,7 @@
 #'     * Labels with data values can easily be printed and are automatically determined
 #'   * Support for any `ggplot2` extension based on [ggplot2::fortify()]
 #'   
-#' The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. For [data.frame]s, [plot2()] currently has `r length(formals(plot2.data.frame)) - 1` arguments, all with a default value. **Less typing, faster coding.**
+#' The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. The generic [plot2()] function currently has `r length(formals(plot2)) - 1` arguments, all with a default value. **Less typing, faster coding.**
 #' @return The [plot2()] function adds new variables to the data for each mapping: any combination of `_var_x`, `_var_y`, `_var_category`, `_var_facet` and `_var_datalabels`. These columns are internally set as mapping using [`aes()`][ggplot2::aes()].
 #' @export
 #' @examples
