@@ -140,11 +140,16 @@ plot2.default <- function(.data,
                           family = getOption("plot2.family"),
                           theme = theme_minimal2(),
                           markdown = TRUE,
-                          taxonomy_italic = markdown,
+                          taxonomy_italic = FALSE,
                           # old certetools pkg support
                           x.category = NULL,
                           y.category = NULL,
                           ...) {
+  
+  if (is.function(.data)) {
+    stop("`plot2()` does not support functions to be plotted", call. = FALSE)
+  }
+  
   # ggplot2's fortify() will try to make this a data.frame,
   # so that plot2.data.frame() can be called
   plot2_exec(fortify(.data),
@@ -404,15 +409,23 @@ plot2.numeric <- function(.data,
                           family = getOption("plot2.family"),
                           theme = theme_minimal2(),
                           markdown = TRUE,
-                          taxonomy_italic = markdown,
+                          taxonomy_italic = FALSE,
                           # old certetools pkg support
                           x.category = NULL,
                           y.category = NULL,
                           ...) {
   y_deparse <- deparse(substitute(.data))
+  if (missing(.data)) {
+    .data <- y
+    y_deparse <- "y"
+  }
   df <- data.frame(y = .data, stringsAsFactors = FALSE)
   colnames(df) <- y_deparse
-  df$x <- seq_len(nrow(df))
+  if (missing(x)) {
+    df$x <- seq_len(nrow(df))
+  } else {
+    df$x <- x
+  }
   plot2_exec(df,
              x = x,
              y = {{ y }},
@@ -670,7 +683,7 @@ plot2.freq <- function(.data,
                        family = getOption("plot2.family"),
                        theme = theme_minimal2(),
                        markdown = TRUE,
-                       taxonomy_italic = markdown,
+                       taxonomy_italic = FALSE,
                        # old certetools pkg support
                        x.category = NULL,
                        y.category = NULL,
@@ -939,7 +952,7 @@ plot2.sf <- function(.data,
                                             axis.line = element_blank(),
                                             axis.ticks = element_blank()),
                      markdown = TRUE,
-                     taxonomy_italic = markdown,
+                     taxonomy_italic = FALSE,
                      # old certetools pkg support
                      x.category = NULL,
                      y.category = NULL,
@@ -1221,7 +1234,7 @@ plot2.data.frame <- function(.data,
                              family = getOption("plot2.family"),
                              theme = theme_minimal2(),
                              markdown = TRUE,
-                             taxonomy_italic = markdown,
+                             taxonomy_italic = FALSE,
                              # old certetools pkg support
                              x.category = NULL,
                              y.category = NULL,
@@ -1372,6 +1385,7 @@ plot2.data.frame <- function(.data,
 #' @details For antimicrobial resistance (AMR) data analysis, use the [`bug_drug_combinations()`][AMR::bug_drug_combinations()] function from the `AMR` package on a data set with antibiograms. The result can be used as input for [plot2()].
 #' @param minimum minimum number of results, defaults to `30`
 #' @param remove_intrinsic_resistant a [logical] to indicate that rows with 100% resistance must be removed from the data set before plotting
+#' @param language language to be used for antibiotic names
 #' @export
 plot2.bug_drug_combinations <- function(.data,
                                         x = ab,
@@ -1406,8 +1420,7 @@ plot2.bug_drug_combinations <- function(.data,
                                         x.date_breaks = NULL,
                                         x.date_labels = NULL,
                                         category.focus = NULL,
-                                        colour = stats::setNames(colourpicker("certe_rsi2", 3),
-                                                                 c("R", "I", "S")),
+                                        colour = "certe_rsi2",
                                         colour_fill = NULL,
                                         x.lbl_angle = ifelse(horizontal, 0, 90),
                                         x.lbl_align = NULL,
@@ -1489,12 +1502,13 @@ plot2.bug_drug_combinations <- function(.data,
                                         family = getOption("plot2.family"),
                                         theme = theme_minimal2(),
                                         markdown = TRUE,
-                                        taxonomy_italic = markdown,
+                                        taxonomy_italic = TRUE,
                                         # old certetools pkg support
                                         x.category = NULL,
                                         y.category = NULL,
                                         minimum = 30,
                                         remove_intrinsic_resistant = TRUE,
+                                        language = "nl",
                                         ...) {
   
   ab_name <- getExportedValue(name = "ab_name", ns = asNamespace("AMR"))
@@ -1508,7 +1522,7 @@ plot2.bug_drug_combinations <- function(.data,
   df <- df %>% 
     filter(total >= minimum) %>% 
     select(-total) %>%
-    mutate(ab = ab_name(ab)) %>% 
+    mutate(ab = ab_name(ab, language = language)) %>% 
     pivot_longer(-c(mo, ab))
   df$name <- factor(df$name, levels = c("S", "I", "R"), ordered = TRUE)
   

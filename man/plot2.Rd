@@ -120,7 +120,7 @@ plot2(
   family = getOption("plot2.family"),
   theme = theme_minimal2(),
   markdown = TRUE,
-  taxonomy_italic = markdown,
+  taxonomy_italic = FALSE,
   x.category = NULL,
   y.category = NULL,
   ...
@@ -367,7 +367,7 @@ plot2(iris, Species, Sepal.Length, type = "violin")
 
 library(dplyr, warn.conflicts = FALSE)
   
-head(admitted_patients)
+admitted_patients
 
 # if there are more Y values than groups, the default will be boxplot
 admitted_patients \%>\%
@@ -402,7 +402,7 @@ admitted_patients \%>\%
 patients_per_hospital_gender <- admitted_patients \%>\%
   count(hospital, gender)
   
-head(patients_per_hospital_gender)
+patients_per_hospital_gender
   
 patients_per_hospital_gender \%>\%
   plot2()

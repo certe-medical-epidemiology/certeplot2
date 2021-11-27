@@ -104,19 +104,6 @@ validate_legend.position <- function(legend.position) {
   legend.position
 }
 
-#' @importFrom dplyr `%>%` mutate across
-add_direction <- function(df, direction, var_name, sep) {
-  tryCatch(df %>% 
-             mutate(across({{ direction }}, .names = paste0("_var_", var_name, "_{col}"))) %>% 
-             summarise_variable(paste0("_var_", var_name), sep = sep),
-           error = function(e) {
-             df <- df %>% 
-               mutate(`_var_` = {{ direction }})
-             colnames(df)[colnames(df) == "_var_"] <- paste0("_var_", var_name)
-             df
-           })
-}
-
 #' @importFrom dplyr `%>%` select pull mutate arrange across
 #' @importFrom certestyle font_bold font_blue
 validate_data <- function(df,
@@ -129,6 +116,8 @@ validate_data <- function(df,
   
   numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.numeric)))
   numeric_cols <- numeric_cols[numeric_cols %unlike% "^_var_"]
+  character_factor_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(x) is.character(x) | is.factor(x))))
+  character_factor_cols <- character_factor_cols[character_factor_cols %unlike% "^_var_"]
   
   if (!has_y(df) && "n" %in% numeric_cols && is.numeric(df$n)) {
     # give preference to "n" for the y axis
@@ -173,6 +162,15 @@ validate_data <- function(df,
         # don't show when type for density geoms - y will not be used
         df <- df %>% 
           mutate(`_var_y` = df %>% pull(`_var_x`))
+      } else if (!has_x(df) && type == "" && length(character_factor_cols) == 0) {
+        # has no x and no y, make it a histogram
+        plot2_message("Using ", font_blue("x = ", numeric_cols, collapse = NULL))
+        plot2_message("Assuming ", font_blue("type = \"histogram\""),
+                      " since the data has only numeric variable and no character/factor variables")
+        type <- "geom_histogram"
+        df <- df %>% 
+          mutate(`_var_x` = df %>% pull(numeric_cols),
+                 `_var_y` = df %>% pull(numeric_cols))
       } else {
         if (has_x(df) && get_x_name(df) == numeric_cols) {
           if (type == "") {
@@ -898,7 +896,7 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
   
   if (geom_is_continuous(type) && geom_has_only_colour(type) && is.numeric(get_category(df))) {
     if (identical(colour, "viridis") | identical(colour_fill, "viridis")) {
-      # choses for viridis, which will lead to scale_colour_viridis_c() in validate_category_scale()
+      # chosen for viridis, which will lead to scale_colour_viridis_c() in validate_category_scale()
       # set the colours here just for the mapping (to allow extension with `+`)
       return(list(colour = colourpicker(colour, 2),
                   colour_fill = colourpicker(colour, 2),
@@ -958,9 +956,6 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
     if (geom_is_continuous(type) && is.null(colour_fill)) {
       # specific treatment for continuous geoms (such as boxplots/violins/histograms/...)
       colour_fill <- add_white(colour, white = 0.35)
-      # } else if (type == "geom_sf") {
-      #   colour_fill <- colourpicker(colour,
-      #                               length = ifelse(length(colour) == 1, length(unique(get_category(df))), 1))
     } else {
       colour_fill <- colourpicker(colour_fill,
                                   length = ifelse(length(colour_fill) == 1, n_unique, 1))
@@ -1058,9 +1053,19 @@ validate_theme <- function(theme,
                            title.colour,
                            subtitle.colour) {
   
-  if (!is.null(theme) && !inherits(theme, "theme")) {
-    plot2_warning("No valid ggplot2 theme, using ", font_blue("theme = ggplot2::theme_grey()"))
-    theme <- NULL
+  if (!is.null(theme)) {
+    if (is.character(theme)) {
+      # for `theme = "theme_bw"` and `theme = "theme_bw()"`
+      theme <- eval(parse(text = theme))
+    }
+    if (is.function(theme)) {
+      # for `theme = theme_bw`
+      theme <- theme()
+    }
+    if (!inherits(theme, "theme")) {
+      plot2_warning("No valid ggplot2 theme, using ", font_blue("theme = ggplot2::theme_grey()"))
+      theme <- NULL
+    }
   }
   
   if (is_empty(theme)) {

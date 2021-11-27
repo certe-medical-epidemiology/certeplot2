@@ -112,7 +112,7 @@
 #' @param print a [logical] to indicate if the result should be [printed][print()] instead of just returned
 #' @param text_factor text factor to use, which will apply to all texts shown in the plot
 #' @param family font family to use, can be set with `options(plot2.family = "...")`
-#' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]
+#' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`).
 #' @param markdown a [logical] to turn all labels and titles into markdown-supported labels, by extending their S3 classes with [`"element_markdown"`][ggtext::element_markdown()], a feature of the `ggtext` package
 #' @param taxonomy_italic a [logical] to transform all labels and titles into italics that are in the `microorganisms` data set of the `AMR` package
 #' @param x.category old argument for `facet`, now deprecated
@@ -363,7 +363,7 @@ plot2 <- function(.data,
                   family = getOption("plot2.family"),
                   theme = theme_minimal2(),
                   markdown = TRUE,
-                  taxonomy_italic = markdown,
+                  taxonomy_italic = FALSE,
                   # old certetools pkg support
                   x.category = NULL,
                   y.category = NULL,
@@ -665,7 +665,7 @@ plot2_exec <- function(.data,
                          datalabels.round = datalabels.round, datalabels.format = datalabels.format)
   }
   # remove datalabels in continuous geoms
-  if (isTRUE(misses_datalabels) && (geom_is_continuous(type) | type %like% "path|line") && type != "geom_sf") {
+  if (has_datalabels(df) && isTRUE(misses_datalabels) && (geom_is_continuous(type) | type %like% "path|line") && type != "geom_sf") {
     df <- df %>% select(-`_var_datalabels`)
   }
   if (!isTRUE(misses_y) && geom_is_continuous_x(type)) {
@@ -819,7 +819,7 @@ plot2_exec <- function(.data,
   }
   
   # add the right scales ----
-  if (is.null(family)) {
+  if (is_empty(family)) {
     family <- ""
   }
   if (has_category(df) && is.numeric(get_category(df))) {
@@ -847,8 +847,20 @@ plot2_exec <- function(.data,
     }
   } else if (type != "geom_sf") {
     p <- p +
-      scale_colour_manual(values = cols$colour) +
-      scale_fill_manual(values = cols$colour_fill)
+      scale_colour_manual(values = cols$colour,
+                          limits = if (is.null(names(cols$colour))) {
+                            NULL
+                          } else {
+                            # remove unneeded labels
+                            base::force
+                          }) + 
+      scale_fill_manual(values = cols$colour_fill,
+                        limits = if (is.null(names(cols$colour))) {
+                          NULL
+                        } else {
+                          # remove unneeded labels
+                          base::force
+                        })
   }
   if (type != "geom_sf") {
     if (has_x(df)) {

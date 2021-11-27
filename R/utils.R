@@ -34,8 +34,13 @@ globalVariables(c(".",
                   "_var_x",
                   "_var_y"))
 
+#' @importFrom dplyr `%>%`
+#' @export
+dplyr::`%>%`
+
 #' @importFrom certestyle font_black font_blue font_red_bg font_white font_bold
 plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", geom = "info") {
+  # at default, only prints in interactive mode and for the website generation
   if (isTRUE(print)) {
     msg <- paste0(font_black(c(...), collapse = NULL), collapse = "")
     # get info icon
@@ -59,6 +64,8 @@ plot2_warning <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") 
 }
 
 summarise_variable <- function(df, var, sep) {
+  # combined with add_direction(), this will add support for multiple vars in one direction:
+  # e.g., category = c(col1, col2)
   cols <- colnames(df)
   old_vars <- cols[cols %like% paste0(var, "_")]
   if (length(old_vars) == 0) {
@@ -71,6 +78,19 @@ summarise_variable <- function(df, var, sep) {
   df <- df[, cols[!cols %in% old_vars], drop = FALSE]
   df[, var] <- new_var
   df
+}
+
+#' @importFrom dplyr `%>%` mutate across
+add_direction <- function(df, direction, var_name, sep) {
+  tryCatch(df %>% 
+             mutate(across({{ direction }}, .names = paste0("_var_", var_name, "_{col}"))) %>% 
+             summarise_variable(paste0("_var_", var_name), sep = sep),
+           error = function(e) {
+             df <- df %>% 
+               mutate(`_var_` = {{ direction }})
+             colnames(df)[colnames(df) == "_var_"] <- paste0("_var_", var_name)
+             df
+           })
 }
 
 #' @importFrom dplyr `%>%` pull

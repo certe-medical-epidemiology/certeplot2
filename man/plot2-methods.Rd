@@ -126,7 +126,7 @@
   family = getOption("plot2.family"),
   theme = theme_minimal2(),
   markdown = TRUE,
-  taxonomy_italic = markdown,
+  taxonomy_italic = FALSE,
   x.category = NULL,
   y.category = NULL,
   ...
@@ -248,7 +248,7 @@
   family = getOption("plot2.family"),
   theme = theme_minimal2(),
   markdown = TRUE,
-  taxonomy_italic = markdown,
+  taxonomy_italic = FALSE,
   x.category = NULL,
   y.category = NULL,
   ...
@@ -370,7 +370,7 @@
   family = getOption("plot2.family"),
   theme = theme_minimal2(),
   markdown = TRUE,
-  taxonomy_italic = markdown,
+  taxonomy_italic = FALSE,
   x.category = NULL,
   y.category = NULL,
   ...
@@ -495,7 +495,7 @@
     axis.text = element_blank(), axis.line = element_blank(), axis.ticks =
     element_blank()),
   markdown = TRUE,
-  taxonomy_italic = markdown,
+  taxonomy_italic = FALSE,
   x.category = NULL,
   y.category = NULL,
   ...
@@ -617,7 +617,7 @@
   family = getOption("plot2.family"),
   theme = theme_minimal2(),
   markdown = TRUE,
-  taxonomy_italic = markdown,
+  taxonomy_italic = FALSE,
   x.category = NULL,
   y.category = NULL,
   ...
@@ -657,7 +657,7 @@
   x.date_breaks = NULL,
   x.date_labels = NULL,
   category.focus = NULL,
-  colour = stats::setNames(colourpicker("certe_rsi2", 3), c("R", "I", "S")),
+  colour = "certe_rsi2",
   colour_fill = NULL,
   x.lbl_angle = ifelse(horizontal, 0, 90),
   x.lbl_align = NULL,
@@ -739,11 +739,12 @@
   family = getOption("plot2.family"),
   theme = theme_minimal2(),
   markdown = TRUE,
-  taxonomy_italic = markdown,
+  taxonomy_italic = TRUE,
   x.category = NULL,
   y.category = NULL,
   minimum = 30,
   remove_intrinsic_resistant = TRUE,
+  language = "nl",
   ...
 )
 }
@@ -1024,6 +1025,8 @@
 \item{minimum}{minimum number of results, defaults to \code{30}}
 
 \item{remove_intrinsic_resistant}{a \link{logical} to indicate that rows with 100\% resistance must be removed from the data set before plotting}
+
+\item{language}{language to be used for antibiotic names}
 }
 \description{
 These are the implemented methods for different S3 classes to be used in \code{\link[=plot2]{plot2()}}. Since they have an extensive list of arguments, they are placed here on a separate manual page.

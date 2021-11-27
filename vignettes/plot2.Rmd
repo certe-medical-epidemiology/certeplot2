@@ -1,8 +1,8 @@
 ---
-title: "plot2() plotting"
+title: "plot2()"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{plot2() plotting}
+  %\VignetteIndexEntry{plot2()}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -16,16 +16,84 @@ knitr::opts_chunk$set(
 )
 ```
 
-Start up by loading this package and the `dplyr` package to utilise the pipe (`%>%`):
+# Introduction
+
+Plotting with `plot2()` - **Less typing, faster coding**
+
+The `plot2()` function is a convenient wrapper around many `ggplot2` functions such as `ggplot()`, `aes()`, `geom_col()`, `facet_wrap()`, `labs()`, etc., and provides:
+
+  * Writing as few lines of codes as possible
+  * Easy plotting in three 'directions': `x` (the regular x axis), `category` (replaces 'fill' and 'colour') and `facet`
+  * Automatic setting of these 'directions' based on the input data
+  * Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': `x.sort`, `category.sort` and `facet.sort`
+  * Easy limiting values, e.g. by setting `x.max_items = 5` or `category.max_items = 5`
+  * Markdown support for any label, with any theme
+  * An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: `theme_minimal2()`
+  * Some conveniences from Microsoft Excel:
+    * The y axis starts at 0 if possible
+    * The y scale expands at the top to be better able to interpret all data points
+    * Date breaks can be written in a human-readable format (such as "d mmm yyyy")
+    * Labels with data values can easily be printed and are automatically determined
+  * Support for any `ggplot2` extension based on `ggplot2::fortify()`
+  
+The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. For `data.frame`s, `plot2()` currently has `r length(formals(plot2.data.frame)) - 1` arguments, all with a default value.
+
+To begin, load the package:
 
 ```{r setup, message = FALSE, warning = FALSE}
 library(certeplot2)
-library(dplyr)
 ```
 
-To work with `plot2()`, the `ggplot2` package must be installed but it does not need to be loaded.
+The `ggplot2` package must (of course) be installed, but it does not need to be loaded using `library()`.
 
 # Setting plot type / geom
+
+`plot2()` was designed to help you with creating plots by doing code suggestions, much to the contrary of `ggplot2`, where every detail has to be defined manually.
+
+To start with, the plot **type** will be determined automatically if left blank. For example, it will be numeric if both the x and y axes are numeric:
+
+```{r}
+data.frame(x = c(1:10),
+           y = c(11:20)) %>% 
+  plot2()
+```
+
+If the x axis are factors or characters, the type will be column:
+
+```{r}
+data.frame(x = letters[1:10],
+           y = c(11:20)) %>% 
+  plot2()
+```
+
+Notice how the y axis starts at `y = 0` and all columns have datalabels (since the default value for the `datalabels` argument is `TRUE` for a discrete x axis).
+
+If the y axis is absent and the x axis is numeric, the default will be a histogram:
+
+```{r}
+data.frame(x = rnorm(1000, mean = 10)) %>% 
+  plot2()
+```
+
+If there are multiple y values for each x, the default will be a boxplot:
+
+```{r}
+data.frame(x = rep(letters[1:3], 4),
+           y = rnorm(12, mean = 10)) %>% 
+  plot2()
+```
+
+The `type` arguments accepts any (abbreviation of) `ggplot2` geoms:
+
+```{r}
+data.frame(x = rep(letters[1:3], 4),
+           y = rnorm(12, mean = 10)) %>% 
+  plot2(type = "violin") # can also be "v"
+
+data.frame(x = rep(letters[1:3], 4),
+           y = rnorm(12, mean = 10)) %>% 
+  plot2(type = "j") # abbreviation of "jitter"
+```
 
 # Setting the 3 directions 
 
