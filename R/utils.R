@@ -65,7 +65,7 @@ plot2_warning <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") 
 
 summarise_variable <- function(df, var, sep) {
   # combined with add_direction(), this will add support for multiple vars in one direction:
-  # e.g., category = c(col1, col2)
+  # e.g., `category = c(col1, col2)`
   cols <- colnames(df)
   old_vars <- cols[cols %like% paste0(var, "_")]
   if (length(old_vars) == 0) {
@@ -80,8 +80,19 @@ summarise_variable <- function(df, var, sep) {
   df
 }
 
-#' @importFrom dplyr `%>%` mutate across
+#' @importFrom dplyr `%>%` select mutate across
 add_direction <- function(df, direction, var_name, sep) {
+  tryCatch({
+    # this for using Tidyverse selectors, such as `facet = where(is.character)`
+    select_test <- df %>%
+      select({{ direction }}) %>% 
+      colnames()
+    select_test <- select_test[select_test %unlike% "^_var_"]
+    if (length(select_test) > 1 && is.character(select_test)) {
+      plot2_message("Using ", font_blue(paste0(var_name, " = c(", paste0(select_test, collapse = ", "), ")")))
+    }
+  }, error = function(e) invisible())
+  
   tryCatch(df %>% 
              mutate(across({{ direction }}, .names = paste0("_var_", var_name, "_{col}"))) %>% 
              summarise_variable(paste0("_var_", var_name), sep = sep),

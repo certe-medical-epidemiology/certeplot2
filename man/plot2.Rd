@@ -13,6 +13,7 @@ plot2(
   type = NULL,
   x.title = NULL,
   y.title = NULL,
+  category.title = NULL,
   title = NULL,
   subtitle = NULL,
   caption = NULL,
@@ -118,7 +119,7 @@ plot2(
   print = FALSE,
   text_factor = 1,
   family = getOption("plot2.family"),
-  theme = theme_minimal2(),
+  theme = getOption("plot2.theme", "theme_minimal2"),
   markdown = TRUE,
   taxonomy_italic = FALSE,
   x.category = NULL,
@@ -147,6 +148,8 @@ plot2(
 \item{x.title}{text to show on the x axis}
 
 \item{y.title}{text to show on the y axis}
+
+\item{category.title}{text to show for the category (legend title)}
 
 \item{title}{title to show}
 
@@ -239,7 +242,7 @@ plot2(
 \item \code{"desc"}: sort \link{factor}s on their \link[=rev]{reversed} levels, otherwise sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
 \item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
-\item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (loewest value first)
+\item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (lowest value first)
 }}
 
 \item{datalabels}{variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' plots, and values of \code{y} otherwise}
@@ -292,7 +295,7 @@ plot2(
 
 \item{family}{font family to use, can be set with \code{options(plot2.family = "...")}}
 
-\item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}}
+\item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}. This argument accepts themes (e.g., \code{theme_bw()}), functions (e.g., \code{theme_bw}) and characters themes (e.g., \code{"theme_bw"}). Can be set with \code{options(plot2.theme = "...")}.}
 
 \item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{\link[ggtext:element_markdown]{"element_markdown"}}, a feature of the \code{ggtext} package}
 
@@ -332,7 +335,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. For \link{data.frame}s, \code{\link[=plot2]{plot2()}} currently has 118 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 119 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)

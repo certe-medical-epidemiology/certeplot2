@@ -15,6 +15,9 @@ knitr::opts_chunk$set(fig.width = 6, fig.height = 4,
   comment = "#>"
 )
 library(certeplot2)
+# load this as well, so function names will get tidyverse links on the website
+library(ggplot2) 
+library(dplyr, warn.conflicts = FALSE)
 args <- names(formals(plot2))
 args <- args[!args %in% c("x.category", "y.category")]
 x_settings <- args[grepl("^x[.]", args)]
@@ -42,7 +45,7 @@ The `plot2()` function is a convenient wrapper around many `ggplot2` functions s
     * Labels with data values can easily be printed and are automatically determined
   * Support for any `ggplot2` extension based on `ggplot2::fortify()`
   
-The `ggplot2` package in conjunction with the `dplyr`, `forcats` and `cleaner` packages can provide above functionalities, but *the goal of the `plot2()` function is to generalise this into one function*. The default `plot2()` function currently has `r length(args)` arguments, all with a default value. **Less typing, faster coding.**
+The `ggplot2` package in conjunction with the `dplyr`, `forcats` and `cleaner` packages can provide above functionalities, but *the goal of the `plot2()` function is to generalise this into one function*. The default `plot2()` function currently has `r length(args)` arguments, all with a default value. 
 
 Every `plot2` is just a `ggplot` object, and thus extendible and editable with any other `ggplot2` function, using `+` (per the `ggplot2` convention`).
 
@@ -54,11 +57,11 @@ To start, load the package:
 library(certeplot2)
 ```
 
-The `ggplot2` package must (of course) be installed, but it does not need to be loaded using `library()`. The same goes for other tidyverse packages, such as `dplyr`, `forcats` and `stringr`. They are only used internally and not required to load before using the `plot2()` function.
+The `ggplot2` package must (of course) be installed, but it does not need to be loaded using `library()`. The same goes for other tidyverse packages, such as `dplyr`, `forcats` and `stringr`. They are only used internally and not required to load before using the `plot2()` function. The pipe function (`%>%`) is also being exported by this package, so it can be used by only loading this package.
 
 # Setting plot type / geom
 
-`plot2()` was designed to help you with creating plots by doing code suggestions, much to the contrary of `ggplot2`, where every detail has to be defined manually.
+`plot2()` was designed to help you with creating plots by doing non-intrusive suggestions, much to the contrary of `ggplot2`, where every detail has to be defined manually.
 
 To start with, the plot **type** will be determined automatically if left blank. For example, it will be numeric if both the x and y axes are numeric:
 
@@ -76,7 +79,7 @@ data.frame(x = letters[1:10],
   plot2()
 ```
 
-Notice how the y axis starts at `y = 0` and all columns have datalabels (since the default value for the `datalabels` argument is `TRUE` for a discrete x axis).
+Notice how the y axis starts at `y = 0` and all columns have datalabels (since the default value for the `datalabels` argument is `TRUE` for a discrete x axis) that do not interfere with plot lines.
 
 If the y axis is absent and the x axis is numeric, the default will be a histogram:
 
@@ -123,9 +126,9 @@ In `ggplot2()`, everything set in `aes()` will in fact become such a direction. 
 All plotting directions in `plot2()` support tidy evaluation. This means that pretty much any input can be given, and `plot2()` (or actually, the `rlang` package) handles everything for you:
 
 ```{r}
+#                |------> this is x
+#                |    |-> this is y
 mtcars %>% plot2(mpg, hp)
-               # |    ^ this is y
-               # ^ this is x
 ```
 
 Tidy evaluation allows for in-place transformations as well:
@@ -181,29 +184,191 @@ data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
 
 These arguments automatically pop up if you press <kbd>tab</kbd> after typing `plot2(x.)`:
 
-![Settings of the x axis.](x_elements.png)
+```{r, echo = FALSE, out.width = "347px", out.height =  "188px"}
+knitr::include_graphics("x_elements.png")
+```
 
 This means that users no longer need to memorise many `ggplot2` functions *and* their arguments to actually make one tiny adjustment. So, this 'library' with all settings and options is constantly available for all who code, lowering the bar for beginners as well.
 
 ## The `category` direction
 
+The `category` plotting direction replaces *colour* and *fill*, which were in our opinion very poorly worded (isn't fill in the plot a colour as well?). `plot2()` automatically determines the colour and fill based on the input data.
+
+### `category` scales
+
+The scale for the `category` is also something that can be determined automatically quite easily - it is after all based on the input data. `ggplot2` returns an error if the scale does not match the data:
+
+```{r, error = TRUE, fig.height = 0}
+character_z <- data.frame(x = rep(letters[1:5], 10),
+                          y = rnorm(50, 5),
+                          # these are 5 letters:
+                          z = rep(letters[6:10], 10),
+                          stringsAsFactors = FALSE)
+head(character_z)
+
+library(ggplot2)
+ggplot(character_z,
+       aes(x = x, y = y, fill = z)) +
+  geom_col() +
+  scale_fill_continuous()
+```
+
+So updating the `aes()` part, also requires users to update the `scale_fill*()` part in this case. `plot2()` determines the type of scale automatically:
+
+```{r}
+numeric_z <- data.frame(x = rep(letters[1:5], 10),
+                        y = rnorm(50, 5),
+                        # these are 5 numbers:
+                        z = rnorm(50, 5),
+                        stringsAsFactors = FALSE)
+head(numeric_z)
+
+character_z %>% 
+    plot2(x, y, z, type = "jitter",
+          caption = "*category* is non-numeric based on inputdata.")
+
+numeric_z %>%  
+    plot2(x, y, z, type = "jitter",
+          caption = "*category* is numeric based on inputdata.")
+```
+
+Settings to this scale can be set with arguments such as `category.labels`, `category.breaks`, `category.limits`, `category.expand` and `category.trans`.
+
+For continuous scales, `plot2()` has an additional argument: `category.midpoint`. When using a 3-point colour scale, this the value of `y` that should have the middle colour, it defaults to the median of `y`:
+
+```{r}
+numeric_z %>%  
+    plot2(x, y, z,
+          type = "jitter",
+          colour = c("red", "green", "blue"))
+numeric_z %>%  
+    plot2(x, y, z,
+          type = "jitter",
+          colour = c("red", "green", "blue"),
+          category.midpoint = 2.5,
+          category.title = "*New* midpoint!")
+```
+
 ## The `facet` direction
 
-## Setting multiple columns {.tabset}
+The `facet` plotting direction splits the plot into multiple plots. Several settings are available: `r paste0("'", sort(facet_settings), "'", collapse = ", ")`.
 
-Support multiple columns, with `c(...)` or even tidyverse selectors:
+For controlling the `y` axis, `facet.repeat_lbls_y` (defaults to `FALSE`) makes sure that all plots have the same y axis:
+
+```{r}
+admitted_patients
+
+admitted_patients %>%
+  plot2(x = age_group, y = age, facet = hospital,
+        caption = "Same y axes")
+
+admitted_patients %>%
+  plot2(x = age_group, y = age, facet = hospital,
+        facet.repeat_lbls_y = TRUE,
+        caption = "All y axes on their own")
+```
+
+You can also omit repeated x labels as well:
 
 ```{r}
 admitted_patients %>%
-  plot2(x = hospital, facet = where(is.character))
+  plot2(x = age_group, y = age, facet = hospital,
+        facet.repeat_lbls_x = FALSE)
 ```
 
+Or change the number of rows the facet should be in:
+
+```{r}
+admitted_patients %>%
+  plot2(x = age_group, y = age, facet = hospital,
+        facet.nrow = 1)
+```
+
+No need to memorise how again the `scales`, `shrink` and `switch` arguments of the `facet_wrap()` function work!
+
+## Setting multiple columns
+
+For all plotting directions (`x`, `category` and `facet`), you can use multiple variables as input, for example using `c()`:
+
+```{r}
+admitted_patients %>%
+  plot2(x = age_group,
+        y = age,
+        facet = c(gender, ward))
+```
+
+You can even use [Tidyverse selectors](https://tidyselect.r-lib.org/reference/language.html):
+
+```{r}
+library(dplyr)
+admitted_patients %>%
+  plot2(x = age_group,
+        y = age,
+        facet = where(is.character),
+        sep = " -- ")
+```
+
+## Sorting
+
+`plot2()` has a powerful sorting option for all three plotting directions: `x.sort`, `category.sort` and `facet.sort`. 
+
+Applying one of the sorting methods will transform the values to an ordered `factor`, which will be used to orient the data. Valid options are:
+  
+  - `TRUE`: sort as `"asc"`
+  - `FALSE`: sort according to the order in the data
+  - `NULL`: do not sort/transform at all
+  - `"asc"` or `"alpha"`: sort `factor`s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (*numeric* sort)
+  - `"desc"`: sort `factor`s on their reversed levels, otherwise sort descending on alphabet, while maintaining numbers in the text (*numeric* sort)
+  - `"order"` or `"inorder"`: sort as `FALSE`
+  - `"freq"` or `"freq-desc"`: sort descending according to the frequencies of `y` computed by `summarise_function` (highest value first)
+  - `"freq-asc"`: sort ascending according to the frequencies of `y` computed by `summarise_function` (lowest value first)
+  
+The default for all plotting directions is `TRUE`, except for continuous values on the `x` axis (such as dates and numbers).
+
+```{r}
+admitted_patients %>%
+  plot2(hospital, y = 1, age_group,
+        y.title = "count",
+        stacked = TRUE,
+        caption = "No sorting")
+
+admitted_patients %>%
+  plot2(hospital, y = 1, age_group,
+        y.title = "count",
+        stacked = TRUE,
+        x.sort = "freq-asc",
+        category.sort = "desc",
+        caption = paste("Hospitals (*x*) now sorted on frequencies (low to high),",
+                        "Age groups (*category*) now sorted on alphabet (desc)",
+                        sep = "\n"))
+```
+
+The sorting can be used in combination with setting a maximum number of items to plot per plotting direction.
+
+## Setting a maximum number of items
+
+`plot2()` has a an option to limit data values for all three plotting directions: `x.max_items`, `category.max_items` and `facet.max_items`. They take a numeric values as input:
+
+```{r}
+admitted_patients %>%
+    plot2(hospital, y = 1, type = "col")
+
+admitted_patients %>%
+    plot2(hospital, y = 1, type = "col",
+          x.max_items = 3)
+```
+
+This can be combined with sorting:
+
+```{r}
+admitted_patients %>%
+    plot2(hospital, y = 1, type = "col",
+          x.sort = "freq-desc",
+          x.max_items = 3,
+          x.max_txt = "These are %n hospitals (covering %p)")
+```
 
 # Setting the values of `y`
-
-# Sorting
-
-# Transforming data
 
 # Legends
 

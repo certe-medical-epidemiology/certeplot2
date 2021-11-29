@@ -19,6 +19,7 @@
   type = NULL,
   x.title = NULL,
   y.title = NULL,
+  category.title = NULL,
   title = NULL,
   subtitle = NULL,
   caption = NULL,
@@ -124,7 +125,7 @@
   print = FALSE,
   text_factor = 1,
   family = getOption("plot2.family"),
-  theme = theme_minimal2(),
+  theme = getOption("plot2.theme", "theme_minimal2"),
   markdown = TRUE,
   taxonomy_italic = FALSE,
   x.category = NULL,
@@ -141,6 +142,7 @@
   type = "point",
   x.title = NULL,
   y.title = NULL,
+  category.title = NULL,
   title = NULL,
   subtitle = NULL,
   caption = NULL,
@@ -246,7 +248,7 @@
   print = FALSE,
   text_factor = 1,
   family = getOption("plot2.family"),
-  theme = theme_minimal2(),
+  theme = getOption("plot2.theme", "theme_minimal2"),
   markdown = TRUE,
   taxonomy_italic = FALSE,
   x.category = NULL,
@@ -368,7 +370,7 @@
   print = FALSE,
   text_factor = 1,
   family = getOption("plot2.family"),
-  theme = theme_minimal2(),
+  theme = getOption("plot2.theme", "theme_minimal2"),
   markdown = TRUE,
   taxonomy_italic = FALSE,
   x.category = NULL,
@@ -385,6 +387,7 @@
   type = NULL,
   x.title = NULL,
   y.title = NULL,
+  category.title = NULL,
   title = NULL,
   subtitle = NULL,
   caption = NULL,
@@ -510,6 +513,7 @@
   type = NULL,
   x.title = NULL,
   y.title = NULL,
+  category.title = NULL,
   title = NULL,
   subtitle = NULL,
   caption = NULL,
@@ -615,7 +619,7 @@
   print = FALSE,
   text_factor = 1,
   family = getOption("plot2.family"),
-  theme = theme_minimal2(),
+  theme = getOption("plot2.theme", "theme_minimal2"),
   markdown = TRUE,
   taxonomy_italic = FALSE,
   x.category = NULL,
@@ -737,7 +741,7 @@
   print = FALSE,
   text_factor = 1,
   family = getOption("plot2.family"),
-  theme = theme_minimal2(),
+  theme = getOption("plot2.theme", "theme_minimal2"),
   markdown = TRUE,
   taxonomy_italic = TRUE,
   x.category = NULL,
@@ -769,6 +773,8 @@
 \item{x.title}{text to show on the x axis}
 
 \item{y.title}{text to show on the y axis}
+
+\item{category.title}{text to show for the category (legend title)}
 
 \item{title}{title to show}
 
@@ -903,7 +909,7 @@
 \item \code{"desc"}: sort \link{factor}s on their \link[=rev]{reversed} levels, otherwise sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
 \item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
-\item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (loewest value first)
+\item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (lowest value first)
 }}
 
 \item{category.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
@@ -915,7 +921,7 @@
 \item \code{"desc"}: sort \link{factor}s on their \link[=rev]{reversed} levels, otherwise sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
 \item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
-\item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (loewest value first)
+\item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (lowest value first)
 }}
 
 \item{facet.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
@@ -927,7 +933,7 @@
 \item \code{"desc"}: sort \link{factor}s on their \link[=rev]{reversed} levels, otherwise sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
 \item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
-\item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (loewest value first)
+\item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (lowest value first)
 }}
 
 \item{datalabels}{variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' plots, and values of \code{y} otherwise}
@@ -1010,7 +1016,7 @@
 
 \item{family}{font family to use, can be set with \code{options(plot2.family = "...")}}
 
-\item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}}
+\item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}. This argument accepts themes (e.g., \code{theme_bw()}), functions (e.g., \code{theme_bw}) and characters themes (e.g., \code{"theme_bw"}). Can be set with \code{options(plot2.theme = "...")}.}
 
 \item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{\link[ggtext:element_markdown]{"element_markdown"}}, a feature of the \code{ggtext} package}
 

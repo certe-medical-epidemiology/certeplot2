@@ -57,6 +57,7 @@ validate_type <- function(type, df = NULL) {
       plot2_warning(font_blue("type"), " can only be of length 1")
     }
     type <- trimws(tolower(type[1L]))
+    type <- gsub(".*::", "", type) # for `type = "ggplot2::geom_col()"`
     type <- gsub("[^a-z0-9_]", "", type)
     if (type == "a") type <- "area"
     if (type == "b") type <- "boxplot"
@@ -318,8 +319,10 @@ validate_data <- function(df,
                                   sort_method = dots$x.sort,
                                   datapoints = get_y(df),
                                   summarise_function = dots$summarise_function,
+                                  summarise_fn_name = dots$summarise_fn_name,
                                   horizontal = dots$horizontal)) %>%
       arrange(across(`_var_x`))
+    df[, get_x_name(df)] <- df$`_var_x` # required to keep sorting after summarising
   }
   if (has_category(df)) {
     df <- df %>% 
@@ -327,7 +330,9 @@ validate_data <- function(df,
                                          sort_method = dots$category.sort,
                                          datapoints = get_y(df),
                                          summarise_function = dots$summarise_function,
+                                         summarise_fn_name = dots$summarise_fn_name,
                                          horizontal = dots$horizontal))
+    df[, get_category_name(df)] <- df$`_var_category` # required to keep sorting after summarising
   }
   if (has_facet(df)) {
     df <- df %>% 
@@ -335,7 +340,9 @@ validate_data <- function(df,
                                       sort_method = dots$facet.sort,
                                       datapoints = get_y(df),
                                       summarise_function = dots$summarise_function,
+                                      summarise_fn_name = dots$summarise_fn_name,
                                       horizontal = FALSE)) # never reversely sort when horizontal
+    df[, get_facet_name(df)] <- df$`_var_facet` # required to keep sorting after summarising
   }
   
   if (type != "geom_sf") {
@@ -571,10 +578,10 @@ validate_y_scale <- function(values,
     if (!is.null(y.limits)) {
       y.limits
     } else if (isTRUE(y.age)) {
-      # geen functie dus, maar vector forceren
+      # so no function, but force a vector
       c(0, max(values) * (1 + y.expand))
     } else if (isTRUE(facet.fixed_y)) {
-      # geen functie dus, maar vector forceren
+      # so no function, but force a vector
       c(NA, max(values) * (1 + y.expand))
     } else {
       function(x, y_expand = y.expand, ...) c(min(0, x), max(x))
@@ -689,7 +696,7 @@ validate_category_scale <- function(values,
     category.expand <- expansion(mult = c(0, category.expand))
   }
   
-  if (geom_has_only_colour(type)) {
+  if (geom_has_only_colour(type) || identical(cols$colour, cols$colour_fill)) {
     aest <- c("colour", "fill")
     cols_category <- cols$colour
   } else {
@@ -902,8 +909,9 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
                   colour_fill = colourpicker(colour, 2),
                   viridis = TRUE))
     } else {
+      colour.bak <- colour
       if (length(colour) == 1) {
-        # in something like point or jitter, start with white
+        # start with white
         colour <- c("white", colourpicker(colour))
       } else if (length(colour) %in% c(2:3)) {
         # two or three colours are supported in validate_category_scale()
@@ -912,7 +920,7 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
         # more colours than needed, take only first two
         colour <- colourpicker(colour, 2)
       }
-      if (is.null(colour_fill)) {
+      if (is.null(colour_fill) || identical(colour.bak, colour_fill)) {
         colour_fill <- colour
       }
       return(list(colour = colour,
@@ -948,8 +956,25 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
       colour_fill <- colourpicker(colour_fill)
     }
     
+  } else if (is.numeric(get_category(df))) {
+    # has also category, and it's numeric
+    colour.bak <- colour
+    if (length(colour) == 1) {
+      # start with white
+      colour <- c("white", colourpicker(colour))
+    } else if (length(colour) %in% c(2:3)) {
+      # two or three colours are supported in validate_category_scale()
+      colour <- colourpicker(colour)
+    } else {
+      # more colours than needed, take only first two
+      colour <- colourpicker(colour, 2)
+    }
+    if (is.null(colour_fill) || identical(colour.bak, colour_fill)) {
+      colour_fill <- colour
+    }
+    
   } else {
-    # has also category
+    # has also category, and it's not numeric
     n_unique <- length(unique(get_category(df)))
     colour <- colourpicker(colour,
                            length = ifelse(length(colour) == 1, n_unique, 1))
@@ -1231,11 +1256,21 @@ validate_facet <- function(df,
     if (isTRUE(horizontal)) {
       switch <- "y"
     }
-    return(facet_grid(cols = vars(`_var_facet`),
-                      space = scales,
-                      drop = facet.drop,
-                      scales = scales,
-                      switch = switch))
+    if (is.null(facet.nrow) || facet.nrow == 1) {
+      return(facet_grid(cols = vars(`_var_facet`),
+                        space = scales,
+                        drop = facet.drop,
+                        scales = scales,
+                        switch = switch))
+    } else {
+      plot2_warning("When using ", font_blue("facet.relative = TRUE"), ", the number of columns cannot be > 1 when ",
+                    font_blue("facet.nrow"), " is larger than 1")
+      return(facet_grid(rows = vars(`_var_facet`),
+                        space = scales,
+                        drop = facet.drop,
+                        scales = scales,
+                        switch = switch))
+    }
   } else {
     return(facet_wrap("`_var_facet`",
                       scales = scales,
@@ -1277,12 +1312,11 @@ set_datalabels <- function(p,
   }
   
   if (!isTRUE(stacked) && !isTRUE(stackedpercent) && type != "geom_sf") {
-    datalabels.fill <- colourpicker(datalabels.fill)
-    datalabels.colour <- colourpicker(datalabels.colour)
+    datalabels.fill <- colourpicker(datalabels.fill, opacity = 0.25) # 25% transparency
   } else {
-    datalabels.fill <- colourpicker(datalabels.fill, opacity = 0.75) # 75% transparent
-    datalabels.colour <- colourpicker(datalabels.colour)
+    datalabels.fill <- colourpicker(datalabels.fill, opacity = 0.75) # 75% transparency
   }
+  datalabels.colour <- colourpicker(datalabels.colour)
   
   is_sf <- (type == "geom_sf")
   
@@ -1413,7 +1447,13 @@ validate_sorting <- function(sort_method, horizontal) {
 
 #' @importFrom forcats fct_inorder fct_reorder
 #' @importFrom stringr str_sort
-sort_data <- function(original_values, sort_method, datapoints, summarise_function, horizontal, last_level) {
+#' @importFrom certestyle font_blue
+sort_data <- function(original_values,
+                      sort_method,
+                      datapoints,
+                      summarise_function,
+                      summarise_fn_name,
+                      horizontal) {
   if (is.null(sort_method) ||
       is.numeric(original_values) ||
       ((isTRUE(sort_method) && is.factor(original_values) && !isTRUE(horizontal)))) {
@@ -1457,36 +1497,39 @@ sort_data <- function(original_values, sort_method, datapoints, summarise_functi
   numeric_sort <- any(original_values %like% "[0-9]", na.rm = TRUE)
   if (sort_method %in% c("alpha", "alpha-asc", "asc")) {
     # alphabetical, or ascending
-    df <- factor(original_values,
+    out <- factor(original_values,
                  levels = str_sort(unique(original_values),
                                    numeric = numeric_sort))
   } else if (sort_method %in% c("alpha-desc", "desc")) {
-    df <- factor(original_values,
+    out <- factor(original_values,
                  levels = str_sort(unique(original_values),
                                    numeric = numeric_sort,
                                    decreasing = TRUE))
   } else if (sort_method %in% c("false", "order", "inorder")) {
-    df <- fct_inorder(as.character(original_values))
+    out <- fct_inorder(as.character(original_values))
   } else if (sort_method %in% c("freq-asc", "infreq-asc")) {
-    df <- fct_reorder(.f = as.character(original_values),
-                      .x = datapoints,
-                      .fun = summarise_function,
-                      .desc = FALSE)
+    plot2_message("Applying sorting ", font_blue(paste0("\"", sort_method, "\"")), " using ",
+                  font_blue(paste0("summarise_function = ", summarise_fn_name)))
+    out <- fct_reorder(.f = as.character(original_values),
+                       .x = datapoints,
+                       .fun = summarise_function,
+                       .desc = FALSE)
   } else if (sort_method %in% c("freq-desc", "infreq-desc")) {
-    df <- fct_reorder(.f = as.character(original_values),
-                      .x = datapoints,
-                      .fun = summarise_function,
-                      .desc = TRUE)
+    plot2_message("Applying sorting ", font_blue(paste0("\"", sort_method, "\"")), " using ",
+                  font_blue(paste0("summarise_function = ", summarise_fn_name)))
+    out <- fct_reorder(.f = as.character(original_values),
+                       .x = datapoints,
+                       .fun = summarise_function,
+                       .desc = TRUE)
   } else {
     stop("invalid sorting option: '", sort_method.bak, "'")
   }
-  
-  df
+  out
 }
 
 #' @importFrom forcats fct_relevel
 #' @importFrom dplyr `%>%` group_by across group_size mutate summarise
-#' @importFrom certestyle font_blue font_red
+#' @importFrom certestyle font_blue font_red format2
 set_max_items <- function(df,
                           y,
                           x,
@@ -1527,7 +1570,9 @@ set_max_items <- function(df,
         lvls_remove <- levels(values)[c(n_max:length(levels(values)))]
       }
       lvls_remove <- lvls_remove[order(-nchar(lvls_remove))]
-      value_new <- gsub("%n", length(lvls_remove), txt, fixed = TRUE)
+      value_new <- gsub("%n", format2(length(lvls_remove)), txt, fixed = TRUE)
+      pct <- format2(length(values[values %in% lvls_remove]) / length(values), percent = TRUE)
+      value_new <- gsub("%p", pct, value_new, fixed = TRUE)
       # add new factor level
       levels(values) <- c(levels(values), value_new)
       # replace all values that must be removed
@@ -1594,7 +1639,8 @@ summarise_data <- function(df,
   df <- df %>%
     mutate(n = get_y(df)) %>%
     group_by(across(c(x, category, facet))) %>%
-    summarise(n = summarise_function(n, na.rm = TRUE))
+    summarise(n = summarise_function(n, na.rm = TRUE),
+              .groups = "drop")
   colnames(df)[colnames(df) == "n"] <- y
   df$`_var_y` <- df[, y, drop = TRUE]
   if (!is.null(x)) df$`_var_x` <- df[, x, drop = TRUE]

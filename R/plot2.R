@@ -36,6 +36,7 @@
 #' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and `"col"` otherwise.
 #' @param x.title text to show on the x axis
 #' @param y.title text to show on the y axis
+#' @param category.title text to show for the category (legend title)
 #' @param title title to show
 #' @param subtitle subtitle to show
 #' @param caption caption to show
@@ -86,7 +87,7 @@
 #' - `"desc"`: sort [factor]s on their [reversed][rev()] levels, otherwise sort descending on alphabet, while maintaining numbers in the text (*numeric* sort)
 #' - `"order"` or `"inorder"`: sort as `FALSE`
 #' - `"freq"` or `"freq-desc"`: sort descending according to the frequencies of `y` computed by `summarise_function` (highest value first)
-#' - `"freq-asc"`: sort ascending according to the frequencies of `y` computed by `summarise_function` (loewest value first)
+#' - `"freq-asc"`: sort ascending according to the frequencies of `y` computed by `summarise_function` (lowest value first)
 #' @param datalabels variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' plots, and values of `y` otherwise
 #' @param datalabels.round number of digits to round the datalabels
 #' @param datalabels.format format to use for datalabels - `"%n"` will be replaced by the count number, `"%p"` will be replaced by the percentage of the total count. Use `datalabels.format = NULL` to not transform the datalabels.
@@ -112,7 +113,7 @@
 #' @param print a [logical] to indicate if the result should be [printed][print()] instead of just returned
 #' @param text_factor text factor to use, which will apply to all texts shown in the plot
 #' @param family font family to use, can be set with `options(plot2.family = "...")`
-#' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`).
+#' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`). Can be set with `options(plot2.theme = "...")`.
 #' @param markdown a [logical] to turn all labels and titles into markdown-supported labels, by extending their S3 classes with [`"element_markdown"`][ggtext::element_markdown()], a feature of the `ggtext` package
 #' @param taxonomy_italic a [logical] to transform all labels and titles into italics that are in the `microorganisms` data set of the `AMR` package
 #' @param x.category old argument for `facet`, now deprecated
@@ -256,6 +257,7 @@ plot2 <- function(.data,
                   type = NULL,
                   x.title = NULL,
                   y.title = NULL,
+                  category.title = NULL,
                   title = NULL,
                   subtitle = NULL,
                   caption = NULL,
@@ -361,7 +363,7 @@ plot2 <- function(.data,
                   print = FALSE,
                   text_factor = 1,
                   family = getOption("plot2.family"),
-                  theme = theme_minimal2(),
+                  theme = getOption("plot2.theme", "theme_minimal2"),
                   markdown = TRUE,
                   taxonomy_italic = FALSE,
                   # old certetools pkg support
@@ -383,6 +385,7 @@ plot2_exec <- function(.data,
                        type,
                        x.title,
                        y.title,
+                       category.title,
                        title,
                        subtitle,
                        caption,
@@ -550,12 +553,18 @@ plot2_exec <- function(.data,
                   " - use ", font_blue("'facet.sort'"), " instead")
     facet.sort <- dots$sort.facet
   }
-  if (!is.null(dots$category.title)) {
-    # category.title does not really exist, what we know what was meant instead:
-    legend.title <- dots$category.title
+  if (!is.null(category.title)) {
+    # category.title and legend.title both exist for convenience
+    if (!is.null(legend.title)) {
+      plot2_warning(font_blue("category.title"), " already set instead of ", font_blue("legend.title"))
+    }
+    legend.title <- category.title
   }
   
   # prevalidate types for special types ----
+  if (!is_empty(type) && !is.character(type)) {
+    stop("'type' must be a character", call. = FALSE)
+  }
   type_backup <- type
   if (isTRUE(type[1L] %like% "^(barpercent|bp)$")) {
     type_backup <- "barpercent"
@@ -602,6 +611,7 @@ plot2_exec <- function(.data,
                   category.sort = category.sort,
                   facet.sort = facet.sort,
                   summarise_function = summarise_function,
+                  summarise_fn_name = dots$summarise_fn_name,
                   horizontal = horizontal,
                   x.max_items = x.max_items,
                   x.max_txt = x.max_txt,
@@ -658,7 +668,7 @@ plot2_exec <- function(.data,
   if (any(group_sizes(df) > 1) && !geom_is_continuous(type)) {
     if (identical(type_backup, "barpercent")) {
       plot2_message("Duplicate observations in discrete plot type (", font_blue(type), "), applying ",
-                    font_blue("summarise_function = " ), font_blue(dots$summarise_fn_name))
+                    font_blue(paste0("summarise_function = ", dots$summarise_fn_name)))
     }
     df <- summarise_data(df = df, summarise_function = summarise_function,
                          decimal.mark = decimal.mark, big.mark = big.mark,
