@@ -956,7 +956,7 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
       colour_fill <- colourpicker(colour_fill)
     }
     
-  } else if (is.numeric(get_category(df))) {
+  } else if (is.numeric(get_category(df)) && type != "geom_sf") {
     # has also category, and it's numeric
     colour.bak <- colour
     if (length(colour) == 1) {

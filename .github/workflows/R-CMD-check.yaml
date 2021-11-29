@@ -52,7 +52,7 @@ jobs:
           - {os: windows-latest, r: 'devel',   allowfail: true}
           - {os: windows-latest, r: '4.1',     allowfail: false}
           - {os: windows-latest, r: '4.0',     allowfail: false}
-          - {os: windows-latest, r: '3.6',     allowfail: false}
+          - {os: windows-latest, r: '3.6',     allowfail: true}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}

@@ -85,6 +85,7 @@ add_direction <- function(df, direction, var_name, sep) {
   tryCatch({
     # this for using Tidyverse selectors, such as `facet = where(is.character)`
     select_test <- df %>%
+      as.data.frame(stringsAsFactors = FALSE) %>% # for sf data
       select({{ direction }}) %>% 
       colnames()
     select_test <- select_test[select_test %unlike% "^_var_"]
