@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.32</span>
       </span>
     </div>
 
@@ -164,6 +164,7 @@
   type <span class='op'>=</span> <span class='cn'>NULL</span>,
   x.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.title <span class='op'>=</span> <span class='cn'>NULL</span>,
+  category.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   title <span class='op'>=</span> <span class='cn'>NULL</span>,
   subtitle <span class='op'>=</span> <span class='cn'>NULL</span>,
   caption <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -269,7 +270,7 @@
   print <span class='op'>=</span> <span class='cn'>FALSE</span>,
   text_factor <span class='op'>=</span> <span class='fl'>1</span>,
   family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"plot2.family"</span><span class='op'>)</span>,
-  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span><span class='op'>)</span>,
+  theme <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"plot2.theme"</span>, <span class='st'>"theme_minimal2"</span><span class='op'>)</span>,
   markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
   taxonomy_italic <span class='op'>=</span> <span class='cn'>FALSE</span>,
   x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -287,6 +288,7 @@
   type <span class='op'>=</span> <span class='st'>"point"</span>,
   x.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.title <span class='op'>=</span> <span class='cn'>NULL</span>,
+  category.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   title <span class='op'>=</span> <span class='cn'>NULL</span>,
   subtitle <span class='op'>=</span> <span class='cn'>NULL</span>,
   caption <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -392,7 +394,7 @@
   print <span class='op'>=</span> <span class='cn'>FALSE</span>,
   text_factor <span class='op'>=</span> <span class='fl'>1</span>,
   family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"plot2.family"</span><span class='op'>)</span>,
-  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span><span class='op'>)</span>,
+  theme <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"plot2.theme"</span>, <span class='st'>"theme_minimal2"</span><span class='op'>)</span>,
   markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
   taxonomy_italic <span class='op'>=</span> <span class='cn'>FALSE</span>,
   x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -515,7 +517,7 @@
   print <span class='op'>=</span> <span class='cn'>FALSE</span>,
   text_factor <span class='op'>=</span> <span class='fl'>1</span>,
   family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"plot2.family"</span><span class='op'>)</span>,
-  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span><span class='op'>)</span>,
+  theme <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"plot2.theme"</span>, <span class='st'>"theme_minimal2"</span><span class='op'>)</span>,
   markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
   taxonomy_italic <span class='op'>=</span> <span class='cn'>FALSE</span>,
   x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -533,6 +535,7 @@
   type <span class='op'>=</span> <span class='cn'>NULL</span>,
   x.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.title <span class='op'>=</span> <span class='cn'>NULL</span>,
+  category.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   title <span class='op'>=</span> <span class='cn'>NULL</span>,
   subtitle <span class='op'>=</span> <span class='cn'>NULL</span>,
   caption <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -659,6 +662,7 @@
   type <span class='op'>=</span> <span class='cn'>NULL</span>,
   x.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.title <span class='op'>=</span> <span class='cn'>NULL</span>,
+  category.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   title <span class='op'>=</span> <span class='cn'>NULL</span>,
   subtitle <span class='op'>=</span> <span class='cn'>NULL</span>,
   caption <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -764,7 +768,7 @@
   print <span class='op'>=</span> <span class='cn'>FALSE</span>,
   text_factor <span class='op'>=</span> <span class='fl'>1</span>,
   family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"plot2.family"</span><span class='op'>)</span>,
-  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span><span class='op'>)</span>,
+  theme <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"plot2.theme"</span>, <span class='st'>"theme_minimal2"</span><span class='op'>)</span>,
   markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
   taxonomy_italic <span class='op'>=</span> <span class='cn'>FALSE</span>,
   x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -887,7 +891,7 @@
   print <span class='op'>=</span> <span class='cn'>FALSE</span>,
   text_factor <span class='op'>=</span> <span class='fl'>1</span>,
   family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"plot2.family"</span><span class='op'>)</span>,
-  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span><span class='op'>)</span>,
+  theme <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"plot2.theme"</span>, <span class='st'>"theme_minimal2"</span><span class='op'>)</span>,
   markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
   taxonomy_italic <span class='op'>=</span> <span class='cn'>TRUE</span>,
   x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -936,6 +940,10 @@
     <tr>
       <th>y.title</th>
       <td><p>text to show on the y axis</p></td>
+    </tr>
+    <tr>
+      <th>category.title</th>
+      <td><p>text to show for the category (legend title)</p></td>
     </tr>
     <tr>
       <th>title</th>
@@ -1195,7 +1203,7 @@
 <li><p><code>"desc"</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a>s on their <a href='https://rdrr.io/r/base/rev.html'>reversed</a> levels, otherwise sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
 <li><p><code>"order"</code> or <code>"inorder"</code>: sort as <code>FALSE</code></p></li>
 <li><p><code>"freq"</code> or <code>"freq-desc"</code>: sort descending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (highest value first)</p></li>
-<li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (loewest value first)</p></li>
+<li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (lowest value first)</p></li>
 </ul></td>
     </tr>
     <tr>
@@ -1208,7 +1216,7 @@
 <li><p><code>"desc"</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a>s on their <a href='https://rdrr.io/r/base/rev.html'>reversed</a> levels, otherwise sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
 <li><p><code>"order"</code> or <code>"inorder"</code>: sort as <code>FALSE</code></p></li>
 <li><p><code>"freq"</code> or <code>"freq-desc"</code>: sort descending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (highest value first)</p></li>
-<li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (loewest value first)</p></li>
+<li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (lowest value first)</p></li>
 </ul></td>
     </tr>
     <tr>
@@ -1221,7 +1229,7 @@
 <li><p><code>"desc"</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a>s on their <a href='https://rdrr.io/r/base/rev.html'>reversed</a> levels, otherwise sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
 <li><p><code>"order"</code> or <code>"inorder"</code>: sort as <code>FALSE</code></p></li>
 <li><p><code>"freq"</code> or <code>"freq-desc"</code>: sort descending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (highest value first)</p></li>
-<li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (loewest value first)</p></li>
+<li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (lowest value first)</p></li>
 </ul></td>
     </tr>
     <tr>
@@ -1386,7 +1394,7 @@
     </tr>
     <tr>
       <th>theme</th>
-      <td><p>a valid <code>ggplot2</code> <a href='https://ggplot2.tidyverse.org/reference/theme.html'>theme</a> to apply, or <code>NULL</code> to use the default <code>theme_grey()</code></p></td>
+      <td><p>a valid <code>ggplot2</code> <a href='https://ggplot2.tidyverse.org/reference/theme.html'>theme</a> to apply, or <code>NULL</code> to use the default <code>theme_grey()</code>. This argument accepts themes (e.g., <code>theme_bw()</code>), functions (e.g., <code>theme_bw</code>) and characters themes (e.g., <code>"theme_bw"</code>). Can be set with <code>options(plot2.theme = "...")</code>.</p></td>
     </tr>
     <tr>
       <th>markdown</th>
@@ -1425,7 +1433,7 @@
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>For geographic information system (GIS) analysis, use the <code>sf</code> package with a data set containing geometries. The result can be used as input for <code><a href='plot2.html'>plot2()</a></code>.</p>
-<p>For antimicrobial resistance (AMR) data analysis, use the <code><a href='https://msberends.github.io/AMR/reference/bug_drug_combinations.html'>bug_drug_combinations()</a></code> function from the <code>AMR</code> package on a data set with antibiograms. The result can be used as input for <code><a href='plot2.html'>plot2()</a></code>.</p>
+<p>For antimicrobial resistance (AMR) data analysis, use the <code><a href='https://msberends.github.io/AMR//reference/bug_drug_combinations.html'>bug_drug_combinations()</a></code> function from the <code>AMR</code> package on a data set with antibiograms. The result can be used as input for <code><a href='plot2.html'>plot2()</a></code>.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

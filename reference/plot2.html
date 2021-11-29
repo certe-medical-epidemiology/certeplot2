@@ -83,7 +83,7 @@ See plot2-methods for all implemented methods for different object classes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.32</span>
       </span>
     </div>
 
@@ -165,6 +165,7 @@ See plot2-methods for all implemented methods for different object classes." />
   type <span class='op'>=</span> <span class='cn'>NULL</span>,
   x.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   y.title <span class='op'>=</span> <span class='cn'>NULL</span>,
+  category.title <span class='op'>=</span> <span class='cn'>NULL</span>,
   title <span class='op'>=</span> <span class='cn'>NULL</span>,
   subtitle <span class='op'>=</span> <span class='cn'>NULL</span>,
   caption <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -270,7 +271,7 @@ See plot2-methods for all implemented methods for different object classes." />
   print <span class='op'>=</span> <span class='cn'>FALSE</span>,
   text_factor <span class='op'>=</span> <span class='fl'>1</span>,
   family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"plot2.family"</span><span class='op'>)</span>,
-  theme <span class='op'>=</span> <span class='fu'><a href='theme_minimal2.html'>theme_minimal2</a></span><span class='op'>(</span><span class='op'>)</span>,
+  theme <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"plot2.theme"</span>, <span class='st'>"theme_minimal2"</span><span class='op'>)</span>,
   markdown <span class='op'>=</span> <span class='cn'>TRUE</span>,
   taxonomy_italic <span class='op'>=</span> <span class='cn'>FALSE</span>,
   x.category <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -316,6 +317,10 @@ See plot2-methods for all implemented methods for different object classes." />
     <tr>
       <th>y.title</th>
       <td><p>text to show on the y axis</p></td>
+    </tr>
+    <tr>
+      <th>category.title</th>
+      <td><p>text to show for the category (legend title)</p></td>
     </tr>
     <tr>
       <th>title</th>
@@ -491,7 +496,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <li><p><code>"desc"</code>: sort <a href='https://rdrr.io/r/base/factor.html'>factor</a>s on their <a href='https://rdrr.io/r/base/rev.html'>reversed</a> levels, otherwise sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
 <li><p><code>"order"</code> or <code>"inorder"</code>: sort as <code>FALSE</code></p></li>
 <li><p><code>"freq"</code> or <code>"freq-desc"</code>: sort descending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (highest value first)</p></li>
-<li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (loewest value first)</p></li>
+<li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (lowest value first)</p></li>
 </ul></td>
     </tr>
     <tr>
@@ -596,7 +601,7 @@ See plot2-methods for all implemented methods for different object classes." />
     </tr>
     <tr>
       <th>theme</th>
-      <td><p>a valid <code>ggplot2</code> <a href='https://ggplot2.tidyverse.org/reference/theme.html'>theme</a> to apply, or <code>NULL</code> to use the default <code>theme_grey()</code></p></td>
+      <td><p>a valid <code>ggplot2</code> <a href='https://ggplot2.tidyverse.org/reference/theme.html'>theme</a> to apply, or <code>NULL</code> to use the default <code>theme_grey()</code>. This argument accepts themes (e.g., <code>theme_bw()</code>), functions (e.g., <code>theme_bw</code>) and characters themes (e.g., <code>"theme_bw"</code>). Can be set with <code>options(plot2.theme = "...")</code>.</p></td>
     </tr>
     <tr>
       <th>markdown</th>
@@ -642,7 +647,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <li><p>Support for any <code>ggplot2</code> extension based on <code><a href='https://ggplot2.tidyverse.org/reference/fortify.html'>ggplot2::fortify()</a></code></p></li>
 </ul>
 
-<p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. For <a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a>s, <code>plot2()</code> currently has 118 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
+<p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 119 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>iris</span><span class='op'>)</span></span>
@@ -830,6 +835,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>y = n</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>x = hospital</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>category = gender</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Applying sorting </span><span style='color: #0000BB;'>"freq-asc"</span><span style='color: #080808;'> using </span><span style='color: #0000BB;'>summarise_function = base::sum</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>i</span> <span style='color: #080808;'>Using </span><span style='color: #0000BB;'>type = "col"</span><span style='color: #080808;'> as default</span></span>
 <span class='r-plt img'><img src='plot2-22.png' alt='' width='700' height='433' /></span>
 <span class='r-in'></span>
@@ -861,8 +867,8 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-in'><span class='co'># Antimicrobial Resistance (AMR) data analysis requires the `AMR` package:</span></span>
 <span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='st'><a href='https://msberends.github.io/AMR'>"AMR"</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span></span>
 <span class='r-in'>  <span class='va'>example_isolates</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> </span>
-<span class='r-in'>    <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>mo</span>, <span class='fu'><a href='https://msberends.github.io/AMR/reference/antibiotic_class_selectors.html'>penicillins</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> </span>
-<span class='r-in'>    <span class='fu'><a href='https://msberends.github.io/AMR/reference/bug_drug_combinations.html'>bug_drug_combinations</a></span><span class='op'>(</span>FUN <span class='op'>=</span> <span class='va'>mo_gramstain</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>    <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>mo</span>, <span class='fu'><a href='https://msberends.github.io/AMR//reference/antibiotic_class_selectors.html'>penicillins</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> </span>
+<span class='r-in'>    <span class='fu'><a href='https://msberends.github.io/AMR//reference/bug_drug_combinations.html'>bug_drug_combinations</a></span><span class='op'>(</span>FUN <span class='op'>=</span> <span class='va'>mo_gramstain</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
 <span class='r-in'>    <span class='fu'>plot2</span><span class='op'>(</span>y.percent_break <span class='op'>=</span> <span class='fl'>0.25</span><span class='op'>)</span></span>
 <span class='r-in'><span class='op'>}</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: AMR</span>
@@ -871,7 +877,7 @@ See plot2-methods for all implemented methods for different object classes." />
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>  (amoxicillin/clavulanic acid), '</span><span style='color: #0000BB; font-weight: bold;'>AMP</span><span style='color: #0000BB;'>' (ampicillin) and '</span><span style='color: #0000BB; font-weight: bold;'>TZP</span><span style='color: #0000BB;'>'</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>  (piperacillin/tazobactam)</span></span>
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #0000BB;'>ℹ Using column '</span><span style='color: #0000BB; font-weight: bold;'>mo</span><span style='color: #0000BB;'>' as input for </span><span style='color: #0000BB; background-color: #EEEEEE;'>`col_mo`</span><span style='color: #0000BB;'>.</span></span>
-<span class='r-plt img'><img src='plot2-25.png' alt='' width='700' height='433' /></span>
+<span class='r-err co'><span class='r-pr'>#&gt;</span> <span class='error'>Error in plot2_exec(.data = df, x = {    {        x    }}, y = {    {        y    }}, category = {    {        category    }}, facet = {    {        facet    }}, type = type, x.title = x.title, y.title = y.title, category.title = category.title,     title = title, subtitle = subtitle, caption = caption, tag = tag,     title.linelength = title.linelength, title.colour = title.colour,     subtitle.linelength = subtitle.linelength, subtitle.colour = subtitle.colour,     na.replace = na.replace, na.rm = na.rm, facet.position = facet.position,     facet.fill = facet.fill, facet.bold = facet.bold, facet.italic = facet.italic,     facet.size = facet.size, facet.margin = facet.margin, facet.repeat_lbls_x = facet.repeat_lbls_x,     facet.repeat_lbls_y = facet.repeat_lbls_y, facet.fixed_y = facet.fixed_y,     facet.drop = facet.drop, facet.nrow = facet.nrow, facet.relative = facet.relative,     x.date_breaks = x.date_breaks, x.date_labels = x.date_labels,     category.focus = category.focus, colour = colour, colour_fill = colour_fill,     x.lbl_angle = x.lbl_angle, x.lbl_align = x.lbl_align, x.lbl_italic = x.lbl_italic,     x.remove = x.remove, x.position = x.position, x.max_items = x.max_items,     x.max_txt = x.max_txt, category.max_items = category.max_items,     category.max_txt = category.max_txt, facet.max_items = facet.max_items,     facet.max_txt = facet.max_txt, x.breaks = x.breaks, x.breaks_n = x.breaks_n,     x.trans = x.trans, x.expand = x.expand, x.limits = x.limits,     x.character = x.character, y.remove = y.remove, y.24h = y.24h,     y.age = y.age, y.percent = y.percent, y.percent_break = y.percent_break,     y.breaks = y.breaks, y.limits = y.limits, y.labels = y.labels,     y.expand = y.expand, y.trans = y.trans, y.position = y.position,     category.labels = category.labels, category.percent = category.percent,     category.breaks = category.breaks, category.limits = category.limits,     category.expand = category.expand, category.midpoint = category.midpoint,     category.trans = category.trans, x.sort = x.sort, category.sort = category.sort,     facet.sort = facet.sort, datalabels = {        {            datalabels        }    }, datalabels.round = datalabels.round, datalabels.colour = datalabels.colour,     datalabels.format = datalabels.format, datalabels.fill = datalabels.fill,     datalabels.size = datalabels.size, datalabels.angle = datalabels.angle,     decimal.mark = decimal.mark, big.mark = big.mark, summarise_function = summarise_function,     stacked = stacked, stackedpercent = stackedpercent, horizontal = horizontal,     reverse = reverse, smooth = smooth, smooth.method = smooth.method,     smooth.formula = smooth.formula, smooth.se = smooth.se, smooth.level = smooth.level,     smooth.alpha = smooth.alpha, smooth.size = smooth.size, smooth.linetype = smooth.linetype,     size = size, linetype = linetype, binwidth = binwidth, width = width,     jitter_seed = jitter_seed, violin_scale = violin_scale, legend.position = legend.position,     legend.title = legend.title, legend.reverse = legend.reverse,     legend.barheight = legend.barheight, legend.barwidth = legend.barwidth,     legend.nbin = legend.nbin, legend.italic = legend.italic,     zoom = zoom, sep = sep, print = print, text_factor = text_factor,     family = family, theme = theme, markdown = markdown, taxonomy_italic = taxonomy_italic,     x.category = x.category, y.category = y.category, misses.x = missing(x),     misses.y = missing(y), misses.category = missing(category),     misses.facet = missing(facet), misses.datalabels = missing(datalabels),     misses.colour_fill = missing(colour_fill), misses.x.title = FALSE,     misses.y.title = FALSE, misses.title = missing(title), misses.subtitle = missing(subtitle),     misses.tag = missing(tag), misses.caption = missing(caption),     misses.y.percent = missing(y.percent), misses.zoom = missing(zoom),     label_x = deparse(substitute(x)), label_y = deparse(substitute(y)),     label_category = deparse(substitute(category)), label_facet = deparse(substitute(facet)),     summarise_fn_name = deparse(substitute(summarise_function)),     ...):</span> object 'category.title' not found</span>
 </pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
