@@ -246,10 +246,13 @@ is_empty <- function(x) {
 }
 
 geom_is_continuous <- function(geom) {
-  geom %in% c("geom_boxplot", "geom_violin", "geom_point", "geom_jitter", "geom_histogram", "geom_density", "geom_sf")
+  geom %in% c("geom_boxplot", "geom_violin", "geom_point", "geom_jitter", "geom_histogram", "geom_density", "geom_sf", "geom_line")
 }
 geom_is_continuous_x <- function(geom) {
   geom %in% c("geom_histogram", "geom_density")
+}
+geom_is_line <- function(geom) {
+  geom %in% c("geom_line", "geom_hline", "geom_vline", "geom_path", "geom_qq_line", "geom_linerange")
 }
 geom_has_only_colour <- function(geom) {
   geom %in% c("geom_point", "geom_jitter", "geom_line", "geom_hline", "geom_vline",

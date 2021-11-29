@@ -33,5 +33,10 @@ test_that("general mapping works", {
 })
 
 test_that("x scale works", {
-  expect_s3_class(plotdata %>% plot2(x = x_date))
+  expect_s3_class(plotdata %>% plot2(x = x_date), "gg")
+  expect_s3_class(plotdata %>% plot2(x = x_char), "gg")
+  expect_s3_class(plotdata %>% plot2(n, type = "hist"), "gg")
+  expect_s3_class(plotdata %>% plot2(n, type = "density"), "gg")
+  expect_s3_class(plotdata %>% plot2(n, type = "jitter"), "gg")
+  expect_s3_class(plotdata %>% plot2(type = "line"), "gg")
 })

@@ -732,9 +732,12 @@ plot2_exec <- function(.data,
                                                 group = `_var_category`))
     }
   }
-  if (geom_is_continuous(type)) {
+  if (geom_is_continuous(type) && !geom_is_line(type)) {
     # remove the group from the mapping
     mapping <- utils::modifyList(mapping, aes(group = NULL))
+  } else if (geom_is_line(type)) {
+    # exception for line plots, force group = 1
+    mapping <- utils::modifyList(mapping, aes(group = 1))
   }
   
   # generate ggplot ----
