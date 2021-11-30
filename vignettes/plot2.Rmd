@@ -34,6 +34,7 @@ The `plot2()` function is a convenient wrapper around many `ggplot2` functions s
   * Writing as few lines of codes as possible
   * Easy plotting in three 'directions': `x` (the regular x axis), `category` (replaces 'fill' and 'colour') and `facet`
   * Automatic setting of these 'directions' based on the input data
+  * Setting in-place calculations for all plotting direction and even `y`
   * Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': `x.sort`, `category.sort` and `facet.sort`
   * Easy limiting values, e.g. by setting `x.max_items = 5` or `category.max_items = 5`
   * Markdown support for any label, with any theme
@@ -119,7 +120,7 @@ data.frame(x = c("a", "a", "a", "a",
 
 `plot2()` comes with three different plotting directions: `x`, `category` and `facet`. The `x` direction plots along the x axis, the `category` plots using the legend (and replaces `ggplot2`'s *colour* and *fill*), and the `facet` direction plots using facets.
 
-In `ggplot2()`, everything set in `aes()` will in fact become such a direction. `plot2()` provides no support for plotting categorically using e.g., *shape*, *linetype* or *size*.
+In `ggplot2`, everything set in `aes()` will in fact become such a direction. `plot2()` provides no support for plotting categorically using e.g., *shape*, *linetype* or *size*.
 
 ### Tidy evaluation
 
@@ -196,9 +197,9 @@ The `category` plotting direction replaces *colour* and *fill*, which were in ou
 
 ### `category` scales
 
-The scale for the `category` is also something that can be determined automatically quite easily - it is after all based on the input data. `ggplot2` returns an error if the scale does not match the data:
+The scale for the `category` is also something that can be determined automatically quite easily - it is after all based on the input data and input choices. `plot2()` determines the type of scale automatically:
 
-```{r, error = TRUE, fig.height = 0}
+```{r}
 character_z <- data.frame(x = rep(letters[1:5], 10),
                           y = rnorm(50, 5),
                           # these are 5 letters:
@@ -206,16 +207,6 @@ character_z <- data.frame(x = rep(letters[1:5], 10),
                           stringsAsFactors = FALSE)
 head(character_z)
 
-library(ggplot2)
-ggplot(character_z,
-       aes(x = x, y = y, fill = z)) +
-  geom_col() +
-  scale_fill_continuous()
-```
-
-So updating the `aes()` part, also requires users to update the `scale_fill*()` part in this case. `plot2()` determines the type of scale automatically:
-
-```{r}
 numeric_z <- data.frame(x = rep(letters[1:5], 10),
                         y = rnorm(50, 5),
                         # these are 5 numbers:
@@ -369,6 +360,16 @@ admitted_patients %>%
 ```
 
 # Setting the values of `y`
+
+In `ggplot2`, the values for `y` must be numeric. In `plot2()`, you can also use an in-place calculation of a (non-numeric) variable. The input will be evaluated while taking into account all plotting directions , such as `x` and `category`:
+
+```{r}
+admitted_patients %>%
+    plot2(x = hospital,
+          y = n_distinct(age_group),
+          category = ward,
+          title = "Unique available age groups per hospital")
+```
 
 # Legends
 

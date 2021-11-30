@@ -132,7 +132,7 @@ plot2(
 
 \item{x}{plotting 'direction': the x axis}
 
-\item{y}{values to use for plotting along the y axis}
+\item{y}{values to use for plotting along the y axis, can also be a calculation of a variable, e.g. \code{max(column1)} or \code{length(unique(person_id))}}
 
 \item{category}{plotting 'direction': the category (called 'fill' and 'colour' in \code{ggplot2})}
 

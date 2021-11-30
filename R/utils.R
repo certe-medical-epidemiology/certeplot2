@@ -81,7 +81,7 @@ summarise_variable <- function(df, var, sep) {
 }
 
 #' @importFrom dplyr `%>%` select mutate across
-add_direction <- function(df, direction, var_name, sep) {
+add_direction <- function(df, direction, var_name, var_label, sep) {
   tryCatch({
     # this for using Tidyverse selectors, such as `facet = where(is.character)`
     select_test <- df %>%
@@ -94,15 +94,22 @@ add_direction <- function(df, direction, var_name, sep) {
     }
   }, error = function(e) invisible())
   
-  tryCatch(df %>% 
-             mutate(across({{ direction }}, .names = paste0("_var_", var_name, "_{col}"))) %>% 
-             summarise_variable(paste0("_var_", var_name), sep = sep),
-           error = function(e) {
-             df <- df %>% 
-               mutate(`_var_` = {{ direction }})
-             colnames(df)[colnames(df) == "_var_"] <- paste0("_var_", var_name)
-             df
-           })
+  df <- tryCatch({
+    df %>% 
+      mutate(across({{ direction }}, .names = paste0("_var_", var_name, "_{col}"))) %>% 
+      summarise_variable(paste0("_var_", var_name), sep = sep)
+  }, error = function(e) {
+    out <- df %>% 
+      mutate(`_var_` = {{ direction }})
+    colnames(out)[colnames(out) == "_var_"] <- paste0("_var_", var_name)
+    out
+  })
+  
+  if (var_label != "NULL" && !var_label %in% colnames(df)) {
+    df$`_var_new` <- df[, paste0("_var_", var_name), drop = TRUE]
+    colnames(df)[colnames(df) == "_var_new"] <- var_label
+  }
+  df
 }
 
 #' @importFrom dplyr `%>%` pull

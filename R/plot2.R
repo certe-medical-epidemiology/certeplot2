@@ -24,7 +24,7 @@
 #' See [plot2-methods] for all implemented methods for different object classes.
 #' @param .data data to plot
 #' @param x plotting 'direction': the x axis
-#' @param y values to use for plotting along the y axis
+#' @param y values to use for plotting along the y axis, can also be a calculation of a variable, e.g. `max(column1)` or `length(unique(person_id))`
 #' @param category plotting 'direction': the category (called 'fill' and 'colour' in `ggplot2`)
 #' @param facet plotting 'direction': the facet
 #' @param type type of visualisation to use. This can be:
@@ -373,7 +373,7 @@ plot2 <- function(.data,
   UseMethod("plot2")
 }
 
-#' @importFrom dplyr `%>%` mutate vars group_by across summarise
+#' @importFrom dplyr `%>%` mutate vars group_by across summarise select matches
 #' @importFrom forcats fct_relabel
 #' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete
 #' @importFrom certestyle format2 font_red font_black font_blue
@@ -583,18 +583,35 @@ plot2_exec <- function(.data,
   
   # prepare data ----
   df <- .data %>%
-    mutate(`_var_y` = {{ y }},
-           `_var_datalabels` = {{ datalabels }}) %>% 
     # add the three directions, these functions also support tidyverse selections: `facet = where(is.character)`
     add_direction(direction = {{ x }},
                   var_name = "x",
+                  var_label = dots$label_x,
                   sep = sep) %>% 
     add_direction(direction = {{ category }}, 
                   var_name = "category",
+                  var_label = dots$label_category,
                   sep = sep) %>% 
     add_direction(direction = {{ facet }}, 
                   var_name = "facet",
+                  var_label = dots$label_facet,
                   sep = sep) %>% 
+    # add y
+    { function(.data) {
+      if (dots$label_y %like% "\\(.*\\)") {
+        # seems like a function, so calculate it over all groups that are available
+        # this will support e.g. `data %>% plot2(y = n_distinct(id))`
+        .data %>% 
+          group_by(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
+                            matches("_var_(x|category|facet)")))) %>%
+          summarise(`_var_y` = {{ y }},
+                    .groups = "drop")
+      } else {
+        # nothing special, just run it as mutate
+        .data %>% 
+          mutate(`_var_y` = {{ y }}) 
+      }}}() %>% 
+    mutate(`_var_datalabels` = {{ datalabels }}) %>% 
     # this part will transform the data as needed
     validate_data(misses_x = misses_x,
                   misses_category = misses_category,
@@ -686,6 +703,10 @@ plot2_exec <- function(.data,
   if (type == "geom_sf") {
     df <- df %>% select(-`_var_x`)
   }
+  # last bit of data cleaning: move all `_var_` columns to the end
+  df <- df %>% 
+    select(!matches("^_var_"), matches("^_var_"))
+  
   # set default size and width ----
   size <- validate_size(size = size, type = type)
   width <- validate_width(width = width, type = type)
