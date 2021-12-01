@@ -504,22 +504,29 @@ plot2_exec <- function(.data,
   }
   
   dots <- list(...)
+  dots_unknown <- names(dots) %unlike% "^(_|sort[.])"
+  if (any(dots_unknown)) {
+    plot2_warning(ifelse(sum(dots_unknown) == 1,
+                         "This argument is unknown and was ignored: ",
+                         "These arguments are unknown and were ignored: "),
+                  paste0(font_blue(names(dots[dots_unknown]), collapse = NULL), collapse = font_black(", ")))
+  }
   
   # record missing arguments ----
-  misses_x <- isTRUE(dots$misses.x)
-  misses_y <- isTRUE(dots$misses.y)
-  misses_category <- isTRUE(dots$misses.category)
-  misses_facet <- isTRUE(dots$misses.facet)
-  misses_datalabels <- isTRUE(dots$misses.datalabels)
-  misses_colour_fill <- isTRUE(dots$misses.colour_fill)
-  misses_x.title <- isTRUE(dots$misses.x.title)
-  misses_y.title <- isTRUE(dots$misses.y.title)
-  misses_title <- isTRUE(dots$misses.title)
-  misses_subtitle <- isTRUE(dots$misses.subtitle)
-  misses_tag <- isTRUE(dots$misses.tag)
-  misses_caption <- isTRUE(dots$misses.caption)
-  misses_zoom <- isTRUE(dots$misses.zoom)
-  misses_y.percent <- isTRUE(dots$misses.y.percent)
+  misses_x <- isTRUE(dots$`_misses.x`)
+  misses_y <- isTRUE(dots$`_misses.y`)
+  misses_category <- isTRUE(dots$`_misses.category`)
+  misses_facet <- isTRUE(dots$`_misses.facet`)
+  misses_datalabels <- isTRUE(dots$`_misses.datalabels`)
+  misses_colour_fill <- isTRUE(dots$`_misses.colour_fill`)
+  misses_x.title <- isTRUE(dots$`_misses.x.title`)
+  misses_y.title <- isTRUE(dots$`_misses.y.title`)
+  misses_title <- isTRUE(dots$`_misses.title`)
+  misses_subtitle <- isTRUE(dots$`_misses.subtitle`)
+  misses_tag <- isTRUE(dots$`_misses.tag`)
+  misses_caption <- isTRUE(dots$`_misses.caption`)
+  misses_zoom <- isTRUE(dots$`_misses.zoom`)
+  misses_y.percent <- isTRUE(dots$`_misses.y.percent`)
   
   # old arguments, from previous package ----
   if (tryCatch(!is.null(y.category), error = function(e) TRUE)) {
@@ -586,21 +593,21 @@ plot2_exec <- function(.data,
     # add the three directions, these functions also support tidyverse selections: `facet = where(is.character)`
     add_direction(direction = {{ x }},
                   var_name = "x",
-                  var_label = dots$label_x,
+                  var_label = dots$`_label.x`,
                   sep = sep) %>% 
     add_direction(direction = {{ category }}, 
                   var_name = "category",
-                  var_label = dots$label_category,
+                  var_label = dots$`_label.category`,
                   sep = sep) %>% 
     add_direction(direction = {{ facet }}, 
                   var_name = "facet",
-                  var_label = dots$label_facet,
+                  var_label = dots$`_label.facet`,
                   sep = sep) %>% 
     # add y
     { function(.data) {
-      if (dots$label_y %like% "\\(.*\\)") {
+      if (dots$`_label.y` %like% ".+\\(.*\\)") {
         # seems like a function, so calculate it over all groups that are available
-        # this will support e.g. `data %>% plot2(y = n_distinct(id))`
+        # - this will support e.g. `data %>% plot2(y = n_distinct(id))`
         .data %>% 
           group_by(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
                             matches("_var_(x|category|facet)")))) %>%
@@ -615,10 +622,10 @@ plot2_exec <- function(.data,
     # this part will transform the data as needed
     validate_data(misses_x = misses_x,
                   misses_category = misses_category,
-                  label_x = dots$label_x,
-                  label_y = dots$label_y,
-                  label_category = dots$label_category,
-                  label_facet = dots$label_facet,
+                  label_x = dots$`_label.x`,
+                  label_y = dots$`_label.y`,
+                  label_category = dots$`_label.category`,
+                  label_facet = dots$`_label.facet`,
                   decimal.mark = decimal.mark,
                   big.mark = big.mark,
                   type = type,
@@ -628,7 +635,7 @@ plot2_exec <- function(.data,
                   category.sort = category.sort,
                   facet.sort = facet.sort,
                   summarise_function = summarise_function,
-                  summarise_fn_name = dots$summarise_fn_name,
+                  summarise_fn_name = dots$`_summarise_fn_name`,
                   horizontal = horizontal,
                   x.max_items = x.max_items,
                   x.max_txt = x.max_txt,
@@ -685,7 +692,7 @@ plot2_exec <- function(.data,
   if (any(group_sizes(df) > 1) && !geom_is_continuous(type)) {
     if (identical(type_backup, "barpercent")) {
       plot2_message("Duplicate observations in discrete plot type (", font_blue(type), "), applying ",
-                    font_blue(paste0("summarise_function = ", dots$summarise_fn_name)))
+                    font_blue(paste0("summarise_function = ", dots$`_summarise_fn_name`)))
     }
     df <- summarise_data(df = df, summarise_function = summarise_function,
                          decimal.mark = decimal.mark, big.mark = big.mark,
@@ -737,8 +744,8 @@ plot2_exec <- function(.data,
                           horizontal = horizontal)
   
   # generate mapping ----
-  if (type == "geom_sf" && !is.null(dots$sf_column)) {
-    mapping <- aes_string(geometry = dots$sf_column)
+  if (type == "geom_sf" && !is.null(dots$`_sf.column`)) {
+    mapping <- aes_string(geometry = dots$`_sf.column`)
   } else if (!geom_is_continuous_x(type)) {
     # histograms etc. have a continuous x variable, so only set y if not a histogram-like
     mapping <- aes(y = `_var_y`, group = 1)
