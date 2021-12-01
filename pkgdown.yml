@@ -3,7 +3,7 @@ pkgdown: 2.0.0
 pkgdown_sha: ~
 articles:
   plot2: plot2.html
-last_built: 2021-12-01T08:39Z
+last_built: 2021-12-01T15:35Z
 urls:
   reference: https://certe-medical-epidemiology.github.io/certeplot2/reference
   article: https://certe-medical-epidemiology.github.io/certeplot2/articles
