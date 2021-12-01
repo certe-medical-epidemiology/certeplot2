@@ -88,7 +88,7 @@
 #' - `"order"` or `"inorder"`: sort as `FALSE`
 #' - `"freq"` or `"freq-desc"`: sort descending according to the frequencies of `y` computed by `summarise_function` (highest value first)
 #' - `"freq-asc"`: sort ascending according to the frequencies of `y` computed by `summarise_function` (lowest value first)
-#' @param datalabels variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' plots, and values of `y` otherwise
+#' @param datalabels variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' data, and values of `y` otherwise. It will print a maximum of 50 labels at default, which can be enforced by explicitly adding `datalabels = TRUE`.
 #' @param datalabels.round number of digits to round the datalabels
 #' @param datalabels.format format to use for datalabels - `"%n"` will be replaced by the count number, `"%p"` will be replaced by the percentage of the total count. Use `datalabels.format = NULL` to not transform the datalabels.
 #' @param datalabels.colour,datalabels.fill,datalabels.size,datalabels.angle settings for the datalabels
@@ -359,7 +359,7 @@ plot2 <- function(.data,
                   legend.nbin = 300,
                   legend.italic = FALSE,
                   zoom = FALSE,
-                  sep = "/",
+                  sep = " / ",
                   print = FALSE,
                   text_factor = 1,
                   family = getOption("plot2.family"),

@@ -19,7 +19,7 @@
 
 #' Example Data Set with Admitted Patients
 #'
-#' An auto-generated, fictitious data set containing patients admitted to hospitals.
+#' An auto-generated data set containing fictitious patients admitted to hospitals.
 #' @format A [tibble]/[data.frame] with `r format(nrow(admitted_patients), big.mark = ",")` observations and `r ncol(admitted_patients)` variables:
 #' - `date`\cr date of hospital admission
 #' - `gender`\cr gender of the patient

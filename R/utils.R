@@ -84,13 +84,13 @@ summarise_variable <- function(df, var, sep) {
 add_direction <- function(df, direction, var_name, var_label, sep) {
   tryCatch({
     # this for using Tidyverse selectors, such as `facet = where(is.character)`
-    select_test <- df %>%
+    selected_cols <- df %>%
       as.data.frame(stringsAsFactors = FALSE) %>% # for sf data
       select({{ direction }}) %>% 
       colnames()
-    select_test <- select_test[select_test %unlike% "^_var_"]
-    if (length(select_test) > 1 && is.character(select_test)) {
-      plot2_message("Using ", font_blue(paste0(var_name, " = c(", paste0(select_test, collapse = ", "), ")")))
+    selected_cols <- selected_cols[selected_cols %unlike% "^_var_"]
+    if (length(selected_cols) > 1 && is.character(selected_cols) && !all(var_label %like% selected_cols)) {
+      plot2_message("Using ", font_blue(paste0(var_name, " = c(", paste0(selected_cols, collapse = ", "), ")")))
     }
   }, error = function(e) invisible())
   

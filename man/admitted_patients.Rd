@@ -19,6 +19,6 @@ A \link{tibble}/\link{data.frame} with 250 observations and 6 variables:
 admitted_patients
 }
 \description{
-An auto-generated, fictitious data set containing patients admitted to hospitals.
+An auto-generated data set containing fictitious patients admitted to hospitals.
 }
 \keyword{datasets}

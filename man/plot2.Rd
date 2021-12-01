@@ -115,7 +115,7 @@ plot2(
   legend.nbin = 300,
   legend.italic = FALSE,
   zoom = FALSE,
-  sep = "/",
+  sep = " / ",
   print = FALSE,
   text_factor = 1,
   family = getOption("plot2.family"),
@@ -245,7 +245,7 @@ plot2(
 \item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (lowest value first)
 }}
 
-\item{datalabels}{variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' plots, and values of \code{y} otherwise}
+\item{datalabels}{variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' data, and values of \code{y} otherwise. It will print a maximum of 50 labels at default, which can be enforced by explicitly adding \code{datalabels = TRUE}.}
 
 \item{datalabels.round}{number of digits to round the datalabels}
 

@@ -1297,7 +1297,7 @@ set_datalabels <- function(p,
                            horizontal,
                            misses_datalabels) {
   
-  if (isTRUE(misses_datalabels) && nrow(df) > 150) {
+  if (isTRUE(misses_datalabels) && nrow(df) > 50) {
     plot2_warning("Omitting printing of ", nrow(df), " datalabels - use ", font_blue("datalabels = TRUE"), " to force printing")
     return(p)
   }

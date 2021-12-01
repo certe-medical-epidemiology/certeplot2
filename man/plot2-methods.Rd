@@ -121,7 +121,7 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   zoom = FALSE,
-  sep = "/",
+  sep = " / ",
   print = FALSE,
   text_factor = 1,
   family = getOption("plot2.family"),
@@ -244,7 +244,7 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   zoom = FALSE,
-  sep = "/",
+  sep = " / ",
   print = FALSE,
   text_factor = 1,
   family = getOption("plot2.family"),
@@ -265,6 +265,7 @@
   type = NULL,
   x.title = "Item",
   y.title = "Count",
+  category.title = NULL,
   title = NULL,
   subtitle = NULL,
   caption = NULL,
@@ -366,7 +367,7 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   zoom = FALSE,
-  sep = "/",
+  sep = " / ",
   print = FALSE,
   text_factor = 1,
   family = getOption("plot2.family"),
@@ -489,7 +490,7 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   zoom = FALSE,
-  sep = "/",
+  sep = " / ",
   print = FALSE,
   text_factor = 1,
   family = getOption("plot2.family"),
@@ -615,7 +616,7 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   zoom = FALSE,
-  sep = "/",
+  sep = " / ",
   print = FALSE,
   text_factor = 1,
   family = getOption("plot2.family"),
@@ -636,6 +637,7 @@
   type = "column",
   x.title = "",
   y.title = "",
+  category.title = NULL,
   title = NULL,
   subtitle = NULL,
   caption = NULL,
@@ -737,7 +739,7 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   zoom = FALSE,
-  sep = "/",
+  sep = " / ",
   print = FALSE,
   text_factor = 1,
   family = getOption("plot2.family"),
@@ -936,7 +938,7 @@
 \item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (lowest value first)
 }}
 
-\item{datalabels}{variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' plots, and values of \code{y} otherwise}
+\item{datalabels}{variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' data, and values of \code{y} otherwise. It will print a maximum of 50 labels at default, which can be enforced by explicitly adding \code{datalabels = TRUE}.}
 
 \item{datalabels.round}{number of digits to round the datalabels}
 

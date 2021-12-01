@@ -10,7 +10,9 @@ editor_options:
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(fig.width = 6, fig.height = 4,
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.height = 4,
   collapse = TRUE,
   comment = "#>"
 )
@@ -154,11 +156,9 @@ library(cleaner) # 'cleaner' has a rdate() function for random dates
 data.frame(x = rdate(100, min = "2016-01-01", max = "2021-12-31"),
            y = rnorm(100, mean = 10)) %>% 
   plot2(type = "p")
-
 data.frame(x = rdate(100, min = "2021-06-01", max = "2021-12-31"),
            y = rnorm(100, mean = 10)) %>% 
   plot2(type = "p")
-
 data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
            y = rnorm(100, mean = 10)) %>% 
   plot2(type = "p")
@@ -173,7 +173,6 @@ data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
         x.date_labels = "ddd d mmm yyyy",
         type = "p",
         title = "Change this...")
-
 data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
            y = rnorm(100, mean = 10)) %>% 
   plot2(x.date_breaks = "1 day",
@@ -217,7 +216,6 @@ head(numeric_z)
 character_z %>% 
     plot2(x, y, z, type = "jitter",
           caption = "*category* is non-numeric based on inputdata.")
-
 numeric_z %>%  
     plot2(x, y, z, type = "jitter",
           caption = "*category* is numeric based on inputdata.")
@@ -252,7 +250,6 @@ admitted_patients
 admitted_patients %>%
   plot2(x = age_group, y = age, facet = hospital,
         caption = "Same y axes")
-
 admitted_patients %>%
   plot2(x = age_group, y = age, facet = hospital,
         facet.repeat_lbls_y = TRUE,
@@ -322,7 +319,6 @@ admitted_patients %>%
         y.title = "count",
         stacked = TRUE,
         caption = "No sorting")
-
 admitted_patients %>%
   plot2(hospital, y = 1, age_group,
         y.title = "count",
@@ -343,7 +339,6 @@ The sorting can be used in combination with setting a maximum number of items to
 ```{r}
 admitted_patients %>%
     plot2(hospital, y = 1, type = "col")
-
 admitted_patients %>%
     plot2(hospital, y = 1, type = "col",
           x.max_items = 3)
@@ -361,15 +356,43 @@ admitted_patients %>%
 
 # Setting the values of `y`
 
-In `ggplot2`, the values for `y` must be numeric. In `plot2()`, you can also use an in-place calculation of a (non-numeric) variable. The input will be evaluated while taking into account all plotting directions , such as `x` and `category`:
+In `ggplot2`, the values for `y` must be numeric. In `plot2()`, you can also use an in-place calculation of a (non-numeric) variable. The input will be evaluated while taking into account all plotting directions, such as `x` and `category`:
 
 ```{r}
+admitted_patients 
+
 admitted_patients %>%
     plot2(x = hospital,
           y = n_distinct(age_group),
           category = ward,
           title = "Unique available age groups per hospital")
 ```
+
+Since the plotting directions allow for in-place transformations as well, you can plot your data without the need to use `group_by()`, `count()` or `summarise()` yourself:
+
+```{r, fig.width = 8}
+admitted_patients %>%
+  plot2(x = format(date, "%Y"),
+        y = median(age),
+        y.age = TRUE,
+        category = ward,
+        datalabels = FALSE)
+```
+
+Including all transformations, we used in total 3 functions (`plot2()`, `format()`, `median()`) - the very least. Compare that to the required `dplyr` + `ggplot2` code:
+
+```{r, fig.width = 8}
+admitted_patients %>%
+  group_by(format(date, "%Y"), ward) %>%
+  summarise(median(age)) %>%
+  ggplot(aes(x = `format(date, "%Y")`,
+             y = `median(age)`,
+             fill = ward)) +
+  geom_col(position = "dodge") +
+  theme_minimal2()
+```
+
+Now we had to use 8 functions in total, and define all variables twice. In other words, a lot of redundant code. And why is y = 0 not on the x baseline and are my bars floating, and why is 2009 so wide?? If you know the answers, you're way deeper into `ggplot2` than should be necessary.
 
 # Legends
 
