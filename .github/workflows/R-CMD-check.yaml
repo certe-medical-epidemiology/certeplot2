@@ -59,7 +59,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
     steps:
       - uses: actions/checkout@v2
-      
+
       # for the plot2() vignette:
       - uses: r-lib/actions/setup-pandoc@v1
 
