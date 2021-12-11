@@ -23,6 +23,15 @@ plotdata <- data.frame(x = seq_len(10) + 10,
                        n = seq_len(10),
                        stringsAsFactors = FALSE)
 
+test_that("general types work", {
+  expect_s3_class(plot2(rnorm(10, 10)), "gg")
+  expect_s3_class(plot2(rnorm(10, 10), type = "l"), "gg")
+  expect_s3_class(plot2(mtcars, mpg^2, hp^2), "gg")
+  expect_s3_class(plot2(mtcars, mpg^2, hp^2, smooth = TRUE), "gg")
+  expect_s3_class(iris %>% plot2(Species), "gg")
+  expect_s3_class(iris %>% plot2(Species, type = "violin"), "gg")
+})
+
 test_that("general mapping works", {
   expect_equal(plotdata %>% plot2() %>% get_mapping() %>% names(),
                c("y", "x", "fill", "colour"))

@@ -773,8 +773,8 @@ plot2_exec <- function(.data,
   if (geom_is_continuous(type) && !geom_is_line(type)) {
     # remove the group from the mapping
     mapping <- utils::modifyList(mapping, aes(group = NULL))
-  } else if (geom_is_line(type)) {
-    # exception for line plots, force group = 1
+  } else if (geom_is_line(type) && !has_category(df)) {
+    # exception for line plots without colour/fill, force group = 1
     mapping <- utils::modifyList(mapping, aes(group = 1))
   }
   
