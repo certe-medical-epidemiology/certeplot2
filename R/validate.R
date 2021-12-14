@@ -100,7 +100,7 @@ validate_legend.position <- function(legend.position) {
   legend.position <- gsub("^l$", "left", legend.position)
   
   if (!legend.position %in% c("top", "right", "bottom", "left", "none")) {
-    stop("legend.position must be 'top', 'right', 'bottom', 'left' or 'none'", call. = FALSE)
+    stop("`legend.position` must be 'top', 'right', 'bottom', 'left' or 'none'", call. = FALSE)
   }
   legend.position
 }
@@ -850,7 +850,7 @@ generate_geom <- function(type,
     
   } else if (type == "geom_histogram") {
     if (is.null(binwidth)) {
-      # this will be the default binwidth: the difference in the range, divided by 12-22.
+      # this will be the default binwidth: the difference in the range, divided by 12 to 22.
       values <- get_x(df)
       values <- values[!is.infinite(values)]
       binwidth <- as.double(diff(range(values, na.rm = TRUE))) / (12 + min(10, length(unique(values)) / 20))
