@@ -704,7 +704,7 @@ validate_category_scale <- function(values,
     cols_category <- cols$colour_fill
   }
   
-  # general arguments for any scale function below (there called with do.cal())
+  # general arguments for any scale function below (they are called with do.call())
   args <- list(aesthetics = aest,
                na.value = "white",
                guide = guide_colourbar(ticks = FALSE,
@@ -734,6 +734,12 @@ validate_category_scale <- function(values,
   if (isTRUE(cols$viridis)) {
     do.call(scale_colour_viridis_c,
             args = args)
+    
+  } else if (length(cols_category) == 1) {
+    do.call(scale_colour_gradient,
+            args = c(list(low = "white",
+                          high =  cols_category),
+                     args))
     
   } else if (length(cols_category) == 3) {
     # 3 colours, so low, mid (set as vector name) and high
@@ -882,8 +888,8 @@ generate_geom <- function(type,
     do.call(geom_fn,
             args = c(list(linetype = linetype,
                           size = size,
-                          na.rm = na.rm,
-                          colour = cols$colour),
+                          na.rm = na.rm),
+                     list(colour = cols$colour)[length(cols$colour) == 1],
                      list(fill = cols$colour_fill)[!has_category(df)]))
     
   } else {
@@ -901,31 +907,36 @@ generate_geom <- function(type,
 #' @importFrom certestyle colourpicker add_white
 validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, horizontal) {
   
-  if (geom_is_continuous(type) && geom_has_only_colour(type) && is.numeric(get_category(df))) {
-    if (identical(colour, "viridis") | identical(colour_fill, "viridis")) {
-      # chosen for viridis, which will lead to scale_colour_viridis_c() in validate_category_scale()
-      # set the colours here just for the mapping (to allow extension with `+`)
-      return(list(colour = colourpicker(colour, 2),
-                  colour_fill = colourpicker(colour, 2),
-                  viridis = TRUE))
+  if (identical(colour, "viridis") | identical(colour_fill, "viridis")) {
+    # chosen for viridis, which will lead to scale_colour_viridis_c() in validate_category_scale()
+    # set the colours here just for the mapping (to allow extension with `+`)
+    return(list(colour = colourpicker(colour, min(length(colour), 2)),
+                colour_fill = colourpicker(colour_fill, 2),
+                viridis = TRUE))
+  }
+  
+  if (geom_is_continuous(type) && is.numeric(get_category(df))) {
+    colour.bak <- colour
+    if (length(colour) <= 3) {
+      # up to three colours are supported in validate_category_scale()
+      colour <- colourpicker(colour)
     } else {
-      colour.bak <- colour
-      if (length(colour) == 1) {
-        # start with white
-        colour <- c("white", colourpicker(colour))
-      } else if (length(colour) %in% c(2:3)) {
-        # two or three colours are supported in validate_category_scale()
-        colour <- colourpicker(colour)
+      # more colours than needed, take only first two
+      colour <- colourpicker(colour, 2)
+    }
+    if (is.null(colour_fill) || identical(colour.bak, colour_fill)) {
+      colour_fill <- colour
+    } else {
+      if (length(colour_fill) <= 3) {
+        # up to three colours are supported in validate_category_scale()
+        colour_fill <- colourpicker(colour_fill)
       } else {
         # more colours than needed, take only first two
-        colour <- colourpicker(colour, 2)
+        colour_fill <- colourpicker(colour_fill, 2)
       }
-      if (is.null(colour_fill) || identical(colour.bak, colour_fill)) {
-        colour_fill <- colour
-      }
-      return(list(colour = colour,
-                  colour_fill = colour_fill))
     }
+    return(list(colour = colour,
+                colour_fill = colour_fill))
   }
   
   if (geom_is_continuous(type) && is.null(colour_fill) && any(colour %like% "certe")) {
@@ -954,23 +965,6 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
       colour_fill <- add_white(colour, white = 0.35)
     } else {
       colour_fill <- colourpicker(colour_fill)
-    }
-    
-  } else if (is.numeric(get_category(df)) && type != "geom_sf") {
-    # has also category, and it's numeric
-    colour.bak <- colour
-    if (length(colour) == 1) {
-      # start with white
-      colour <- c("white", colourpicker(colour))
-    } else if (length(colour) %in% c(2:3)) {
-      # two or three colours are supported in validate_category_scale()
-      colour <- colourpicker(colour)
-    } else {
-      # more colours than needed, take only first two
-      colour <- colourpicker(colour, 2)
-    }
-    if (is.null(colour_fill) || identical(colour.bak, colour_fill)) {
-      colour_fill <- colour
     }
     
   } else {

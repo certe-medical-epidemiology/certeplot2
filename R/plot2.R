@@ -743,7 +743,7 @@ plot2_exec <- function(.data,
                           misses_colour_fill = misses_colour_fill,
                           horizontal = horizontal)
   
-  # generate mapping ----
+  # generate mapping / aesthetics ----
   if (type == "geom_sf" && !is.null(dots$`_sf.column`)) {
     mapping <- aes_string(geometry = dots$`_sf.column`)
   } else if (!geom_is_continuous_x(type)) {
