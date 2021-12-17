@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.37</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.38</span>
       </span>
     </div>
 
@@ -278,7 +278,7 @@
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span>
 <span class="co">#&gt; i Using y = y</span>
 <span class="co">#&gt; i Using x = x</span>
-<span class="co">#&gt; i Using x.date_breaks = "4 days" based on data</span>
+<span class="co">#&gt; i Using x.date_breaks = "1 day" based on data</span>
 <span class="co">#&gt; i Using x.date_labels = "d mmm" based on data</span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-10-3.png" width="576"></p>
 <p>If you have crowded x labels, it’s easy to turn them:</p>
@@ -325,12 +325,12 @@
                           stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">character_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y z</span>
-<span class="co">#&gt; 1 a 5.831237 f</span>
-<span class="co">#&gt; 2 b 5.801931 g</span>
-<span class="co">#&gt; 3 c 4.005485 h</span>
-<span class="co">#&gt; 4 d 4.756547 i</span>
-<span class="co">#&gt; 5 e 4.614395 j</span>
-<span class="co">#&gt; 6 a 3.554239 f</span>
+<span class="co">#&gt; 1 a 3.573832 f</span>
+<span class="co">#&gt; 2 b 6.829004 g</span>
+<span class="co">#&gt; 3 c 4.856212 h</span>
+<span class="co">#&gt; 4 d 6.590163 i</span>
+<span class="co">#&gt; 5 e 5.188797 j</span>
+<span class="co">#&gt; 6 a 4.274595 f</span>
 
 <span class="va">numeric_z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span>,
                         y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">5</span><span class="op">)</span>,
@@ -339,12 +339,12 @@
                         stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">numeric_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y        z</span>
-<span class="co">#&gt; 1 a 3.816082 3.945965</span>
-<span class="co">#&gt; 2 b 4.591603 5.136567</span>
-<span class="co">#&gt; 3 c 3.102200 6.147483</span>
-<span class="co">#&gt; 4 d 4.531540 3.103264</span>
-<span class="co">#&gt; 5 e 4.948588 6.250877</span>
-<span class="co">#&gt; 6 a 5.143920 6.198318</span>
+<span class="co">#&gt; 1 a 5.394371 4.088023</span>
+<span class="co">#&gt; 2 b 5.892487 4.656642</span>
+<span class="co">#&gt; 3 c 4.387996 4.988906</span>
+<span class="co">#&gt; 4 d 4.026153 5.736623</span>
+<span class="co">#&gt; 5 e 4.028507 6.361816</span>
+<span class="co">#&gt; 6 a 4.928345 4.004366</span>
 
 <span class="va">character_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>, type <span class="op">=</span> <span class="st">"jitter"</span>,
@@ -362,7 +362,7 @@
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>,
           type <span class="op">=</span> <span class="st">"jitter"</span>,
           colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; i Using category.midpoint = 4.95 (the median) for the category scale</span></code></pre></div>
+<span class="co">#&gt; i Using category.midpoint = 5.16 (the median) for the category scale</span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-14-1.png" width="576"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">numeric_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  
