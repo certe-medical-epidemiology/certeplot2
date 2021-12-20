@@ -416,4 +416,7 @@ How does it look?
 
 ```{r}
 plot2(netherlands)
+plot2(netherlands,
+      colour_fill = "viridis",
+      datalabels = paste0(province, "\n", round(area_km2)))
 ```

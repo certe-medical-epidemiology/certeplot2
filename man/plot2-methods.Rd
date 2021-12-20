@@ -64,6 +64,7 @@
   x.expand = 0.5,
   x.limits = NULL,
   x.character = NULL,
+  x.drop = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -187,6 +188,7 @@
   x.expand = 0.5,
   x.limits = NULL,
   x.character = NULL,
+  x.drop = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -310,6 +312,7 @@
   x.expand = 0.5,
   x.limits = NULL,
   x.character = NULL,
+  x.drop = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -388,7 +391,7 @@
   type = NULL,
   x.title = NULL,
   y.title = NULL,
-  category.title = NULL,
+  category.title = TRUE,
   title = NULL,
   subtitle = NULL,
   caption = NULL,
@@ -433,6 +436,7 @@
   x.expand = 0,
   x.limits = NULL,
   x.character = NULL,
+  x.drop = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -559,6 +563,7 @@
   x.expand = 0.5,
   x.limits = NULL,
   x.character = NULL,
+  x.drop = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -682,6 +687,7 @@
   x.expand = 0.5,
   x.limits = NULL,
   x.character = NULL,
+  x.drop = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -836,9 +842,9 @@
 
 \item{x.lbl_align}{alignment for the x axis between \code{0} (left aligned) and \code{1} (right aligned)}
 
-\item{x.lbl_italic}{a \link{logical} to indicate whether the x labels should in in \emph{italics}}
+\item{x.lbl_italic}{\link{logical} to indicate whether the x labels should in in \emph{italics}}
 
-\item{x.remove}{a \link{logical} to indicate whether the x labels and title should be removed}
+\item{x.remove}{\link{logical} to indicate whether the x labels and title should be removed}
 
 \item{x.position}{position of the x axis, defaults to \code{"bottom"}}
 
@@ -854,17 +860,19 @@
 
 \item{facet.max_txt}{the text to use of values not included number of \verb{*.max_items}. The placeholder \verb{\%n} will be replaced with the outcome of the \code{summarise_function} function, the placeholder \verb{\%p} will be replaced with the percentage.}
 
-\item{x.breaks}{a breaks function or numeric vector to use for the x axis}
+\item{x.breaks}{breaks function or numeric vector to use for the x axis}
 
 \item{x.breaks_n}{number of breaks to use for the x axis}
 
-\item{x.trans}{a transformation function to use for the x axis, e.g. \code{"log2"}}
+\item{x.trans}{transformation function to use for the x axis, e.g. \code{"log2"}}
 
 \item{x.expand}{expansion to use for the x axis, can be length 1 or 2}
 
 \item{x.limits}{limits to use for the x axis, can be length 1 or 2}
 
 \item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (x values between 2000 and 2050)}
+
+\item{x.drop}{\link{logical} to indicate whether factor levels should be dropped}
 
 \item{y.remove}{a \link{logical} to indicate whether the y labels and title should be removed}
 

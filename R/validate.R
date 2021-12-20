@@ -386,6 +386,7 @@ validate_x_scale <- function(values,
                              x.limits,
                              x.position,
                              x.trans,
+                             x.drop,
                              decimal.mark,
                              big.mark,
                              horizontal,
@@ -446,7 +447,7 @@ validate_x_scale <- function(values,
                      limits = x.limits)
   } else {
     if (!is.numeric(values)) {
-      scale_x_discrete(position = x.position)
+      scale_x_discrete(position = x.position, drop = x.drop)
     } else {
       if (x.trans == "identity" && isTRUE(horizontal)) {
         x.trans <- reverse_trans()
@@ -642,7 +643,7 @@ validate_y_scale <- function(values,
   )
 }
 
-#' @importFrom ggplot2 scale_colour_gradient2 scale_colour_gradient scale_colour_viridis_c expansion guide_colourbar element_text
+#' @importFrom ggplot2 scale_colour_gradient2 scale_colour_gradient scale_colour_gradientn scale_colour_viridis_c expansion guide_colourbar element_text
 #' @importFrom certestyle format2
 validate_category_scale <- function(values,
                                     type,
@@ -736,9 +737,17 @@ validate_category_scale <- function(values,
             args = args)
     
   } else if (length(cols_category) == 1) {
+    # 1 colour, start with white
     do.call(scale_colour_gradient,
             args = c(list(low = "white",
                           high =  cols_category),
+                     args))
+    
+  } else if (length(cols_category) == 2) {
+    # 2 colours, low and high
+    do.call(scale_colour_gradient,
+            args = c(list(low = cols_category[1],
+                          high = cols_category[2]),
                      args))
     
   } else if (length(cols_category) == 3) {
@@ -757,14 +766,11 @@ validate_category_scale <- function(values,
                           high = cols_category[3],
                           midpoint = mid_point),
                      args))
+    
   } else {
-    # 2 colours, low and high
-    if (length(cols_category) > 2) {
-      cols_category <- c(cols_category[1], cols_category[length(cols_category)])
-    }
-    do.call(scale_colour_gradient,
-            args = c(list(low = cols_category[1],
-                          high =  cols_category[2]),
+    # more than 3 colours, create own divergent scale
+    do.call(scale_colour_gradientn,
+            args = c(list(colours = cols_category),
                      args))
   }
 }
@@ -917,22 +923,21 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
   
   if (geom_is_continuous(type) && is.numeric(get_category(df))) {
     colour.bak <- colour
-    if (length(colour) <= 3) {
-      # up to three colours are supported in validate_category_scale()
-      colour <- colourpicker(colour)
+    # up to three colours are supported in validate_category_scale()
+    if (length(colour) == 1 && colour %like% "certe([1-6]+)?$") {
+      # take all Certe colours
+      colour <- colourpicker(colour, 4)
     } else {
-      # more colours than needed, take only first two
-      colour <- colourpicker(colour, 2)
+      colour <- colourpicker(colour)
     }
     if (is.null(colour_fill) || identical(colour.bak, colour_fill)) {
       colour_fill <- colour
     } else {
-      if (length(colour_fill) <= 3) {
-        # up to three colours are supported in validate_category_scale()
-        colour_fill <- colourpicker(colour_fill)
+      if (length(colour_fill) == 1 && colour_fill %like% "certe([1-6]+)?$") {
+        # take all Certe colours
+        colour_fill <- colourpicker(colour_fill, 4)
       } else {
-        # more colours than needed, take only first two
-        colour_fill <- colourpicker(colour_fill, 2)
+        colour_fill <- colourpicker(colour_fill)
       }
     }
     return(list(colour = colour,
@@ -991,10 +996,10 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
     
     minimum_length <- length(group_sizes(df))
     if (length(colour) < minimum_length) {
-      colour <- rep(colour, minimum_length / length(colour))
+      colour <- c(colour, rep(colour, minimum_length)[seq_len(minimum_length - length(colour))])
     }
     if (length(colour_fill) < minimum_length) {
-      colour_fill <- rep(colour_fill, minimum_length / length(colour_fill))
+      colour_fill <- c(colour_fill, rep(colour_fill, minimum_length)[seq_len(minimum_length - length(colour_fill))])
     }
   }
   
@@ -1211,7 +1216,7 @@ validate_theme <- function(theme,
   return(theme)
 }
 
-#' @importFrom ggplot2 facet_grid facet_wrap
+#' @importFrom ggh4x facet_grid2 facet_wrap2
 validate_facet <- function(df,
                            type,
                            facet.repeat_lbls_x,
@@ -1224,17 +1229,25 @@ validate_facet <- function(df,
   scales <- "fixed"
   if (isTRUE(facet.repeat_lbls_x) && isTRUE(facet.repeat_lbls_y)) {
     scales <- "free"
+    axes <- "all"
   } else if (isTRUE(facet.repeat_lbls_y)) {
     scales <- "free_y"
+    axes <- "y"
     if (isTRUE(horizontal)) {
       scales <- "free_x"
+      axes <- "x"
     }
   } else if (isTRUE(facet.repeat_lbls_x)) {
     scales <- "free_x"
+    axes <- "x"
     if (isTRUE(horizontal)) {
       scales <- "free_y"
+      axes <- "y"
     }
   }
+  
+  # return(facet_grid2(cols = vars(`_var_facet`), switch = "y", space = scales))
+  
   if (type == "geom_sf") {
     # force fixes scales, otherwise throws an error: coord_sf doesn't support free scales
     scales <- "fixed"
@@ -1251,7 +1264,7 @@ validate_facet <- function(df,
       switch <- "y"
     }
     if (is.null(facet.nrow) || facet.nrow == 1) {
-      return(facet_grid(cols = vars(`_var_facet`),
+      return(facet_grid2(cols = vars(`_var_facet`),
                         space = scales,
                         drop = facet.drop,
                         scales = scales,
@@ -1259,14 +1272,14 @@ validate_facet <- function(df,
     } else {
       plot2_warning("When using ", font_blue("facet.relative = TRUE"), ", the number of columns cannot be > 1 when ",
                     font_blue("facet.nrow"), " is larger than 1")
-      return(facet_grid(rows = vars(`_var_facet`),
+      return(facet_grid2(rows = vars(`_var_facet`),
                         space = scales,
                         drop = facet.drop,
                         scales = scales,
                         switch = switch))
     }
   } else {
-    return(facet_wrap("`_var_facet`",
+    return(facet_wrap2("`_var_facet`",
                       scales = scales,
                       strip.position = facet.position,
                       drop = facet.drop,

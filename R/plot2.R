@@ -55,15 +55,16 @@
 #' @param colour_fill colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
 #' @param x.lbl_angle angle to use for the x axis in a counter-clockwise direction (i.e., a value of `90` will orient the axis labels from bottom to top, a value of `270` will orient the axis labels from top to bottom)
 #' @param x.lbl_align alignment for the x axis between `0` (left aligned) and `1` (right aligned)
-#' @param x.lbl_italic a [logical] to indicate whether the x labels should in in *italics*
-#' @param x.remove a [logical] to indicate whether the x labels and title should be removed
+#' @param x.lbl_italic [logical] to indicate whether the x labels should in in *italics*
+#' @param x.remove [logical] to indicate whether the x labels and title should be removed
 #' @param x.position position of the x axis, defaults to `"bottom"`
-#' @param x.breaks a breaks function or numeric vector to use for the x axis
+#' @param x.breaks breaks function or numeric vector to use for the x axis
 #' @param x.breaks_n number of breaks to use for the x axis
-#' @param x.trans a transformation function to use for the x axis, e.g. `"log2"`
+#' @param x.trans transformation function to use for the x axis, e.g. `"log2"`
 #' @param x.expand expansion to use for the x axis, can be length 1 or 2
 #' @param x.limits limits to use for the x axis, can be length 1 or 2
 #' @param x.character a [logical] to indicate whether the values of the x axis should be forced to [character]. The default is `FALSE`, except for years (x values between 2000 and 2050)
+#' @param x.drop [logical] to indicate whether factor levels should be dropped
 #' @param y.remove a [logical] to indicate whether the y labels and title should be removed
 #' @param y.24h a [logical] to indicate whether the y labels and breaks should be formatted as 24-hour sequences
 #' @param y.age a [logical] to indicate whether the y labels and breaks should be formatted as ages in years
@@ -302,6 +303,7 @@ plot2 <- function(.data,
                   x.expand = 0.5,
                   x.limits = NULL,
                   x.character = NULL,
+                  x.drop = FALSE,
                   y.remove = FALSE,
                   y.24h = FALSE,
                   y.age = FALSE,
@@ -430,6 +432,7 @@ plot2_exec <- function(.data,
                        x.expand,
                        x.limits,
                        x.character,
+                       x.drop,
                        y.remove,
                        y.24h,
                        y.age,
@@ -562,8 +565,8 @@ plot2_exec <- function(.data,
   }
   if (!is.null(category.title)) {
     # category.title and legend.title both exist for convenience
-    if (!is.null(legend.title)) {
-      plot2_warning(font_blue("category.title"), " already set instead of ", font_blue("legend.title"))
+    if (!is.null(legend.title) && !isTRUE(legend.title)) {
+      plot2_warning("Ignoring ", font_blue("legend.title"), "in favour of ", font_blue("category.title"))
     }
     legend.title <- category.title
   }
@@ -915,6 +918,7 @@ plot2_exec <- function(.data,
                          x.limits = x.limits,
                          x.position = x.position,
                          x.trans = x.trans,
+                         x.drop = x.drop,
                          decimal.mark = decimal.mark,
                          big.mark = big.mark,
                          horizontal = horizontal,
@@ -922,7 +926,7 @@ plot2_exec <- function(.data,
     } else {
       # no x
       p <- p +
-        scale_x_discrete(labels = NULL, breaks = NULL)
+        scale_x_discrete(labels = NULL, breaks = NULL, drop = x.drop)
     }
     if (has_y(df)) {
       p <- p +

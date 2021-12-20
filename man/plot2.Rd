@@ -58,6 +58,7 @@ plot2(
   x.expand = 0.5,
   x.limits = NULL,
   x.character = NULL,
+  x.drop = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -187,9 +188,9 @@ plot2(
 
 \item{x.lbl_align}{alignment for the x axis between \code{0} (left aligned) and \code{1} (right aligned)}
 
-\item{x.lbl_italic}{a \link{logical} to indicate whether the x labels should in in \emph{italics}}
+\item{x.lbl_italic}{\link{logical} to indicate whether the x labels should in in \emph{italics}}
 
-\item{x.remove}{a \link{logical} to indicate whether the x labels and title should be removed}
+\item{x.remove}{\link{logical} to indicate whether the x labels and title should be removed}
 
 \item{x.position}{position of the x axis, defaults to \code{"bottom"}}
 
@@ -197,17 +198,19 @@ plot2(
 
 \item{x.max_txt, category.max_txt, facet.max_txt}{the text to use of values not included number of \verb{*.max_items}. The placeholder \verb{\%n} will be replaced with the outcome of the \code{summarise_function} function, the placeholder \verb{\%p} will be replaced with the percentage.}
 
-\item{x.breaks}{a breaks function or numeric vector to use for the x axis}
+\item{x.breaks}{breaks function or numeric vector to use for the x axis}
 
 \item{x.breaks_n}{number of breaks to use for the x axis}
 
-\item{x.trans}{a transformation function to use for the x axis, e.g. \code{"log2"}}
+\item{x.trans}{transformation function to use for the x axis, e.g. \code{"log2"}}
 
 \item{x.expand}{expansion to use for the x axis, can be length 1 or 2}
 
 \item{x.limits}{limits to use for the x axis, can be length 1 or 2}
 
 \item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (x values between 2000 and 2050)}
+
+\item{x.drop}{\link{logical} to indicate whether factor levels should be dropped}
 
 \item{y.remove}{a \link{logical} to indicate whether the y labels and title should be removed}
 
@@ -335,7 +338,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 119 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 120 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)

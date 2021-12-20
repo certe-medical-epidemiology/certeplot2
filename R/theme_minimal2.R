@@ -65,7 +65,7 @@ theme_minimal2 <- function(...) {
                               hjust = 0,
                               colour = "black",
                               face = "bold"),
-      # for facet (facet_wrap):
+      # for facet (ggh4x::facet_wrap2):
       strip.background = element_rect(colour = "#FFFFFF00"),
       strip.switch.pad.wrap = unit(10, "pt"),
       strip.placement = "outside",
