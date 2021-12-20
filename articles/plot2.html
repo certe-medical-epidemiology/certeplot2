@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.38</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.39</span>
       </span>
     </div>
 
@@ -144,7 +144,7 @@
 <li>Support for any <code>ggplot2</code> extension based on <code><a href="https://ggplot2.tidyverse.org/reference/fortify.html" class="external-link">ggplot2::fortify()</a></code>
 </li>
 </ul>
-<p>The <code>ggplot2</code> package in conjunction with the <code>dplyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but <em>the goal of the <code><a href="../reference/plot2.html">plot2()</a></code> function is to generalise this into one function</em>. The default <code><a href="../reference/plot2.html">plot2()</a></code> function currently has 118 arguments, all with a default value.</p>
+<p>The <code>ggplot2</code> package in conjunction with the <code>dplyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but <em>the goal of the <code><a href="../reference/plot2.html">plot2()</a></code> function is to generalise this into one function</em>. The default <code><a href="../reference/plot2.html">plot2()</a></code> function currently has 119 arguments, all with a default value.</p>
 <p>Every <code>plot2</code> is just a <code>ggplot</code> object, and thus extendible and editable with any other <code>ggplot2</code> function, using <code>+</code> (per the <code>ggplot2</code> convention`).</p>
 <div class="section level3">
 <h3 id="initialisation">Initialisation<a class="anchor" aria-label="anchor" href="#initialisation"></a>
@@ -247,7 +247,7 @@
 <div class="section level2">
 <h2 id="the-x-direction">The <code>x</code> direction<a class="anchor" aria-label="anchor" href="#the-x-direction"></a>
 </h2>
-<p>The x axis is the most commonly used way to categorise values of <em>y</em> according to another variable. All arguments of <code><a href="../reference/plot2.html">plot2()</a></code> that start with <code>x.</code> are for adjusting settings of the x axis. These are: ‘x.breaks’, ‘x.breaks_n’, ‘x.character’, ‘x.date_breaks’, ‘x.date_labels’, ‘x.expand’, ‘x.lbl_align’, ‘x.lbl_angle’, ‘x.lbl_italic’, ‘x.limits’, ‘x.max_items’, ‘x.max_txt’, ‘x.position’, ‘x.remove’, ‘x.sort’, ‘x.title’, ‘x.trans’.</p>
+<p>The x axis is the most commonly used way to categorise values of <em>y</em> according to another variable. All arguments of <code><a href="../reference/plot2.html">plot2()</a></code> that start with <code>x.</code> are for adjusting settings of the x axis. These are: ‘x.breaks’, ‘x.breaks_n’, ‘x.character’, ‘x.date_breaks’, ‘x.date_labels’, ‘x.drop’, ‘x.expand’, ‘x.lbl_align’, ‘x.lbl_angle’, ‘x.lbl_italic’, ‘x.limits’, ‘x.max_items’, ‘x.max_txt’, ‘x.position’, ‘x.remove’, ‘x.sort’, ‘x.title’, ‘x.trans’.</p>
 <div class="section level3">
 <h3 id="x-labels">
 <code>x</code> labels<a class="anchor" aria-label="anchor" href="#x-labels"></a>
@@ -278,7 +278,7 @@
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span>
 <span class="co">#&gt; i Using y = y</span>
 <span class="co">#&gt; i Using x = x</span>
-<span class="co">#&gt; i Using x.date_breaks = "1 day" based on data</span>
+<span class="co">#&gt; i Using x.date_breaks = "4 days" based on data</span>
 <span class="co">#&gt; i Using x.date_labels = "d mmm" based on data</span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-10-3.png" width="576"></p>
 <p>If you have crowded x labels, it’s easy to turn them:</p>
@@ -325,12 +325,12 @@
                           stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">character_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y z</span>
-<span class="co">#&gt; 1 a 3.573832 f</span>
-<span class="co">#&gt; 2 b 6.829004 g</span>
-<span class="co">#&gt; 3 c 4.856212 h</span>
-<span class="co">#&gt; 4 d 6.590163 i</span>
-<span class="co">#&gt; 5 e 5.188797 j</span>
-<span class="co">#&gt; 6 a 4.274595 f</span>
+<span class="co">#&gt; 1 a 3.939757 f</span>
+<span class="co">#&gt; 2 b 6.086154 g</span>
+<span class="co">#&gt; 3 c 5.676827 h</span>
+<span class="co">#&gt; 4 d 5.167679 i</span>
+<span class="co">#&gt; 5 e 3.969287 j</span>
+<span class="co">#&gt; 6 a 4.291481 f</span>
 
 <span class="va">numeric_z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span>,
                         y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">5</span><span class="op">)</span>,
@@ -339,12 +339,12 @@
                         stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">numeric_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y        z</span>
-<span class="co">#&gt; 1 a 5.394371 4.088023</span>
-<span class="co">#&gt; 2 b 5.892487 4.656642</span>
-<span class="co">#&gt; 3 c 4.387996 4.988906</span>
-<span class="co">#&gt; 4 d 4.026153 5.736623</span>
-<span class="co">#&gt; 5 e 4.028507 6.361816</span>
-<span class="co">#&gt; 6 a 4.928345 4.004366</span>
+<span class="co">#&gt; 1 a 4.306640 4.078487</span>
+<span class="co">#&gt; 2 b 4.160347 4.858886</span>
+<span class="co">#&gt; 3 c 5.668895 6.510290</span>
+<span class="co">#&gt; 4 d 5.322184 4.744283</span>
+<span class="co">#&gt; 5 e 6.054446 4.271066</span>
+<span class="co">#&gt; 6 a 5.338911 6.890232</span>
 
 <span class="va">character_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>, type <span class="op">=</span> <span class="st">"jitter"</span>,
@@ -362,7 +362,7 @@
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>,
           type <span class="op">=</span> <span class="st">"jitter"</span>,
           colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; i Using category.midpoint = 5.16 (the median) for the category scale</span></code></pre></div>
+<span class="co">#&gt; i Using category.midpoint = 5.43 (the median) for the category scale</span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-14-1.png" width="576"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">numeric_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  
@@ -592,7 +592,7 @@
 <p>The <code>netherlands</code> data set is such an <code>sf</code> object:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
-<span class="co">#&gt; Linking to GEOS 3.8.0, GDAL 3.0.4, PROJ 6.3.1</span>
+<span class="co">#&gt; Linking to GEOS 3.8.0, GDAL 3.0.4, PROJ 6.3.1; sf_use_s2() is TRUE</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">netherlands</span><span class="op">)</span>
 <span class="co">#&gt; Simple feature collection with 12 features and 2 fields</span>
 <span class="co">#&gt; Geometry type: MULTIPOLYGON</span>
@@ -617,6 +617,12 @@
 <span class="co">#&gt; i Using category = area_km2</span>
 <span class="co">#&gt; i Using datalabels = province</span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-27-1.png" width="576"></p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">netherlands</span>,
+      colour_fill <span class="op">=</span> <span class="st">"viridis"</span>,
+      datalabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">province</span>, <span class="st">"\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">area_km2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; i Using category = area_km2</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-27-2.png" width="576"></p>
 </div>
   </div>
 
