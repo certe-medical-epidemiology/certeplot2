@@ -1058,6 +1058,7 @@ validate_titles <- function(text, markdown = TRUE, max_length = NULL) {
     } else {
       if (isTRUE(markdown)) {
         text <- gsub("\n", "<br>", text, fixed = TRUE)
+        text <- gsub(" ^ ", "^", text, fixed = TRUE)
       }
       if (is.null(max_length)) {
         return(text)
