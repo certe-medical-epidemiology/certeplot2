@@ -29,11 +29,11 @@
 #' @param facet plotting 'direction': the facet
 #' @param type type of visualisation to use. This can be:
 #' 
-#' * A `ggplot2` geom name, all geoms are supported. Full function names can be used (e.g., `"geom_histogram"`), but they can also be abbreviated (e.g., `"h"`, `"hist"`). These geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), violin (`"v"`). **Please note:** in `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `type = "bar"` will set `type = "col"` and `horizontal = TRUE`.
+#' * A `ggplot2` geom name, all geoms are supported (including [`geom_blank()`][ggplot2::geom_blank()]). Full function names can be used (e.g., `"geom_histogram"`), but they can also be abbreviated (e.g., `"h"`, `"hist"`). These geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), violin (`"v"`). **Please note:** in `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `type = "bar"` will set `type = "col"` and `horizontal = TRUE`.
 #' 
 #' * A shortcut. There is currently one supported shortcut: `"barpercent"`, which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
 #' 
-#' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and `"col"` otherwise.
+#' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and `"col"` otherwise. Use `type = "blank"` or `type = "geom_blank"` to *not* print a geom.
 #' @param x.title text to show on the x axis
 #' @param y.title text to show on the y axis
 #' @param category.title text to show for the category (legend title)
@@ -51,7 +51,7 @@
 #' @param x.date_breaks breaks to use when the x axis contains dates, will be determined automatically if left blank
 #' @param x.date_labels labels to use when the x axis contains dates, will be determined automatically if left blank
 #' @param category.focus a value of `category` that should be highlighted, meaning that all other values in `category` will be greyed out. This can also be a numeric value between 1 and the length of unique values of `category`, e.g. `category.focus = 2` to focus on the second legend item.
-#' @param colour colour(s) to set, will be evaluated with [`colourpicker()`][certestyle::colourpicker()] and defaults to Certe colours. This can be a named vector to match values of `category`, see *Examples*. Using a named vector can also be used to manually sort the values of `category`.
+#' @param colour colour(s) to set, will be evaluated with [`colourpicker()`][certestyle::colourpicker()] and defaults to Certe colours. This can also be one of the viridis colours for a continuous scale: `"viridis"`, `"magma"`, `"inferno"`, `"plasma"`, `"cividis"`, `"rocket"`, `"mako"` or `"turbo"`. This can also be a named vector to match values of `category`, see *Examples*. Using a named vector can also be used to manually sort the values of `category`.
 #' @param colour_fill colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
 #' @param x.lbl_angle angle to use for the x axis in a counter-clockwise direction (i.e., a value of `90` will orient the axis labels from bottom to top, a value of `270` will orient the axis labels from top to bottom)
 #' @param x.lbl_align alignment for the x axis between `0` (left aligned) and `1` (right aligned)
@@ -240,7 +240,8 @@
 #' # sf objects (geographic plots, 'simple features') are also supported
 #' if (require("sf")) {
 #'   netherlands %>% 
-#'     plot2(datalabels = TRUE)
+#'     plot2(colour_fill = "viridis",
+#'           datalabels = paste0(province, "\n", round(area_km2)))
 #' }
 #' 
 #' # Antimicrobial Resistance (AMR) data analysis requires the `AMR` package:
@@ -501,11 +502,6 @@ plot2_exec <- function(.data,
                        y.category,
                        ...) {
   
-  if (NROW(.data) == 0) {
-    warning("No observations to plot.", call. = FALSE)
-    return(invisible())
-  }
-  
   dots <- list(...)
   dots_unknown <- names(dots) %unlike% "^(_|sort[.])"
   if (any(dots_unknown)) {
@@ -530,6 +526,37 @@ plot2_exec <- function(.data,
   misses_caption <- isTRUE(dots$`_misses.caption`)
   misses_zoom <- isTRUE(dots$`_misses.zoom`)
   misses_y.percent <- isTRUE(dots$`_misses.y.percent`)
+  
+  # no observations, return empty plot ----
+  if (NROW(.data) == 0) {
+    plot2_warning("No observations, returning an empty plot")
+    p <- ggplot() +
+      validate_theme(theme = theme,
+                     type = "",
+                     markdown = markdown,
+                     text_factor = text_factor,
+                     family = family,
+                     horizontal = horizontal,
+                     x.remove = x.remove,
+                     x.lbl_angle = x.lbl_angle,
+                     x.lbl_align = x.lbl_align,
+                     x.lbl_italic = x.lbl_italic,
+                     facet.fill = facet.fill,
+                     facet.bold = facet.bold,
+                     facet.italic = facet.italic,
+                     facet.size = facet.size,
+                     facet.margin = facet.margin,
+                     legend.italic = legend.italic,
+                     title.colour = title.colour,
+                     subtitle.colour = subtitle.colour)
+    if (!misses_x.title) p <- p + labs(x = validate_titles(x.title))
+    if (!misses_y.title) p <- p + labs(y = validate_titles(y.title))
+    if (!misses_title) p <- p + labs(title = validate_titles(title, markdown = markdown, max_length = title.linelength))
+    if (!misses_subtitle) p <- p + labs(subtitle = validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
+    if (!misses_tag) p <- p + labs(tag = validate_titles(tag))
+    if (!misses_caption) p <- p + labs(caption = validate_titles(caption))
+    return(p)
+  }
   
   # old arguments, from previous package ----
   if (tryCatch(!is.null(y.category), error = function(e) TRUE)) {
@@ -950,27 +977,25 @@ plot2_exec <- function(.data,
   }
   
   # validate theme and add markdown support ----
-  theme <- validate_theme(theme = theme,
-                          type = type,
-                          markdown = markdown,
-                          text_factor = text_factor,
-                          family = family,
-                          horizontal = horizontal,
-                          x.remove = x.remove,
-                          x.lbl_angle = x.lbl_angle,
-                          x.lbl_align = x.lbl_align,
-                          x.lbl_italic = x.lbl_italic,
-                          facet.fill = facet.fill,
-                          facet.bold = facet.bold,
-                          facet.italic = facet.italic,
-                          facet.size = facet.size,
-                          facet.margin = facet.margin,
-                          legend.italic = legend.italic,
-                          title.colour = title.colour,
-                          subtitle.colour = subtitle.colour)
-  if (!is_empty(theme)) {
-    p <- p + theme
-  }
+  p <- p + 
+    validate_theme(theme = theme,
+                   type = type,
+                   markdown = markdown,
+                   text_factor = text_factor,
+                   family = family,
+                   horizontal = horizontal,
+                   x.remove = x.remove,
+                   x.lbl_angle = x.lbl_angle,
+                   x.lbl_align = x.lbl_align,
+                   x.lbl_italic = x.lbl_italic,
+                   facet.fill = facet.fill,
+                   facet.bold = facet.bold,
+                   facet.italic = facet.italic,
+                   facet.size = facet.size,
+                   facet.margin = facet.margin,
+                   legend.italic = legend.italic,
+                   title.colour = title.colour,
+                   subtitle.colour = subtitle.colour)
   
   # add titles ----
   if (!misses_x.title) p <- p + labs(x = validate_titles(x.title)) # this will overwrite the var name
@@ -1028,7 +1053,7 @@ plot2_exec <- function(.data,
   }
   
   # set datalabels ----
-  if (has_datalabels(df)) {
+  if (has_datalabels(df) && type != "geom_blank") {
     p <- set_datalabels(p = p,
                         df = df,
                         type = type,

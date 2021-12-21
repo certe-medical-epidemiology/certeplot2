@@ -296,7 +296,7 @@ validate_data <- function(df,
     dots$x.character <- TRUE
   } else if (has_x(df) && 
              is.numeric(get_x(df)) &&
-             type != "" &&
+             !type %in% c("", "geom_blank") &&
              !geom_is_continuous(type)) {
     plot2_message("Assuming ", font_blue("x.character = TRUE"),
                   " for discrete plot type (", font_blue(type), ")",
@@ -643,7 +643,7 @@ validate_y_scale <- function(values,
   )
 }
 
-#' @importFrom ggplot2 scale_colour_gradient2 scale_colour_gradient scale_colour_gradientn scale_colour_viridis_c expansion guide_colourbar element_text
+#' @importFrom ggplot2 scale_colour_gradient2 scale_colour_gradient scale_colour_gradientn expansion guide_colourbar element_text
 #' @importFrom certestyle format2
 validate_category_scale <- function(values,
                                     type,
@@ -731,12 +731,7 @@ validate_category_scale <- function(values,
                                   ...),
                trans = category.trans)
   
-  # support divergent viridis scale
-  if (isTRUE(cols$viridis)) {
-    do.call(scale_colour_viridis_c,
-            args = args)
-    
-  } else if (length(cols_category) == 1) {
+  if (length(cols_category) == 1) {
     # 1 colour, start with white
     do.call(scale_colour_gradient,
             args = c(list(low = "white",
@@ -769,6 +764,7 @@ validate_category_scale <- function(values,
     
   } else {
     # more than 3 colours, create own divergent scale
+    # this can also be because one of the viridis colours was set with `colour` and/or `colour_fill`
     do.call(scale_colour_gradientn,
             args = c(list(colours = cols_category),
                      args))
@@ -898,9 +894,13 @@ generate_geom <- function(type,
                      list(colour = cols$colour)[length(cols$colour) == 1],
                      list(fill = cols$colour_fill)[!has_category(df)]))
     
+  } else if (type == "geom_blank") {
+    do.call(geom_fn,
+            args = list(na.rm = na.rm))
+    
   } else {
     # try to put some arguments into the requested geom
-    plot2_warning(font_blue("type = \"", geom, "\"", collapse = ""), " is currently only loosely supported")
+    plot2_warning(font_blue("type = \"", type, "\"", collapse = ""), " is currently only loosely supported")
     do.call(geom_fn,
             args = c(list(width = width,
                           size = size,
@@ -913,29 +913,43 @@ generate_geom <- function(type,
 #' @importFrom certestyle colourpicker add_white
 validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, horizontal) {
   
-  if (identical(colour, "viridis") | identical(colour_fill, "viridis")) {
-    # chosen for viridis, which will lead to scale_colour_viridis_c() in validate_category_scale()
-    # set the colours here just for the mapping (to allow extension with `+`)
-    return(list(colour = colourpicker(colour, min(length(colour), 2)),
-                colour_fill = colourpicker(colour_fill, 2),
-                viridis = TRUE))
-  }
-  
   if (geom_is_continuous(type) && is.numeric(get_category(df))) {
+    viridis_colours <- c("viridis", "magma", "inferno", "plasma", "cividis", "rocket", "mako", "turbo")
     colour.bak <- colour
-    # up to three colours are supported in validate_category_scale()
-    if (length(colour) == 1 && colour %like% "certe([1-6]+)?$") {
-      # take all Certe colours
-      colour <- colourpicker(colour, 4)
+    # this is for validate_category_scale()
+    if (length(colour) == 1) {
+      if (colour == "certe") {
+        # divergent Certe scale
+        colour <- colourpicker(c("certeblauw0", "certeblauw2", "certegroen2", "certegroen4"))
+      } else if (colour %like% "certe([1-6]+)$") {
+        # take Certe colours
+        colour <- colourpicker(colour, 4)
+      } else if (colour %in% viridis_colours) {
+        # generate viridis colour
+        colour <- colourpicker(colour, 5)
+      } else {
+        colour <- colourpicker(colour)
+      }
     } else {
       colour <- colourpicker(colour)
     }
+
     if (is.null(colour_fill) || identical(colour.bak, colour_fill)) {
       colour_fill <- colour
     } else {
-      if (length(colour_fill) == 1 && colour_fill %like% "certe([1-6]+)?$") {
-        # take all Certe colours
-        colour_fill <- colourpicker(colour_fill, 4)
+      if (length(colour_fill) == 1) {
+        if (colour_fill == "certe") {
+          # divergent Certe scale
+          colour_fill <- colourpicker(c("certeblauw0", "certeblauw2", "certegroen2", "certegroen4"))
+        } else if (colour_fill %like% "certe([1-6]+)$") {
+          # take Certe colours
+          colour_fill <- colourpicker(colour_fill, 4)
+        } else if (colour_fill %in% viridis_colours) {
+          # generate viridis colour
+          colour_fill <- colourpicker(colour_fill, 5)
+        } else {
+          colour_fill <- colourpicker(colour_fill)
+        }
       } else {
         colour_fill <- colourpicker(colour_fill)
       }
@@ -945,7 +959,7 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
   }
   
   if (geom_is_continuous(type) && is.null(colour_fill) && any(colour %like% "certe")) {
-    # exception for Certe: certeblauw (colour) -> certeblauw6 (colour_fill)
+    # exception for Certe: "certeblauw" (colour) -> "certeblauw6" (colour_fill)
     colour_fill <- colourpicker(colour)
     if (type == "geom_sf") {
       colour_fill[colour %like% "certe[a-z]*"] <- paste0(colour[colour %like% "certe[a-z]*"], "3")
@@ -1216,7 +1230,7 @@ validate_theme <- function(theme,
   return(theme)
 }
 
-#' @importFrom ggh4x facet_grid2 facet_wrap2
+#' @importFrom ggplot2 facet_grid facet_wrap
 validate_facet <- function(df,
                            type,
                            facet.repeat_lbls_x,
@@ -1229,24 +1243,17 @@ validate_facet <- function(df,
   scales <- "fixed"
   if (isTRUE(facet.repeat_lbls_x) && isTRUE(facet.repeat_lbls_y)) {
     scales <- "free"
-    axes <- "all"
   } else if (isTRUE(facet.repeat_lbls_y)) {
     scales <- "free_y"
-    axes <- "y"
     if (isTRUE(horizontal)) {
       scales <- "free_x"
-      axes <- "x"
     }
   } else if (isTRUE(facet.repeat_lbls_x)) {
     scales <- "free_x"
-    axes <- "x"
     if (isTRUE(horizontal)) {
       scales <- "free_y"
-      axes <- "y"
     }
   }
-  
-  # return(facet_grid2(cols = vars(`_var_facet`), switch = "y", space = scales))
   
   if (type == "geom_sf") {
     # force fixes scales, otherwise throws an error: coord_sf doesn't support free scales
@@ -1259,27 +1266,28 @@ validate_facet <- function(df,
     facet.drop <- TRUE
   }
   if (isTRUE(facet.relative)) {
-    switch <- "x"
-    if (isTRUE(horizontal)) {
-      switch <- "y"
+    if (facet.position == "top") {
+      switch <- "y"  
+    } else {
+      switch <- "x"
     }
     if (is.null(facet.nrow) || facet.nrow == 1) {
-      return(facet_grid2(cols = vars(`_var_facet`),
-                        space = scales,
+      return(facet_grid(cols = vars(`_var_facet`),
+                        space = scales, # <- this makes the facet.relative happen
                         drop = facet.drop,
                         scales = scales,
                         switch = switch))
     } else {
       plot2_warning("When using ", font_blue("facet.relative = TRUE"), ", the number of columns cannot be > 1 when ",
                     font_blue("facet.nrow"), " is larger than 1")
-      return(facet_grid2(rows = vars(`_var_facet`),
+      return(facet_grid(rows = vars(`_var_facet`),
                         space = scales,
                         drop = facet.drop,
                         scales = scales,
                         switch = switch))
     }
   } else {
-    return(facet_wrap2("`_var_facet`",
+    return(facet_wrap("`_var_facet`",
                       scales = scales,
                       strip.position = facet.position,
                       drop = facet.drop,
@@ -1505,13 +1513,13 @@ sort_data <- function(original_values,
   if (sort_method %in% c("alpha", "alpha-asc", "asc")) {
     # alphabetical, or ascending
     out <- factor(original_values,
-                 levels = str_sort(unique(original_values),
-                                   numeric = numeric_sort))
+                  levels = str_sort(unique(original_values),
+                                    numeric = numeric_sort))
   } else if (sort_method %in% c("alpha-desc", "desc")) {
     out <- factor(original_values,
-                 levels = str_sort(unique(original_values),
-                                   numeric = numeric_sort,
-                                   decreasing = TRUE))
+                  levels = str_sort(unique(original_values),
+                                    numeric = numeric_sort,
+                                    decreasing = TRUE))
   } else if (sort_method %in% c("false", "order", "inorder")) {
     out <- fct_inorder(as.character(original_values))
   } else if (sort_method %in% c("freq-asc", "infreq-asc")) {

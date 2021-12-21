@@ -773,9 +773,9 @@
 
 \item{type}{type of visualisation to use. This can be:
 \itemize{
-\item A \code{ggplot2} geom name, all geoms are supported. Full function names can be used (e.g., \code{"geom_histogram"}), but they can also be abbreviated (e.g., \code{"h"}, \code{"hist"}). These geoms can be abbreviated by their first character: area (\code{"a"}), boxplot (\code{"b"}), column (\code{"c"}), histogram (\code{"h"}), jitter (\code{"j"}), line (\code{"l"}), point (\code{"p"}), ribbon (\code{"r"}), violin (\code{"v"}). \strong{Please note:} in \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{type = "bar"} will set \code{type = "col"} and \code{horizontal = TRUE}.
+\item A \code{ggplot2} geom name, all geoms are supported (including \code{\link[ggplot2:geom_blank]{geom_blank()}}). Full function names can be used (e.g., \code{"geom_histogram"}), but they can also be abbreviated (e.g., \code{"h"}, \code{"hist"}). These geoms can be abbreviated by their first character: area (\code{"a"}), boxplot (\code{"b"}), column (\code{"c"}), histogram (\code{"h"}), jitter (\code{"j"}), line (\code{"l"}), point (\code{"p"}), ribbon (\code{"r"}), violin (\code{"v"}). \strong{Please note:} in \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{type = "bar"} will set \code{type = "col"} and \code{horizontal = TRUE}.
 \item A shortcut. There is currently one supported shortcut: \code{"barpercent"}, which will set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
-\item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X axis or if the length of unique values per X axis item is at least 3, \code{"point"} if both the Y and X axes are numeric, and \code{"col"} otherwise.
+\item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X axis or if the length of unique values per X axis item is at least 3, \code{"point"} if both the Y and X axes are numeric, and \code{"col"} otherwise. Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} print a geom.
 }}
 
 \item{x.title}{text to show on the x axis}
@@ -834,7 +834,7 @@
 
 \item{category.focus}{a value of \code{category} that should be highlighted, meaning that all other values in \code{category} will be greyed out. This can also be a numeric value between 1 and the length of unique values of \code{category}, e.g. \code{category.focus = 2} to focus on the second legend item.}
 
-\item{colour}{colour(s) to set, will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}} and defaults to Certe colours. This can be a named vector to match values of \code{category}, see \emph{Examples}. Using a named vector can also be used to manually sort the values of \code{category}.}
+\item{colour}{colour(s) to set, will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}} and defaults to Certe colours. This can also be one of the viridis colours for a continuous scale: \code{"viridis"}, \code{"magma"}, \code{"inferno"}, \code{"plasma"}, \code{"cividis"}, \code{"rocket"}, \code{"mako"} or \code{"turbo"}. This can also be a named vector to match values of \code{category}, see \emph{Examples}. Using a named vector can also be used to manually sort the values of \code{category}.}
 
 \item{colour_fill}{colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}}}
 
