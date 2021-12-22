@@ -1179,5 +1179,5 @@ For geographic information system (GIS) analysis, use the \code{sf} package with
 
 For antimicrobial resistance (AMR) data analysis, use the \code{\link[AMR:bug_drug_combinations]{bug_drug_combinations()}} function from the \code{AMR} package on a data set with antibiograms. The result can be used as input for \code{\link[=plot2]{plot2()}}.
 
-The QC-test can be acquired with \code{\link[certestats:nelson_rules]{certestats::qc_test()}}. It applies the Nelson QC rules for a vector of values.
+The QC-test can be acquired with \code{\link[certestats:qc_rules]{certestats::qc_test()}}. It applies the Nelson QC rules for a vector of values.
 }

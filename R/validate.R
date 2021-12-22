@@ -320,7 +320,8 @@ validate_data <- function(df,
                                   datapoints = get_y(df),
                                   summarise_function = dots$summarise_function,
                                   summarise_fn_name = dots$summarise_fn_name,
-                                  horizontal = dots$horizontal)) %>%
+                                  horizontal = dots$horizontal,
+                                  drop = dots$x.drop)) %>%
       arrange(across(`_var_x`))
     df[, get_x_name(df)] <- df$`_var_x` # required to keep sorting after summarising
   }
@@ -331,7 +332,8 @@ validate_data <- function(df,
                                          datapoints = get_y(df),
                                          summarise_function = dots$summarise_function,
                                          summarise_fn_name = dots$summarise_fn_name,
-                                         horizontal = dots$horizontal))
+                                         horizontal = dots$horizontal,
+                                         drop = TRUE))
     df[, get_category_name(df)] <- df$`_var_category` # required to keep sorting after summarising
   }
   if (has_facet(df)) {
@@ -341,7 +343,8 @@ validate_data <- function(df,
                                       datapoints = get_y(df),
                                       summarise_function = dots$summarise_function,
                                       summarise_fn_name = dots$summarise_fn_name,
-                                      horizontal = FALSE)) # never reversely sort when horizontal
+                                      horizontal = FALSE, # never reversely sort when horizontal
+                                      drop = TRUE))
     df[, get_facet_name(df)] <- df$`_var_facet` # required to keep sorting after summarising
   }
   
@@ -1469,7 +1472,8 @@ sort_data <- function(original_values,
                       datapoints,
                       summarise_function,
                       summarise_fn_name,
-                      horizontal) {
+                      horizontal,
+                      drop) {
   if (is.null(sort_method) ||
       is.numeric(original_values) ||
       ((isTRUE(sort_method) && is.factor(original_values) && !isTRUE(horizontal)))) {
@@ -1502,6 +1506,9 @@ sort_data <- function(original_values,
                     levels = lvls,
                     ordered = is.ordered(original_values)))
     }
+  }
+  if (!isTRUE(drop)) {
+    levels <- levels(original_values)
   }
   
   if (!is.numeric(original_values)) {
@@ -1540,6 +1547,11 @@ sort_data <- function(original_values,
   } else {
     stop("invalid sorting option: '", sort_method.bak, "'")
   }
+  
+  if (!isTRUE(drop) && !is.null(levels)) {
+    levels(out) <- c(levels(out), sort(levels[!levels %in% levels(out)]))
+  }
+  
   out
 }
 

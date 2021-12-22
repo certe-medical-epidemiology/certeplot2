@@ -426,7 +426,7 @@ plot2.numeric <- function(.data,
     y_deparse <- "y"
   }
   df <- data.frame(y = .data, stringsAsFactors = FALSE)
-  colnames(df) <- y_deparse
+  colnames(df) <- ifelse(y_deparse == "x", "y", y_deparse) # support `plot2(x)` if x is a dbl vector
   if (missing(x)) {
     df$x <- seq_len(nrow(df))
   } else {
