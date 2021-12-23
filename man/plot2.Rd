@@ -311,7 +311,7 @@ plot2(
 \item{...}{arguments passed on to methods}
 }
 \value{
-The \code{\link[=plot2]{plot2()}} function adds new variables to the data for each mapping: any combination of \verb{_var_x}, \verb{_var_y}, \verb{_var_category}, \verb{_var_facet} and \verb{_var_datalabels}. These columns are internally set as mapping using \code{\link[ggplot2:aes]{aes()}}.
+a \code{ggplot} object
 }
 \description{
 The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \code{\link[ggplot2:ggplot]{ggplot2}} functions. By design, the \code{ggplot2} package requires users to use a lot of functions, while the \code{\link[=plot2]{plot2()}} function auto-determines needs and only requires to define arguments in one single function.

@@ -136,7 +136,7 @@
 #'   * Support for any `ggplot2` extension based on [ggplot2::fortify()]
 #'   
 #' The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. The generic [plot2()] function currently has `r length(formals(plot2)) - 1` arguments, all with a default value. **Less typing, faster coding.**
-#' @return The [plot2()] function adds new variables to the data for each mapping: any combination of `_var_x`, `_var_y`, `_var_category`, `_var_facet` and `_var_datalabels`. These columns are internally set as mapping using [`aes()`][ggplot2::aes()].
+#' @return a `ggplot` object
 #' @export
 #' @examples
 #' head(iris)
@@ -355,7 +355,7 @@ plot2 <- function(.data,
                   jitter_seed = NA,
                   violin_scale = "count",
                   legend.position = "top",
-                  legend.title = NULL, # TRUE in numeric categories
+                  legend.title = NULL, # will become TRUE in numeric categories is left NULL
                   legend.reverse = FALSE,
                   legend.barheight = 6,
                   legend.barwidth = 1.5,
@@ -590,13 +590,9 @@ plot2_exec <- function(.data,
                   " - use ", font_blue("'facet.sort'"), " instead")
     facet.sort <- dots$sort.facet
   }
-  if (!is.null(category.title)) {
-    # category.title and legend.title both exist for convenience
-    if (!is.null(legend.title) && !isTRUE(legend.title)) {
-      plot2_warning("Ignoring ", font_blue("legend.title"), "in favour of ", font_blue("category.title"))
-    }
-    legend.title <- category.title
-  }
+  
+  # category.title and legend.title both exist for convenience
+  legend.title <- if (is.null(category.title)) legend.title else category.title
   
   # prevalidate types for special types ----
   if (!is_empty(type) && !is.character(type)) {
@@ -619,6 +615,8 @@ plot2_exec <- function(.data,
   }
   
   # prepare data ----
+  # IMPORTANT: in this part, the data for mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
+  # this is done for convenience - this is restored before returning the `ggplot` object in the end
   df <- .data %>%
     # add the three directions, these functions also support tidyverse selections: `facet = where(is.character)`
     add_direction(direction = {{ x }},
@@ -775,6 +773,8 @@ plot2_exec <- function(.data,
                           horizontal = horizontal)
   
   # generate mapping / aesthetics ----
+  # IMPORTANT: in this part, the mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
+  # this is done for convenience - this is restored before returning the `ggplot` object in the end
   if (type == "geom_sf" && !is.null(dots$`_sf.column`)) {
     mapping <- aes_string(geometry = dots$`_sf.column`)
   } else if (!geom_is_continuous_x(type)) {
@@ -1078,6 +1078,27 @@ plot2_exec <- function(.data,
     p <- p + coord_flip()
   }
   
+  
+  # restore mapping to original names ----
+  # this will replace e.g. `_var_x` and `_var_category` in the mapping and remove them from the data
+  att <- attributes(p$mapping)
+  p$mapping <- p$mapping %>% 
+    lapply(function(map) 
+      if (deparse(map) %like% "_var_x") {
+        aes_string(as.name(get_x_name(df)))[[1]] 
+      } else if (deparse(map) %like% "_var_y") {
+        aes_string(as.name(get_y_name(df)))[[1]] 
+      } else if (deparse(map) %like% "_var_category") {
+        aes_string(as.name(get_category_name(df)))[[1]] 
+      } else if (deparse(map) %like% "_var_facet") {
+        aes_string(as.name(get_facet_name(df)))[[1]] 
+      } else {
+        map
+      })
+  # restore attributes
+  attributes(p$mapping) <- att
+  p$data <- p$data[, colnames(p$data)[colnames(p$data) %unlike% "^_var_(x|y|category|facet)$"], drop = FALSE]
+
   # return plot ----
   if (isTRUE(print)) {
     print(p)

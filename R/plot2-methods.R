@@ -984,8 +984,6 @@ plot2.sf <- function(.data,
     plot2_warning("In 'sf' plots, ", font_blue("y"), " will be ignored - did you mean ", font_blue("category"), "?")
   }
   
-  # df <- .data %>% 
-  #   mutate(x = "", y = 0) 
   df <- .data
   df$x <- ""
   df$y <- 0

@@ -30,6 +30,17 @@ test_that("general types work", {
   expect_s3_class(plot2(mtcars, mpg^2, hp^2, smooth = TRUE), "gg")
   expect_s3_class(iris %>% plot2(Species), "gg")
   expect_s3_class(iris %>% plot2(Species, type = "violin"), "gg")
+  expect_s3_class(lm(mpg ~ hp, mtcars) %>% plot2(), "gg")
+  expect_s3_class(cleaner::freq(admitted_patients$hospital) %>% plot2(), "gg")
+  expect_s3_class(netherlands %>% plot2(), "gg")
+  expect_s3_class(AMR::example_isolates %>%
+                    select(mo, CIP, AMC) %>%
+                    AMR::bug_drug_combinations(FUN = AMR::mo_gramstain) %>%
+                    plot2(),
+                  "gg")
+  if ("certestats" %in% rownames(utils::installed.packages())) {
+    expect_s3_class(certestats::qc_test(rnorm(100)) %>% plot2(), "gg")
+  }
 })
 
 test_that("general mapping works", {
@@ -48,4 +59,14 @@ test_that("x scale works", {
   expect_s3_class(plotdata %>% plot2(n, type = "density"), "gg")
   expect_s3_class(plotdata %>% plot2(n, type = "jitter"), "gg")
   expect_s3_class(plotdata %>% plot2(type = "line"), "gg")
+  expect_s3_class(plotdata %>% plot2(type = "barpercent"), "gg")
+})
+
+test_that("blank plot works", {
+  expect_s3_class(plotdata %>% subset(n < 0) %>% plot2(), "gg")
+  expect_s3_class(plotdata %>% plot2(type = "blank"), "gg")
+})
+
+test_that("misc elements works", {
+  expect_s3_class(plotdata %>% plot2(x_char, taxonomy_italic = TRUE), "gg")
 })

@@ -210,7 +210,9 @@ validate_data <- function(df,
   if (misses_x && misses_category && !has_category(df) && ncol(df) > 2 && type != "geom_sf") {
     # category must only be used if factor or character
     # and if x was also missing
-    cols <- sapply(df, function(col) (is.factor(col) | is.character(col)) &
+    cols <- vapply(FUN.VALUE = logical(1),
+                   df,
+                   function(col) (is.factor(col) | is.character(col)) &
                      !identical(get_y(df), col) &
                      !(has_x(df) && identical(get_x(df), col)))
     cols <- names(cols)[cols]
