@@ -1016,6 +1016,9 @@ plot2_exec <- function(.data,
     if ("fill" %in% names(mapping)) {
       p <- p + labs(fill = validate_titles(legend.title))
     }
+    if ("group" %in% names(mapping)) {
+      p <- p + labs(group = validate_titles(legend.title))
+    }
   }
   
   # set legend ----
@@ -1097,6 +1100,10 @@ plot2_exec <- function(.data,
       })
   # restore attributes
   attributes(p$mapping) <- att
+  # restore facets
+  p$facet$params$facets[[1]] <- aes_string(as.name(get_facet_name(df)))[[1]]
+  names(p$facet$params$facets)[1] <- get_facet_name(df)
+  # remove anonymous `_var_*` columns from the data
   p$data <- p$data[, colnames(p$data)[colnames(p$data) %unlike% "^_var_(x|y|category|facet)$"], drop = FALSE]
 
   # return plot ----

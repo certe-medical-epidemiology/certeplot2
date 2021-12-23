@@ -37,7 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-r@v1
+      - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
           # be sure to enable our R-universe
@@ -45,9 +45,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:
-          extra-packages:
-          - covr
-          - certestats
+          extra-packages: covr, certestats
 
       - name: Test coverage
         run: covr::codecov()
