@@ -38,6 +38,14 @@ globalVariables(c(".",
 #' @export
 dplyr::`%>%`
 
+#' @importFrom dplyr n
+#' @export
+dplyr::n
+
+#' @importFrom dplyr n_distinct
+#' @export
+dplyr::n_distinct
+
 #' @importFrom certestyle font_black font_blue font_red_bg font_white font_bold
 plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", geom = "info") {
   # at default, only prints in interactive mode and for the website generation
@@ -287,4 +295,47 @@ group_sizes <- function(df) {
       group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df)))) %>%
       group_size()
   }
+}
+
+restore_mapping <- function(p, df) {
+  
+  # help function
+  new_mapping <- function(mapping, df) {
+    if (is.null(mapping)) {
+      return(mapping)
+    }
+    att <- attributes(mapping)
+    new_mapping <- lapply(mapping,
+                          function(map) 
+                            if (any(deparse(map) %like% "_var_x")) {
+                              aes_string(as.name(get_x_name(df)))[[1]] 
+                            } else if (any(deparse(map) %like% "_var_y")) {
+                              aes_string(as.name(get_y_name(df)))[[1]] 
+                            } else if (any(deparse(map) %like% "_var_category")) {
+                              aes_string(as.name(get_category_name(df)))[[1]] 
+                            } else if (any(deparse(map) %like% "_var_facet")) {
+                              aes_string(as.name(get_facet_name(df)))[[1]] 
+                            } else {
+                              map
+                            })
+    attributes(new_mapping) <- att
+    new_mapping
+  }
+  
+  # general plot mapping
+  p$mapping <- new_mapping(mapping = p$mapping, df = df)
+  # mapping for each extra layer, such as geom_smooth()
+  for (i in seq_len(length(p$layers))) {
+    p$layers[[i]]$mapping <- new_mapping(mapping = p$layers[[i]]$mapping, df = df)
+  }
+  # mapping in facets
+  if (has_facet(df)) {
+    p$facet$params$facets[[1]] <- aes_string(as.name(get_facet_name(df)))[[1]]
+    names(p$facet$params$facets)[1] <- get_facet_name(df)
+  }
+  
+  # now remove anonymous these `_var_*` columns from the data
+  p$data <- p$data[, colnames(p$data)[colnames(p$data) %unlike% "^_var_(x|y|category|facet)$"], drop = FALSE]
+  # return the plot object
+  p
 }

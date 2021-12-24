@@ -24,7 +24,7 @@
 #' See [plot2-methods] for all implemented methods for different object classes.
 #' @param .data data to plot
 #' @param x plotting 'direction': the x axis
-#' @param y values to use for plotting along the y axis, can also be a calculation of a variable, e.g. `max(column1)` or `length(unique(person_id))`
+#' @param y values to use for plotting along the y axis - can also be [n()] for the row count or a calculation of a variable, e.g. `max(column1)`, `median(column2)` or `n_distinct(person_id)`
 #' @param category plotting 'direction': the category (called 'fill' and 'colour' in `ggplot2`)
 #' @param facet plotting 'direction': the facet
 #' @param type type of visualisation to use. This can be:
@@ -203,26 +203,24 @@
 #'  
 #' # the default type is column, datalabels are automatically
 #' # set in non-continuous types:
-#' patients_per_hospital_gender <- admitted_patients %>%
-#'   count(hospital, gender)
+#' admitted_patients %>% 
+#'   plot2(hospital, n(), gender)
 #'   
-#' patients_per_hospital_gender
-#'   
-#' patients_per_hospital_gender %>%
-#'   plot2()
-#'   
-#' patients_per_hospital_gender %>%
-#'   plot2(stacked = TRUE)
-#'   
-#' patients_per_hospital_gender %>%
-#'   plot2(stackedpercent = TRUE)
+#' admitted_patients %>% 
+#'   plot2(hospital, n(), gender,
+#'         stacked = TRUE)
+#'         
+#' admitted_patients %>% 
+#'   plot2(hospital, n(), gender,
+#'         stackedpercent = TRUE)
 #'   
 #' # sort any direction
-#' patients_per_hospital_gender %>%
-#'   plot2(category.sort = "desc")
-#'   
-#' patients_per_hospital_gender %>%
-#'   plot2(category.sort = "desc",
+#' admitted_patients %>% 
+#'   plot2(hospital, n(), gender,
+#'         x.sort = "desc")
+#'         
+#' admitted_patients %>% 
+#'   plot2(hospital, n(), gender,
 #'         x.sort = "freq-asc",
 #'         stacked = TRUE)
 #' 
@@ -232,7 +230,7 @@
 #'   plot2(x = mpg ^ -3,
 #'         y = hp ^ 2,
 #'         smooth = TRUE,
-#'         mooth.method = "lm",
+#'         smooth.method = "lm",
 #'         smooth.formula = "y ~ log(x)",
 #'         title = "Titles/captions *support* **markdown**",
 #'         subtitle = "Axis titles contain the square notation: ^2")
@@ -1081,32 +1079,10 @@ plot2_exec <- function(.data,
     p <- p + coord_flip()
   }
   
-  
   # restore mapping to original names ----
   # this will replace e.g. `_var_x` and `_var_category` in the mapping and remove them from the data
-  att <- attributes(p$mapping)
-  p$mapping <- p$mapping %>% 
-    lapply(function(map) 
-      if (deparse(map) %like% "_var_x") {
-        aes_string(as.name(get_x_name(df)))[[1]] 
-      } else if (deparse(map) %like% "_var_y") {
-        aes_string(as.name(get_y_name(df)))[[1]] 
-      } else if (deparse(map) %like% "_var_category") {
-        aes_string(as.name(get_category_name(df)))[[1]] 
-      } else if (deparse(map) %like% "_var_facet") {
-        aes_string(as.name(get_facet_name(df)))[[1]] 
-      } else {
-        map
-      })
-  # restore attributes
-  attributes(p$mapping) <- att
-  if (has_facet(df)) {
-    # restore facets
-    p$facet$params$facets[[1]] <- aes_string(as.name(get_facet_name(df)))[[1]]
-    names(p$facet$params$facets)[1] <- get_facet_name(df)
-  }
-  # remove anonymous `_var_*` columns from the data
-  p$data <- p$data[, colnames(p$data)[colnames(p$data) %unlike% "^_var_(x|y|category|facet)$"], drop = FALSE]
+  p <- restore_mapping(p = p,
+                       df = df)
   
   # return plot ----
   if (isTRUE(print)) {

@@ -242,25 +242,25 @@ numeric_z %>%
 
 The `facet` plotting direction splits the plot into multiple plots. Several settings are available: `r paste0("'", sort(facet_settings), "'", collapse = ", ")`.
 
-For controlling the `y` axis, `facet.repeat_lbls_y` (defaults to `FALSE`) makes sure that all plots have the same y axis:
+For controlling the `y` axis, `facet.repeat_lbls_y` (defaults to `FALSE`) makes sure that all plots have the same y axis (also notice that the `y` argument is set to the number of rows with `n()`):
 
 ```{r}
 admitted_patients
 
 admitted_patients %>%
-  plot2(x = age_group, y = age, facet = hospital,
+  plot2(x = age_group, y = n(), facet = hospital,
         caption = "Same y axes")
 admitted_patients %>%
-  plot2(x = age_group, y = age, facet = hospital,
+  plot2(x = age_group, y = n(), facet = hospital,
         facet.repeat_lbls_y = TRUE,
         caption = "All y axes on their own")
 ```
 
-You can also omit repeated x labels as well:
+You can omit repeated x labels as well:
 
 ```{r}
 admitted_patients %>%
-  plot2(x = age_group, y = age, facet = hospital,
+  plot2(x = age_group, y = n(), facet = hospital,
         facet.repeat_lbls_x = FALSE)
 ```
 
@@ -268,7 +268,7 @@ Or change the number of rows the facet should be in:
 
 ```{r}
 admitted_patients %>%
-  plot2(x = age_group, y = age, facet = hospital,
+  plot2(x = age_group, y = n(), facet = hospital,
         facet.nrow = 1)
 ```
 
@@ -281,7 +281,7 @@ For all plotting directions (`x`, `category` and `facet`), you can use multiple 
 ```{r}
 admitted_patients %>%
   plot2(x = age_group,
-        y = age,
+        y = n(),
         facet = c(gender, ward))
 ```
 
@@ -291,7 +291,7 @@ You can even use [Tidyverse selectors](https://tidyselect.r-lib.org/reference/la
 library(dplyr)
 admitted_patients %>%
   plot2(x = age_group,
-        y = age,
+        y = n(),
         facet = where(is.character),
         sep = " -- ")
 ```
@@ -315,12 +315,12 @@ The default for all plotting directions is `TRUE`, except for continuous values 
 
 ```{r}
 admitted_patients %>%
-  plot2(hospital, y = 1, age_group,
+  plot2(hospital, y = n(), age_group,
         y.title = "count",
         stacked = TRUE,
         caption = "No sorting")
 admitted_patients %>%
-  plot2(hospital, y = 1, age_group,
+  plot2(hospital, y = n(), age_group,
         y.title = "count",
         stacked = TRUE,
         x.sort = "freq-asc",
@@ -338,9 +338,9 @@ The sorting can be used in combination with setting a maximum number of items to
 
 ```{r}
 admitted_patients %>%
-    plot2(hospital, y = 1, type = "col")
+    plot2(hospital, y = n(), type = "col")
 admitted_patients %>%
-    plot2(hospital, y = 1, type = "col",
+    plot2(hospital, y = n(), type = "col",
           x.max_items = 3)
 ```
 
@@ -348,7 +348,7 @@ This can be combined with sorting:
 
 ```{r}
 admitted_patients %>%
-    plot2(hospital, y = 1, type = "col",
+    plot2(hospital, y = n(), type = "col",
           x.sort = "freq-desc",
           x.max_items = 3,
           x.max_txt = "These are %n hospitals (covering %p)")

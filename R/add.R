@@ -51,6 +51,6 @@ add_line <- function(plot, ...) {
 
 #' @rdname add_type
 #' @export
-add_column <- function(plot, ...) {
+add_col <- function(plot, ...) {
   add_type(plot = plot, type = "col", ...)
 }

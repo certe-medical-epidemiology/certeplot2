@@ -111,7 +111,6 @@ validate_data <- function(df,
                           misses_x,
                           misses_category,
                           ...) {
-  
   dots <- list(...)
   type <- validate_type(dots$type, df = NULL) # quick validation
   
@@ -756,9 +755,9 @@ validate_category_scale <- function(values,
       mid_point <- as.double(category.midpoint)
     } else {
       # default will be set to the median
-      mid_point <- stats::median(values, na.rm = TRUE)
+      mid_point <- diff(c(min(0, min(values, na.rm = TRUE)), max(values, na.rm = TRUE))) / 2
       plot2_message("Using ", font_blue("category.midpoint =", round(mid_point, 2)),
-                    " (the median) for the ", font_blue("category"), " scale")
+                    " for the ", font_blue("category"), " scale")
     }
     do.call(scale_colour_gradient2,
             args = c(list(low = cols_category[1],
@@ -925,7 +924,7 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
     if (length(colour) == 1) {
       if (colour == "certe") {
         # divergent Certe scale
-        colour <- colourpicker(c("certeblauw0", "certeblauw2", "certegroen2", "certegroen4"))
+        colour <- colourpicker(c("certeblauw0", "certegroen", "certegeel", "certeroze"))
       } else if (colour %like% "certe([1-6]+)$") {
         # take Certe colours
         colour <- colourpicker(colour, 4)
@@ -945,7 +944,7 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
       if (length(colour_fill) == 1) {
         if (colour_fill == "certe") {
           # divergent Certe scale
-          colour_fill <- colourpicker(c("certeblauw0", "certeblauw2", "certegroen2", "certegroen4"))
+          colour_fill <- colourpicker(c("certeblauw0", "certegroen", "certegeel", "certeroze"))
         } else if (colour_fill %like% "certe([1-6]+)$") {
           # take Certe colours
           colour_fill <- colourpicker(colour_fill, 4)

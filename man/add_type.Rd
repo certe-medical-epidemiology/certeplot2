@@ -3,14 +3,14 @@
 \name{add_type}
 \alias{add_type}
 \alias{add_line}
-\alias{add_column}
+\alias{add_col}
 \title{Add Plot Element}
 \usage{
 add_type(plot, type = NULL, ...)
 
 add_line(plot, ...)
 
-add_column(plot, ...)
+add_col(plot, ...)
 }
 \arguments{
 \item{plot}{a \code{ggplot2} plot}
