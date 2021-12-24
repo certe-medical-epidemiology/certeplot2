@@ -133,7 +133,7 @@ plot2(
 
 \item{x}{plotting 'direction': the x axis}
 
-\item{y}{values to use for plotting along the y axis, can also be a calculation of a variable, e.g. \code{max(column1)} or \code{length(unique(person_id))}}
+\item{y}{values to use for plotting along the y axis - can also be \code{\link[=n]{n()}} for the row count or a calculation of a variable, e.g. \code{max(column1)}, \code{median(column2)} or \code{n_distinct(person_id)}}
 
 \item{category}{plotting 'direction': the category (called 'fill' and 'colour' in \code{ggplot2})}
 
@@ -405,26 +405,24 @@ admitted_patients \%>\%
  
 # the default type is column, datalabels are automatically
 # set in non-continuous types:
-patients_per_hospital_gender <- admitted_patients \%>\%
-  count(hospital, gender)
+admitted_patients \%>\% 
+  plot2(hospital, n(), gender)
   
-patients_per_hospital_gender
-  
-patients_per_hospital_gender \%>\%
-  plot2()
-  
-patients_per_hospital_gender \%>\%
-  plot2(stacked = TRUE)
-  
-patients_per_hospital_gender \%>\%
-  plot2(stackedpercent = TRUE)
+admitted_patients \%>\% 
+  plot2(hospital, n(), gender,
+        stacked = TRUE)
+        
+admitted_patients \%>\% 
+  plot2(hospital, n(), gender,
+        stackedpercent = TRUE)
   
 # sort any direction
-patients_per_hospital_gender \%>\%
-  plot2(category.sort = "desc")
-  
-patients_per_hospital_gender \%>\%
-  plot2(category.sort = "desc",
+admitted_patients \%>\% 
+  plot2(hospital, n(), gender,
+        x.sort = "desc")
+        
+admitted_patients \%>\% 
+  plot2(hospital, n(), gender,
         x.sort = "freq-asc",
         stacked = TRUE)
 
@@ -434,7 +432,7 @@ mtcars \%>\%
   plot2(x = mpg ^ -3,
         y = hp ^ 2,
         smooth = TRUE,
-        mooth.method = "lm",
+        smooth.method = "lm",
         smooth.formula = "y ~ log(x)",
         title = "Titles/captions *support* **markdown**",
         subtitle = "Axis titles contain the square notation: ^2")
