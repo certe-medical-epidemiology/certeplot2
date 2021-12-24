@@ -17,6 +17,8 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
+plot2_env <- new.env(hash = FALSE)
+
 globalVariables(c(".",
                   "..count..",
                   "ab",
@@ -149,7 +151,11 @@ get_x <- function(df, na.rm = FALSE) {
 }
 get_x_name <- function(df) {
   if (has_x(df)) {
-    get_column_name(df, `_var_x`)
+    if (plot2_env$mapping_x != "NULL" && plot2_env$mapping_x %in% colnames(df)) {
+      plot2_env$mapping_x
+    } else {
+      get_column_name(df, `_var_x`)
+    }
   } else {
     NULL
   }
@@ -167,7 +173,11 @@ get_y <- function(df) {
 }
 get_y_name <- function(df) {
   if (has_y(df)) {
-    get_column_name(df, `_var_y`)
+    if (plot2_env$mapping_y != "NULL" && plot2_env$mapping_y %in% colnames(df)) {
+      plot2_env$mapping_y
+    } else {
+      get_column_name(df, `_var_y`)
+    }
   } else {
     NULL
   }
@@ -185,7 +195,11 @@ get_category <- function(df) {
 }
 get_category_name <- function(df) {
   if (has_category(df)) {
-    get_column_name(df, `_var_category`)
+    if (plot2_env$mapping_category != "NULL" && plot2_env$mapping_category %in% colnames(df)) {
+      plot2_env$mapping_category
+    } else {
+      get_column_name(df, `_var_category`)
+    }
   } else {
     NULL
   }
@@ -203,7 +217,11 @@ get_facet <- function(df) {
 }
 get_facet_name <- function(df) {
   if (has_facet(df)) {
-    get_column_name(df, `_var_facet`)
+    if (plot2_env$mapping_facet != "NULL" && plot2_env$mapping_facet %in% colnames(df)) {
+      plot2_env$mapping_facet
+    } else {
+      get_column_name(df, `_var_facet`)
+    }
   } else {
     NULL
   }

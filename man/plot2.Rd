@@ -324,10 +324,11 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Writing as few lines of codes as possible
 \item Easy plotting in three 'directions': \code{x} (the regular x axis), \code{category} (replaces 'fill' and 'colour') and \code{facet}
 \item Automatic setting of these 'directions' based on the input data
+\item Setting in-place calculations for all plotting direction and even \code{y}
 \item Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': \code{x.sort}, \code{category.sort} and \code{facet.sort}
 \item Easy limiting values, e.g. by setting \code{x.max_items = 5} or \code{category.max_items = 5}
 \item Markdown support for any label, with any theme
-\item An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: \code{\link[=theme_minimal2]{theme_minimal2()}}
+\item An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: \code{theme_minimal2()}
 \item Some conveniences from Microsoft Excel:
 \itemize{
 \item The y axis starts at 0 if possible
@@ -427,6 +428,8 @@ admitted_patients \%>\%
         stacked = TRUE)
 
 # plot2() supports all S3 extensions available through ggplot2::fortify():
+
+# regression model
 mtcars \%>\% 
   lm(mpg ~ hp, data = .) \%>\% 
   plot2(x = mpg ^ -3,
@@ -437,14 +440,20 @@ mtcars \%>\%
         title = "Titles/captions *support* **markdown**",
         subtitle = "Axis titles contain the square notation: ^2")
         
+# QC plots, according to e.g. Nelson's Quality Control Rules
+if (require("certestats")) {
+  rnorm(250) \%>\% 
+    qc_test() \%>\% 
+    plot2()
+}
+        
 # sf objects (geographic plots, 'simple features') are also supported
 if (require("sf")) {
   netherlands \%>\% 
-    plot2(colour_fill = "viridis",
-          datalabels = paste0(province, "\n", round(area_km2)))
+    plot2(datalabels = paste0(province, "\n", round(area_km2)))
 }
 
-# Antimicrobial Resistance (AMR) data analysis requires the `AMR` package:
+# Antimicrobial resistance (AMR) data analysis
 if (require("AMR")) {
   example_isolates \%>\% 
     select(mo, penicillins()) \%>\% 

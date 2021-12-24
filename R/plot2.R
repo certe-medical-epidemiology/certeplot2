@@ -124,10 +124,11 @@
 #'   * Writing as few lines of codes as possible
 #'   * Easy plotting in three 'directions': `x` (the regular x axis), `category` (replaces 'fill' and 'colour') and `facet`
 #'   * Automatic setting of these 'directions' based on the input data
+#'   * Setting in-place calculations for all plotting direction and even `y`
 #'   * Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': `x.sort`, `category.sort` and `facet.sort`
 #'   * Easy limiting values, e.g. by setting `x.max_items = 5` or `category.max_items = 5`
 #'   * Markdown support for any label, with any theme
-#'   * An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: [theme_minimal2()]
+#'   * An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: `theme_minimal2()`
 #'   * Some conveniences from Microsoft Excel:
 #'     * The y axis starts at 0 if possible
 #'     * The y scale expands at the top to be better able to interpret all data points
@@ -225,6 +226,8 @@
 #'         stacked = TRUE)
 #' 
 #' # plot2() supports all S3 extensions available through ggplot2::fortify():
+#' 
+#' # regression model
 #' mtcars %>% 
 #'   lm(mpg ~ hp, data = .) %>% 
 #'   plot2(x = mpg ^ -3,
@@ -235,14 +238,20 @@
 #'         title = "Titles/captions *support* **markdown**",
 #'         subtitle = "Axis titles contain the square notation: ^2")
 #'         
+#' # QC plots, according to e.g. Nelson's Quality Control Rules
+#' if (require("certestats")) {
+#'   rnorm(250) %>% 
+#'     qc_test() %>% 
+#'     plot2()
+#' }
+#'         
 #' # sf objects (geographic plots, 'simple features') are also supported
 #' if (require("sf")) {
 #'   netherlands %>% 
-#'     plot2(colour_fill = "viridis",
-#'           datalabels = paste0(province, "\n", round(area_km2)))
+#'     plot2(datalabels = paste0(province, "\n", round(area_km2)))
 #' }
 #' 
-#' # Antimicrobial Resistance (AMR) data analysis requires the `AMR` package:
+#' # Antimicrobial resistance (AMR) data analysis
 #' if (require("AMR")) {
 #'   example_isolates %>% 
 #'     select(mo, penicillins()) %>% 
@@ -611,6 +620,11 @@ plot2_exec <- function(.data,
     type <- "col"
     horizontal <- TRUE
   }
+  
+  plot2_env$mapping_x <- concat(dots$`_label.x`)
+  plot2_env$mapping_y <- concat(dots$`_label.y`)
+  plot2_env$mapping_category <- concat(dots$`_label.category`)
+  plot2_env$mapping_facet <- concat(dots$`_label.facet`)
   
   # prepare data ----
   # IMPORTANT: in this part, the data for mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;

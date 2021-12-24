@@ -46,10 +46,6 @@ test_that("general types work", {
 test_that("general mapping works", {
   expect_equal(plotdata %>% plot2() %>% get_mapping() %>% names(),
                c("y", "x", "fill", "colour"))
-  expect_equal(plotdata %>% plot2() %>% get_data() %>% get_x_name(), "x")
-  expect_equal(plotdata %>% plot2() %>% get_data() %>% get_y_name(), "n")
-  expect_equal(plotdata %>% plot2() %>% get_data() %>% get_category_name(), "x_char")
-  expect_equal(plotdata %>% plot2() %>% get_data() %>% get_facet_name(), NULL)
 })
 
 test_that("x scale works", {

@@ -1689,7 +1689,9 @@ plot2.bug_drug_combinations <- function(.data,
 }
 
 #' @rdname plot2-methods
-#' @importFrom ggplot2 geom_hline geom_point geom_line
+#' @importFrom ggplot2 geom_hline geom_point geom_line element_text
+#' @importFrom ggtext element_markdown
+#' @importFrom certestyle colourpicker
 #' @details The QC-test can be acquired with [certestats::qc_test()]. It applies the Nelson QC rules for a vector of values.
 #' @export
 plot2.qc_test <- function(.data,
@@ -1701,7 +1703,7 @@ plot2.qc_test <- function(.data,
                           x.title = FALSE,
                           y.title = FALSE,
                           category.title = NULL,
-                          title = NULL,
+                          title = paste0("QC Chart (", attributes(.data)$guideline, ")"),
                           subtitle = NULL,
                           caption = NULL,
                           tag = NULL,
@@ -1797,7 +1799,7 @@ plot2.qc_test <- function(.data,
                           smooth.alpha = 0.15,
                           smooth.size = 0.75,
                           smooth.linetype = 3,
-                          size = NULL,
+                          size = 2,
                           linetype = 1,
                           binwidth = NULL,
                           width = NULL,
@@ -1828,6 +1830,7 @@ plot2.qc_test <- function(.data,
                    y = att$values,
                    rule = "Observation",
                    shp = 4,
+                   size = size,
                    stringsAsFactors = FALSE)
   for (i in seq_len(length(.data))) {
     if (length(.data[[i]]) > 0) {
@@ -1836,12 +1839,32 @@ plot2.qc_test <- function(.data,
                             y = att$values[.data[[i]]],
                             rule = paste0("Rule ", gsub("[^0-9]", "", names(.data)[i])),
                             shp = 13,
+                            size = size * 1.5,
                             stringsAsFactors = FALSE)
       df <- rbind(df, df_rule)
     }
   }
   
   df <- df[order(df$x, df$rule), , drop = FALSE]
+  
+  if (missing(caption) && "certestats" %in% rownames(utils::installed.packages())) {
+    # fill caption with rules
+    qc_rule_text <- getExportedValue("qc_rule_text", ns = asNamespace("certestats"))
+    rules <- names(.data[unlist(lapply(.data, function(r) length(r) > 0))])
+    rules <- as.integer(gsub("[^0-9]", "", rules))
+    threshold <- att$threshold[rules]
+    caption <- "\n"
+    for (i in seq_len(length(rules))) {
+      if (isTRUE(markdown)) {
+        rule <- paste0("**Rule ", rules[i], ":**")
+      } else {
+        rule <- paste0("Rule ", rules[i], ":")
+      }
+      caption <- c(caption, 
+                   paste(rule, qc_rule_text(rules[i], threshold[i])))
+    }
+    caption <- paste0(caption, collapse = "\n")
+  }
   
   p <- plot2_exec(.data = df,
                   x = {{ x }},
@@ -1971,10 +1994,10 @@ plot2.qc_test <- function(.data,
                   `_misses.colour_fill` = missing(colour_fill),
                   `_misses.x.title` = FALSE,
                   `_misses.y.title` = FALSE,
-                  `_misses.title` = missing(title),
+                  `_misses.title` = FALSE,
                   `_misses.subtitle` = missing(subtitle),
                   `_misses.tag` = missing(tag),
-                  `_misses.caption` = missing(caption),
+                  `_misses.caption` = FALSE,
                   `_misses.y.percent` = missing(y.percent),
                   `_misses.zoom` = missing(zoom),
                   `_label.x` = deparse(substitute(x)),
@@ -1984,31 +2007,48 @@ plot2.qc_test <- function(.data,
                   `_summarise_fn_name` = deparse(substitute(summarise_function)),
                   ...)
   
+  # left align the rule texts
+  if (isTRUE(markdown)) {
+    p <- p + theme(plot.caption = element_markdown(hjust = 0))
+  } else {
+    p <- p + theme(plot.caption = element_text(hjust = 0))
+  }
+  
   # add reference lines
   p <- p +
     geom_hline(yintercept = mean(att$values),
-               colour = "black", linetype = 2, size = 0.75) +
+               colour = "black", linetype = 2, size = size / 2.5) +
     geom_hline(yintercept = mean(att$values) + sd(att$values),
-               colour = "#61D04F", linetype = 2, size = 0.75) +
+               colour = "#61D04F", linetype = 2, size = size / 2.5) +
     geom_hline(yintercept = mean(att$values) - sd(att$values),
-               colour = "#61D04F", linetype = 2, size = 0.75) +
+               colour = "#61D04F", linetype = 2, size = size / 2.5) +
     geom_hline(yintercept = mean(att$values) + 2 * sd(att$values),
-               colour = "#F5C710", linetype = 2, size = 0.75) +
+               colour = "#F5C710", linetype = 2, size = size / 2.5) +
     geom_hline(yintercept = mean(att$values) - 2 * sd(att$values),
-               colour = "#F5C710", linetype = 2, size = 0.75) +
+               colour = "#F5C710", linetype = 2, size = size / 2.5) +
     geom_hline(yintercept = mean(att$values) + 3 * sd(att$values),
-               colour = "#DF536B", linetype = 2, size = 0.75) +
+               colour = "#DF536B", linetype = 2, size = size / 2.5) +
     geom_hline(yintercept = mean(att$values) - 3 * sd(att$values),
-               colour = "#DF536B", linetype = 2, size = 0.75)
+               colour = "#DF536B", linetype = 2, size = size / 2.5)
   
-  p <- p + geom_point(shape = df$shp, size = 2)
+  p <- p +
+    geom_point(shape = df$shp, size = df$size)
   
   # add lines for each rule found
   for (i in seq_len(length(.data))) {
     if (length(.data[[i]]) > 0) {
       threshold <- att$threshold[i]
+      ind <- .data[[i]]
+      p <- p +
+        geom_point(data = data.frame(x = ind,
+                                     y = att$values[ind]),
+                   mapping = aes_string("x", "y"),
+                   inherit.aes = FALSE,
+                   alpha = 0.33,
+                   size = size * 2.5,
+                   colour = colour[i + 1])
       if (threshold > 1) {
-        ind <- .data[[i]]
+        # print coloured lines and point for the rules
         for (j in seq_len(length(ind))) {
           ind_vector <- c(ind[j]:(ind[j] + threshold - 1))
           val <- att$values[ind_vector]
@@ -2017,8 +2057,16 @@ plot2.qc_test <- function(.data,
                                         y = val),
                       mapping = aes_string("x", "y"),
                       inherit.aes = FALSE,
-                      size = 1,
-                      colour = colour[i + 1])
+                      size = size / 3,
+                      linetype = linetype,
+                      colour = colour[i + 1]) +
+            geom_point(data = data.frame(x = ind_vector,
+                                         y = val),
+                       mapping = aes_string("x", "y"),
+                       inherit.aes = FALSE,
+                       shape = 4,
+                       size = size,
+                       colour = colour[i + 1])
         }
       }
     }
