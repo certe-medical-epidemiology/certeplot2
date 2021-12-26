@@ -18,7 +18,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.47</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.48</span>
       </span>
     </div>
 
@@ -288,7 +288,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dt>x.expand</dt>
 <dd><p>expansion to use for the x axis, can be length 1 or 2</p></dd>
 <dt>x.limits</dt>
-<dd><p>limits to use for the x axis, can be length 1 or 2</p></dd>
+<dd><p>limits to use for the x axis, can be length 1 or 2. Use <code>NA</code> for the highest or lowest value in the data, e.g. <code>x.limits = c(0, NA)</code> to have the scale start at zero.</p></dd>
 <dt>x.character</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the values of the x axis should be forced to <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>. The default is <code>FALSE</code>, except for years (x values between 2000 and 2050)</p></dd>
 <dt>x.drop</dt>
@@ -306,7 +306,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dt>y.breaks</dt>
 <dd><p>a breaks function or numeric vector to use for the y axis</p></dd>
 <dt>y.limits</dt>
-<dd><p>limits to use for the y axis, can be length 1 or 2</p></dd>
+<dd><p>limits to use for the y axis, can be length 1 or 2. Use <code>NA</code> for the highest or lowest value in the data, e.g. <code>y.limits = c(0, NA)</code> to have the scale start at zero.</p></dd>
 <dt>y.labels</dt>
 <dd><p>a labels function or character vector to use for the y axis</p></dd>
 <dt>y.expand</dt>
@@ -315,8 +315,10 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>a transformation function to use for the y axis, e.g. <code>"log2"</code></p></dd>
 <dt>y.position</dt>
 <dd><p>position of the x axis, defaults to <code>"left"</code></p></dd>
-<dt>category.labels, category.percent, category.breaks, category.limits, category.expand, category.midpoint, category.trans</dt>
-<dd><p>settings for the plotting direction <code>category</code></p></dd>
+<dt>category.labels, category.percent, category.breaks, category.expand, category.midpoint, category.trans</dt>
+<dd><p>settings for the plotting direction <code>category</code>.</p></dd>
+<dt>category.limits</dt>
+<dd><p>limits to use for a numeric category, can be length 1 or 2. Use <code>NA</code> for the highest or lowest value in the data, e.g. <code>category.limits = c(0, NA)</code> to have the scale start at zero.</p></dd>
 <dt>x.sort, category.sort, facet.sort</dt>
 <dd><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul><li><p><code>TRUE</code>: sort as <code>"asc"</code></p></li>
 <li><p><code>FALSE</code>: sort according to the order in the data</p></li>
@@ -415,224 +417,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          5.1         3.5          1.4         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          4.9         3.0          1.4         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          4.7         3.2          1.3         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          4.6         3.1          1.5         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5          5.0         3.6          1.4         0.2  setosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6          5.4         3.9          1.7         0.4  setosa</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># no variables determined, so plot2() will try for itself -</span></span>
-<span class="r-in"><span class="co"># the type will be points since the first two variables are numeric</span></span>
-<span class="r-in"><span class="fu">plot2</span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = Sepal.Length</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = Sepal.Width</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category = Species</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plot2</span><span class="op">(</span><span class="va">iris</span>, theme <span class="op">=</span> <span class="cn">NULL</span>, legend.position <span class="op">=</span> <span class="st">"r"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = Sepal.Length</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = Sepal.Width</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category = Species</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># only view the data part, like ggplot2 normally does</span></span>
-<span class="r-in"><span class="fu">plot2</span><span class="op">(</span><span class="va">iris</span>, zoom <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = Sepal.Length</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = Sepal.Width</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category = Species</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># if x and y are set, no addition mapping will be set:</span></span>
-<span class="r-in"><span class="fu">plot2</span><span class="op">(</span><span class="va">iris</span>, <span class="va">Sepal.Width</span>, <span class="va">Sepal.Length</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-4.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plot2</span><span class="op">(</span><span class="va">iris</span>, <span class="va">Species</span>, <span class="va">Sepal.Length</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "boxplot"</span><span style="color: #080808;"> since all groups have size &gt;= 3</span></span>
-<span class="r-plt img"><img src="plot2-5.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># the arguments are in this order: x, y, category, facet</span></span>
-<span class="r-in"><span class="fu">plot2</span><span class="op">(</span><span class="va">iris</span>, <span class="va">Sepal.Length</span>, <span class="va">Sepal.Width</span>, <span class="va">Petal.Length</span>, <span class="va">Species</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-6.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">plot2</span><span class="op">(</span><span class="va">iris</span>, <span class="va">Sepal.Length</span>, <span class="va">Sepal.Width</span>, <span class="va">Petal.Length</span>, <span class="va">Species</span>,</span>
-<span class="r-in">      colour <span class="op">=</span> <span class="st">"viridis"</span><span class="op">)</span> <span class="co"># set the viridis colours</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-7.png" alt="" width="700" height="433"></span>
-<span class="r-in">      </span>
-<span class="r-in"><span class="fu">plot2</span><span class="op">(</span><span class="va">iris</span>, <span class="va">Sepal.Length</span>, <span class="va">Sepal.Width</span>, <span class="va">Petal.Length</span>, <span class="va">Species</span>,</span>
-<span class="r-in">      colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"red"</span>, <span class="st">"black"</span><span class="op">)</span><span class="op">)</span> <span class="co"># set own colours</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category.midpoint = 3.45</span><span style="color: #080808;"> for the </span><span style="color: #0000BB;">category</span><span style="color: #080808;"> scale</span></span>
-<span class="r-plt img"><img src="plot2-8.png" alt="" width="700" height="433"></span>
-<span class="r-in">      </span>
-<span class="r-in"><span class="fu">plot2</span><span class="op">(</span><span class="va">iris</span>, <span class="va">Sepal.Length</span>, <span class="va">Sepal.Width</span>, <span class="va">Petal.Length</span>, <span class="va">Species</span>,</span>
-<span class="r-in">      colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"red"</span>, <span class="st">"black"</span><span class="op">)</span>, <span class="co"># set own colours</span></span>
-<span class="r-in">      category.midpoint <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>               <span class="co"># with an own midpoint</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-9.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># change to any type</span></span>
-<span class="r-in"><span class="fu">plot2</span><span class="op">(</span><span class="va">iris</span>, <span class="va">Species</span>, <span class="va">Sepal.Length</span>, type <span class="op">=</span> <span class="st">"violin"</span><span class="op">)</span></span>
-<span class="r-plt img"><img src="plot2-10.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in">  </span>
-<span class="r-in"><span class="va">admitted_patients</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 250 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    date       gender   age age_group hospital ward   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;ord&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 2002-02-18 M         82 75+       B        Non-ICU</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 2002-02-21 M         64 55-74     D        Non-ICU</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 2002-02-24 M          0 0-11      C        Non-ICU</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 2002-04-14 M         73 55-74     C        Non-ICU</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 2002-04-14 M         72 55-74     C        Non-ICU</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2002-04-26 M         79 75+       D        Non-ICU</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 2002-05-04 F         46 25-54     B        ICU    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 2002-07-15 M         84 75+       A        ICU    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2002-07-15 F         67 55-74     B        ICU    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2002-08-31 F         80 75+       B        ICU    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 240 more rows</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># if there are more Y values than groups, the default will be boxplot</span></span>
-<span class="r-in"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">plot2</span><span class="op">(</span>x <span class="op">=</span> <span class="va">hospital</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = age</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "boxplot"</span><span style="color: #080808;"> since all groups have size &gt;= 3</span></span>
-<span class="r-plt img"><img src="plot2-11.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># the arguments are in this order: x, y, category, facet</span></span>
-<span class="r-in"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="va">age</span>, <span class="va">gender</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "boxplot"</span><span style="color: #080808;"> since all groups have size &gt;= 3</span></span>
-<span class="r-plt img"><img src="plot2-12.png" alt="" width="700" height="433"></span>
-<span class="r-in">  </span>
-<span class="r-in"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="va">age</span>, <span class="va">gender</span>, <span class="va">ward</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "boxplot"</span><span style="color: #080808;"> since all groups have size &gt;= 3</span></span>
-<span class="r-plt img"><img src="plot2-13.png" alt="" width="700" height="433"></span>
-<span class="r-in">  </span>
-<span class="r-in"><span class="co"># use summarise_function to apply a function for continuous data</span></span>
-<span class="r-in"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="va">age</span>, <span class="va">gender</span>, <span class="va">ward</span>,</span>
-<span class="r-in">        type <span class="op">=</span> <span class="st">"col"</span>, summarise_function <span class="op">=</span> <span class="va">median</span><span class="op">)</span></span>
-<span class="r-plt img"><img src="plot2-14.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">plot2</span><span class="op">(</span>x <span class="op">=</span> <span class="va">hospital</span>,</span>
-<span class="r-in">        category <span class="op">=</span> <span class="va">gender</span>,</span>
-<span class="r-in">        colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"F"</span> <span class="op">=</span> <span class="st">"orange3"</span>, <span class="st">"M"</span> <span class="op">=</span> <span class="st">"purple3"</span><span class="op">)</span>,</span>
-<span class="r-in">        colour_fill <span class="op">=</span> <span class="st">"white"</span>,</span>
-<span class="r-in">        y.age <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = age</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "boxplot"</span><span style="color: #080808;"> since all groups have size &gt;= 3</span></span>
-<span class="r-plt img"><img src="plot2-15.png" alt="" width="700" height="433"></span>
-<span class="r-in">        </span>
-<span class="r-in"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">plot2</span><span class="op">(</span><span class="va">age</span>, type <span class="op">=</span> <span class="st">"hist"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">binwidth = 6.4</span><span style="color: #080808;"> based on data</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #0000BB;">smooth = TRUE</span><span style="color: #080808;"> for </span><span style="color: #0000BB;">type = "histogram"</span></span>
-<span class="r-plt img"><img src="plot2-16.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">plot2</span><span class="op">(</span><span class="va">age</span>, type <span class="op">=</span> <span class="st">"density"</span><span class="op">)</span></span>
-<span class="r-plt img"><img src="plot2-17.png" alt="" width="700" height="433"></span>
-<span class="r-in"> </span>
-<span class="r-in"><span class="co"># the default type is column, datalabels are automatically</span></span>
-<span class="r-in"><span class="co"># set in non-continuous types:</span></span>
-<span class="r-in"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span class="r-in">  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gender</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span>
-<span class="r-plt img"><img src="plot2-18.png" alt="" width="700" height="433"></span>
-<span class="r-in">  </span>
-<span class="r-in"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span class="r-in">  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gender</span>,</span>
-<span class="r-in">        stacked <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span>
-<span class="r-plt img"><img src="plot2-19.png" alt="" width="700" height="433"></span>
-<span class="r-in">        </span>
-<span class="r-in"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span class="r-in">  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gender</span>,</span>
-<span class="r-in">        stackedpercent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span>
-<span class="r-plt img"><img src="plot2-20.png" alt="" width="700" height="433"></span>
-<span class="r-in">  </span>
-<span class="r-in"><span class="co"># sort any direction</span></span>
-<span class="r-in"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span class="r-in">  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gender</span>,</span>
-<span class="r-in">        x.sort <span class="op">=</span> <span class="st">"desc"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span>
-<span class="r-plt img"><img src="plot2-21.png" alt="" width="700" height="433"></span>
-<span class="r-in">        </span>
-<span class="r-in"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span class="r-in">  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gender</span>,</span>
-<span class="r-in">        x.sort <span class="op">=</span> <span class="st">"freq-asc"</span>,</span>
-<span class="r-in">        stacked <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Applying sorting </span><span style="color: #0000BB;">"freq-asc"</span><span style="color: #080808;"> using </span><span style="color: #0000BB;">summarise_function = base::sum</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span>
-<span class="r-plt img"><img src="plot2-22.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plot2() supports all S3 extensions available through ggplot2::fortify():</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># regression model</span></span>
-<span class="r-in"><span class="va">mtcars</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">hp</span>, data <span class="op">=</span> <span class="va">.</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span class="r-in">  <span class="fu">plot2</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mpg</span> <span class="op">^</span> <span class="op">-</span><span class="fl">3</span>,</span>
-<span class="r-in">        y <span class="op">=</span> <span class="va">hp</span> <span class="op">^</span> <span class="fl">2</span>,</span>
-<span class="r-in">        smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">        smooth.method <span class="op">=</span> <span class="st">"lm"</span>,</span>
-<span class="r-in">        smooth.formula <span class="op">=</span> <span class="st">"y ~ log(x)"</span>,</span>
-<span class="r-in">        title <span class="op">=</span> <span class="st">"Titles/captions *support* **markdown**"</span>,</span>
-<span class="r-in">        subtitle <span class="op">=</span> <span class="st">"Axis titles contain the square notation: ^2"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-23.png" alt="" width="700" height="433"></span>
-<span class="r-in">        </span>
-<span class="r-in"><span class="co"># QC plots, according to e.g. Nelson's Quality Control Rules</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://certe-medical-epidemiology.github.io/certestats" class="external-link">"certestats"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">250</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span class="r-in">    <span class="fu"><a href="https://certe-medical-epidemiology.github.io/certestats/reference/qc_rules.html" class="external-link">qc_test</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span class="r-in">    <span class="fu">plot2</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: certestats</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘certestats’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:stats’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     IQR, fivenum, median, quantile, sd, var</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     all, any, max, mean, min, pmax, pmin, prod, range, sum</span>
-<span class="r-plt img"><img src="plot2-24.png" alt="" width="700" height="433"></span>
-<span class="r-in">        </span>
-<span class="r-in"><span class="co"># sf objects (geographic plots, 'simple features') are also supported</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://r-spatial.github.io/sf/" class="external-link">"sf"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="va">netherlands</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span class="r-in">    <span class="fu">plot2</span><span class="op">(</span>datalabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">province</span>, <span class="st">"\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">area_km2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: sf</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Linking to GEOS 3.8.0, GDAL 3.0.4, PROJ 6.3.1; sf_use_s2() is TRUE</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category = area_km2</span></span>
-<span class="r-plt img"><img src="plot2-25.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Antimicrobial resistance (AMR) data analysis</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://msberends.github.io/AMR" class="external-link">"AMR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="va">example_isolates</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span class="r-in">    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">mo</span>, <span class="fu"><a href="https://msberends.github.io/AMR/reference/antibiotic_class_selectors.html" class="external-link">penicillins</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span class="r-in">    <span class="fu"><a href="https://msberends.github.io/AMR/reference/bug_drug_combinations.html" class="external-link">bug_drug_combinations</a></span><span class="op">(</span>FUN <span class="op">=</span> <span class="va">mo_gramstain</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu">plot2</span><span class="op">(</span>y.percent_break <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: AMR</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ For </span><span style="color: #0000BB; background-color: #EEEEEE;">`penicillins()`</span><span style="color: #0000BB;"> using columns '</span><span style="color: #0000BB; font-weight: bold;">PEN</span><span style="color: #0000BB;">' (benzylpenicillin), '</span><span style="color: #0000BB; font-weight: bold;">OXA</span><span style="color: #0000BB;">'</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">  (oxacillin), '</span><span style="color: #0000BB; font-weight: bold;">FLC</span><span style="color: #0000BB;">' (flucloxacillin), '</span><span style="color: #0000BB; font-weight: bold;">AMX</span><span style="color: #0000BB;">' (amoxicillin), '</span><span style="color: #0000BB; font-weight: bold;">AMC</span><span style="color: #0000BB;">'</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">  (amoxicillin/clavulanic acid), '</span><span style="color: #0000BB; font-weight: bold;">AMP</span><span style="color: #0000BB;">' (ampicillin) and '</span><span style="color: #0000BB; font-weight: bold;">TZP</span><span style="color: #0000BB;">'</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">  (piperacillin/tazobactam)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ Using column '</span><span style="color: #0000BB; font-weight: bold;">mo</span><span style="color: #0000BB;">' as input for </span><span style="color: #0000BB; background-color: #EEEEEE;">`col_mo`</span><span style="color: #0000BB;">.</span></span>
-<span class="r-plt img"><img src="plot2-26.png" alt="" width="700" height="433"></span>
-</code></pre></div>
+    
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
