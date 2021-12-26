@@ -694,7 +694,7 @@ validate_category_scale <- function(values,
     } else if (isTRUE(category.percent)) {
       function(x, ...) c(min(0, x), max(1, x))
     } else {
-      function(x, ...) c(min(0, x), max(x))
+      function(x, ...) c(min(x), max(x))
     }
   }
   if (is.numeric(category.expand)) {

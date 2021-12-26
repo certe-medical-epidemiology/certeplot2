@@ -41,7 +41,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:
-          extra-packages: pkgdown, certestats
+          extra-packages: pkgdown
           needs: website
           
       - name: Install fonts

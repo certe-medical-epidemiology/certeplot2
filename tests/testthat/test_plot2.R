@@ -38,9 +38,7 @@ test_that("general types work", {
                     AMR::bug_drug_combinations(FUN = AMR::mo_gramstain) %>%
                     plot2(),
                   "gg")
-  if ("certestats" %in% rownames(utils::installed.packages())) {
-    expect_s3_class(certestats::qc_test(rnorm(100)) %>% plot2(), "gg")
-  }
+  expect_s3_class(certestats::qc_test(rnorm(100)) %>% plot2(), "gg")
 })
 
 test_that("general mapping works", {

@@ -2018,17 +2018,17 @@ plot2.qc_test <- function(.data,
   p <- p +
     geom_hline(yintercept = mean(att$values),
                colour = "black", linetype = 2, size = size / 2.5) +
-    geom_hline(yintercept = mean(att$values) + sd(att$values),
+    geom_hline(yintercept = mean(att$values) + stats::sd(att$values),
                colour = "#61D04F", linetype = 2, size = size / 2.5) +
-    geom_hline(yintercept = mean(att$values) - sd(att$values),
+    geom_hline(yintercept = mean(att$values) - stats::sd(att$values),
                colour = "#61D04F", linetype = 2, size = size / 2.5) +
-    geom_hline(yintercept = mean(att$values) + 2 * sd(att$values),
+    geom_hline(yintercept = mean(att$values) + 2 * stats::sd(att$values),
                colour = "#F5C710", linetype = 2, size = size / 2.5) +
-    geom_hline(yintercept = mean(att$values) - 2 * sd(att$values),
+    geom_hline(yintercept = mean(att$values) - 2 * stats::sd(att$values),
                colour = "#F5C710", linetype = 2, size = size / 2.5) +
-    geom_hline(yintercept = mean(att$values) + 3 * sd(att$values),
+    geom_hline(yintercept = mean(att$values) + 3 * stats::sd(att$values),
                colour = "#DF536B", linetype = 2, size = size / 2.5) +
-    geom_hline(yintercept = mean(att$values) - 3 * sd(att$values),
+    geom_hline(yintercept = mean(att$values) - 3 * stats::sd(att$values),
                colour = "#DF536B", linetype = 2, size = size / 2.5)
   
   p <- p +

@@ -995,7 +995,7 @@
 
 \item{x.expand}{expansion to use for the x axis, can be length 1 or 2}
 
-\item{x.limits}{limits to use for the x axis, can be length 1 or 2}
+\item{x.limits}{limits to use for the x axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{x.limits = c(0, NA)} to have the scale start at zero.}
 
 \item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (x values between 2000 and 2050)}
 
@@ -1013,7 +1013,7 @@
 
 \item{y.breaks}{a breaks function or numeric vector to use for the y axis}
 
-\item{y.limits}{limits to use for the y axis, can be length 1 or 2}
+\item{y.limits}{limits to use for the y axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the scale start at zero.}
 
 \item{y.labels}{a labels function or character vector to use for the y axis}
 
@@ -1023,19 +1023,19 @@
 
 \item{y.position}{position of the x axis, defaults to \code{"left"}}
 
-\item{category.labels}{settings for the plotting direction \code{category}}
+\item{category.labels}{settings for the plotting direction \code{category}.}
 
-\item{category.percent}{settings for the plotting direction \code{category}}
+\item{category.percent}{settings for the plotting direction \code{category}.}
 
-\item{category.breaks}{settings for the plotting direction \code{category}}
+\item{category.breaks}{settings for the plotting direction \code{category}.}
 
-\item{category.limits}{settings for the plotting direction \code{category}}
+\item{category.limits}{limits to use for a numeric category, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{category.limits = c(0, NA)} to have the scale start at zero.}
 
-\item{category.expand}{settings for the plotting direction \code{category}}
+\item{category.expand}{settings for the plotting direction \code{category}.}
 
-\item{category.midpoint}{settings for the plotting direction \code{category}}
+\item{category.midpoint}{settings for the plotting direction \code{category}.}
 
-\item{category.trans}{settings for the plotting direction \code{category}}
+\item{category.trans}{settings for the plotting direction \code{category}.}
 
 \item{x.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
 \itemize{

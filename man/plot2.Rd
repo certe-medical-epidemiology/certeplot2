@@ -206,7 +206,7 @@ plot2(
 
 \item{x.expand}{expansion to use for the x axis, can be length 1 or 2}
 
-\item{x.limits}{limits to use for the x axis, can be length 1 or 2}
+\item{x.limits}{limits to use for the x axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{x.limits = c(0, NA)} to have the scale start at zero.}
 
 \item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (x values between 2000 and 2050)}
 
@@ -224,7 +224,7 @@ plot2(
 
 \item{y.breaks}{a breaks function or numeric vector to use for the y axis}
 
-\item{y.limits}{limits to use for the y axis, can be length 1 or 2}
+\item{y.limits}{limits to use for the y axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the scale start at zero.}
 
 \item{y.labels}{a labels function or character vector to use for the y axis}
 
@@ -234,7 +234,9 @@ plot2(
 
 \item{y.position}{position of the x axis, defaults to \code{"left"}}
 
-\item{category.labels, category.percent, category.breaks, category.limits, category.expand, category.midpoint, category.trans}{settings for the plotting direction \code{category}}
+\item{category.labels, category.percent, category.breaks, category.expand, category.midpoint, category.trans}{settings for the plotting direction \code{category}.}
+
+\item{category.limits}{limits to use for a numeric category, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{category.limits = c(0, NA)} to have the scale start at zero.}
 
 \item{x.sort, category.sort, facet.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
 \itemize{
@@ -346,33 +348,32 @@ head(iris)
 
 # no variables determined, so plot2() will try for itself -
 # the type will be points since the first two variables are numeric
-plot2(iris)
-plot2(iris, theme = NULL, legend.position = "r")
+iris \%>\%
+  plot2()
 
-# only view the data part, like ggplot2 normally does
-plot2(iris, zoom = TRUE)
+ggplot2 defaults (more or less):
+iris \%>\% 
+  plot2(theme = NULL,
+        zoom = TRUE,
+        legend.position = "r")
 
-# if x and y are set, no addition mapping will be set:
-plot2(iris, Sepal.Width, Sepal.Length)
-plot2(iris, Species, Sepal.Length)
+# if x and y are set, no additional mapping will be set:
+iris \%>\% 
+  plot2(Sepal.Width, Sepal.Length)
+iris \%>\% 
+  plot2(Species, Sepal.Length)
 
 # the arguments are in this order: x, y, category, facet
-plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species)
+iris \%>\% 
+  plot2(Sepal.Length, Sepal.Width, Petal.Length, Species)
 
-plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species,
-      colour = "viridis") # set the viridis colours
+iris \%>\% 
+  plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
+        colour = "viridis") # set the viridis colours
       
-plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species,
-      colour = c("white", "red", "black")) # set own colours
-      
-plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species,
-      colour = c("white", "red", "black"), # set own colours
-      category.midpoint = 3)               # with an own midpoint
-
-# change to any type
-plot2(iris, Species, Sepal.Length, type = "violin")
-
-library(dplyr, warn.conflicts = FALSE)
+iris \%>\% 
+  plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
+        colour = c("white", "red", "black")) # set own colours
   
 admitted_patients
 
@@ -387,22 +388,19 @@ admitted_patients \%>\%
 admitted_patients \%>\%
   plot2(hospital, age, gender, ward)
   
-# use summarise_function to apply a function for continuous data
+# or use a function for y
 admitted_patients \%>\%
-  plot2(hospital, age, gender, ward,
-        type = "col", summarise_function = median)
+  plot2(hospital, median(age), gender, ward)
 
 admitted_patients \%>\%
   plot2(x = hospital,
         category = gender,
-        colour = c("F" = "orange3", "M" = "purple3"),
-        colour_fill = "white",
+        colour = c("F" = "green4", "M" = "red4"),
+        colour_fill = "lightyellow",
         y.age = TRUE)
         
 admitted_patients \%>\%
   plot2(age, type = "hist")
-admitted_patients \%>\%
-  plot2(age, type = "density")
  
 # the default type is column, datalabels are automatically
 # set in non-continuous types:
@@ -416,12 +414,8 @@ admitted_patients \%>\%
 admitted_patients \%>\% 
   plot2(hospital, n(), gender,
         stackedpercent = TRUE)
-  
-# sort any direction
-admitted_patients \%>\% 
-  plot2(hospital, n(), gender,
-        x.sort = "desc")
-        
+ 
+# sort on any direction:       
 admitted_patients \%>\% 
   plot2(hospital, n(), gender,
         x.sort = "freq-asc",

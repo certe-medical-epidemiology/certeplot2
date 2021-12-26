@@ -62,7 +62,7 @@
 #' @param x.breaks_n number of breaks to use for the x axis
 #' @param x.trans transformation function to use for the x axis, e.g. `"log2"`
 #' @param x.expand expansion to use for the x axis, can be length 1 or 2
-#' @param x.limits limits to use for the x axis, can be length 1 or 2
+#' @param x.limits limits to use for the x axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `x.limits = c(0, NA)` to have the scale start at zero.
 #' @param x.character a [logical] to indicate whether the values of the x axis should be forced to [character]. The default is `FALSE`, except for years (x values between 2000 and 2050)
 #' @param x.drop [logical] to indicate whether factor levels should be dropped
 #' @param y.remove a [logical] to indicate whether the y labels and title should be removed
@@ -71,12 +71,13 @@
 #' @param y.percent a [logical] to indicate whether the y labels should be formatted as percentages
 #' @param y.percent_break number of percentages on which the y axis should have breaks
 #' @param y.breaks a breaks function or numeric vector to use for the y axis
-#' @param y.limits limits to use for the y axis, can be length 1 or 2
+#' @param y.limits limits to use for the y axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `y.limits = c(0, NA)` to have the scale start at zero.
 #' @param y.labels a labels function or character vector to use for the y axis
 #' @param y.expand expansion to use for the y axis, can be length 1 or 2
 #' @param y.trans a transformation function to use for the y axis, e.g. `"log2"`
 #' @param y.position position of the x axis, defaults to `"left"`
-#' @param category.labels,category.percent,category.breaks,category.limits,category.expand,category.midpoint,category.trans settings for the plotting direction `category`
+#' @param category.labels,category.percent,category.breaks,category.expand,category.midpoint,category.trans settings for the plotting direction `category`.
+#' @param category.limits limits to use for a numeric category, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `category.limits = c(0, NA)` to have the scale start at zero.
 #' @param x.max_items,category.max_items,facet.max_items number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the `summarise_function` function. **Please note:** the sorting will be applied first, allowing to e.g. plot the top *n* most frequent values of the x axis by combining `x.sort = "freq-desc"` with `x.max_items =` *n*.
 #' @param x.max_txt,category.max_txt,facet.max_txt the text to use of values not included number of `*.max_items`. The placeholder `%n` will be replaced with the outcome of the `summarise_function` function, the placeholder `%p` will be replaced with the percentage.
 #' @param x.sort,category.sort,facet.sort sorting of the plotting direction, defaults to `TRUE`, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered [factor], which `ggplot2` uses to orient the data. Valid values are:
@@ -144,33 +145,32 @@
 #' 
 #' # no variables determined, so plot2() will try for itself -
 #' # the type will be points since the first two variables are numeric
-#' plot2(iris)
-#' plot2(iris, theme = NULL, legend.position = "r")
+#' iris %>%
+#'   plot2()
 #' 
-#' # only view the data part, like ggplot2 normally does
-#' plot2(iris, zoom = TRUE)
+#' ggplot2 defaults (more or less):
+#' iris %>% 
+#'   plot2(theme = NULL,
+#'         zoom = TRUE,
+#'         legend.position = "r")
 #' 
-#' # if x and y are set, no addition mapping will be set:
-#' plot2(iris, Sepal.Width, Sepal.Length)
-#' plot2(iris, Species, Sepal.Length)
+#' # if x and y are set, no additional mapping will be set:
+#' iris %>% 
+#'   plot2(Sepal.Width, Sepal.Length)
+#' iris %>% 
+#'   plot2(Species, Sepal.Length)
 #' 
 #' # the arguments are in this order: x, y, category, facet
-#' plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species)
+#' iris %>% 
+#'   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species)
 #' 
-#' plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species,
-#'       colour = "viridis") # set the viridis colours
+#' iris %>% 
+#'   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
+#'         colour = "viridis") # set the viridis colours
 #'       
-#' plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species,
-#'       colour = c("white", "red", "black")) # set own colours
-#'       
-#' plot2(iris, Sepal.Length, Sepal.Width, Petal.Length, Species,
-#'       colour = c("white", "red", "black"), # set own colours
-#'       category.midpoint = 3)               # with an own midpoint
-#' 
-#' # change to any type
-#' plot2(iris, Species, Sepal.Length, type = "violin")
-#' 
-#' library(dplyr, warn.conflicts = FALSE)
+#' iris %>% 
+#'   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
+#'         colour = c("white", "red", "black")) # set own colours
 #'   
 #' admitted_patients
 #' 
@@ -185,22 +185,19 @@
 #' admitted_patients %>%
 #'   plot2(hospital, age, gender, ward)
 #'   
-#' # use summarise_function to apply a function for continuous data
+#' # or use a function for y
 #' admitted_patients %>%
-#'   plot2(hospital, age, gender, ward,
-#'         type = "col", summarise_function = median)
+#'   plot2(hospital, median(age), gender, ward)
 #'
 #' admitted_patients %>%
 #'   plot2(x = hospital,
 #'         category = gender,
-#'         colour = c("F" = "orange3", "M" = "purple3"),
-#'         colour_fill = "white",
+#'         colour = c("F" = "green4", "M" = "red4"),
+#'         colour_fill = "lightyellow",
 #'         y.age = TRUE)
 #'         
 #' admitted_patients %>%
 #'   plot2(age, type = "hist")
-#' admitted_patients %>%
-#'   plot2(age, type = "density")
 #'  
 #' # the default type is column, datalabels are automatically
 #' # set in non-continuous types:
@@ -214,12 +211,8 @@
 #' admitted_patients %>% 
 #'   plot2(hospital, n(), gender,
 #'         stackedpercent = TRUE)
-#'   
-#' # sort any direction
-#' admitted_patients %>% 
-#'   plot2(hospital, n(), gender,
-#'         x.sort = "desc")
-#'         
+#'  
+#' # sort on any direction:       
 #' admitted_patients %>% 
 #'   plot2(hospital, n(), gender,
 #'         x.sort = "freq-asc",
