@@ -148,7 +148,7 @@
 #' iris %>%
 #'   plot2()
 #' 
-#' ggplot2 defaults (more or less):
+#' # ggplot2 defaults (more or less):
 #' iris %>% 
 #'   plot2(theme = NULL,
 #'         zoom = TRUE,
