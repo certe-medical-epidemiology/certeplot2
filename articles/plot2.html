@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.49</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.50</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@
 <h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h1>
 <p><em>Plotting with <code><a href="../reference/plot2.html">plot2()</a></code> - <strong>Less typing, faster coding</strong></em></p>
-<p>The <code><a href="../reference/plot2.html">plot2()</a></code> function is a convenient wrapper around many <code>ggplot2</code> functions such as <code>ggplot()</code>, <code>aes()</code>, <code>geom_col()</code>, <code>facet_wrap()</code>, <code>labs()</code>, etc., and provides:</p>
+<p>The <code><a href="../reference/plot2.html">plot2()</a></code> function is a convenient wrapper around many <code>ggplot2</code> functions such as <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot()</a></code>, <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code>, <code><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col()</a></code>, <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap()</a></code>, <code><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs()</a></code>, etc., and provides:</p>
 <ul>
 <li>Writing as few lines of codes as possible</li>
 <li>Easy plotting in three ‘directions’: <code>x</code> (the regular x axis), <code>category</code> (replaces ‘fill’ and ‘colour’) and <code>facet</code>
@@ -145,7 +145,7 @@
 </li>
 </ul>
 <p>The <code>ggplot2</code> package in conjunction with the <code>dplyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but <em>the goal of the <code><a href="../reference/plot2.html">plot2()</a></code> function is to generalise this into one function</em>. The default <code><a href="../reference/plot2.html">plot2()</a></code> function currently has 119 arguments, all with a default value. Every <code>plot2</code> is just a <code>ggplot</code> object, and thus extendible and editable with any other <code>ggplot2</code> function, using <code>+</code> (per the <code>ggplot2</code> convention`).</p>
-<p>Adding layers atop of other layers using functions (i.e., how <code>ggplot2</code> works) is conceptually pure brilliance. But the costs are at the user’s side: it lacks convenience as it requires a lot of recurrent code. Who wants to type <code>ggplot()</code>, <code>aes()</code> and <code>geom_whatever()</code> and their arguments over and over again, and then add another bunch of functions to get the desired style? The <code><a href="../reference/plot2.html">plot2()</a></code> function is arguably what <code><a href="https://ggplot2.tidyverse.org/reference/qplot.html" class="external-link">ggplot2::qplot()</a></code> could have been.</p>
+<p>Adding layers atop of other layers using functions (i.e., how <code>ggplot2</code> works) is conceptually pure brilliance. But the costs are at the user’s side: it lacks convenience as it requires a lot of recurrent code. Who wants to type <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot()</a></code>, <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code> and <code>geom_whatever()</code> and their arguments over and over again, and then add another bunch of functions to get the desired style? The <code><a href="../reference/plot2.html">plot2()</a></code> function is arguably what <code><a href="https://ggplot2.tidyverse.org/reference/qplot.html" class="external-link">ggplot2::qplot()</a></code> could have been.</p>
 <div class="section level3">
 <h3 id="initialisation">Initialisation<a class="anchor" aria-label="anchor" href="#initialisation"></a>
 </h3>
@@ -224,7 +224,7 @@
 <h1 id="setting-the-3-plotting-directions">Setting the 3 plotting directions<a class="anchor" aria-label="anchor" href="#setting-the-3-plotting-directions"></a>
 </h1>
 <p><code><a href="../reference/plot2.html">plot2()</a></code> comes with three different plotting directions: <code>x</code>, <code>category</code> and <code>facet</code>. The <code>x</code> direction plots along the x axis, the <code>category</code> plots using the legend (and replaces <code>ggplot2</code>’s <em>colour</em> and <em>fill</em>), and the <code>facet</code> direction plots using facets.</p>
-<p>In <code>ggplot2</code>, everything set in <code>aes()</code> will in fact become such a direction. <code><a href="../reference/plot2.html">plot2()</a></code> provides no support for plotting categorically using e.g., <em>shape</em>, <em>linetype</em> or <em>size</em>.</p>
+<p>In <code>ggplot2</code>, everything set in <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code> will in fact become such a direction. <code><a href="../reference/plot2.html">plot2()</a></code> provides no support for plotting categorically using e.g., <em>shape</em>, <em>linetype</em> or <em>size</em>.</p>
 <div class="section level3">
 <h3 id="tidy-evaluation">Tidy evaluation<a class="anchor" aria-label="anchor" href="#tidy-evaluation"></a>
 </h3>
@@ -325,12 +325,12 @@
                           stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">character_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y z</span>
-<span class="co">#&gt; 1 a 5.372117 f</span>
-<span class="co">#&gt; 2 b 5.821598 g</span>
-<span class="co">#&gt; 3 c 4.966559 h</span>
-<span class="co">#&gt; 4 d 4.990387 i</span>
-<span class="co">#&gt; 5 e 6.908077 j</span>
-<span class="co">#&gt; 6 a 6.679758 f</span>
+<span class="co">#&gt; 1 a 4.757552 f</span>
+<span class="co">#&gt; 2 b 5.399421 g</span>
+<span class="co">#&gt; 3 c 4.470583 h</span>
+<span class="co">#&gt; 4 d 5.819728 i</span>
+<span class="co">#&gt; 5 e 4.071076 j</span>
+<span class="co">#&gt; 6 a 5.610065 f</span>
 
 <span class="va">numeric_z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span>,
                         y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">5</span><span class="op">)</span>,
@@ -339,12 +339,12 @@
                         stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">numeric_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y        z</span>
-<span class="co">#&gt; 1 a 5.593507 4.889995</span>
-<span class="co">#&gt; 2 b 5.621971 4.658078</span>
-<span class="co">#&gt; 3 c 4.631547 6.068115</span>
-<span class="co">#&gt; 4 d 3.603034 5.203139</span>
-<span class="co">#&gt; 5 e 5.342356 3.605221</span>
-<span class="co">#&gt; 6 a 5.075237 5.114436</span>
+<span class="co">#&gt; 1 a 4.969480 4.413243</span>
+<span class="co">#&gt; 2 b 6.232094 4.978422</span>
+<span class="co">#&gt; 3 c 4.931228 5.484488</span>
+<span class="co">#&gt; 4 d 5.266394 5.242650</span>
+<span class="co">#&gt; 5 e 4.386558 5.851129</span>
+<span class="co">#&gt; 6 a 4.848676 5.365741</span>
 
 <span class="va">character_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>, type <span class="op">=</span> <span class="st">"jitter"</span>,
@@ -362,7 +362,7 @@
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>,
           type <span class="op">=</span> <span class="st">"jitter"</span>,
           colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; i Using category.midpoint = 3.84 for the category scale</span></code></pre></div>
+<span class="co">#&gt; i Using category.midpoint = 3.81 for the category scale</span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-14-1.png" width="576"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">numeric_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  
@@ -422,7 +422,7 @@
         facet.nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 <span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-17-1.png" width="576"></p>
-<p>No need to memorise how again the <code>scales</code>, <code>shrink</code> and <code>switch</code> arguments of the <code>facet_wrap()</code> function work!</p>
+<p>No need to memorise how again the <code>scales</code>, <code>shrink</code> and <code>switch</code> arguments of the <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap()</a></code> function work!</p>
 </div>
 <div class="section level2">
 <h2 id="setting-multiple-columns">Setting multiple columns<a class="anchor" aria-label="anchor" href="#setting-multiple-columns"></a>
@@ -563,25 +563,28 @@
 <p><img src="plot2_files/figure-html/unnamed-chunk-24-1.png" width="768"></p>
 <p>Including all transformations, we used in total 3 functions (<code><a href="../reference/plot2.html">plot2()</a></code>, <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code>, <code><a href="https://certe-medical-epidemiology.github.io/certestats/reference/math_functions.html" class="external-link">median()</a></code>) - the very least. Compare that to the required <code>dplyr</code> + <code>ggplot2</code> code:</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
+
+<span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">date</span>, <span class="st">"%Y"</span><span class="op">)</span>, <span class="va">ward</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://certe-medical-epidemiology.github.io/certestats/reference/math_functions.html" class="external-link">median</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">`format(date, "%Y")`</span>,
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`format(date, "%Y")`</span>,
              y <span class="op">=</span> <span class="va">`median(age)`</span>,
              fill <span class="op">=</span> <span class="va">ward</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_col</span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span>,
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span>,
            width <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
   <span class="co"># this part is just for styling:</span>
-  <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ICU"</span> <span class="op">=</span> <span class="st">"#01617E"</span>,
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ICU"</span> <span class="op">=</span> <span class="st">"#01617E"</span>,
                                <span class="st">"Non-ICU"</span> <span class="op">=</span> <span class="st">"#8B9934"</span><span class="op">)</span>,
                     name <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">scale_y_continuous</span><span class="op">(</span>expand <span class="op">=</span> <span class="fu">expansion</span><span class="op">(</span>mult <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span>,
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/expansion.html" class="external-link">expansion</a></span><span class="op">(</span>mult <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span>,
                      breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span>, <span class="fl">10</span><span class="op">)</span>,
                      labels <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"yrs"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="../reference/theme_minimal2.html">theme_minimal2</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` has grouped output by 'format(date, "%Y")'. You can override using the `.groups` argument.</span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-25-1.png" width="768"></p>
-<p>Now we had to use 7 functions to get the desired functional part of the plot while defining all variables twice. The styling part took another 6 functions. In other words, a lot of redundant code. And why 2009 is still so wide?? I’ll give you this: if you know the solution, you’re way deeper into <code>ggplot2</code> than should ever be necessary to use an R package.</p>
+<p>Now, we had to use 7 functions to get the desired functional part of the plot while defining all variables twice. The styling part took another 6 functions. Aside from being it a lot of redundant code, using all of these functions requires users to know them <em>and</em> their arguments. How many users would know <code><a href="https://ggplot2.tidyverse.org/reference/expansion.html" class="external-link">expansion()</a></code>, or that colours can be named in <code><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual()</a></code>? The obligations on the user side are quite insane.</p>
+<p>And why is 2009 still so wide?? I’ll give you this: if you know the solution, you’re way deeper into <code>ggplot2</code> than should ever be necessary for an R package.</p>
 </div>
 <div class="section level1">
 <h1 id="legends">Legends<a class="anchor" aria-label="anchor" href="#legends"></a>
@@ -591,7 +594,7 @@
 <h1 id="turning-the-plot-with-horizontal">Turning the plot with <code>horizontal</code><a class="anchor" aria-label="anchor" href="#turning-the-plot-with-horizontal"></a>
 </h1>
 <ul>
-<li>changes with <code>coord_flip()</code>
+<li>changes with <code><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip()</a></code>
 </li>
 <li>changes theme to exchange x and y properties</li>
 </ul>
@@ -599,7 +602,7 @@
 <div class="section level1">
 <h1 id="plotting-geometries-sf-objects">Plotting geometries (<code>sf</code> objects)<a class="anchor" aria-label="anchor" href="#plotting-geometries-sf-objects"></a>
 </h1>
-<p>Objects of class <code>sf</code> (<em>simple feature</em>) are treated specially by the <code>ggplot2</code> package, although <code><a href="../reference/plot2.html">plot2()</a></code> handles these objects like any other data set. Instead it returns a <code>ggplot</code> object created with <code>geom_sf()</code> internally, but most arguments are usable and even the <code><a href="../reference/theme_minimal2.html">theme_minimal2()</a></code> theme has good use for <code>sf</code> plots.</p>
+<p>Objects of class <code>sf</code> (<em>simple feature</em>) are treated specially by the <code>ggplot2</code> package, although <code><a href="../reference/plot2.html">plot2()</a></code> handles these objects like any other data set. Instead it returns a <code>ggplot</code> object created with <code><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf()</a></code> internally, but most arguments are usable and even the <code><a href="../reference/theme_minimal2.html">theme_minimal2()</a></code> theme has good use for <code>sf</code> plots.</p>
 <p>The <code>netherlands</code> data set is such an <code>sf</code> object:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
