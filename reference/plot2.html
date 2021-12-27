@@ -165,7 +165,7 @@ See plot2-methods for all implemented methods for different object classes."><me
   datalabels.round <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">y.percent</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>,
   datalabels.format <span class="op">=</span> <span class="st">"%n"</span>,
   datalabels.colour <span class="op">=</span> <span class="st">"grey25"</span>,
-  datalabels.fill <span class="op">=</span> <span class="cn">NULL</span>,
+  datalabels.colour_fill <span class="op">=</span> <span class="cn">NULL</span>,
   datalabels.size <span class="op">=</span> <span class="op">(</span><span class="fl">3</span> <span class="op">*</span> <span class="va">text_factor</span><span class="op">)</span>,
   datalabels.angle <span class="op">=</span> <span class="fl">0</span>,
   decimal.mark <span class="op">=</span> <span class="st">","</span>,
@@ -204,8 +204,6 @@ See plot2-methods for all implemented methods for different object classes."><me
   theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.theme"</span>, <span class="st">"theme_minimal2"</span><span class="op">)</span>,
   markdown <span class="op">=</span> <span class="cn">TRUE</span>,
   taxonomy_italic <span class="op">=</span> <span class="cn">FALSE</span>,
-  x.category <span class="op">=</span> <span class="cn">NULL</span>,
-  y.category <span class="op">=</span> <span class="cn">NULL</span>,
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -332,10 +330,10 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dt>datalabels</dt>
 <dd><p>variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' data, and values of <code>y</code> otherwise. It will print a maximum of 50 labels at default, which can be enforced by explicitly adding <code>datalabels = TRUE</code>.</p></dd>
 <dt>datalabels.round</dt>
-<dd><p>number of digits to round the datalabels</p></dd>
+<dd><p>number of digits to round the datalabels, applies to both <code>"%n"</code> and <code>"%p"</code> for replacement (see <code>datalabels.format</code>)</p></dd>
 <dt>datalabels.format</dt>
 <dd><p>format to use for datalabels - <code>"%n"</code> will be replaced by the count number, <code>"%p"</code> will be replaced by the percentage of the total count. Use <code>datalabels.format = NULL</code> to not transform the datalabels.</p></dd>
-<dt>datalabels.colour, datalabels.fill, datalabels.size, datalabels.angle</dt>
+<dt>datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle</dt>
 <dd><p>settings for the datalabels</p></dd>
 <dt>decimal.mark</dt>
 <dd><p>decimal mark, defaults to Dutch use (a comma)</p></dd>
@@ -350,7 +348,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dt>horizontal</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to turn the plot 90 degrees using <code><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip()</a></code>. This option also updates some theme options, so that e.g., <code>x.lbl_italic</code> will still apply to the original x axis.</p></dd>
 <dt>reverse</dt>
-<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to reverse all values of <code>category</code></p></dd>
+<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to reverse the <em>values</em> of <code>category</code>. Use <code>legend.reverse</code> to reverse the <em>legend</em> of <code>category</code>.</p></dd>
 <dt>smooth</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to add a smooth. In histograms, this will add the density count as an overlaying line (default: <code>TRUE</code>). In all other cases, a smooth will be added using <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth()</a></code> (default: <code>FALSE</code>).</p></dd>
 <dt>smooth.method, smooth.formula, smooth.se, smooth.level, smooth.alpha, smooth.size, smooth.linetype</dt>
@@ -385,10 +383,6 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to turn all labels and titles into markdown-supported labels, by extending their S3 classes with <code><a href="https://wilkelab.org/ggtext/reference/element_markdown.html" class="external-link">"element_markdown"</a></code>, a feature of the <code>ggtext</code> package</p></dd>
 <dt>taxonomy_italic</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to transform all labels and titles into italics that are in the <code>microorganisms</code> data set of the <code>AMR</code> package</p></dd>
-<dt>x.category</dt>
-<dd><p>old argument for <code>facet</code>, now deprecated</p></dd>
-<dt>y.category</dt>
-<dd><p>old argument for <code>category</code>, now deprecated</p></dd>
 <dt>...</dt>
 <dd><p>arguments passed on to methods</p></dd>
 </dl></div>
@@ -412,7 +406,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <li><p>Labels with data values can easily be printed and are automatically determined</p></li>
 </ul></li>
 <li><p>Support for any <code>ggplot2</code> extension based on <code><a href="https://ggplot2.tidyverse.org/reference/fortify.html" class="external-link">ggplot2::fortify()</a></code></p></li>
-</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 120 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
+</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 118 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
     </div>
 
     <div id="ref-examples">
@@ -560,9 +554,8 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span>
 <span class="r-plt img"><img src="plot2-17.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="co"># plot2() supports all S3 extensions available through ggplot2::fortify():</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># regression model</span></span>
+<span class="r-in"><span class="co"># plot2() supports all S3 extensions available through</span></span>
+<span class="r-in"><span class="co"># ggplot2::fortify(), such as regression models:</span></span>
 <span class="r-in"><span class="va">mtcars</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">hp</span>, data <span class="op">=</span> <span class="va">.</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span class="r-in">  <span class="fu">plot2</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mpg</span> <span class="op">^</span> <span class="op">-</span><span class="fl">3</span>,</span>
@@ -574,7 +567,9 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in">        subtitle <span class="op">=</span> <span class="st">"Axis titles contain the square notation: ^2"</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
 <span class="r-plt img"><img src="plot2-18.png" alt="" width="700" height="433"></span>
-<span class="r-in">        </span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># plot2() also has various other S3 implementations:</span></span>
+<span class="r-in"></span>
 <span class="r-in"><span class="co"># QC plots, according to e.g. Nelson's Quality Control Rules</span></span>
 <span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://certe-medical-epidemiology.github.io/certestats" class="external-link">"certestats"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">250</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -604,13 +599,20 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Antimicrobial resistance (AMR) data analysis</span></span>
 <span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://msberends.github.io/AMR" class="external-link">"AMR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>AMR_locale <span class="op">=</span> <span class="st">"nl"</span><span class="op">)</span></span>
+<span class="r-in">  </span>
 <span class="r-in">  <span class="va">example_isolates</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span class="r-in">    <span class="fu">select</span><span class="op">(</span><span class="va">mo</span>, <span class="fu"><a href="https://msberends.github.io/AMR/reference/antibiotic_class_selectors.html" class="external-link">penicillins</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span class="r-in">    <span class="va">.</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mo"</span>, <span class="fu"><a href="https://msberends.github.io/AMR/reference/antibiotic_class_selectors.html" class="external-link">penicillins</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span class="r-in">    <span class="fu"><a href="https://msberends.github.io/AMR/reference/bug_drug_combinations.html" class="external-link">bug_drug_combinations</a></span><span class="op">(</span>FUN <span class="op">=</span> <span class="va">mo_gramstain</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span class="r-in">    <span class="fu">plot2</span><span class="op">(</span>y.percent_break <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">}</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: AMR</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> could not find function "select"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ For </span><span style="color: #0000BB; background-color: #EEEEEE;">`penicillins()`</span><span style="color: #0000BB;"> using columns '</span><span style="color: #0000BB; font-weight: bold;">PEN</span><span style="color: #0000BB;">' (benzylpenicillin), '</span><span style="color: #0000BB; font-weight: bold;">OXA</span><span style="color: #0000BB;">'</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">  (oxacillin), '</span><span style="color: #0000BB; font-weight: bold;">FLC</span><span style="color: #0000BB;">' (flucloxacillin), '</span><span style="color: #0000BB; font-weight: bold;">AMX</span><span style="color: #0000BB;">' (amoxicillin), '</span><span style="color: #0000BB; font-weight: bold;">AMC</span><span style="color: #0000BB;">'</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">  (amoxicillin/clavulanic acid), '</span><span style="color: #0000BB; font-weight: bold;">AMP</span><span style="color: #0000BB;">' (ampicillin) and '</span><span style="color: #0000BB; font-weight: bold;">TZP</span><span style="color: #0000BB;">'</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">  (piperacillin/tazobactam)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ Using column '</span><span style="color: #0000BB; font-weight: bold;">mo</span><span style="color: #0000BB;">' as input for </span><span style="color: #0000BB; background-color: #EEEEEE;">`col_mo`</span><span style="color: #0000BB;">.</span></span>
+<span class="r-plt img"><img src="plot2-21.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </div>
