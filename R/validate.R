@@ -114,18 +114,27 @@ validate_data <- function(df,
   dots <- list(...)
   type <- validate_type(dots$type, df = NULL) # quick validation
   
-  numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.numeric)))
+  force_numeric <- function(x) {
+    if (!is.numeric(x)) {
+      # this is required to plot e.g. difftime
+      # integers and doubles both return TRUE for is.numeric() 
+      x <- as.double(x)
+    }
+    x
+  }
+  
+  numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) mode(col) == "numeric")))
   numeric_cols <- numeric_cols[numeric_cols %unlike% "^_var_"]
   character_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.character)))
   character_cols <- character_cols[character_cols %unlike% "^_var_"]
-  non_numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(x) !is.numeric(x))))
+  non_numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) mode(col) != "numeric")))
   non_numeric_cols <- non_numeric_cols[non_numeric_cols %unlike% "^_var_"]
   
-  if (!has_y(df) && "n" %in% numeric_cols && is.numeric(df$n)) {
+  if (!has_y(df) && "n" %in% numeric_cols && mode(df$n) == "numeric") {
     # give preference to "n" for the y axis
     plot2_message("Using ", font_blue("y = n"))
     df <- df %>% 
-      mutate(`_var_y` = df %>% pull(n))
+      mutate(`_var_y` = df %>% pull(n) %>% force_numeric())
   }
   
   if (!has_y(df)) {
@@ -143,15 +152,15 @@ validate_data <- function(df,
           plot2_message("Using ", font_blue("y = ", numeric_cols[2L], collapse = NULL))
         }
         df <- df %>% 
-          mutate(`_var_x` = df %>% pull(numeric_cols[1L]),
-                 `_var_y` = df %>% pull(numeric_cols[2L]))
+          mutate(`_var_x` = df %>% pull(numeric_cols[1L]) %>% force_numeric(),
+                 `_var_y` = df %>% pull(numeric_cols[2L]) %>% force_numeric())
       } else {
         if (!geom_is_continuous_x(type)) {
           # don't show when type for density geoms - y will not be used
           plot2_message("Using ", font_blue("y = ", numeric_cols[1L], collapse = NULL))
         }
         df <- df %>% 
-          mutate(`_var_y` = df %>% pull(numeric_cols[1L]))
+          mutate(`_var_y` = df %>% pull(numeric_cols[1L]) %>% force_numeric())
       }
     } else {
       # only one numeric column
@@ -159,7 +168,7 @@ validate_data <- function(df,
         if (!has_x(df)) {
           plot2_message("Using ", font_blue("x = ", numeric_cols, collapse = NULL))
           df <- df %>% 
-            mutate(`_var_x` = df %>% pull(numeric_cols))
+            mutate(`_var_x` = df %>% pull(numeric_cols) %>% force_numeric())
         }
         # don't show when type for density geoms - y will not be used
         df <- df %>% 
@@ -171,8 +180,8 @@ validate_data <- function(df,
                       " since the data has only one numeric variable and no other variables")
         type <- "geom_histogram"
         df <- df %>% 
-          mutate(`_var_x` = df %>% pull(numeric_cols),
-                 `_var_y` = df %>% pull(numeric_cols))
+          mutate(`_var_x` = df %>% pull(numeric_cols) %>% force_numeric(),
+                 `_var_y` = df %>% pull(numeric_cols) %>% force_numeric())
       } else {
         if (has_x(df) && get_x_name(df) == numeric_cols) {
           if (type == "") {
@@ -188,7 +197,7 @@ validate_data <- function(df,
         } else {
           plot2_message("Using ", font_blue("y = ", numeric_cols, collapse = NULL))
           df <- df %>% 
-            mutate(`_var_y` = df %>% pull(numeric_cols))
+            mutate(`_var_y` = df %>% pull(numeric_cols) %>% force_numeric())
         }
       }
     }
