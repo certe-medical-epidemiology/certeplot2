@@ -382,6 +382,8 @@ admitted_patients %>%
 Including all transformations, we used in total 3 functions (`plot2()`, `format()`, `median()`) - the very least. Compare that to the required `dplyr` + `ggplot2` code:
 
 ```{r, fig.width = 8}
+library(ggplot2)
+
 admitted_patients %>%
   group_by(format(date, "%Y"), ward) %>%
   summarise(median(age)) %>%
@@ -400,7 +402,9 @@ admitted_patients %>%
   theme_minimal2(legend.position = "top")
 ```
 
-Now we had to use 7 functions to get the desired functional part of the plot while defining all variables twice. The styling part took another 6 functions. In other words, a lot of redundant code. And why 2009 is still so wide?? I'll give you this: if you know the solution, you're way deeper into `ggplot2` than should ever be necessary to use an R package. 
+Now, we had to use 7 functions to get the desired functional part of the plot while defining all variables twice. The styling part took another 6 functions. Aside from being it a lot of redundant code, using all of these functions requires users to know them *and* their arguments. How many users would know `expansion()`, or that colours can be named in `scale_fill_manual()`? The obligations on the user side are quite insane.
+
+And why is 2009 still so wide?? I'll give you this: if you know the solution, you're way deeper into `ggplot2` than should ever be necessary for an R package. 
 
 # Legends
 

@@ -554,9 +554,6 @@ plot2_exec <- function(.data,
     return(p)
   }
   
-  # category.title and legend.title both exist for convenience
-  legend.title <- if (is.null(category.title)) legend.title else category.title
-  
   # prevalidate types for special types ----
   if (!is_empty(type) && !is.character(type)) {
     stop("'type' must be a character", call. = FALSE)
@@ -612,7 +609,7 @@ plot2_exec <- function(.data,
       } else {
         # nothing special, just run it as mutate
         .data %>% 
-          mutate(`_var_y` = {{ y }}) 
+          mutate(`_var_y` = {{ y }})
       }}}() %>% 
     mutate(`_var_datalabels` = {{ datalabels }}) %>% 
     # this part will transform the data as needed
@@ -714,6 +711,8 @@ plot2_exec <- function(.data,
     plot2_warning("Ignoring ", font_blue("stacked = TRUE"), ", since ", font_blue("stackedpercent = TRUE"))
     stacked <- FALSE
   }
+  # category.title and legend.title both exist for convenience
+  legend.title <- if (is.null(category.title)) legend.title else category.title
   
   # set default size and width ----
   size <- validate_size(size = size, type = type)
