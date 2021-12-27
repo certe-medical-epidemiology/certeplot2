@@ -91,7 +91,7 @@
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
   datalabels.colour = "grey25",
-  datalabels.fill = NULL,
+  datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
   decimal.mark = ",",
@@ -130,8 +130,6 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   markdown = TRUE,
   taxonomy_italic = FALSE,
-  x.category = NULL,
-  y.category = NULL,
   ...
 )
 
@@ -215,7 +213,7 @@
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
   datalabels.colour = "grey25",
-  datalabels.fill = NULL,
+  datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
   decimal.mark = ",",
@@ -254,8 +252,6 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   markdown = TRUE,
   taxonomy_italic = FALSE,
-  x.category = NULL,
-  y.category = NULL,
   ...
 )
 
@@ -339,7 +335,7 @@
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
   datalabels.colour = "grey25",
-  datalabels.fill = NULL,
+  datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
   decimal.mark = ",",
@@ -378,8 +374,6 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   markdown = TRUE,
   taxonomy_italic = FALSE,
-  x.category = NULL,
-  y.category = NULL,
   ...
 )
 
@@ -463,7 +457,7 @@
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = NULL,
   datalabels.colour = "black",
-  datalabels.fill = NULL,
+  datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
   decimal.mark = ",",
@@ -505,8 +499,6 @@
     element_blank()),
   markdown = TRUE,
   taxonomy_italic = FALSE,
-  x.category = NULL,
-  y.category = NULL,
   ...
 )
 
@@ -590,7 +582,7 @@
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
   datalabels.colour = "grey25",
-  datalabels.fill = NULL,
+  datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
   decimal.mark = ",",
@@ -629,8 +621,6 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   markdown = TRUE,
   taxonomy_italic = FALSE,
-  x.category = NULL,
-  y.category = NULL,
   ...
 )
 
@@ -714,7 +704,7 @@
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
   datalabels.colour = "grey25",
-  datalabels.fill = NULL,
+  datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
   decimal.mark = ",",
@@ -753,8 +743,6 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   markdown = TRUE,
   taxonomy_italic = TRUE,
-  x.category = NULL,
-  y.category = NULL,
   minimum = 30,
   remove_intrinsic_resistant = TRUE,
   language = "nl",
@@ -843,7 +831,7 @@
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
   datalabels.colour = "grey25",
-  datalabels.fill = NULL,
+  datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
   decimal.mark = ",",
@@ -882,8 +870,6 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   markdown = TRUE,
   taxonomy_italic = FALSE,
-  x.category = NULL,
-  y.category = NULL,
   ...
 )
 }
@@ -1075,13 +1061,13 @@
 
 \item{datalabels}{variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' data, and values of \code{y} otherwise. It will print a maximum of 50 labels at default, which can be enforced by explicitly adding \code{datalabels = TRUE}.}
 
-\item{datalabels.round}{number of digits to round the datalabels}
+\item{datalabels.round}{number of digits to round the datalabels, applies to both \code{"\%n"} and \code{"\%p"} for replacement (see \code{datalabels.format})}
 
 \item{datalabels.format}{format to use for datalabels - \code{"\%n"} will be replaced by the count number, \code{"\%p"} will be replaced by the percentage of the total count. Use \code{datalabels.format = NULL} to not transform the datalabels.}
 
 \item{datalabels.colour}{settings for the datalabels}
 
-\item{datalabels.fill}{settings for the datalabels}
+\item{datalabels.colour_fill}{settings for the datalabels}
 
 \item{datalabels.size}{settings for the datalabels}
 
@@ -1099,7 +1085,7 @@
 
 \item{horizontal}{a \link{logical} to turn the plot 90 degrees using \code{\link[ggplot2:coord_flip]{coord_flip()}}. This option also updates some theme options, so that e.g., \code{x.lbl_italic} will still apply to the original x axis.}
 
-\item{reverse}{a \link{logical} to reverse all values of \code{category}}
+\item{reverse}{a \link{logical} to reverse the \emph{values} of \code{category}. Use \code{legend.reverse} to reverse the \emph{legend} of \code{category}.}
 
 \item{smooth}{a \link{logical} to add a smooth. In histograms, this will add the density count as an overlaying line (default: \code{TRUE}). In all other cases, a smooth will be added using \code{\link[ggplot2:geom_smooth]{geom_smooth()}} (default: \code{FALSE}).}
 
@@ -1158,10 +1144,6 @@
 \item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{\link[ggtext:element_markdown]{"element_markdown"}}, a feature of the \code{ggtext} package}
 
 \item{taxonomy_italic}{a \link{logical} to transform all labels and titles into italics that are in the \code{microorganisms} data set of the \code{AMR} package}
-
-\item{x.category}{old argument for \code{facet}, now deprecated}
-
-\item{y.category}{old argument for \code{category}, now deprecated}
 
 \item{...}{arguments passed on to methods}
 

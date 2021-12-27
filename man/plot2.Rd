@@ -84,7 +84,7 @@ plot2(
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
   datalabels.colour = "grey25",
-  datalabels.fill = NULL,
+  datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
   decimal.mark = ",",
@@ -123,8 +123,6 @@ plot2(
   theme = getOption("plot2.theme", "theme_minimal2"),
   markdown = TRUE,
   taxonomy_italic = FALSE,
-  x.category = NULL,
-  y.category = NULL,
   ...
 )
 }
@@ -252,11 +250,11 @@ plot2(
 
 \item{datalabels}{variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' data, and values of \code{y} otherwise. It will print a maximum of 50 labels at default, which can be enforced by explicitly adding \code{datalabels = TRUE}.}
 
-\item{datalabels.round}{number of digits to round the datalabels}
+\item{datalabels.round}{number of digits to round the datalabels, applies to both \code{"\%n"} and \code{"\%p"} for replacement (see \code{datalabels.format})}
 
 \item{datalabels.format}{format to use for datalabels - \code{"\%n"} will be replaced by the count number, \code{"\%p"} will be replaced by the percentage of the total count. Use \code{datalabels.format = NULL} to not transform the datalabels.}
 
-\item{datalabels.colour, datalabels.fill, datalabels.size, datalabels.angle}{settings for the datalabels}
+\item{datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle}{settings for the datalabels}
 
 \item{decimal.mark}{decimal mark, defaults to Dutch use (a comma)}
 
@@ -270,7 +268,7 @@ plot2(
 
 \item{horizontal}{a \link{logical} to turn the plot 90 degrees using \code{\link[ggplot2:coord_flip]{coord_flip()}}. This option also updates some theme options, so that e.g., \code{x.lbl_italic} will still apply to the original x axis.}
 
-\item{reverse}{a \link{logical} to reverse all values of \code{category}}
+\item{reverse}{a \link{logical} to reverse the \emph{values} of \code{category}. Use \code{legend.reverse} to reverse the \emph{legend} of \code{category}.}
 
 \item{smooth}{a \link{logical} to add a smooth. In histograms, this will add the density count as an overlaying line (default: \code{TRUE}). In all other cases, a smooth will be added using \code{\link[ggplot2:geom_smooth]{geom_smooth()}} (default: \code{FALSE}).}
 
@@ -306,10 +304,6 @@ plot2(
 
 \item{taxonomy_italic}{a \link{logical} to transform all labels and titles into italics that are in the \code{microorganisms} data set of the \code{AMR} package}
 
-\item{x.category}{old argument for \code{facet}, now deprecated}
-
-\item{y.category}{old argument for \code{category}, now deprecated}
-
 \item{...}{arguments passed on to methods}
 }
 \value{
@@ -341,7 +335,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 120 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 118 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)
@@ -421,9 +415,8 @@ admitted_patients \%>\%
         x.sort = "freq-asc",
         stacked = TRUE)
 
-# plot2() supports all S3 extensions available through ggplot2::fortify():
-
-# regression model
+# plot2() supports all S3 extensions available through
+# ggplot2::fortify(), such as regression models:
 mtcars \%>\% 
   lm(mpg ~ hp, data = .) \%>\% 
   plot2(x = mpg ^ -3,
@@ -433,7 +426,9 @@ mtcars \%>\%
         smooth.formula = "y ~ log(x)",
         title = "Titles/captions *support* **markdown**",
         subtitle = "Axis titles contain the square notation: ^2")
-        
+
+# plot2() also has various other S3 implementations:
+
 # QC plots, according to e.g. Nelson's Quality Control Rules
 if (require("certestats")) {
   rnorm(250) \%>\% 
@@ -449,8 +444,10 @@ if (require("sf")) {
 
 # Antimicrobial resistance (AMR) data analysis
 if (require("AMR")) {
+  options(AMR_locale = "nl")
+  
   example_isolates \%>\% 
-    select(mo, penicillins()) \%>\% 
+    .[, c("mo", penicillins())] \%>\% 
     bug_drug_combinations(FUN = mo_gramstain) \%>\%
     plot2(y.percent_break = 0.25)
 }

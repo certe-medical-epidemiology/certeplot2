@@ -48,9 +48,9 @@ The `plot2()` function is a convenient wrapper around many `ggplot2` functions s
     * Labels with data values can easily be printed and are automatically determined
   * Support for any `ggplot2` extension based on `ggplot2::fortify()`
   
-The `ggplot2` package in conjunction with the `dplyr`, `forcats` and `cleaner` packages can provide above functionalities, but *the goal of the `plot2()` function is to generalise this into one function*. The default `plot2()` function currently has `r length(args)` arguments, all with a default value. 
+The `ggplot2` package in conjunction with the `dplyr`, `forcats` and `cleaner` packages can provide above functionalities, but *the goal of the `plot2()` function is to generalise this into one function*. The default `plot2()` function currently has `r length(args)` arguments, all with a default value. Every `plot2` is just a `ggplot` object, and thus extendible and editable with any other `ggplot2` function, using `+` (per the `ggplot2` convention`).
 
-Every `plot2` is just a `ggplot` object, and thus extendible and editable with any other `ggplot2` function, using `+` (per the `ggplot2` convention`).
+Adding layers atop of other layers using functions (i.e., how `ggplot2` works) is conceptually pure brilliance. But the costs are at the user's side: it lacks convenience as it requires a lot of recurrent code. Who wants to type `ggplot()`, `aes()` and `geom_whatever()` and their arguments over and over again, and then add another bunch of functions to get the desired style? The `plot2()` function is arguably what `ggplot2::qplot()` could have been. 
 
 ### Initialisation
 
@@ -338,9 +338,9 @@ The sorting can be used in combination with setting a maximum number of items to
 
 ```{r}
 admitted_patients %>%
-    plot2(hospital, y = n(), type = "col")
+    plot2(hospital, y = n())
 admitted_patients %>%
-    plot2(hospital, y = n(), type = "col",
+    plot2(hospital, y = n(),
           x.max_items = 3)
 ```
 
@@ -348,10 +348,10 @@ This can be combined with sorting:
 
 ```{r}
 admitted_patients %>%
-    plot2(hospital, y = n(), type = "col",
+    plot2(hospital, y = n(),
           x.sort = "freq-desc",
           x.max_items = 3,
-          x.max_txt = "These are %n hospitals (covering %p)")
+          x.max_txt = "%n other hospitals (%p)")
 ```
 
 # Setting the values of `y`
@@ -388,13 +388,23 @@ admitted_patients %>%
   ggplot(aes(x = `format(date, "%Y")`,
              y = `median(age)`,
              fill = ward)) +
-  geom_col(position = "dodge") +
-  theme_minimal2()
+  geom_col(position = "dodge",
+           width = 0.5) +
+  # this part is just for styling:
+  scale_fill_manual(values = c("ICU" = "#01617E",
+                               "Non-ICU" = "#8B9934"),
+                    name = "") +
+  scale_y_continuous(expand = expansion(mult = c(NA, 0.25)),
+                     breaks = seq(0, 100, 10),
+                     labels = function(x) paste(x, "yrs")) +
+  theme_minimal2(legend.position = "top")
 ```
 
-Now we had to use 8 functions in total, and define all variables twice. In other words, a lot of redundant code. And why is y = 0 not on the x baseline and are my bars floating, and why is 2009 so wide?? If you know the answers, you're way deeper into `ggplot2` than should be necessary.
+Now we had to use 7 functions to get the desired functional part of the plot while defining all variables twice. The styling part took another 6 functions. In other words, a lot of redundant code. And why 2009 is still so wide?? I'll give you this: if you know the solution, you're way deeper into `ggplot2` than should ever be necessary to use an R package. 
 
 # Legends
+
+
 
 # Turning the plot with `horizontal`
 

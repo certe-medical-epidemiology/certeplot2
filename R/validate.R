@@ -1308,7 +1308,7 @@ set_datalabels <- function(p,
                            width,
                            stacked,
                            stackedpercent,
-                           datalabels.fill,
+                           datalabels.colour_fill,
                            datalabels.colour,
                            datalabels.size,
                            datalabels.angle,
@@ -1318,23 +1318,24 @@ set_datalabels <- function(p,
                            misses_datalabels) {
   
   if (isTRUE(misses_datalabels) && nrow(df) > 50) {
-    plot2_warning("Omitting printing of ", nrow(df), " datalabels - use ", font_blue("datalabels = TRUE"), " to force printing")
+    plot2_warning("Omitting printing of ", nrow(df), " datalabels - use ",
+                  font_blue("datalabels = TRUE"), " to force printing")
     return(p)
   }
   
-  if (is.null(datalabels.fill)) {
+  if (is.null(datalabels.colour_fill)) {
     # try to get from current theme
-    datalabels.fill <- p$theme$panel.background$fill
-    if (is.null(datalabels.fill)) {
+    datalabels.colour_fill <- p$theme$panel.background$fill
+    if (is.null(datalabels.colour_fill)) {
       # still NULL, then make fill invisible (NA)
-      datalabels.fill <- NA
+      datalabels.colour_fill <- NA
     }
   }
   
   if (!isTRUE(stacked) && !isTRUE(stackedpercent) && type != "geom_sf") {
-    datalabels.fill <- colourpicker(datalabels.fill, opacity = 0.25) # 25% transparency
+    datalabels.colour_fill <- colourpicker(datalabels.colour_fill, opacity = 0.25) # 25% transparency
   } else {
-    datalabels.fill <- colourpicker(datalabels.fill, opacity = 0.75) # 75% transparency
+    datalabels.colour_fill <- colourpicker(datalabels.colour_fill, opacity = 0.75) # 75% transparency
   }
   datalabels.colour <- colourpicker(datalabels.colour)
   
@@ -1392,7 +1393,7 @@ set_datalabels <- function(p,
                                                        paste0(`_var_datalabels`,
                                                               strrep("-", ceiling(nchar(`_var_datalabels`) * 0.33))))),
                           colour = NA,
-                          fill = datalabels.fill,
+                          fill = datalabels.colour_fill,
                           size = datalabels.size,
                           family = family,
                           angle = datalabels.angle,

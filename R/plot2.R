@@ -91,16 +91,16 @@
 #' - `"freq"` or `"freq-desc"`: sort descending according to the frequencies of `y` computed by `summarise_function` (highest value first)
 #' - `"freq-asc"`: sort ascending according to the frequencies of `y` computed by `summarise_function` (lowest value first)
 #' @param datalabels variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' data, and values of `y` otherwise. It will print a maximum of 50 labels at default, which can be enforced by explicitly adding `datalabels = TRUE`.
-#' @param datalabels.round number of digits to round the datalabels
+#' @param datalabels.round number of digits to round the datalabels, applies to both `"%n"` and `"%p"` for replacement (see `datalabels.format`)
 #' @param datalabels.format format to use for datalabels - `"%n"` will be replaced by the count number, `"%p"` will be replaced by the percentage of the total count. Use `datalabels.format = NULL` to not transform the datalabels.
-#' @param datalabels.colour,datalabels.fill,datalabels.size,datalabels.angle settings for the datalabels
+#' @param datalabels.colour,datalabels.colour_fill,datalabels.size,datalabels.angle settings for the datalabels
 #' @param decimal.mark decimal mark, defaults to Dutch use (a comma)
 #' @param big.mark thousands separator, defaults to Dutch use (a full stop)
 #' @param summarise_function a [function] to use if the data has to be summarised, see *Examples*
 #' @param stacked a [logical] to indicate that values must be stacked
 #' @param stackedpercent a [logical] to indicate that values must be 100% stacked
 #' @param horizontal a [logical] to turn the plot 90 degrees using [`coord_flip()`][ggplot2::coord_flip()]. This option also updates some theme options, so that e.g., `x.lbl_italic` will still apply to the original x axis.
-#' @param reverse a [logical] to reverse all values of `category`
+#' @param reverse a [logical] to reverse the *values* of `category`. Use `legend.reverse` to reverse the *legend* of `category`.
 #' @param smooth a [logical] to add a smooth. In histograms, this will add the density count as an overlaying line (default: `TRUE`). In all other cases, a smooth will be added using [`geom_smooth()`][ggplot2::geom_smooth()] (default: `FALSE`).
 #' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.size,smooth.linetype settings for `smooth`
 #' @param size size of the geom
@@ -118,8 +118,6 @@
 #' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`). Can be set with `options(plot2.theme = "...")`.
 #' @param markdown a [logical] to turn all labels and titles into markdown-supported labels, by extending their S3 classes with [`"element_markdown"`][ggtext::element_markdown()], a feature of the `ggtext` package
 #' @param taxonomy_italic a [logical] to transform all labels and titles into italics that are in the `microorganisms` data set of the `AMR` package
-#' @param x.category old argument for `facet`, now deprecated
-#' @param y.category old argument for `category`, now deprecated
 #' @param ... arguments passed on to methods
 #' @details The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions such as [`ggplot()`][ggplot2::ggplot()], [`aes()`][ggplot2::aes()], [`geom_col()`][ggplot2::geom_col()], [`facet_wrap()`][ggplot2::facet_wrap()], [`labs()`][ggplot2::labs()], etc., and provides:
 #'   * Writing as few lines of codes as possible
@@ -218,9 +216,8 @@
 #'         x.sort = "freq-asc",
 #'         stacked = TRUE)
 #' 
-#' # plot2() supports all S3 extensions available through ggplot2::fortify():
-#' 
-#' # regression model
+#' # plot2() supports all S3 extensions available through
+#' # ggplot2::fortify(), such as regression models:
 #' mtcars %>% 
 #'   lm(mpg ~ hp, data = .) %>% 
 #'   plot2(x = mpg ^ -3,
@@ -230,7 +227,9 @@
 #'         smooth.formula = "y ~ log(x)",
 #'         title = "Titles/captions *support* **markdown**",
 #'         subtitle = "Axis titles contain the square notation: ^2")
-#'         
+#' 
+#' # plot2() also has various other S3 implementations:
+#' 
 #' # QC plots, according to e.g. Nelson's Quality Control Rules
 #' if (require("certestats")) {
 #'   rnorm(250) %>% 
@@ -246,8 +245,10 @@
 #' 
 #' # Antimicrobial resistance (AMR) data analysis
 #' if (require("AMR")) {
+#'   options(AMR_locale = "nl")
+#'   
 #'   example_isolates %>% 
-#'     select(mo, penicillins()) %>% 
+#'     .[, c("mo", penicillins())] %>% 
 #'     bug_drug_combinations(FUN = mo_gramstain) %>%
 #'     plot2(y.percent_break = 0.25)
 #' }
@@ -330,7 +331,7 @@ plot2 <- function(.data,
                   datalabels.round = ifelse(y.percent, 2, 1),
                   datalabels.format = "%n",
                   datalabels.colour = "grey25",
-                  datalabels.fill = NULL,
+                  datalabels.colour_fill = NULL,
                   datalabels.size = (3 * text_factor),
                   datalabels.angle = 0,
                   decimal.mark = ",",
@@ -369,9 +370,6 @@ plot2 <- function(.data,
                   theme = getOption("plot2.theme", "theme_minimal2"),
                   markdown = TRUE,
                   taxonomy_italic = FALSE,
-                  # old certetools pkg support
-                  x.category = NULL,
-                  y.category = NULL,
                   ...) {
   UseMethod("plot2")
 }
@@ -459,7 +457,7 @@ plot2_exec <- function(.data,
                        datalabels.round,
                        datalabels.colour,
                        datalabels.format,
-                       datalabels.fill,
+                       datalabels.colour_fill,
                        datalabels.size,
                        datalabels.angle,
                        decimal.mark,
@@ -498,17 +496,15 @@ plot2_exec <- function(.data,
                        theme,
                        markdown,
                        taxonomy_italic,
-                       x.category,
-                       y.category,
                        ...) {
   
   dots <- list(...)
-  dots_unknown <- names(dots) %unlike% "^(_|sort[.])"
+  dots_unknown <- names(dots) %unlike% "^_(label[.]|misses[.]|sf.column|summarise_fn_name)"
   if (any(dots_unknown)) {
     plot2_warning(ifelse(sum(dots_unknown) == 1,
                          "This argument is unknown and was ignored: ",
                          "These arguments are unknown and were ignored: "),
-                  paste0(font_blue(names(dots[dots_unknown]), collapse = NULL), collapse = font_black(", ")))
+                  paste0(font_red(names(dots[dots_unknown]), collapse = NULL), collapse = font_black(", ")))
   }
   
   # record missing arguments ----
@@ -556,39 +552,6 @@ plot2_exec <- function(.data,
     if (!misses_tag) p <- p + labs(tag = validate_titles(tag))
     if (!misses_caption) p <- p + labs(caption = validate_titles(caption))
     return(p)
-  }
-  
-  # old arguments, from previous package ----
-  if (tryCatch(!is.null(y.category), error = function(e) TRUE)) {
-    plot2_warning("Using ", font_red("'y.category' is deprecated"), 
-                  " - use ", font_blue("'category'"), " instead")
-    .data <- .data %>% 
-      mutate(across({{ y.category }}, .names = "_var_category_{col}")) %>% 
-      summarise_variable("_var_category", sep = sep)
-    category <- "_var_category"
-  }
-  if (tryCatch(!is.null(x.category), error = function(e) TRUE)) {
-    plot2_warning("Using ", font_red("'x.category' is deprecated"), 
-                  " - use ", font_blue("'facet'"), " instead")
-    .data <- .data %>% 
-      mutate(across({{ x.category }}, .names = "_var_facet_{col}")) %>% 
-      summarise_variable("_var_facet", sep = sep)
-    facet <- "_var_facet"
-  }
-  if (!is.null(dots$sort.x)) {
-    plot2_warning("Using ", font_red("'sort.x' is deprecated"),
-                  " - use ", font_blue("'x.sort'"), " instead")
-    x.sort <- dots$sort.x
-  }
-  if (!is.null(dots$sort.category)) {
-    plot2_warning("Using ", font_red("'sort.category' is deprecated"),
-                  " - use ", font_blue("'category.sort'"), " instead")
-    category.sort <- dots$sort.category
-  }
-  if (!is.null(dots$sort.facet)) {
-    plot2_warning("Using ", font_red("'sort.facet' is deprecated"),
-                  " - use ", font_blue("'facet.sort'"), " instead")
-    facet.sort <- dots$sort.facet
   }
   
   # category.title and legend.title both exist for convenience
@@ -732,6 +695,8 @@ plot2_exec <- function(.data,
                          decimal.mark = decimal.mark, big.mark = big.mark,
                          datalabels.round = datalabels.round, datalabels.format = datalabels.format)
   }
+  
+  # various cleaning steps ----
   # remove datalabels in continuous geoms
   if (has_datalabels(df) && isTRUE(misses_datalabels) && (geom_is_continuous(type) | type %like% "path|line") && type != "geom_sf") {
     df <- df %>% select(-`_var_datalabels`)
@@ -744,9 +709,11 @@ plot2_exec <- function(.data,
   if (type == "geom_sf") {
     df <- df %>% select(-`_var_x`)
   }
-  # last bit of data cleaning: move all `_var_` columns to the end
-  df <- df %>% 
-    select(!matches("^_var_"), matches("^_var_"))
+  # keep only one of `stacked` and `stackedpercent`
+  if (isTRUE(stacked) && isTRUE(stackedpercent)) {
+    plot2_warning("Ignoring ", font_blue("stacked = TRUE"), ", since ", font_blue("stackedpercent = TRUE"))
+    stacked <- FALSE
+  }
   
   # set default size and width ----
   size <- validate_size(size = size, type = type)
@@ -1069,7 +1036,7 @@ plot2_exec <- function(.data,
                         width = width,
                         stacked = stacked,
                         stackedpercent = stackedpercent,
-                        datalabels.fill = datalabels.fill,
+                        datalabels.colour_fill = datalabels.colour_fill,
                         datalabels.colour = datalabels.colour,
                         datalabels.size = datalabels.size,
                         datalabels.angle = datalabels.angle,
