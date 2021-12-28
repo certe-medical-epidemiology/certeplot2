@@ -73,6 +73,10 @@ plot2_warning <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") 
   plot2_message(..., print = print, geom = "warning")
 }
 
+requires_numeric_coercion <- function(x) {
+  !is.null(x) && mode(x) == "numeric" && !is.numeric(x) && !inherits(x, c("Date", "POSIXt"))
+}
+
 summarise_variable <- function(df, var, sep) {
   # combined with add_direction(), this will add support for multiple vars in one direction:
   # e.g., `category = c(col1, col2)`

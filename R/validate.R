@@ -114,11 +114,11 @@ validate_data <- function(df,
   dots <- list(...)
   type <- validate_type(dots$type, df = NULL) # quick validation
   
-  numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) mode(col) == "numeric")))
+  numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) mode(col) == "numeric" & !inherits(col, c("Date", "POSIXTt")))))
   numeric_cols <- numeric_cols[numeric_cols %unlike% "^_var_"]
   character_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.character)))
   character_cols <- character_cols[character_cols %unlike% "^_var_"]
-  non_numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) mode(col) != "numeric")))
+  non_numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) mode(col) != "numeric" | inherits(col, c("Date", "POSIXTt")))))
   non_numeric_cols <- non_numeric_cols[non_numeric_cols %unlike% "^_var_"]
   
   if (!has_y(df) && "n" %in% numeric_cols && mode(df$n) == "numeric") {
@@ -196,11 +196,11 @@ validate_data <- function(df,
   
   # this is required to plot e.g. difftime
   # integers and doubles both return TRUE for is.numeric() 
-  if (has_y(df) && !is.numeric(get_y(df))) {
+  if (has_y(df) && requires_numeric_coercion(get_y(df))) {
     df <- df %>% 
       mutate(`_var_y` = as.double(`_var_y`))
   }
-  if (has_x(df) && mode(get_x(df)) == "numeric" && !is.numeric(get_x(df))) {
+  if (has_x(df) && requires_numeric_coercion(get_x(df))) {
     df <- df %>% 
       mutate(`_var_x` = as.double(`_var_x`))
   }
@@ -290,7 +290,7 @@ validate_data <- function(df,
       }
     }
     # format datalabels
-    if (mode(get_datalabels(df)) == "numeric" && !is.numeric(get_datalabels(df))) {
+    if (requires_numeric_coercion(get_datalabels(df))) {
       # force double for e.g. difftime
       df <- df %>% 
         mutate(`_var_datalabels` = as.double(`_var_datalabels`))
