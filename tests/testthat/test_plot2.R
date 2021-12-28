@@ -42,7 +42,7 @@ test_that("general types work", {
 })
 
 test_that("general mapping works", {
-  expect_equal(plotdata %>% plot2() %>% get_mapping() %>% names(),
+  expect_equal(plotdata %>% plot2() %>% .$mapping %>% names(),
                c("y", "x", "fill", "colour"))
 })
 
