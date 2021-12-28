@@ -74,7 +74,7 @@ plot2_warning <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") 
 }
 
 requires_numeric_coercion <- function(x) {
-  !is.null(x) && mode(x) == "numeric" && !is.numeric(x) && !inherits(x, c("Date", "POSIXt"))
+  !is.null(x) && mode(x) == "numeric" && !is.numeric(x) && !inherits(x, c("factor", "Date", "POSIXt"))
 }
 
 summarise_variable <- function(df, var, sep) {
