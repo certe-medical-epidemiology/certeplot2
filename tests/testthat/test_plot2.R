@@ -23,6 +23,19 @@ plotdata <- data.frame(x = seq_len(10) + 10,
                        n = seq_len(10),
                        stringsAsFactors = FALSE)
 
+`%or%` <- function(a, b) if (is.null(a)) b else a
+
+get_mapping <- function(plot) plot$mapping %>% sapply(deparse) %>% gsub("~", "", .)
+get_data <- function(plot) plot$data
+get_xrange <- function(plot) {
+  ggplot2::ggplot_build(plot)$layout$panel_scales_x[[1]]$limits %or% 
+    ggplot2::ggplot_build(plot)$layout$panel_scales_x[[1]]$range$range
+}
+get_yrange <- function(plot) {
+  ggplot2::ggplot_build(plot)$layout$panel_scales_y[[1]]$limits %or%
+    ggplot2::ggplot_build(plot)$layout$panel_scales_y[[1]]$range$range
+}
+
 test_that("general types work", {
   expect_s3_class(plot2(rnorm(10, 10)), "gg")
   expect_s3_class(plot2(rnorm(10, 10), type = "l"), "gg")
@@ -30,14 +43,30 @@ test_that("general types work", {
   expect_s3_class(plot2(mtcars, mpg^2, hp^2, smooth = TRUE), "gg")
   expect_s3_class(iris %>% plot2(Species), "gg")
   expect_s3_class(iris %>% plot2(Species, type = "violin"), "gg")
+  expect_s3_class(iris %>% plot2(Species, type = "violin"), "gg")
+  expect_s3_class(iris %>% plot2(Species, type = "blank"), "gg")
+  expect_warning(iris %>% plot2(Species, type = "area"))
+  # difftime coercion to double:
+  expect_s3_class(data.frame(x = letters[1:10],
+                             y = difftime(Sys.time(), Sys.time() - seq_len(10))) %>%
+                    plot2(),
+                  "gg")
+})
+
+test_that("S3 implementations work", {
+  # lm
   expect_s3_class(lm(mpg ~ hp, mtcars) %>% plot2(), "gg")
+  # freq
   expect_s3_class(cleaner::freq(admitted_patients$hospital) %>% plot2(), "gg")
+  # sf
   expect_s3_class(netherlands %>% plot2(), "gg")
+  # bug_drug_combinations
   expect_s3_class(AMR::example_isolates %>%
                     select(mo, CIP, AMC) %>%
                     AMR::bug_drug_combinations(FUN = AMR::mo_gramstain) %>%
                     plot2(),
                   "gg")
+  # qc_test
   expect_s3_class(certestats::qc_test(rnorm(100)) %>% plot2(), "gg")
 })
 
@@ -48,12 +77,53 @@ test_that("general mapping works", {
 
 test_that("x scale works", {
   expect_s3_class(plotdata %>% plot2(x = x_date), "gg")
+  plotdata %>% plot2(x = x_date, x.limits = c(Sys.Date() - 13, Sys.Date() + 2))
   expect_s3_class(plotdata %>% plot2(x = x_char), "gg")
   expect_s3_class(plotdata %>% plot2(n, type = "hist"), "gg")
   expect_s3_class(plotdata %>% plot2(n, type = "density"), "gg")
   expect_s3_class(plotdata %>% plot2(n, type = "jitter"), "gg")
   expect_s3_class(plotdata %>% plot2(type = "line"), "gg")
   expect_s3_class(plotdata %>% plot2(type = "barpercent"), "gg")
+  
+  p <- plotdata %>%
+    plot2(x = x_date,
+          x.limits = c(Sys.Date() - 13,
+                       Sys.Date() + 2))
+  expect_equal(p %>% get_xrange() %>% as.Date(origin = "1970-01-01"),
+               c(Sys.Date() - 13 - 1, Sys.Date() + 2 + 1))
+})
+
+test_that("category scale works", {
+  # set as numeric
+  expect_s3_class(plotdata %>% .[1:4, ] %>% plot2(x = x_char, y = 1, category = n), "gg")
+  # 2-colour scale
+  expect_true(all(c(fill = "Petal.Length", colour = "Petal.Length") %in%
+                    (plot2(iris, Sepal.Length, Sepal.Width, Petal.Length,
+                           colour = c("red", "blue")) %>%
+                       get_mapping())))
+  # 3-colour scale
+  expect_true(all(c(fill = "Petal.Length", colour = "Petal.Length") %in%
+                    (plot2(iris, Sepal.Length, Sepal.Width, Petal.Length,
+                           colour = c("red", "blue", "green")) %>%
+                       get_mapping())))
+  # multi-colour scale
+  expect_true(all(c(fill = "Petal.Length", colour = "Petal.Length") %in%
+                    (plot2(iris, Sepal.Length, Sepal.Width, Petal.Length,
+                           colour = c("red", "blue", "green", "yellow")) %>%
+                       get_mapping())))
+  expect_true(all(c(fill = "Petal.Length", colour = "Petal.Length") %in%
+                    (plot2(iris, Sepal.Length, Sepal.Width, Petal.Length,
+                           colour = "certe") %>%
+                       get_mapping())))
+})
+
+test_that("facet scale works", {
+  expect_s3_class(iris %>% plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
+                                 Species), "gg")
+  expect_s3_class(iris %>% plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
+                                 Species, facet.relative = TRUE), "gg")
+  expect_s3_class(iris %>% plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
+                                 Species, facet.relative = TRUE, facet.nrow = 2), "gg")
 })
 
 test_that("blank plot works", {
@@ -63,4 +133,25 @@ test_that("blank plot works", {
 
 test_that("misc elements works", {
   expect_s3_class(plotdata %>% plot2(x_char, taxonomy_italic = TRUE), "gg")
+})
+
+test_that("type validation works", {
+  library(dplyr, warn.conflicts = FALSE)
+  df <- tibble(x = letters[1:10],
+               y = c(1:10),
+               z = LETTERS[1:10],
+               `_var_x` = x,
+               `_var_y` = y,
+               `_var_category` = z)
+  expect_equal(validate_type(NULL, df), "geom_col")
+  expect_equal(validate_type(NULL, df %>% select(-x, -`_var_x`)), "geom_boxplot")
+  expect_equal(validate_type("a", df), "geom_area")
+  expect_equal(validate_type("b", df), "geom_boxplot")
+  expect_equal(validate_type("c", df), "geom_col")
+  expect_equal(validate_type("h", df), "geom_histogram")
+  expect_equal(validate_type("j", df), "geom_jitter")
+  expect_equal(validate_type("l", df), "geom_line")
+  expect_equal(validate_type("p", df), "geom_point")
+  expect_equal(validate_type("r", df), "geom_ribbon")
+  expect_equal(validate_type("v", df), "geom_violin")
 })

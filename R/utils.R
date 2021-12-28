@@ -155,7 +155,7 @@ get_x <- function(df, na.rm = FALSE) {
 }
 get_x_name <- function(df) {
   if (has_x(df)) {
-    if (plot2_env$mapping_x != "NULL" && plot2_env$mapping_x %in% colnames(df)) {
+    if (!is.null(plot2_env$mapping_x) && plot2_env$mapping_x != "NULL" && plot2_env$mapping_x %in% colnames(df)) {
       plot2_env$mapping_x
     } else {
       get_column_name(df, `_var_x`)
@@ -177,7 +177,7 @@ get_y <- function(df) {
 }
 get_y_name <- function(df) {
   if (has_y(df)) {
-    if (plot2_env$mapping_y != "NULL" && plot2_env$mapping_y %in% colnames(df)) {
+    if (!is.null(plot2_env$mapping_y) && plot2_env$mapping_y != "NULL" && plot2_env$mapping_y %in% colnames(df)) {
       plot2_env$mapping_y
     } else {
       get_column_name(df, `_var_y`)
@@ -199,7 +199,7 @@ get_category <- function(df) {
 }
 get_category_name <- function(df) {
   if (has_category(df)) {
-    if (plot2_env$mapping_category != "NULL" && plot2_env$mapping_category %in% colnames(df)) {
+    if (!is.null(plot2_env$mapping_category) && plot2_env$mapping_category != "NULL" && plot2_env$mapping_category %in% colnames(df)) {
       plot2_env$mapping_category
     } else {
       get_column_name(df, `_var_category`)
@@ -221,7 +221,7 @@ get_facet <- function(df) {
 }
 get_facet_name <- function(df) {
   if (has_facet(df)) {
-    if (plot2_env$mapping_facet != "NULL" && plot2_env$mapping_facet %in% colnames(df)) {
+    if (!is.null(plot2_env$mapping_facet) && plot2_env$mapping_facet != "NULL" && plot2_env$mapping_facet %in% colnames(df)) {
       plot2_env$mapping_facet
     } else {
       get_column_name(df, `_var_facet`)
@@ -350,14 +350,25 @@ restore_mapping <- function(p, df) {
   for (i in seq_len(length(p$layers))) {
     p$layers[[i]]$mapping <- new_mapping(mapping = p$layers[[i]]$mapping, df = df)
   }
-  # mapping in facets
+  
+  # facet mapping
   if (has_facet(df)) {
     p$facet$params$facets[[1]] <- aes_string(as.name(get_facet_name(df)))[[1]]
     names(p$facet$params$facets)[1] <- get_facet_name(df)
+    # required for ggplot2::facet_grid(), which is used when facet.relative = TRUE:
+    if (length(p$facet$params$rows) > 0) {
+      p$facet$params$rows[[1]] <- aes_string(as.name(get_facet_name(df)))[[1]]
+      names(p$facet$params$rows)[1] <- get_facet_name(df)
+    }
+    if (length(p$facet$params$cols) > 0) {
+      p$facet$params$cols[[1]] <- aes_string(as.name(get_facet_name(df)))[[1]]
+      names(p$facet$params$cols)[1] <- get_facet_name(df)
+    }
   }
   
   # now remove anonymous these `_var_*` columns from the data
   p$data <- p$data[, colnames(p$data)[colnames(p$data) %unlike% "^_var_(x|y|category|facet)$"], drop = FALSE]
+  
   # return the plot object
   p
 }

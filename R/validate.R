@@ -665,6 +665,7 @@ validate_y_scale <- function(values,
 
 #' @importFrom ggplot2 scale_colour_gradient2 scale_colour_gradient scale_colour_gradientn expansion guide_colourbar element_text
 #' @importFrom certestyle format2
+#' @importFrom cleaner as.percentage
 validate_category_scale <- function(values,
                                     type,
                                     cols,
@@ -699,7 +700,12 @@ validate_category_scale <- function(values,
     if (!is.null(category.breaks)) {
       category.breaks
     } else if (isTRUE(category.percent)) {
-      seq(0, 1, 0.25)
+      if (max(c(1, values)) == 1) {
+        seq(0, 1, 0.25)
+      } else {
+        # print 5 labels nicely
+        scales::pretty_breaks()(values, 5)
+      }
     } else {
       scales::pretty_breaks()
     }
@@ -770,10 +776,18 @@ validate_category_scale <- function(values,
     if (!is.null(category.midpoint)) {
       mid_point <- as.double(category.midpoint)
     } else {
-      # default will be set to the median
-      mid_point <- diff(c(min(0, min(values, na.rm = TRUE)), max(values, na.rm = TRUE))) / 2
+      # default to the middle of the set limits
+      if (is.function(args$limits)) {
+        rng <- args$limits(values)
+      } else {
+        rng <- args$limits
+      }
+      mid_point <- sum(rng) / 2
       plot2_message("Using ", font_blue("category.midpoint =", round(mid_point, 2)),
-                    " for the ", font_blue("category"), " scale")
+                    ifelse(isTRUE(category.percent),
+                           paste0(" (", format2(as.percentage(mid_point)), ", "),
+                           " ("),
+                    "the current ", font_blue("category"), " scale centre)")
     }
     do.call(scale_colour_gradient2,
             args = c(list(low = cols_category[1],
