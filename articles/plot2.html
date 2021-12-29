@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.57</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -325,12 +325,12 @@
                           stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">character_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y z</span>
-<span class="co">#&gt; 1 a 6.066412 f</span>
-<span class="co">#&gt; 2 b 3.643992 g</span>
-<span class="co">#&gt; 3 c 3.515256 h</span>
-<span class="co">#&gt; 4 d 4.078193 i</span>
-<span class="co">#&gt; 5 e 6.200280 j</span>
-<span class="co">#&gt; 6 a 3.721627 f</span>
+<span class="co">#&gt; 1 a 4.596267 f</span>
+<span class="co">#&gt; 2 b 6.618336 g</span>
+<span class="co">#&gt; 3 c 4.877345 h</span>
+<span class="co">#&gt; 4 d 5.669667 i</span>
+<span class="co">#&gt; 5 e 6.378166 j</span>
+<span class="co">#&gt; 6 a 3.579923 f</span>
 
 <span class="va">numeric_z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span>,
                         y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">5</span><span class="op">)</span>,
@@ -339,12 +339,12 @@
                         stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">numeric_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y        z</span>
-<span class="co">#&gt; 1 a 4.935970 4.368190</span>
-<span class="co">#&gt; 2 b 2.915038 3.285680</span>
-<span class="co">#&gt; 3 c 4.059822 5.458866</span>
-<span class="co">#&gt; 4 d 4.717273 6.081289</span>
-<span class="co">#&gt; 5 e 5.832035 5.265432</span>
-<span class="co">#&gt; 6 a 3.971201 3.990787</span>
+<span class="co">#&gt; 1 a 4.381380 5.038611</span>
+<span class="co">#&gt; 2 b 4.754431 6.447928</span>
+<span class="co">#&gt; 3 c 5.020957 4.601409</span>
+<span class="co">#&gt; 4 d 5.986273 3.947639</span>
+<span class="co">#&gt; 5 e 4.943865 4.296490</span>
+<span class="co">#&gt; 6 a 3.594852 5.075016</span>
 
 <span class="va">character_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>, type <span class="op">=</span> <span class="st">"jitter"</span>,
@@ -362,7 +362,7 @@
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>,
           type <span class="op">=</span> <span class="st">"jitter"</span>,
           colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; i Using category.midpoint = 4.35 (the current category scale centre)</span></code></pre></div>
+<span class="co">#&gt; i Using category.midpoint = 4.79 (the current category scale centre)</span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-14-1.png" width="576"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">numeric_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  
@@ -587,19 +587,6 @@
 <p>And why is 2009 still so wide?? I’ll give you this: if you know the solution, you’re way deeper into <code>ggplot2</code> than should ever be necessary for an R package.</p>
 </div>
 <div class="section level1">
-<h1 id="legends">Legends<a class="anchor" aria-label="anchor" href="#legends"></a>
-</h1>
-</div>
-<div class="section level1">
-<h1 id="turning-the-plot-with-horizontal">Turning the plot with <code>horizontal</code><a class="anchor" aria-label="anchor" href="#turning-the-plot-with-horizontal"></a>
-</h1>
-<ul>
-<li>changes with <code><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip()</a></code>
-</li>
-<li>changes theme to exchange x and y properties</li>
-</ul>
-</div>
-<div class="section level1">
 <h1 id="plotting-geometries-sf-objects">Plotting geometries (<code>sf</code> objects)<a class="anchor" aria-label="anchor" href="#plotting-geometries-sf-objects"></a>
 </h1>
 <p>Objects of class <code>sf</code> (<em>simple feature</em>) are treated specially by the <code>ggplot2</code> package, although <code><a href="../reference/plot2.html">plot2()</a></code> handles these objects like any other data set. Instead it returns a <code>ggplot</code> object created with <code><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf()</a></code> internally, but most arguments are usable and even the <code><a href="../reference/theme_minimal2.html">theme_minimal2()</a></code> theme has good use for <code>sf</code> plots.</p>
@@ -625,7 +612,7 @@
 <span class="co">#&gt; 8  Noord-Holland 2864.292 MULTIPOLYGON (((5.054713 52...</span>
 <span class="co">#&gt; 9   Zuid-Holland 2967.352 MULTIPOLYGON (((4.547322 52...</span>
 <span class="co">#&gt; 10       Zeeland 1838.376 MULTIPOLYGON (((3.842477 51...</span></code></pre></div>
-<p>How does it look?</p>
+<p>These objects can be given to <code><a href="../reference/plot2.html">plot2()</a></code>, and its built-in <code><a href="../reference/theme_minimal2.html">theme_minimal2()</a></code> makes sure you get a clean map:</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">netherlands</span><span class="op">)</span>
 <span class="co">#&gt; i Using category = area_km2</span>
@@ -633,10 +620,17 @@
 <p><img src="plot2_files/figure-html/unnamed-chunk-27-1.png" width="576"></p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">netherlands</span>,
-      colour_fill <span class="op">=</span> <span class="st">"viridis"</span>,
-      datalabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">province</span>, <span class="st">"\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">area_km2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+      colour_fill <span class="op">=</span> <span class="st">"certe"</span>,
+      datalabels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#&gt; i Using category = area_km2</span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-27-2.png" width="576"></p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">netherlands</span>,
+      colour_fill <span class="op">=</span> <span class="st">"viridis"</span>,
+      <span class="co"># datalabels support tidy evaluation too:</span>
+      datalabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">province</span>, <span class="st">"\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">area_km2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; i Using category = area_km2</span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-27-3.png" width="576"></p>
 </div>
   </div>
 
