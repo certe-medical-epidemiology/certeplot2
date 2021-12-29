@@ -241,13 +241,6 @@ get_datalabels <- function(df) {
     NULL
   }
 }
-get_datalabels_name <- function(df) {
-  if (has_datalabels(df)) {
-    get_column_name(df, `_var_datalabels`)
-  } else {
-    NULL
-  }
-}
 has_datalabels <- function(df) {
   "_var_datalabels" %in% colnames(df)
 }

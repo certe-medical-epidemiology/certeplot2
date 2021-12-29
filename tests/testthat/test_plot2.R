@@ -26,6 +26,7 @@ plotdata <- data.frame(x = seq_len(10) + 10,
 `%or%` <- function(a, b) if (is.null(a)) b else a
 
 get_mapping <- function(plot) plot$mapping %>% sapply(deparse) %>% gsub("~", "", .)
+get_layers <- function(plot) plot$layers
 get_data <- function(plot) plot$data
 get_xrange <- function(plot) {
   ggplot2::ggplot_build(plot)$layout$panel_scales_x[[1]]$limits %or% 
@@ -67,7 +68,7 @@ test_that("S3 implementations work", {
                     plot2(),
                   "gg")
   # qc_test
-  expect_s3_class(certestats::qc_test(rnorm(100)) %>% plot2(), "gg")
+  expect_s3_class(certestats::qc_test(rnorm(1000)) %>% plot2(), "gg")
 })
 
 test_that("general mapping works", {
@@ -135,6 +136,14 @@ test_that("misc elements works", {
   expect_s3_class(plotdata %>% plot2(x_char, taxonomy_italic = TRUE), "gg")
 })
 
+test_that("get title works", {
+ p <- plot2(mtcars, title = "Plotting **mpg** vs. **cyl**!")
+  expect_equal(get_plot_title(p), "plotting_mpg_vs_cyl")
+  expect_equal(get_plot_title(p, valid_filename = FALSE), "Plotting **mpg** vs. **cyl**!")
+  expect_equal(get_plot_title(plot2(mtcars)), NA_character_)
+  expect_equal(get_plot_title(plot2(mtcars), default = "test"), "test")
+})
+
 test_that("type validation works", {
   library(dplyr, warn.conflicts = FALSE)
   df <- tibble(x = letters[1:10],
@@ -154,4 +163,34 @@ test_that("type validation works", {
   expect_equal(validate_type("p", df), "geom_point")
   expect_equal(validate_type("r", df), "geom_ribbon")
   expect_equal(validate_type("v", df), "geom_violin")
+})
+
+test_that("adding elements works", {
+  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% get_layers(), 1)
+  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% add_line() %>% get_layers(), 2)
+  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% add_col() %>% get_layers(), 2)
+  expect_error(mtcars %>% plot2(mpg, hp, cyl) %>% add_type(type = NULL))
+})
+
+test_that("adding scales works", {
+  library(ggplot2)
+  expect_message(mtcars %>%
+                   plot2(mpg, hp, cyl, colour = "viridis") + 
+                   scale_color_certe_c())
+  expect_message(mtcars %>%
+                   plot2(mpg, hp, cyl, colour = "viridis") + 
+                   scale_fill_certe_c())
+  expect_message(mtcars %>%
+                   plot2(mpg, hp, rownames(.), colour = "viridis") +
+                   scale_color_certe_d())
+  expect_message(mtcars %>%
+                   plot2(mpg, hp, rownames(.), colour = "viridis") +
+                   scale_fill_certe_d())
+})
+
+test_that("moving layer works", {
+  expect_s3_class((mtcars %>%
+                     plot2(mpg, hp, cyl) +
+                     geom_line(colour = "grey75")) %>%
+                    move_layer(-1), "gg")
 })
