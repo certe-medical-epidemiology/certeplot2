@@ -406,15 +406,6 @@ Now, we had to use 7 functions to get the desired functional part of the plot wh
 
 And why is 2009 still so wide?? I'll give you this: if you know the solution, you're way deeper into `ggplot2` than should ever be necessary for an R package. 
 
-# Legends
-
-
-
-# Turning the plot with `horizontal`
-
-* changes with `coord_flip()`
-* changes theme to exchange x and y properties
-
 # Plotting geometries (`sf` objects)
 
 Objects of class `sf` (*simple feature*) are treated specially by the `ggplot2` package, although `plot2()` handles these objects like any other data set. Instead it returns a `ggplot` object created with `geom_sf()` internally, but most arguments are usable and even the `theme_minimal2()` theme has good use for `sf` plots.
@@ -426,11 +417,15 @@ library(sf)
 print(netherlands)
 ```
 
-How does it look?
+These objects can be given to `plot2()`, and its built-in `theme_minimal2()` makes sure you get a clean map:
 
 ```{r}
 plot2(netherlands)
 plot2(netherlands,
+      colour_fill = "certe",
+      datalabels = FALSE)
+plot2(netherlands,
       colour_fill = "viridis",
+      # datalabels support tidy evaluation too:
       datalabels = paste0(province, "\n", round(area_km2)))
 ```
