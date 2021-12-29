@@ -28,11 +28,11 @@ plotdata <- data.frame(x = seq_len(10) + 10,
 get_mapping <- function(plot) plot$mapping %>% sapply(deparse) %>% gsub("~", "", .)
 get_layers <- function(plot) plot$layers
 get_data <- function(plot) plot$data
-get_xrange <- function(plot) {
+get_range_x <- function(plot) {
   ggplot2::ggplot_build(plot)$layout$panel_scales_x[[1]]$limits %or% 
     ggplot2::ggplot_build(plot)$layout$panel_scales_x[[1]]$range$range
 }
-get_yrange <- function(plot) {
+get_range_y <- function(plot) {
   ggplot2::ggplot_build(plot)$layout$panel_scales_y[[1]]$limits %or%
     ggplot2::ggplot_build(plot)$layout$panel_scales_y[[1]]$range$range
 }
@@ -76,6 +76,65 @@ test_that("general mapping works", {
                c("y", "x", "fill", "colour"))
 })
 
+test_that("titles work", {
+  expect_equal(mtcars %>%
+                 plot2(caption = "caption",
+                       tag = "tag",
+                       subtitle = "subtitle",
+                       title = "title",
+                       y.title = "y.title",
+                       x.title = "x.title") %>%
+                 .$labels %>%
+                 unlist(),
+               c(caption = "caption",
+                 tag = "tag",
+                 subtitle = "subtitle",
+                 title = "title",
+                 y = "y.title",
+                 x = "x.title"))
+})
+
+test_that("max items and sorting work", {
+  expect_equal(admitted_patients %>%
+                 plot2(x = hospital,
+                       y = n(),
+                       x.sort = "asc") %>% 
+                 get_range_x(),
+               c("A", "B", "C", "D"))
+  expect_equal(admitted_patients %>%
+                 plot2(x = hospital,
+                       y = n(),
+                       x.sort = "desc") %>% 
+                 get_range_x(),
+               c("D", "C", "B", "A"))
+  expect_equal(admitted_patients %>%
+                 plot2(x = hospital,
+                       y = n(),
+                       x.sort = "freq-desc") %>% 
+                 get_range_x(),
+               c("B", "D", "C", "A"))
+  expect_equal(admitted_patients %>%
+                 plot2(x = hospital,
+                       y = n(),
+                       x.sort = "freq-asc") %>% 
+                 get_range_x(),
+               c("A", "C", "D", "B"))
+  expect_equal(admitted_patients %>%
+                 plot2(x = hospital,
+                       y = n(),
+                       x.sort = "asc") %>% 
+                 get_range_x(),
+               c("A", "B", "C", "D"))
+  expect_equal(admitted_patients %>%
+                 plot2(x = format(date, "%Y"),
+                       y = n(),
+                       x.sort = "freq-desc",
+                       x.max_items = 5) %>%
+                 get_range_x(),
+               c("2008", "2004", "2009", "2015", "(rest, x 12)"))
+  
+})
+
 test_that("x scale works", {
   expect_s3_class(plotdata %>% plot2(x = x_date), "gg")
   plotdata %>% plot2(x = x_date, x.limits = c(Sys.Date() - 13, Sys.Date() + 2))
@@ -90,7 +149,7 @@ test_that("x scale works", {
     plot2(x = x_date,
           x.limits = c(Sys.Date() - 13,
                        Sys.Date() + 2))
-  expect_equal(p %>% get_xrange() %>% as.Date(origin = "1970-01-01"),
+  expect_equal(p %>% get_range_x() %>% as.Date(origin = "1970-01-01"),
                c(Sys.Date() - 13 - 1, Sys.Date() + 2 + 1))
 })
 
@@ -116,6 +175,8 @@ test_that("category scale works", {
                     (plot2(iris, Sepal.Length, Sepal.Width, Petal.Length,
                            colour = "certe") %>%
                        get_mapping())))
+  expect_s3_class(mtcars %>% plot2(mpg, hp, as.character(cyl), category.focus = 2), "gg")
+  expect_s3_class(mtcars %>% plot2(mpg, hp, as.character(cyl), category.focus = "4"), "gg")
 })
 
 test_that("facet scale works", {
@@ -193,4 +254,26 @@ test_that("moving layer works", {
                      plot2(mpg, hp, cyl) +
                      geom_line(colour = "grey75")) %>%
                     move_layer(-1), "gg")
+})
+
+test_that("messaging works", {
+  expect_message(plot2_message("test", print = TRUE))
+  expect_message(plot2_warning("test", print = TRUE))
+})
+
+test_that("date labels work", {
+  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 30 - 1)),
+               list(breaks = "1 day", labels = "d mmm"))
+  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 92 - 1)),
+               list(breaks = "4 days", labels = "d mmm"))
+  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 183 - 1)),
+               list(breaks = "2 weeks", labels = "d mmm"))
+  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 365 - 1)),
+               list(breaks = "1 month", labels = "mmmm yyyy"))
+  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 730 - 1)),
+               list(breaks = "3 months", labels = "mmm yyyy"))
+  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 1095 - 1)),
+               list(breaks = "6 months", labels = "mmm yyyy"))
+  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 2556 - 1)),
+               list(breaks = "1 year", labels = "mmm yyyy"))
 })

@@ -36,7 +36,7 @@
 #' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and `"col"` otherwise. Use `type = "blank"` or `type = "geom_blank"` to *not* print a geom.
 #' @param x.title text to show on the x axis
 #' @param y.title text to show on the y axis
-#' @param category.title text to show for the category (legend title)
+#' @param category.title title of the legend (if `legend.title` is not set), defaults to `TRUE` if the legend items are numeric.
 #' @param title title to show
 #' @param subtitle subtitle to show
 #' @param caption caption to show
@@ -82,10 +82,10 @@
 #' @param x.max_txt,category.max_txt,facet.max_txt the text to use of values not included number of `*.max_items`. The placeholder `%n` will be replaced with the outcome of the `summarise_function` function, the placeholder `%p` will be replaced with the percentage.
 #' @param x.sort,category.sort,facet.sort sorting of the plotting direction, defaults to `TRUE`, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered [factor], which `ggplot2` uses to orient the data. Valid values are:
 #' 
-#' - `TRUE`: sort as `"asc"`
+#' - `TRUE`: sort [factor]s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (*numeric* sort)
 #' - `FALSE`: sort according to the order in the data
 #' - `NULL`: do not sort/transform at all
-#' - `"asc"` or `"alpha"`: sort [factor]s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (*numeric* sort)
+#' - `"asc"` or `"alpha"`: sort as `TRUE`
 #' - `"desc"`: sort [factor]s on their [reversed][rev()] levels, otherwise sort descending on alphabet, while maintaining numbers in the text (*numeric* sort)
 #' - `"order"` or `"inorder"`: sort as `FALSE`
 #' - `"freq"` or `"freq-desc"`: sort descending according to the frequencies of `y` computed by `summarise_function` (highest value first)
@@ -109,7 +109,9 @@
 #' @param width width of the geom
 #' @param jitter_seed seed (randomisation factor) to be set when using `type = "jitter"`
 #' @param violin_scale scale to be set when using `type = "violin"`, can also be set to `"area"`
-#' @param legend.position,legend.title,legend.reverse,legend.barheight,legend.barwidth,legend.nbin,legend.italic settings for the legend
+#' @param legend.position position of the legend, must be `"top"`, `"right"`, `"bottom"`, `"left"` or `"none"` (of `NA` or `NULL`), can be abbreviated. Defaults to `"right"` for numeric `category` values and 'sf' plots, and `"top"` otherwise.
+#' @param legend.title title of the legend (if `category.title` is not set), defaults to `TRUE` if the legend items are numeric.
+#' @param legend.reverse,legend.barheight,legend.barwidth,legend.nbin,legend.italic other settings for the legend
 #' @param zoom a [logical] to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0
 #' @param sep separator character to use if multiple columns are given to either of the three directions: `x`, `category` and `facet`, e.g. `facet = c(column1, column2)`
 #' @param print a [logical] to indicate if the result should be [printed][print()] instead of just returned
@@ -355,8 +357,8 @@ plot2 <- function(.data,
                   width = NULL,
                   jitter_seed = NA,
                   violin_scale = "count",
-                  legend.position = "top",
-                  legend.title = NULL, # will become TRUE in numeric categories is left NULL
+                  legend.position = NULL,
+                  legend.title = NULL, # will become TRUE in numeric categories if left NULL
                   legend.reverse = FALSE,
                   legend.barheight = 6,
                   legend.barwidth = 1.5,
@@ -882,12 +884,10 @@ plot2_exec <- function(.data,
                               legend.barheight = legend.barheight,
                               legend.barwidth = legend.barwidth,
                               legend.reverse = legend.reverse,
+                              legend.position = legend.position,
                               decimal.mark = decimal.mark,
                               big.mark = big.mark,
                               family = family)
-    if (is.null(legend.title)) {
-      legend.title <- TRUE
-    }
   } else if (type != "geom_sf") {
     p <- p +
       scale_colour_manual(values = cols$colour,
@@ -978,6 +978,9 @@ plot2_exec <- function(.data,
   if (!misses_caption) p <- p + labs(caption = validate_titles(caption))
   if (has_category(df)) {
     # legend
+    if (is.null(legend.title) && all(get_category(df) %like% "^[0-9.,]+$", na.rm = TRUE)) {
+      legend.title <- TRUE
+    }
     if (isTRUE(legend.title)) {
       legend.title <- get_category_name(df)
     }
@@ -993,10 +996,18 @@ plot2_exec <- function(.data,
   }
   
   # set legend ----
+  if (is.null(legend.position)) {
+    if (has_category(df) && all(get_category(df) %like% "^[0-9.,]+$", na.rm = TRUE)) {
+      legend.position <- "right"
+    } else {
+      legend.position <- "top"
+    }
+  }
+  legend.position <- validate_legend.position(legend.position)
+  p <- p + theme(legend.position = legend.position)
+  
   if (!(has_category(df) && is.numeric(get_category(df)))) {
     # only change this when there is no guide_colourbar(), see validate_category_scale()
-    legend.position <- validate_legend.position(legend.position)
-    p <- p + theme(legend.position = legend.position)
     if (!is.null(legend.reverse)) {
       p <- p +
         guides(fill = guide_legend(reverse = isTRUE(legend.reverse)),

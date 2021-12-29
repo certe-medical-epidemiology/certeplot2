@@ -115,7 +115,7 @@
   width = NULL,
   jitter_seed = NA,
   violin_scale = "count",
-  legend.position = "top",
+  legend.position = NULL,
   legend.title = NULL,
   legend.reverse = FALSE,
   legend.barheight = 6,
@@ -237,7 +237,7 @@
   width = NULL,
   jitter_seed = NA,
   violin_scale = "count",
-  legend.position = "top",
+  legend.position = NULL,
   legend.title = NULL,
   legend.reverse = FALSE,
   legend.barheight = 6,
@@ -359,7 +359,7 @@
   width = NULL,
   jitter_seed = NA,
   violin_scale = "count",
-  legend.position = "top",
+  legend.position = NULL,
   legend.title = NULL,
   legend.reverse = FALSE,
   legend.barheight = 6,
@@ -606,7 +606,7 @@
   width = NULL,
   jitter_seed = NA,
   violin_scale = "count",
-  legend.position = "top",
+  legend.position = NULL,
   legend.title = NULL,
   legend.reverse = FALSE,
   legend.barheight = 6,
@@ -728,7 +728,7 @@
   width = NULL,
   jitter_seed = NA,
   violin_scale = "count",
-  legend.position = "top",
+  legend.position = NULL,
   legend.title = NULL,
   legend.reverse = FALSE,
   legend.barheight = 6,
@@ -895,7 +895,7 @@
 
 \item{y.title}{text to show on the y axis}
 
-\item{category.title}{text to show for the category (legend title)}
+\item{category.title}{title of the legend (if \code{legend.title} is not set), defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{title}{title to show}
 
@@ -1025,10 +1025,10 @@
 
 \item{x.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
 \itemize{
-\item \code{TRUE}: sort as \code{"asc"}
+\item \code{TRUE}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{FALSE}: sort according to the order in the data
 \item \code{NULL}: do not sort/transform at all
-\item \code{"asc"} or \code{"alpha"}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
+\item \code{"asc"} or \code{"alpha"}: sort as \code{TRUE}
 \item \code{"desc"}: sort \link{factor}s on their \link[=rev]{reversed} levels, otherwise sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
 \item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
@@ -1037,10 +1037,10 @@
 
 \item{category.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
 \itemize{
-\item \code{TRUE}: sort as \code{"asc"}
+\item \code{TRUE}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{FALSE}: sort according to the order in the data
 \item \code{NULL}: do not sort/transform at all
-\item \code{"asc"} or \code{"alpha"}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
+\item \code{"asc"} or \code{"alpha"}: sort as \code{TRUE}
 \item \code{"desc"}: sort \link{factor}s on their \link[=rev]{reversed} levels, otherwise sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
 \item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
@@ -1049,10 +1049,10 @@
 
 \item{facet.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
 \itemize{
-\item \code{TRUE}: sort as \code{"asc"}
+\item \code{TRUE}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{FALSE}: sort according to the order in the data
 \item \code{NULL}: do not sort/transform at all
-\item \code{"asc"} or \code{"alpha"}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
+\item \code{"asc"} or \code{"alpha"}: sort as \code{TRUE}
 \item \code{"desc"}: sort \link{factor}s on their \link[=rev]{reversed} levels, otherwise sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
 \item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
@@ -1115,19 +1115,19 @@
 
 \item{violin_scale}{scale to be set when using \code{type = "violin"}, can also be set to \code{"area"}}
 
-\item{legend.position}{settings for the legend}
+\item{legend.position}{position of the legend, must be \code{"top"}, \code{"right"}, \code{"bottom"}, \code{"left"} or \code{"none"} (of \code{NA} or \code{NULL}), can be abbreviated. Defaults to \code{"right"} for numeric \code{category} values and 'sf' plots, and \code{"top"} otherwise.}
 
-\item{legend.title}{settings for the legend}
+\item{legend.title}{title of the legend (if \code{category.title} is not set), defaults to \code{TRUE} if the legend items are numeric.}
 
-\item{legend.reverse}{settings for the legend}
+\item{legend.reverse}{other settings for the legend}
 
-\item{legend.barheight}{settings for the legend}
+\item{legend.barheight}{other settings for the legend}
 
-\item{legend.barwidth}{settings for the legend}
+\item{legend.barwidth}{other settings for the legend}
 
-\item{legend.nbin}{settings for the legend}
+\item{legend.nbin}{other settings for the legend}
 
-\item{legend.italic}{settings for the legend}
+\item{legend.italic}{other settings for the legend}
 
 \item{zoom}{a \link{logical} to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0}
 

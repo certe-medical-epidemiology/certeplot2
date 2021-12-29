@@ -681,11 +681,18 @@ validate_category_scale <- function(values,
                                     legend.barheight,
                                     legend.barwidth,
                                     legend.reverse,
+                                    legend.position,
                                     decimal.mark,
                                     big.mark,
                                     family,
                                     ...) {
   # only for a numeric category scale
+  
+  if (is.null(legend.position)) {
+    legend.position <- "right"
+  } else {
+    legend.position <- validate_legend.position(legend.position)
+  }
   
   labels_fn <- function(values, category.labels, category.percent, stackedpercent, decimal.mark, big.mark, ...) {
     if (!is.null(category.labels)) {
@@ -739,8 +746,12 @@ validate_category_scale <- function(values,
                                        draw.llim = TRUE,
                                        reverse = isTRUE(legend.reverse),
                                        nbin = legend.nbin,
-                                       barheight = legend.barheight,
-                                       barwidth = legend.barwidth),
+                                       barheight = ifelse(legend.position %in% c("top", "bottom"),
+                                                          legend.barwidth,
+                                                          legend.barheight),
+                                       barwidth = ifelse(legend.position %in% c("top", "bottom"),
+                                                         legend.barheight,
+                                                         legend.barwidth)),
                labels = labels_fn(values = values,
                                   category.labels = category.labels,
                                   category.percent = category.percent,
