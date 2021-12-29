@@ -18,7 +18,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.56</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.57</span>
       </span>
     </div>
 
@@ -189,7 +189,7 @@ See plot2-methods for all implemented methods for different object classes."><me
   width <span class="op">=</span> <span class="cn">NULL</span>,
   jitter_seed <span class="op">=</span> <span class="cn">NA</span>,
   violin_scale <span class="op">=</span> <span class="st">"count"</span>,
-  legend.position <span class="op">=</span> <span class="st">"top"</span>,
+  legend.position <span class="op">=</span> <span class="cn">NULL</span>,
   legend.title <span class="op">=</span> <span class="cn">NULL</span>,
   legend.reverse <span class="op">=</span> <span class="cn">FALSE</span>,
   legend.barheight <span class="op">=</span> <span class="fl">6</span>,
@@ -230,7 +230,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dt>y.title</dt>
 <dd><p>text to show on the y axis</p></dd>
 <dt>category.title</dt>
-<dd><p>text to show for the category (legend title)</p></dd>
+<dd><p>title of the legend (if <code>legend.title</code> is not set), defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
 <dt>title</dt>
 <dd><p>title to show</p></dd>
 <dt>subtitle</dt>
@@ -318,10 +318,10 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dt>category.limits</dt>
 <dd><p>limits to use for a numeric category, can be length 1 or 2. Use <code>NA</code> for the highest or lowest value in the data, e.g. <code>category.limits = c(0, NA)</code> to have the scale start at zero.</p></dd>
 <dt>x.sort, category.sort, facet.sort</dt>
-<dd><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul><li><p><code>TRUE</code>: sort as <code>"asc"</code></p></li>
+<dd><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul><li><p><code>TRUE</code>: sort <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
 <li><p><code>FALSE</code>: sort according to the order in the data</p></li>
 <li><p><code>NULL</code>: do not sort/transform at all</p></li>
-<li><p><code>"asc"</code> or <code>"alpha"</code>: sort <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<li><p><code>"asc"</code> or <code>"alpha"</code>: sort as <code>TRUE</code></p></li>
 <li><p><code>"desc"</code>: sort <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>s on their <a href="https://rdrr.io/r/base/rev.html" class="external-link">reversed</a> levels, otherwise sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
 <li><p><code>"order"</code> or <code>"inorder"</code>: sort as <code>FALSE</code></p></li>
 <li><p><code>"freq"</code> or <code>"freq-desc"</code>: sort descending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (highest value first)</p></li>
@@ -365,8 +365,12 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>seed (randomisation factor) to be set when using <code>type = "jitter"</code></p></dd>
 <dt>violin_scale</dt>
 <dd><p>scale to be set when using <code>type = "violin"</code>, can also be set to <code>"area"</code></p></dd>
-<dt>legend.position, legend.title, legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic</dt>
-<dd><p>settings for the legend</p></dd>
+<dt>legend.position</dt>
+<dd><p>position of the legend, must be <code>"top"</code>, <code>"right"</code>, <code>"bottom"</code>, <code>"left"</code> or <code>"none"</code> (of <code>NA</code> or <code>NULL</code>), can be abbreviated. Defaults to <code>"right"</code> for numeric <code>category</code> values and 'sf' plots, and <code>"top"</code> otherwise.</p></dd>
+<dt>legend.title</dt>
+<dd><p>title of the legend (if <code>category.title</code> is not set), defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
+<dt>legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic</dt>
+<dd><p>other settings for the legend</p></dd>
 <dt>zoom</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0</p></dd>
 <dt>sep</dt>
