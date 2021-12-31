@@ -109,14 +109,15 @@ add_direction <- function(df, direction, var_name, var_label, sep) {
   }, error = function(e) invisible())
   
   df <- tryCatch({
-    df %>% 
-      mutate(across({{ direction }}, .names = paste0("_var_", var_name, "_{col}"))) %>% 
-      summarise_variable(paste0("_var_", var_name), sep = sep)
-  }, error = function(e) {
     out <- df %>% 
       mutate(`_var_` = {{ direction }})
     colnames(out)[colnames(out) == "_var_"] <- paste0("_var_", var_name)
     out
+  }, error = function(e) {
+    # multiple columns selected
+    df %>% 
+      mutate(across({{ direction }}, .names = paste0("_var_", var_name, "_{col}"))) %>% 
+      summarise_variable(paste0("_var_", var_name), sep = sep)
   })
   
   if (var_label != "NULL" && !var_label %in% colnames(df)) {
@@ -364,4 +365,17 @@ restore_mapping <- function(p, df) {
   
   # return the plot object
   p
+}
+
+set_plot2_env <- function(x, y, category, facet) {
+  plot2_env$mapping_x <- paste0(x, collapse = " ")
+  plot2_env$mapping_y <- paste0(y, collapse = " ")
+  plot2_env$mapping_category <- paste0(category, collapse = " ")
+  plot2_env$mapping_facet <- paste0(facet, collapse = " ")
+}
+clean_plot2_env <- function() {
+  plot2_env$mapping_x <- NULL
+  plot2_env$mapping_y <- NULL
+  plot2_env$mapping_category <- NULL
+  plot2_env$mapping_facet <- NULL
 }

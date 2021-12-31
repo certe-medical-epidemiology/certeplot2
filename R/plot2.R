@@ -576,10 +576,11 @@ plot2_exec <- function(.data,
     horizontal <- TRUE
   }
   
-  plot2_env$mapping_x <- concat(dots$`_label.x`)
-  plot2_env$mapping_y <- concat(dots$`_label.y`)
-  plot2_env$mapping_category <- concat(dots$`_label.category`)
-  plot2_env$mapping_facet <- concat(dots$`_label.facet`)
+  set_plot2_env(dots$`_label.x`, 
+                dots$`_label.y`,
+                dots$`_label.category`,
+                dots$`_label.facet`)
+  on.exit(clean_plot2_env())
   
   # prepare data ----
   # IMPORTANT: in this part, the data for mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;

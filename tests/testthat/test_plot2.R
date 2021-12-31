@@ -27,6 +27,7 @@ plotdata <- data.frame(x = seq_len(10) + 10,
 
 get_mapping <- function(plot) plot$mapping %>% sapply(deparse) %>% gsub("~", "", .)
 get_layers <- function(plot) plot$layers
+get_labels <- function(plot) unlist(plot$labels)
 get_data <- function(plot) plot$data
 get_range_x <- function(plot) {
   ggplot2::ggplot_build(plot)$layout$panel_scales_x[[1]]$limits %or% 
@@ -52,6 +53,8 @@ test_that("general types work", {
                              y = difftime(Sys.time(), Sys.time() - seq_len(10))) %>%
                     plot2(),
                   "gg")
+  expect_s3_class(admitted_patients %>% plot2(hospital, n(), where(is.character)), "gg")
+  expect_s3_class(admitted_patients %>% plot2(hospital, n(), c(gender, ward)), "gg")
 })
 
 test_that("S3 implementations work", {
@@ -84,8 +87,7 @@ test_that("titles work", {
                        title = "title",
                        y.title = "y.title",
                        x.title = "x.title") %>%
-                 .$labels %>%
-                 unlist(),
+                 get_labels(),
                c(caption = "caption",
                  tag = "tag",
                  subtitle = "subtitle",
