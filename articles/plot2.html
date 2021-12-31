@@ -164,18 +164,18 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>,
            y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; i Using x = x</span>
-<span class="co">#&gt; i Using y = y</span>
-<span class="co">#&gt; i Using type = "point" since both axes are numeric</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = x</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = y</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
 <p>If the x axis is of class <code>factor</code> or <code>character</code>, the type will be column:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>,
            y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; i Using y = y</span>
-<span class="co">#&gt; i Using x = x</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = y</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = x</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-4-1.png" width="576"></p>
 <p>Notice how the y axis starts at <code>y = 0</code> and all columns have datalabels (since the default value for the <code>datalabels</code> argument is <code>TRUE</code> for a discrete x axis) that do not interfere with plot lines.</p>
 <p>If the y axis is absent and the x axis is numeric, the default will be a histogram:</p>
@@ -183,10 +183,10 @@
 <code class="sourceCode R"><span class="co"># rnorm() here generates a thousand random values according to a normal distribution</span>
 <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1000</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; i Using x = x</span>
-<span class="co">#&gt; i Assuming type = "histogram" since the data has only one numeric variable and no other variables</span>
-<span class="co">#&gt; i Using binwidth = 0.3 based on data</span>
-<span class="co">#&gt; i Assuming smooth = TRUE for type = "histogram"</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = x</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #0000BB;">type = "histogram"</span><span style="color: #080808;"> since the data has only one numeric variable and no other variables</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">binwidth = 0.3</span><span style="color: #080808;"> based on data</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #0000BB;">smooth = TRUE</span><span style="color: #080808;"> for </span><span style="color: #0000BB;">type = "histogram"</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-5-1.png" width="576"></p>
 <p>If there are multiple y values for each x, the default will be a boxplot:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -195,9 +195,9 @@
                  <span class="st">"c"</span>, <span class="st">"c"</span>, <span class="st">"c"</span>, <span class="st">"c"</span><span class="op">)</span>,
            y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; i Using y = y</span>
-<span class="co">#&gt; i Using x = x</span>
-<span class="co">#&gt; i Using type = "boxplot" since all groups have size &gt;= 3</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = y</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = x</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "boxplot"</span><span style="color: #080808;"> since all groups have size &gt;= 3</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-6-1.png" width="576"></p>
 <p>The <code>type</code> arguments accepts any (abbreviation of) <code>ggplot2</code> geoms:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -206,8 +206,8 @@
                  <span class="st">"c"</span>, <span class="st">"c"</span>, <span class="st">"c"</span>, <span class="st">"c"</span><span class="op">)</span>,
            y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"violin"</span><span class="op">)</span> <span class="co"># can also be "v" or "geom_violin"</span>
-<span class="co">#&gt; i Using y = y</span>
-<span class="co">#&gt; i Using x = x</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = y</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = x</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-7-1.png" width="576"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
@@ -216,8 +216,8 @@
                  <span class="st">"c"</span>, <span class="st">"c"</span>, <span class="st">"c"</span>, <span class="st">"c"</span><span class="op">)</span>,
            y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">12</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"j"</span><span class="op">)</span> <span class="co"># abbreviation of "jitter"</span>
-<span class="co">#&gt; i Using y = y</span>
-<span class="co">#&gt; i Using x = x</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = y</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = x</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-7-2.png" width="576"></p>
 </div>
 <div class="section level1">
@@ -233,7 +233,7 @@
 <code class="sourceCode R"><span class="co">#                |------&gt; this is x</span>
 <span class="co">#                |    |-&gt; this is y</span>
 <span class="va">mtcars</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">hp</span><span class="op">)</span>
-<span class="co">#&gt; i Using type = "point" since both axes are numeric</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-8-1.png" width="576"></p>
 <p>Tidy evaluation allows for in-place transformations as well:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -241,7 +241,7 @@
 <span class="va">mtcars</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">mpg</span> <span class="op">^</span> <span class="fl">2</span>,
         y <span class="op">=</span> <span class="va">my_y_values</span><span class="op">)</span>
-<span class="co">#&gt; i Using type = "point" since both axes are numeric</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-9-1.png" width="576"></p>
 </div>
 <div class="section level2">
@@ -258,28 +258,28 @@
 <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/cleaner/man/rdate.html" class="external-link">rdate</a></span><span class="op">(</span><span class="fl">100</span>, min <span class="op">=</span> <span class="st">"2016-01-01"</span>, max <span class="op">=</span> <span class="st">"2021-12-31"</span><span class="op">)</span>,
            y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span>
-<span class="co">#&gt; i Using y = y</span>
-<span class="co">#&gt; i Using x = x</span>
-<span class="co">#&gt; i Using x.date_breaks = "1 year" based on data</span>
-<span class="co">#&gt; i Using x.date_labels = "mmm yyyy" based on data</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = y</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = x</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x.date_breaks = "1 year"</span><span style="color: #080808;"> based on data</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x.date_labels = "mmm yyyy"</span><span style="color: #080808;"> based on data</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-10-1.png" width="576"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/cleaner/man/rdate.html" class="external-link">rdate</a></span><span class="op">(</span><span class="fl">100</span>, min <span class="op">=</span> <span class="st">"2021-06-01"</span>, max <span class="op">=</span> <span class="st">"2021-12-31"</span><span class="op">)</span>,
            y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span>
-<span class="co">#&gt; i Using y = y</span>
-<span class="co">#&gt; i Using x = x</span>
-<span class="co">#&gt; i Using x.date_breaks = "1 month" based on data</span>
-<span class="co">#&gt; i Using x.date_labels = "mmmm yyyy" based on data</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = y</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = x</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x.date_breaks = "1 month"</span><span style="color: #080808;"> based on data</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x.date_labels = "mmmm yyyy"</span><span style="color: #080808;"> based on data</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-10-2.png" width="576"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/cleaner/man/rdate.html" class="external-link">rdate</a></span><span class="op">(</span><span class="fl">100</span>, min <span class="op">=</span> <span class="st">"2021-12-01"</span>, max <span class="op">=</span> <span class="st">"2021-12-31"</span><span class="op">)</span>,
            y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span>
-<span class="co">#&gt; i Using y = y</span>
-<span class="co">#&gt; i Using x = x</span>
-<span class="co">#&gt; i Using x.date_breaks = "1 day" based on data</span>
-<span class="co">#&gt; i Using x.date_labels = "d mmm" based on data</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = y</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = x</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x.date_breaks = "4 days"</span><span style="color: #080808;"> based on data</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x.date_labels = "d mmm"</span><span style="color: #080808;"> based on data</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-10-3.png" width="576"></p>
 <p>If you have crowded x labels, it’s easy to turn them:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -289,8 +289,8 @@
         x.date_labels <span class="op">=</span> <span class="st">"ddd d mmm yyyy"</span>,
         type <span class="op">=</span> <span class="st">"p"</span>,
         title <span class="op">=</span> <span class="st">"Change this..."</span><span class="op">)</span>
-<span class="co">#&gt; i Using y = y</span>
-<span class="co">#&gt; i Using x = x</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = y</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = x</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-11-1.png" width="576"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/cleaner/man/rdate.html" class="external-link">rdate</a></span><span class="op">(</span><span class="fl">100</span>, min <span class="op">=</span> <span class="st">"2021-12-01"</span>, max <span class="op">=</span> <span class="st">"2021-12-31"</span><span class="op">)</span>,
@@ -300,8 +300,8 @@
         x.lbl_angle <span class="op">=</span> <span class="fl">90</span>, <span class="co"># &lt;- only requires this argument</span>
         type <span class="op">=</span> <span class="st">"p"</span>,
         title <span class="op">=</span> <span class="st">"... into this:"</span><span class="op">)</span>
-<span class="co">#&gt; i Using y = y</span>
-<span class="co">#&gt; i Using x = x</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = y</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = x</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-11-2.png" width="576"></p>
 <p>These arguments automatically pop up if you press <kbd>tab</kbd> after typing <code>plot2(x.)</code>:</p>
 <p><img src="x_elements.png" width="347px" height="188px"></p>
@@ -325,12 +325,12 @@
                           stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">character_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y z</span>
-<span class="co">#&gt; 1 a 4.596267 f</span>
-<span class="co">#&gt; 2 b 6.618336 g</span>
-<span class="co">#&gt; 3 c 4.877345 h</span>
-<span class="co">#&gt; 4 d 5.669667 i</span>
-<span class="co">#&gt; 5 e 6.378166 j</span>
-<span class="co">#&gt; 6 a 3.579923 f</span>
+<span class="co">#&gt; 1 a 6.047058 f</span>
+<span class="co">#&gt; 2 b 4.750909 g</span>
+<span class="co">#&gt; 3 c 6.196105 h</span>
+<span class="co">#&gt; 4 d 4.350995 i</span>
+<span class="co">#&gt; 5 e 5.263414 j</span>
+<span class="co">#&gt; 6 a 4.409214 f</span>
 
 <span class="va">numeric_z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span>,
                         y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">5</span><span class="op">)</span>,
@@ -339,12 +339,12 @@
                         stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">numeric_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y        z</span>
-<span class="co">#&gt; 1 a 4.381380 5.038611</span>
-<span class="co">#&gt; 2 b 4.754431 6.447928</span>
-<span class="co">#&gt; 3 c 5.020957 4.601409</span>
-<span class="co">#&gt; 4 d 5.986273 3.947639</span>
-<span class="co">#&gt; 5 e 4.943865 4.296490</span>
-<span class="co">#&gt; 6 a 3.594852 5.075016</span>
+<span class="co">#&gt; 1 a 4.605056 5.625628</span>
+<span class="co">#&gt; 2 b 2.770371 5.584302</span>
+<span class="co">#&gt; 3 c 5.597409 4.575367</span>
+<span class="co">#&gt; 4 d 6.149684 4.929285</span>
+<span class="co">#&gt; 5 e 5.228783 4.142304</span>
+<span class="co">#&gt; 6 a 3.719981 3.348442</span>
 
 <span class="va">character_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>, type <span class="op">=</span> <span class="st">"jitter"</span>,
@@ -362,7 +362,7 @@
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>,
           type <span class="op">=</span> <span class="st">"jitter"</span>,
           colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; i Using category.midpoint = 4.79 (the current category scale centre)</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category.midpoint = 5.08</span><span style="color: #080808;"> (the current </span><span style="color: #0000BB;">category</span><span style="color: #080808;"> scale centre)</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-14-1.png" width="576"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">numeric_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  
@@ -399,28 +399,28 @@
 <span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age_group</span>, y <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, facet <span class="op">=</span> <span class="va">hospital</span>,
         caption <span class="op">=</span> <span class="st">"Same y axes"</span><span class="op">)</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-15-1.png" width="576"></p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age_group</span>, y <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, facet <span class="op">=</span> <span class="va">hospital</span>,
         facet.repeat_lbls_y <span class="op">=</span> <span class="cn">TRUE</span>,
         caption <span class="op">=</span> <span class="st">"All y axes on their own"</span><span class="op">)</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-15-2.png" width="576"></p>
 <p>You can omit repeated x labels as well:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age_group</span>, y <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, facet <span class="op">=</span> <span class="va">hospital</span>,
         facet.repeat_lbls_x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-16-1.png" width="576"></p>
 <p>Or change the number of rows the facet should be in:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age_group</span>, y <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, facet <span class="op">=</span> <span class="va">hospital</span>,
         facet.nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-17-1.png" width="576"></p>
 <p>No need to memorise how again the <code>scales</code>, <code>shrink</code> and <code>switch</code> arguments of the <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap()</a></code> function work!</p>
 </div>
@@ -433,7 +433,7 @@
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age_group</span>,
         y <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,
         facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gender</span>, <span class="va">ward</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-18-1.png" width="576"></p>
 <p>You can even use <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">Tidyverse selectors</a>:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
@@ -443,8 +443,8 @@
         y <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,
         facet <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.character</span><span class="op">)</span>,
         sep <span class="op">=</span> <span class="st">" -- "</span><span class="op">)</span>
-<span class="co">#&gt; i Using facet = c(gender, ward)</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">facet = c(gender, ward)</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-19-1.png" width="576"></p>
 </div>
 <div class="section level2">
@@ -479,7 +479,7 @@
         y.title <span class="op">=</span> <span class="st">"count"</span>,
         stacked <span class="op">=</span> <span class="cn">TRUE</span>,
         caption <span class="op">=</span> <span class="st">"No sorting"</span><span class="op">)</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-20-1.png" width="576"></p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
@@ -491,8 +491,8 @@
         caption <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Hospitals (*x*) now sorted on frequencies (low to high),"</span>,
                         <span class="st">"Age groups (*category*) now sorted on alphabet (desc)"</span>,
                         sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; i Applying sorting "freq-asc" using summarise_function = base::sum</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Applying sorting </span><span style="color: #0000BB;">"freq-asc"</span><span style="color: #080808;"> using </span><span style="color: #0000BB;">summarise_function = base::sum</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-20-2.png" width="576"></p>
 <p>The sorting can be used in combination with setting a maximum number of items to plot per plotting direction.</p>
 </div>
@@ -503,13 +503,13 @@
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">hospital</span>, y <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-21-1.png" width="576"></p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">admitted_patients</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">hospital</span>, y <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,
           x.max_items <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-21-2.png" width="576"></p>
 <p>This can be combined with sorting:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
@@ -518,8 +518,8 @@
           x.sort <span class="op">=</span> <span class="st">"freq-desc"</span>,
           x.max_items <span class="op">=</span> <span class="fl">3</span>,
           x.max_txt <span class="op">=</span> <span class="st">"%n other hospitals (%p)"</span><span class="op">)</span>
-<span class="co">#&gt; i Applying sorting "freq-desc" using summarise_function = base::sum</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Applying sorting </span><span style="color: #0000BB;">"freq-desc"</span><span style="color: #080808;"> using </span><span style="color: #0000BB;">summarise_function = base::sum</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-22-1.png" width="576"></p>
 </div>
 </div>
@@ -549,7 +549,7 @@
           y <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">age_group</span><span class="op">)</span>,
           category <span class="op">=</span> <span class="va">ward</span>,
           title <span class="op">=</span> <span class="st">"Unique available age groups per hospital"</span><span class="op">)</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-23-1.png" width="576"></p>
 <p>Since the plotting directions allow for in-place transformations as well, you can plot your data without the need to use <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by()</a></code>, <code><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count()</a></code> or <code><a href="https://r-spatial.github.io/sf/reference/tidyverse.html" class="external-link">summarise()</a></code> yourself:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
@@ -559,7 +559,7 @@
         y.age <span class="op">=</span> <span class="cn">TRUE</span>,
         category <span class="op">=</span> <span class="va">ward</span>,
         datalabels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="co">#&gt; i Using type = "col" as default</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "col"</span><span style="color: #080808;"> as default</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-24-1.png" width="768"></p>
 <p>Including all transformations, we used in total 3 functions (<code><a href="../reference/plot2.html">plot2()</a></code>, <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code>, <code><a href="https://certe-medical-epidemiology.github.io/certestats/reference/math_functions.html" class="external-link">median()</a></code>) - the very least. Compare that to the required <code>dplyr</code> + <code>ggplot2</code> code:</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
@@ -615,21 +615,21 @@
 <p>These objects can be given to <code><a href="../reference/plot2.html">plot2()</a></code>, and its built-in <code><a href="../reference/theme_minimal2.html">theme_minimal2()</a></code> makes sure you get a clean map:</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">netherlands</span><span class="op">)</span>
-<span class="co">#&gt; i Using category = area_km2</span>
-<span class="co">#&gt; i Using datalabels = province</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category = area_km2</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">datalabels = province</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-27-1.png" width="576"></p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">netherlands</span>,
       colour_fill <span class="op">=</span> <span class="st">"certe"</span>,
       datalabels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="co">#&gt; i Using category = area_km2</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category = area_km2</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-27-2.png" width="576"></p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">netherlands</span>,
       colour_fill <span class="op">=</span> <span class="st">"viridis"</span>,
       <span class="co"># datalabels support tidy evaluation too:</span>
       datalabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">province</span>, <span class="st">"\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">area_km2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; i Using category = area_km2</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category = area_km2</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-27-3.png" width="576"></p>
 </div>
   </div>
