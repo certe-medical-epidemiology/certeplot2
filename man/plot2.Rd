@@ -353,7 +353,8 @@ iris \%>\%
 iris \%>\% 
   plot2(theme = NULL,
         zoom = TRUE,
-        legend.position = "r")
+        legend.title = TRUE,
+        legend.position = "right")
 
 # if x and y are set, no additional mapping will be set:
 iris \%>\% 
@@ -375,20 +376,21 @@ iris \%>\%
   
 admitted_patients
 
-# if there are more Y values than groups, the default will be boxplot
-admitted_patients \%>\%
-  plot2(x = hospital)
-
 # the arguments are in this order: x, y, category, facet
+admitted_patients \%>\%
+  plot2(hospital, age)
+
 admitted_patients \%>\%
   plot2(hospital, age, gender)
   
 admitted_patients \%>\%
   plot2(hospital, age, gender, ward)
   
-# or use a function for y
+# or use any function for y
 admitted_patients \%>\%
   plot2(hospital, median(age), gender, ward)
+admitted_patients \%>\%
+  plot2(hospital, n(), gender, ward)
 
 admitted_patients \%>\%
   plot2(x = hospital,
@@ -434,7 +436,7 @@ mtcars \%>\%
 # plot2() also has various other S3 implementations:
 
 # QC plots, according to e.g. Nelson's Quality Control Rules
-if (require("certestats")) {
+if (require("certestats", warn.conflicts = FALSE)) {
   rnorm(250) \%>\% 
     qc_test() \%>\% 
     plot2()
