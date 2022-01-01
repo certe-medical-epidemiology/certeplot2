@@ -1,10 +1,5 @@
 # The `certeplot2` package for R
 
-[![certeplot2 status badge](https://certe-medical-epidemiology.r-universe.dev/badges/certeplot2?color=01617e)](https://certe-medical-epidemiology.r-universe.dev)
-[![codecov](https://codecov.io/gh/certe-medical-epidemiology/certeplot2/branch/main/graph/badge.svg)](https://codecov.io/gh/certe-medical-epidemiology/certeplot2)
-[![R-CMD-check](https://github.com/certe-medical-epidemiology/certeplot2/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/certe-medical-epidemiology/certeplot2/actions/workflows/R-CMD-check.yaml)
-[![CodeFactor](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certeplot2/badge/main)](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certeplot2/overview/main)
-
 This is a Certe R Package for fast and convenient plotting, by providing wrappers around 'tidyverse' packages such as 'ggplot2', while also providing plotting in the Certe organisational style. This package is part of the 'certedata' universe.
 
 You can [read the manual with explanation about all functions](https://certe-medical-epidemiology.github.io/certeplot2/reference), or install this particular R package using:
@@ -13,7 +8,7 @@ You can [read the manual with explanation about all functions](https://certe-med
 install.packages("certeplot2", repos = "https://certe-medical-epidemiology.r-universe.dev")
 ```
 
-### About the 'certedata' universe
+## About the 'certedata' universe
 
 <div style="position: relative; height: 410px;">
   <a href="https://certe-medical-epidemiology.github.io/certedata/" target="_blank">
@@ -51,7 +46,7 @@ These are R packages developed by [**Certe**](https://www.certe.nl), a non-profi
 
 For all our packages, please visit [our GitHub organisation overview](https://github.com/certe-medical-epidemiology). Our R packages are not on CRAN since their use is primarily intended for own staff, but they are publicly available to support open science. 
 
-#### R-universe
+### R-universe
 
 All our R packages are published [here at R-universe](https://certe-medical-epidemiology.r-universe.dev), allowing anyone to install and update the packages using common methods, such as the RStudio menu bar or `install.packages()`. To use the R-universe of Certe Medical Epidemiology, run:
 
@@ -60,16 +55,34 @@ All our R packages are published [here at R-universe](https://certe-medical-epid
 options(repos = c(
   CerteMedEpi = "https://certe-medical-epidemiology.r-universe.dev",
   CRAN = "https://cloud.r-project.org"))
+```
 
+You can then install any Certe R package, e.g.:
+
+```r
 # our 'loader package' certedata installs all Certe R packages:
 install.packages("certedata")
 ```
 
-### Copyright regarding this software
+### Developer status
 
-We believe open science matters, which is why this package is publicly available on GitHub.
+| Certe R Package | Latest release | R unit tests | Code coverage | Code compliance | Changelog |
+|:----------------|:--------------:|:------------:|:-------------:|:---------------:|:---------:|
+| <img src="https://certe-medical-epidemiology.github.io/certedata/logo.svg" style="width: 20x; height: 23px;"> [`certedata`](https://certe-medical-epidemiology.github.io/certedata) | [![R-universe](https://certe-medical-epidemiology.r-universe.dev/badges/certedata?color=22bb55)](https://certe-medical-epidemiology.r-universe.dev) | [![R-CMD-check](https://github.com/certe-medical-epidemiology/certedata/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/certe-medical-epidemiology/certedata/actions/workflows/R-CMD-check.yaml) | [![codecov](https://codecov.io/gh/certe-medical-epidemiology/certedata/branch/main/graph/badge.svg)](https://codecov.io/gh/certe-medical-epidemiology/certedata) |  [![CodeFactor](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certedata/badge/main)](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certedata/) | [![commits](https://badgen.net/github/commits/certe-medical-epidemiology/certedata/main?icon=github&color=green)](https://github.com/certe-medical-epidemiology/certedata/commits/main) |
+| <img src="https://certe-medical-epidemiology.github.io/certedb/logo.svg" style="width: 20x; height: 23px;"> [`certedb`](https://certe-medical-epidemiology.github.io/certedb) | [![R-universe](https://certe-medical-epidemiology.r-universe.dev/badges/certedb?color=22bb55)](https://certe-medical-epidemiology.r-universe.dev) | [![R-CMD-check](https://github.com/certe-medical-epidemiology/certedb/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/certe-medical-epidemiology/certedb/actions/workflows/R-CMD-check.yaml) | [![codecov](https://codecov.io/gh/certe-medical-epidemiology/certedb/branch/main/graph/badge.svg)](https://codecov.io/gh/certe-medical-epidemiology/certedb) |  [![CodeFactor](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certedb/badge/main)](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certedb/) | [![commits](https://badgen.net/github/commits/certe-medical-epidemiology/certedb/main?icon=github&color=green)](https://github.com/certe-medical-epidemiology/certedb/commits/main) |
+| <img src="https://certe-medical-epidemiology.github.io/certegis/logo.svg" style="width: 20x; height: 23px;"> [`certegis`](https://certe-medical-epidemiology.github.io/certegis) | [![R-universe](https://certe-medical-epidemiology.r-universe.dev/badges/certegis?color=22bb55)](https://certe-medical-epidemiology.r-universe.dev) | [![R-CMD-check](https://github.com/certe-medical-epidemiology/certegis/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/certe-medical-epidemiology/certegis/actions/workflows/R-CMD-check.yaml) | [![codecov](https://codecov.io/gh/certe-medical-epidemiology/certegis/branch/main/graph/badge.svg)](https://codecov.io/gh/certe-medical-epidemiology/certegis) |  [![CodeFactor](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certegis/badge/main)](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certegis/) | [![commits](https://badgen.net/github/commits/certe-medical-epidemiology/certegis/main?icon=github&color=green)](https://github.com/certe-medical-epidemiology/certegis/commits/main) |
+| <img src="https://certe-medical-epidemiology.github.io/certemail/logo.svg" style="width: 20x; height: 23px;"> [`certemail`](https://certe-medical-epidemiology.github.io/certemail) | [![R-universe](https://certe-medical-epidemiology.r-universe.dev/badges/certemail?color=22bb55)](https://certe-medical-epidemiology.r-universe.dev) | [![R-CMD-check](https://github.com/certe-medical-epidemiology/certemail/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/certe-medical-epidemiology/certemail/actions/workflows/R-CMD-check.yaml) | [![codecov](https://codecov.io/gh/certe-medical-epidemiology/certemail/branch/main/graph/badge.svg)](https://codecov.io/gh/certe-medical-epidemiology/certemail) |  [![CodeFactor](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certemail/badge/main)](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certemail/) | [![commits](https://badgen.net/github/commits/certe-medical-epidemiology/certemail/main?icon=github&color=green)](https://github.com/certe-medical-epidemiology/certemail/commits/main) |
+| <img src="https://certe-medical-epidemiology.github.io/certeplot2/logo.svg" style="width: 20x; height: 23px;"> [`certeplot2`](https://certe-medical-epidemiology.github.io/certeplot2) | [![R-universe](https://certe-medical-epidemiology.r-universe.dev/badges/certeplot2?color=22bb55)](https://certe-medical-epidemiology.r-universe.dev) | [![R-CMD-check](https://github.com/certe-medical-epidemiology/certeplot2/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/certe-medical-epidemiology/certeplot2/actions/workflows/R-CMD-check.yaml) | [![codecov](https://codecov.io/gh/certe-medical-epidemiology/certeplot2/branch/main/graph/badge.svg)](https://codecov.io/gh/certe-medical-epidemiology/certeplot2) |  [![CodeFactor](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certeplot2/badge/main)](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certeplot2/) | [![commits](https://badgen.net/github/commits/certe-medical-epidemiology/certeplot2/main?icon=github&color=green)](https://github.com/certe-medical-epidemiology/certeplot2/commits/main) |
+| <img src="https://certe-medical-epidemiology.github.io/certeprojects/logo.svg" style="width: 20x; height: 23px;"> [`certeprojects`](https://certe-medical-epidemiology.github.io/certeprojects) | [![R-universe](https://certe-medical-epidemiology.r-universe.dev/badges/certeprojects?color=22bb55)](https://certe-medical-epidemiology.r-universe.dev) | [![R-CMD-check](https://github.com/certe-medical-epidemiology/certeprojects/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/certe-medical-epidemiology/certeprojects/actions/workflows/R-CMD-check.yaml) | [![codecov](https://codecov.io/gh/certe-medical-epidemiology/certeprojects/branch/main/graph/badge.svg)](https://codecov.io/gh/certe-medical-epidemiology/certeprojects) |  [![CodeFactor](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certeprojects/badge/main)](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certeprojects/) | [![commits](https://badgen.net/github/commits/certe-medical-epidemiology/certeprojects/main?icon=github&color=green)](https://github.com/certe-medical-epidemiology/certeprojects/commits/main) |
+| <img src="https://certe-medical-epidemiology.github.io/certestats/logo.svg" style="width: 20x; height: 23px;"> [`certestats`](https://certe-medical-epidemiology.github.io/certestats) | [![R-universe](https://certe-medical-epidemiology.r-universe.dev/badges/certestats?color=22bb55)](https://certe-medical-epidemiology.r-universe.dev) | [![R-CMD-check](https://github.com/certe-medical-epidemiology/certestats/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/certe-medical-epidemiology/certestats/actions/workflows/R-CMD-check.yaml) | [![codecov](https://codecov.io/gh/certe-medical-epidemiology/certestats/branch/main/graph/badge.svg)](https://codecov.io/gh/certe-medical-epidemiology/certestats) |  [![CodeFactor](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certestats/badge/main)](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certestats/) | [![commits](https://badgen.net/github/commits/certe-medical-epidemiology/certestats/main?icon=github&color=green)](https://github.com/certe-medical-epidemiology/certestats/commits/main) |
+| <img src="https://certe-medical-epidemiology.github.io/certestyle/logo.svg" style="width: 20x; height: 23px;"> [`certestyle`](https://certe-medical-epidemiology.github.io/certestyle) | [![R-universe](https://certe-medical-epidemiology.r-universe.dev/badges/certestyle?color=22bb55)](https://certe-medical-epidemiology.r-universe.dev) | [![R-CMD-check](https://github.com/certe-medical-epidemiology/certestyle/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/certe-medical-epidemiology/certestyle/actions/workflows/R-CMD-check.yaml) | [![codecov](https://codecov.io/gh/certe-medical-epidemiology/certestyle/branch/main/graph/badge.svg)](https://codecov.io/gh/certe-medical-epidemiology/certestyle) |  [![CodeFactor](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certestyle/badge/main)](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certestyle/) | [![commits](https://badgen.net/github/commits/certe-medical-epidemiology/certestyle/main?icon=github&color=green)](https://github.com/certe-medical-epidemiology/certestyle/commits/main) |
+| <img src="https://certe-medical-epidemiology.github.io/certetoolbox/logo.svg" style="width: 20x; height: 23px;"> [`certetoolbox`](https://certe-medical-epidemiology.github.io/certetoolbox) | [![R-universe](https://certe-medical-epidemiology.r-universe.dev/badges/certetoolbox?color=22bb55)](https://certe-medical-epidemiology.r-universe.dev) | [![R-CMD-check](https://github.com/certe-medical-epidemiology/certetoolbox/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/certe-medical-epidemiology/certetoolbox/actions/workflows/R-CMD-check.yaml) | [![codecov](https://codecov.io/gh/certe-medical-epidemiology/certetoolbox/branch/main/graph/badge.svg)](https://codecov.io/gh/certe-medical-epidemiology/certetoolbox) |  [![CodeFactor](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certetoolbox/badge/main)](https://www.codefactor.io/repository/github/certe-medical-epidemiology/certetoolbox/) | [![commits](https://badgen.net/github/commits/certe-medical-epidemiology/certetoolbox/main?icon=github&color=green)](https://github.com/certe-medical-epidemiology/certetoolbox/commits/main) |
 
-This R package is free, open-source software and licensed under the [GNU General Public License v2.0 (GPL-2)](./LICENSE.md). In a nutshell, this means that this package:
+### Copyright
+
+We believe open science matters, which is why these R packages are publicly available on GitHub.
+
+They are free, open-source software and are all licensed under the [GNU General Public License v2.0 (GPL-2)](./LICENSE.md). In a nutshell, this means that these packages:
 
 - May be used for commercial purposes
 - May be used for private purposes
@@ -80,8 +93,8 @@ This R package is free, open-source software and licensed under the [GNU General
 - May be distributed, although:
   - Source code **must** be made available when the package is distributed
   - A copy of the license and copyright notice **must** be included with the package.
-- Comes with a LIMITATION of liability
-- Comes with NO warranty
+- Come with a LIMITATION of liability
+- Come with NO warranty
 
 ----
 
