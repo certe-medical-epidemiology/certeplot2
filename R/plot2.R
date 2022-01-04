@@ -643,6 +643,8 @@ plot2_exec <- function(.data,
                   category.max_txt = category.max_txt,
                   facet.max_items = facet.max_items,
                   facet.max_txt = facet.max_txt,
+                  na.rm = na.rm,
+                  na.replace = na.replace,
                   ...)
   
   # apply taxonomic italics ----

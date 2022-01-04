@@ -106,7 +106,7 @@ validate_legend.position <- function(legend.position) {
 }
 
 #' @importFrom dplyr `%>%` select pull mutate arrange across
-#' @importFrom certestyle font_bold font_blue
+#' @importFrom certestyle font_bold font_blue font_red
 validate_data <- function(df,
                           misses_x,
                           misses_category,
@@ -177,7 +177,8 @@ validate_data <- function(df,
         if (has_x(df) && get_x_name(df) == numeric_cols) {
           if (type == "") {
             plot2_message("Assuming ", font_blue("type = \"histogram\""),
-                          " since the ", font_blue("x"), " variable (", font_blue(get_x_name(df)), ") is the only numeric variable")
+                          " since the ", font_blue("x"),
+                          " variable (", font_blue(get_x_name(df)), ") is the only numeric variable")
             type <- "geom_histogram"
             df <- df %>% 
               mutate(`_var_y` = df %>% pull(`_var_x`))
@@ -323,6 +324,52 @@ validate_data <- function(df,
   if (isTRUE(dots$x.character)) {
     df <- df %>%
       mutate(`_var_x` = as.character(`_var_x`))
+  }
+  
+  # remove or replace NAs
+  has_NAs <- df %>%
+    select(c(get_x_name(.), get_category_name(.), get_facet_name(.),
+             matches("_var_(x|category|facet)"))) %>%
+    unlist(use.names = FALSE)
+  has_NAs <- any(is.na(has_NAs))
+  if (isTRUE(has_NAs)) {
+    is_numeric <- function(x) {
+      mode(x) == "numeric" || is.numeric(x) || inherits(x, c("Date", "POSIXt"))
+    }
+    if (isTRUE(dots$na.rm)) {
+      nrw_old <- nrow(df)
+      df <- df %>%
+        filter(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
+                        matches("_var_(x|category|facet)")),
+                      function(x) {
+                        if (is_numeric(x)) {
+                          TRUE
+                        } else {
+                          !is.na(x)
+                        }}))
+      nrw_new <- nrow(df)
+      if (nrw_old != nrw_new) {
+        plot2_message("Removed ", nrw_old - nrw_new, " rows since ",
+                      font_blue("na.rm = TRUE"))
+      }
+    } else {
+      # replace NAs
+      plot2_env$na_replaced <- 0
+      df <- df %>%
+        mutate(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
+                        matches("_var_(x|category|facet)")),
+                      function(x) {
+                        if (!is_numeric(x)) {
+                          plot2_env$na_replaced <- plot2_env$na_replaced + sum(is.na(x))
+                          x[is.na(x)] <- dots$na.replace
+                        }
+                        x
+                      }))
+      if (plot2_env$na_replaced > 0) {
+        plot2_message("Replacing ", font_red("NA"), "s using ",
+                      font_blue(paste0("na.replace = \"", dots$na.replace, "\"")))
+      }
+    }
   }
   
   # apply sortings

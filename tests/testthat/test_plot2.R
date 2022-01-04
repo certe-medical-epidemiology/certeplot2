@@ -57,6 +57,13 @@ test_that("general types work", {
   expect_s3_class(admitted_patients %>% plot2(hospital, n(), c(gender, ward)), "gg")
 })
 
+test_that("na.rm works", {
+  df <- data.frame(hp = mtcars$hp,
+                   letters = letters[seq_len(nrow(mtcars))])
+  expect_lt(df %>% plot2(na.rm = TRUE) %>% get_data() %>% nrow(), nrow(df))
+  expect_lt(df %>% plot2(na.rm = FALSE) %>% get_data() %>% nrow(), nrow(df))
+})
+
 test_that("S3 implementations work", {
   # lm
   expect_s3_class(lm(mpg ~ hp, mtcars) %>% plot2(), "gg")
