@@ -26,7 +26,6 @@ add_col(
   x,
   colour = "certeblauw",
   colour_fill = "certeblauw",
-  size,
   width,
   ...,
   inherit.aes = TRUE
