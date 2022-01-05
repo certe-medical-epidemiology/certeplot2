@@ -86,6 +86,30 @@ test_that("general mapping works", {
                c("y", "x", "fill", "colour"))
 })
 
+test_that("adding types works", {
+  p <- data.frame(x = c(1:100),
+                  y = rnorm(100, 100, 25)) %>% 
+    plot2()
+  expect_length(p %>% get_layers(), 1)
+  expect_length(p %>% 
+                  add_line(mean(y)) %>%
+                  get_layers(), 2)
+  expect_length(p %>%
+                  add_line(mean(y)) %>%
+                  add_col(y / 5,
+                          colour = "black",
+                          colour_fill = "yellow",
+                          width = 0.25) %>%
+                  get_layers(), 3)
+  expect_length(p %>%
+                  add_line(certestats::rr_ewma(y, 0.75),
+                           colour = "certeroze",
+                           size = 2,
+                           linetype = 2,
+                           alpha = 0.5) %>%
+                  get_layers(), 2)
+})
+
 test_that("titles work", {
   expect_equal(mtcars %>%
                  plot2(caption = "caption",
