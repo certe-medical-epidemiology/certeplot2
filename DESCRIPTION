@@ -1,6 +1,6 @@
 Package: certeplot2
 Title: A Certe R Package for Convenient Plotting
-Version: 1.2.0
+Version: 1.2.1
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
          family = "Berends",
@@ -32,6 +32,7 @@ Imports:
   yaml (>= 2.2.0)
 Suggests: 
   certestats,
+  certegis,
   AMR (>= 1.7.1),
   rmarkdown (>= 2.11),
   knitr (>= 1.30),
