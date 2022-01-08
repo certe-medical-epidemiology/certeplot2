@@ -87,6 +87,12 @@ test_that("general mapping works", {
 })
 
 test_that("adding types works", {
+  
+  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% get_layers(), 1)
+  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% add_line() %>% get_layers(), 2)
+  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% add_col() %>% get_layers(), 2)
+  expect_error(mtcars %>% plot2(mpg, hp, cyl) %>% add_type(type = NULL))
+  
   p <- data.frame(x = c(1:100),
                   y = rnorm(100, 100, 25)) %>% 
     plot2()
@@ -101,6 +107,7 @@ test_that("adding types works", {
                           colour_fill = "yellow",
                           width = 0.25) %>%
                   get_layers(), 3)
+  
   expect_length(p %>%
                   add_line(certestats::rr_ewma(y, 0.75),
                            colour = "certeroze",
@@ -108,6 +115,16 @@ test_that("adding types works", {
                            linetype = 2,
                            alpha = 0.5) %>%
                   get_layers(), 2)
+  
+  expect_length(plot2(certegis::geo_provincies, datalabels = FALSE) %>%
+                  add_sf(certegis::geocode("Martini Ziekenhuis"),
+                         colour = "certeroze") %>%
+                  get_layers(), 2)
+  expect_length(plot2(certegis::geo_provincies, datalabels = FALSE) %>%
+                  add_sf(certegis::geocode("Martini Ziekenhuis"),
+                         colour = "certeroze",
+                         datalabels = place) %>%
+                  get_layers(), 3)
 })
 
 test_that("titles work", {
@@ -257,13 +274,6 @@ test_that("type validation works", {
   expect_equal(validate_type("p", df), "geom_point")
   expect_equal(validate_type("r", df), "geom_ribbon")
   expect_equal(validate_type("v", df), "geom_violin")
-})
-
-test_that("adding elements works", {
-  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% get_layers(), 1)
-  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% add_line() %>% get_layers(), 2)
-  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% add_col() %>% get_layers(), 2)
-  expect_error(mtcars %>% plot2(mpg, hp, cyl) %>% add_type(type = NULL))
 })
 
 test_that("adding scales works", {

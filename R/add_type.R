@@ -50,6 +50,17 @@
 #'               linetype = 3,
 #'               size = 1)
 #' }
+#' 
+#' if (require("certegis")) {
+#'   hospitals <- geocode(c("Martini Ziekenhuis",
+#'                          "Medisch Centrum Leeuwarden",
+#'                          "Tjongerschans Heerenveen",
+#'                          "Treant Emmen"))
+#'   geo_gemeenten %>%
+#'     crop_certe() %>%
+#'     plot2(datalabels = FALSE) %>%
+#'     add_sf(hospitals, colour = "certeroze", datalabels = place)
+#' }
 add_type <- function(plot, type = NULL, mapping = aes(), ...) {
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
@@ -177,4 +188,56 @@ add_col <- function(plot, y, x, colour = "certeblauw", colour_fill = "certeblauw
            type = "column",
            mapping = mapping,
            params)
+}
+
+#' @rdname add_type
+#' @param sf_data an 'sf' [data.frame], such as the outcome of [certegis::geocode()]
+#' @param datalabels a column of `sf_data` to add as label below the points
+#' @param nudge_y is `datalabels` is not `NULL`, the amount of vertical adjustment of the datalabels
+#' @importFrom dplyr `%>%` mutate
+#' @importFrom ggplot2 geom_sf geom_sf_text aes is.ggplot
+#' @importFrom certestyle colourpicker
+#' @export
+add_sf <- function(plot,
+                   sf_data,
+                   colour = "certeblauw",
+                   colour_fill = "certeblauw",
+                   size = 3,
+                   datalabels = NULL,
+                   nudge_y = -0.025,
+                   ...,
+                   inherit.aes = FALSE) {
+  if (!is.ggplot(plot)) {
+    stop("`plot` must be a ggplot2 model.", call. = FALSE)
+  }
+  
+  p <- plot +
+    geom_sf(data = sf_data,
+            inherit.aes = inherit.aes,
+            size = size,
+            colour = colourpicker(colour),
+            fill = colourpicker(colour_fill),
+            ...)
+  
+  if (tryCatch(!is.null(datalabels), error = function(e) TRUE)) {
+    sf_data <- sf_data %>% 
+      mutate(`_var_datalabels` = {{ datalabels }})
+    # these functions from the 'sf' package fix invalid geometries
+    st_is_valid <- getExportedValue(name = "st_is_valid", ns = asNamespace("sf"))
+    st_point <- getExportedValue(name = "st_point", ns = asNamespace("sf"))
+    st_point_on_surface <- getExportedValue(name = "st_point_on_surface", ns = asNamespace("sf"))
+    st_zm <- getExportedValue(name = "st_zm", ns = asNamespace("sf"))
+    p <- p +
+      geom_sf_text(aes(label = `_var_datalabels`),
+                   data = sf_data,
+                   inherit.aes = inherit.aes,
+                   size = size,
+                   nudge_y = nudge_y,
+                   colour = colourpicker(colour),
+                   fun.geometry = function(x) {
+                     x[!st_is_valid(x)] <- st_point()
+                     suppressWarnings(st_point_on_surface(st_zm(x)))
+                   })
+  }
+  p
 }

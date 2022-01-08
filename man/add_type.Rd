@@ -4,6 +4,7 @@
 \alias{add_type}
 \alias{add_line}
 \alias{add_col}
+\alias{add_sf}
 \title{Add Plot Element}
 \usage{
 add_type(plot, type = NULL, mapping = aes(), ...)
@@ -30,6 +31,18 @@ add_col(
   ...,
   inherit.aes = TRUE
 )
+
+add_sf(
+  plot,
+  sf_data,
+  colour = "certeblauw",
+  colour_fill = "certeblauw",
+  size = 3,
+  datalabels = NULL,
+  nudge_y = -0.025,
+  ...,
+  inherit.aes = FALSE
+)
 }
 \arguments{
 \item{plot}{a \code{ggplot2} plot}
@@ -45,6 +58,12 @@ add_col(
 \item{colour, colour_fill}{colour of the line or column, will be evaluated with \code{\link[certestyle:colourpicker]{certestyle::colourpicker()}}. If \code{colour_fill} is missing but \code{colour} is given, \code{colour_fill} will inherit the colour set with \code{colour}.}
 
 \item{inherit.aes}{a \link{logical} to indicate whether the default aesthetics should be inherited, rather than combining with them}
+
+\item{sf_data}{an 'sf' \link{data.frame}, such as the outcome of \code{\link[certegis:geocoding]{certegis::geocode()}}}
+
+\item{datalabels}{a column of \code{sf_data} to add as label below the points}
+
+\item{nudge_y}{is \code{datalabels} is not \code{NULL}, the amount of vertical adjustment of the datalabels}
 }
 \description{
 Quickly add a new 'geom' to an existing \code{plot2}/\code{ggplot} model. Like \code{\link[=plot2]{plot2()}}, they support tidy evaluation, meaning that variables can be unquoted. They can be added using the pipe (\verb{\%>\%}).
@@ -71,5 +90,16 @@ if (require("certestats", warn.conflicts = FALSE)) {
               colour = "certeroze",
               linetype = 3,
               size = 1)
+}
+
+if (require("certegis")) {
+  hospitals <- geocode(c("Martini Ziekenhuis",
+                         "Medisch Centrum Leeuwarden",
+                         "Tjongerschans Heerenveen",
+                         "Treant Emmen"))
+  geo_gemeenten \%>\%
+    crop_certe() \%>\%
+    plot2(datalabels = FALSE) \%>\%
+    add_sf(hospitals, colour = "certeroze", datalabels = place)
 }
 }
