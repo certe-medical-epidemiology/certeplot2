@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.1</span>
       </span>
     </div>
 
@@ -138,7 +138,7 @@
 <dt>inherit.aes</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the default aesthetics should be inherited, rather than combining with them</p></dd>
 <dt>sf_data</dt>
-<dd><p>an 'sf' <a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a>, such as the outcome of <code>certegis::geocode()</code></p></dd>
+<dd><p>an 'sf' <a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a>, such as the outcome of <code><a href="https://certe-medical-epidemiology.github.io/certegis/reference/geocoding.html" class="external-link">certegis::geocode()</a></code></p></dd>
 <dt>datalabels</dt>
 <dd><p>a column of <code>sf_data</code> to add as label below the points</p></dd>
 <dt>nudge_y</dt>
@@ -183,18 +183,19 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
 <span class="r-plt img"><img src="add_type-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st">"certegis"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://certe-medical-epidemiology.github.io/certegis" class="external-link">"certegis"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span class="r-in">  <span class="va">hospitals</span> <span class="op">&lt;-</span> <span class="fu">geocode</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Martini Ziekenhuis"</span>,</span>
 <span class="r-in">                         <span class="st">"Medisch Centrum Leeuwarden"</span>,</span>
 <span class="r-in">                         <span class="st">"Tjongerschans Heerenveen"</span>,</span>
 <span class="r-in">                         <span class="st">"Treant Emmen"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in">  <span class="va">geo_gemeenten</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu">crop_certe</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span class="r-in">    <span class="fu"><a href="https://certe-medical-epidemiology.github.io/certegis/reference/GIS.html" class="external-link">crop_certe</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span class="r-in">    <span class="fu"><a href="plot2.html">plot2</a></span><span class="op">(</span>datalabels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span class="r-in">    <span class="fu">add_sf</span><span class="op">(</span><span class="va">hospitals</span>, colour <span class="op">=</span> <span class="st">"certeroze"</span>, datalabels <span class="op">=</span> <span class="va">place</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">}</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: certegis</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>there is no package called ‘certegis’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Linking to CBS data - 'postcodes' 2021, 'gebiedsindelingen' 2022 v1</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in geocode(c("Martini Ziekenhuis", "Medisch Centrum Leeuwarden",     "Tjongerschans Heerenveen", "Treant Emmen")):</span> could not find function "geocode"</span>
 </code></pre></div>
     </div>
   </div>
