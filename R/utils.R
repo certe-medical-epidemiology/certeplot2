@@ -140,7 +140,11 @@ get_column_name <- function(df, column_var) {
                 df %>% pull({{column_var}}) %>% as.character())
     })
   }
-  names(out)[out & names(out) %unlike% "^_var_"][1L]
+  out <- names(out)[out & names(out) %unlike% "^_var_"][1L]
+  if (is.na(out)) {
+    return(NULL)
+  }
+  out
 }
 
 get_x <- function(df, na.rm = FALSE) {
@@ -308,7 +312,8 @@ group_sizes <- function(df) {
     nrow(df)
   } else {
     df %>% 
-      group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df)))) %>%
+      group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df))),
+               .drop = FALSE) %>%
       group_size()
   }
 }

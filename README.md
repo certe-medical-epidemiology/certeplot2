@@ -2,11 +2,8 @@
 
 This is a Certe R Package for fast and convenient plotting, by providing wrappers around 'tidyverse' packages such as 'ggplot2', while also providing plotting in the Certe organisational style. This package is part of the 'certedata' universe.
 
-You can [read the manual with explanation about all functions](https://certe-medical-epidemiology.github.io/certeplot2/reference), or install this particular R package using:
 
-```r
-install.packages("certeplot2", repos = "https://certe-medical-epidemiology.r-universe.dev")
-```
+You can read the [manual with explanation about its functions here](https://certe-medical-epidemiology.github.io/certeplot2/reference).
 
 ## About the 'certedata' universe
 
@@ -46,22 +43,26 @@ These are R packages developed by [**Certe**](https://www.certe.nl), a non-profi
 
 For all our packages, please visit [our GitHub organisation overview](https://github.com/certe-medical-epidemiology). Our R packages are not on CRAN since their use is primarily intended for own staff, but they are publicly available to support open science. 
 
-### R-universe
+### Install
 
-All our R packages are published [here at R-universe](https://certe-medical-epidemiology.r-universe.dev), allowing anyone to install and update the packages using common methods, such as the RStudio menu bar or `install.packages()`. To use the R-universe of Certe Medical Epidemiology, run:
+All our R packages are published [here at R-universe](https://certe-medical-epidemiology.r-universe.dev), allowing anyone to install and update the packages using common methods, such as the RStudio menu bar or `install.packages()`. To add the Certe Medical Epidemiology R-universe to your existing repositories, run:
 
 ```r
-# set the repos option to include the Certe Medical Epidemiology R-universe
 options(repos = c(
   CerteMedEpi = "https://certe-medical-epidemiology.r-universe.dev",
-  CRAN = "https://cloud.r-project.org"))
+  options()$repos)
 ```
 
-You can then install any Certe R package, e.g.:
+You can now install any Certe R package, e.g.:
 
 ```r
-# our 'loader package' certedata installs all Certe R packages:
-install.packages("certedata")
+# our 'loader package' certedata installs all Certe R packages this way:
+install.packages("certedata", dependencies = TRUE)
+
+# or install a specific package:
+install.packages("certegis")
+install.packages("certeplot2")
+install.packages("certestats")
 ```
 
 ### Developer status

@@ -30,7 +30,7 @@ name: Codecov
 
 jobs:
   Codecov:
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
@@ -43,7 +43,7 @@ jobs:
           # be sure to enable our R-universe
           extra-repositories: 'https://certe-medical-epidemiology.r-universe.dev'
 
-      - uses: r-lib/actions/setup-r-dependencies@v1
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: covr
 

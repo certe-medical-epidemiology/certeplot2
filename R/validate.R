@@ -327,31 +327,24 @@ validate_data <- function(df,
   }
   
   # remove or replace NAs
-  has_NAs <- df %>%
-    select(c(get_x_name(.), get_category_name(.), get_facet_name(.),
-             matches("_var_(x|category|facet)"))) %>%
-    unlist(use.names = FALSE)
-  has_NAs <- any(is.na(has_NAs))
-  if (isTRUE(has_NAs)) {
-    is_numeric <- function(x) {
-      mode(x) == "numeric" || is.numeric(x) || inherits(x, c("Date", "POSIXt"))
-    }
+  is_numeric <- function(x) {
+    mode(x) == "numeric" || is.numeric(x) || inherits(x, c("Date", "POSIXt"))
+  }
+  df_noNA <- df %>%
+    filter(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
+                    matches("_var_(x|category|facet)")),
+                  function(x) {
+                    if (is_numeric(x)) {
+                      TRUE
+                    } else {
+                      !is.na(x)
+                    }}))
+  if (nrow(df_noNA) < nrow(df)) {
+    # so some are NAs
     if (isTRUE(dots$na.rm)) {
-      nrw_old <- nrow(df)
-      df <- df %>%
-        filter(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
-                        matches("_var_(x|category|facet)")),
-                      function(x) {
-                        if (is_numeric(x)) {
-                          TRUE
-                        } else {
-                          !is.na(x)
-                        }}))
-      nrw_new <- nrow(df)
-      if (nrw_old != nrw_new) {
-        plot2_message("Removed ", nrw_old - nrw_new, " rows since ",
-                      font_blue("na.rm = TRUE"))
-      }
+      plot2_message("Removed ", nrow(df) - nrow(df_noNA), " rows since ",
+                    font_blue("na.rm = TRUE"))
+      df <- df_noNA
     } else {
       # replace NAs
       plot2_env$na_replaced <- 0

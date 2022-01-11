@@ -6,6 +6,9 @@ pre code {
   color: #aaaaaa !important;
   font-style: italic;
 }
+th {
+  text-align: inherit;
+}
 .fu {
   font-weight: bold
 }

@@ -603,8 +603,9 @@ plot2_exec <- function(.data,
                   sep = sep) %>% 
     # add y
     { function(.data) {
-      if (dots$`_label.y` %like% ".+\\(.*\\)") {
-        # seems like a function, so calculate it over all groups that are available
+      if (dots$`_label.y` %like% ".+\\(.*\\)" &&
+          !(length(group_sizes(.data) == 1) && group_sizes(.data) == nrow(.data))) {
+        # seems like a function with multiple groups, so calculate it over all groups that are available
         # - this will support e.g. `data %>% plot2(y = n_distinct(id))`
         .data %>% 
           group_by(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
