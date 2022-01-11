@@ -20,7 +20,8 @@
 #' @importFrom certestyle font_blue font_black  
 validate_type <- function(type, df = NULL) {
   type.bak <- type
-  if (is.null(type) && !is.null(df)) {
+  type_unset <- (is.null(type) || identical(type, ""))
+  if (type_unset && !is.null(df)) {
     if (!has_x(df)) {
       # only numeric values, make it a boxplot
       type <- "geom_boxplot"
@@ -50,7 +51,7 @@ validate_type <- function(type, df = NULL) {
                       font_black(" as default"))
       }
     }
-  } else if (is.null(type) && is.null(df)) {
+  } else if (type_unset && is.null(df)) {
     return("") # for quick validation
   } else {
     if (length(type) > 1) {
@@ -251,7 +252,9 @@ validate_data <- function(df,
   if (has_facet(df) && all(get_facet(df) == FALSE)) {
     df <- df %>% select(-`_var_facet`)
   }
-  if (has_datalabels(df) && all(get_datalabels(df) == FALSE)) {
+  if (has_datalabels(df) && 
+      (all(get_datalabels(df) == FALSE) || (geom_is_continuous(suppressMessages(validate_type(dots$type, df)))))) {
+    # remove datalabels if `datalabels = FALSE`, or if the type now seems to be continuous
     df <- df %>% select(-`_var_datalabels`)
   }
   

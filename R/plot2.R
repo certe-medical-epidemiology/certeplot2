@@ -604,7 +604,7 @@ plot2_exec <- function(.data,
     # add y
     { function(.data) {
       if (dots$`_label.y` %like% ".+\\(.*\\)" &&
-          !(length(group_sizes(.data) == 1) && group_sizes(.data) == nrow(.data))) {
+          !(length(group_sizes(.data)) == 1 && group_sizes(.data) == nrow(.data))) {
         # seems like a function with multiple groups, so calculate it over all groups that are available
         # - this will support e.g. `data %>% plot2(y = n_distinct(id))`
         .data %>% 

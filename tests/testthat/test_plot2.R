@@ -79,6 +79,8 @@ test_that("S3 implementations work", {
                   "gg")
   # qc_test
   expect_s3_class(certestats::qc_test(rnorm(1000)) %>% plot2(), "gg")
+  # type should become boxplot here
+  expect_s3_class(admitted_patients %>% plot2(x = hospital, y = certestats::z_score(age)), "gg")
 })
 
 test_that("general mapping works", {
