@@ -115,11 +115,11 @@ validate_data <- function(df,
   dots <- list(...)
   type <- validate_type(dots$type, df = NULL) # quick validation
   
-  numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) mode(col) == "numeric" & !inherits(col, c("Date", "POSIXTt")))))
+  numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) mode(col) == "numeric" & !inherits(col, c("Date", "POSIXTt", "factor")))))
   numeric_cols <- numeric_cols[numeric_cols %unlike% "^_var_"]
-  character_cols <- names(which(vapply(FUN.VALUE = logical(1), df, is.character)))
+  character_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) is.character(col) | is.factor(col))))
   character_cols <- character_cols[character_cols %unlike% "^_var_"]
-  non_numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) mode(col) != "numeric" | inherits(col, c("Date", "POSIXTt")))))
+  non_numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) mode(col) != "numeric" | inherits(col, c("Date", "POSIXTt", "factor")))))
   non_numeric_cols <- non_numeric_cols[non_numeric_cols %unlike% "^_var_"]
   
   if (!has_y(df) && "n" %in% numeric_cols && mode(df$n) == "numeric") {
@@ -337,7 +337,7 @@ validate_data <- function(df,
     filter(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
                     matches("_var_(x|category|facet)")),
                   function(x) {
-                    if (is_numeric(x)) {
+                    if (is_numeric(x) & !is.factor(x)) {
                       TRUE
                     } else {
                       !is.na(x)
@@ -355,14 +355,18 @@ validate_data <- function(df,
         mutate(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
                         matches("_var_(x|category|facet)")),
                       function(x) {
-                        if (!is_numeric(x)) {
+                        if (is.factor(x)) {
+                          # add as last factor level
+                          levels(x) <- c(levels(x), dots$na.replace)
+                        }
+                        if (!is_numeric(x) | is.factor(x)) {
                           plot2_env$na_replaced <- plot2_env$na_replaced + sum(is.na(x))
                           x[is.na(x)] <- dots$na.replace
                         }
                         x
                       }))
       if (plot2_env$na_replaced > 0) {
-        plot2_message("Replacing ", font_red("NA"), "s using ",
+        plot2_message("Replacing ", font_red("NA"), " using ",
                       font_blue(paste0("na.replace = \"", dots$na.replace, "\"")))
       }
     }

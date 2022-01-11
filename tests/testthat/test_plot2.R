@@ -58,8 +58,16 @@ test_that("general types work", {
 })
 
 test_that("na.rm works", {
+  # as characters
   df <- data.frame(hp = mtcars$hp,
-                   letters = letters[seq_len(nrow(mtcars))])
+                   letters = letters[seq_len(nrow(mtcars))],
+                   stringsAsFactors = FALSE)
+  expect_lt(df %>% plot2(na.rm = TRUE) %>% get_data() %>% nrow(), nrow(df))
+  expect_lt(df %>% plot2(na.rm = FALSE) %>% get_data() %>% nrow(), nrow(df))
+  # as factors
+  df <- data.frame(hp = mtcars$hp,
+                   letters = letters[seq_len(nrow(mtcars))],
+                   stringsAsFactors = TRUE)
   expect_lt(df %>% plot2(na.rm = TRUE) %>% get_data() %>% nrow(), nrow(df))
   expect_lt(df %>% plot2(na.rm = FALSE) %>% get_data() %>% nrow(), nrow(df))
 })
