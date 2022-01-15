@@ -253,7 +253,9 @@ validate_data <- function(df,
     df <- df %>% select(-`_var_facet`)
   }
   if (has_datalabels(df) && 
-      (all(get_datalabels(df) == FALSE) || (geom_is_continuous(suppressMessages(validate_type(dots$type, df)))))) {
+      (all(get_datalabels(df) == FALSE) ||
+       (!is.null(dots$type) && dots$type != "sf" &&
+        geom_is_continuous(suppressMessages(validate_type(dots$type, df)))))) {
     # remove datalabels if `datalabels = FALSE`, or if the type now seems to be continuous
     df <- df %>% select(-`_var_datalabels`)
   }
@@ -901,6 +903,16 @@ generate_geom <- function(type,
                      list(colour = cols$colour)[!has_category(df)],
                      list(fill = cols$colour_fill)[!has_category(df)]))
     
+  } else if (type == "geom_area") {
+    do.call(geom_fn,
+            args = c(list(linetype = linetype,
+                          stat = "identity",
+                          position = position,
+                          size = size,
+                          na.rm = na.rm),
+                     list(colour = cols$colour)[!has_category(df)],
+                     list(fill = cols$colour_fill)[!has_category(df)]))
+    
   } else if (type %in% c("geom_line", "geom_path")) {
     do.call(geom_fn,
             args = c(list(size = size,
@@ -999,7 +1011,13 @@ generate_geom <- function(type,
 }
 
 #' @importFrom certestyle colourpicker add_white
-validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, horizontal) {
+validate_colour <- function(df,
+                            type,
+                            colour,
+                            colour_fill,
+                            colour_opacity,
+                            misses_colour_fill,
+                            horizontal) {
   
   if (geom_is_continuous(type) && is.numeric(get_category(df))) {
     viridis_colours <- c("viridis", "magma", "inferno", "plasma", "cividis", "rocket", "mako", "turbo")
@@ -1008,18 +1026,19 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
     if (length(colour) == 1) {
       if (colour == "certe") {
         # divergent Certe scale
-        colour <- colourpicker(c("certeblauw0", "certegroen", "certegeel", "certeroze"))
+        colour <- colourpicker(c("certeblauw0", "certegroen", "certegeel", "certeroze"),
+                               opacity = colour_opacity)
       } else if (colour %like% "certe([1-6]+)$") {
         # take Certe colours
-        colour <- colourpicker(colour, 4)
+        colour <- colourpicker(colour, 4, opacity = colour_opacity)
       } else if (colour %in% viridis_colours) {
         # generate viridis colour
-        colour <- colourpicker(colour, 5)
+        colour <- colourpicker(colour, 5, opacity = colour_opacity)
       } else {
-        colour <- colourpicker(colour)
+        colour <- colourpicker(colour, opacity = colour_opacity)
       }
     } else {
-      colour <- colourpicker(colour)
+      colour <- colourpicker(colour, opacity = colour_opacity)
     }
 
     if (is.null(colour_fill) || identical(colour.bak, colour_fill)) {
@@ -1028,18 +1047,19 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
       if (length(colour_fill) == 1) {
         if (colour_fill == "certe") {
           # divergent Certe scale
-          colour_fill <- colourpicker(c("certeblauw0", "certegroen", "certegeel", "certeroze"))
+          colour_fill <- colourpicker(c("certeblauw0", "certegroen", "certegeel", "certeroze"),
+                                      opacity = colour_opacity)
         } else if (colour_fill %like% "certe([1-6]+)$") {
           # take Certe colours
-          colour_fill <- colourpicker(colour_fill, 4)
+          colour_fill <- colourpicker(colour_fill, 4, opacity = colour_opacity)
         } else if (colour_fill %in% viridis_colours) {
           # generate viridis colour
-          colour_fill <- colourpicker(colour_fill, 5)
+          colour_fill <- colourpicker(colour_fill, 5, opacity = colour_opacity)
         } else {
-          colour_fill <- colourpicker(colour_fill)
+          colour_fill <- colourpicker(colour_fill, opacity = colour_opacity)
         }
       } else {
-        colour_fill <- colourpicker(colour_fill)
+        colour_fill <- colourpicker(colour_fill, opacity = colour_opacity)
       }
     }
     return(list(colour = colour,
@@ -1048,7 +1068,7 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
   
   if (geom_is_continuous(type) && is.null(colour_fill) && any(colour %like% "certe")) {
     # exception for Certe: "certeblauw" (colour) -> "certeblauw6" (colour_fill)
-    colour_fill <- colourpicker(colour)
+    colour_fill <- colourpicker(colour, opacity = colour_opacity)
     if (type == "geom_sf") {
       colour_fill[colour %like% "certe[a-z]*"] <- paste0(colour[colour %like% "certe[a-z]*"], "3")
     } else {
@@ -1066,25 +1086,27 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
       colour <- colour[1]
       colour_fill <- colour_fill[1]
     }
-    colour <- colourpicker(colour)
+    colour <- colourpicker(colour, opacity = colour_opacity)
     if (geom_is_continuous(type) && is.null(colour_fill)) {
       # specific treatment for continuous geoms (such as boxplots/violins/histograms/...)
       colour_fill <- add_white(colour, white = 0.35)
     } else {
-      colour_fill <- colourpicker(colour_fill)
+      colour_fill <- colourpicker(colour_fill, opacity = colour_opacity)
     }
     
   } else {
     # has also category, and it's not numeric
     n_unique <- length(unique(get_category(df)))
     colour <- colourpicker(colour,
-                           length = ifelse(length(colour) == 1, n_unique, 1))
+                           length = ifelse(length(colour) == 1, n_unique, 1),
+                           opacity = colour_opacity)
     if (geom_is_continuous(type) && is.null(colour_fill)) {
       # specific treatment for continuous geoms (such as boxplots/violins/histograms/...)
       colour_fill <- add_white(colour, white = 0.35)
     } else {
       colour_fill <- colourpicker(colour_fill,
-                                  length = ifelse(length(colour_fill) == 1, n_unique, 1))
+                                  length = ifelse(length(colour_fill) == 1, n_unique, 1),
+                                  opacity = colour_opacity)
     }
     
     if (isTRUE(horizontal)) {
@@ -1115,7 +1137,7 @@ validate_colour <- function(df, type, colour, colour_fill, misses_colour_fill, h
 
 validate_size <- function(size, type) {
   if (is.null(size)) {
-    if (type %in% c("geom_boxplot", "geom_violin") | geom_is_continuous_x(type)) {
+    if (type %in% c("geom_boxplot", "geom_violin", "geom_area", "geom_ribbon") | geom_is_continuous_x(type)) {
       size <- 0.5
     } else if (type %in% c("geom_point", "geom_jitter")) {
       size <- 2
@@ -1779,20 +1801,35 @@ format_datalabels <- function(datalabels,
                               big.mark) {
   datalabels[as.character(datalabels) %in% c("", "0")] <- NA
   datalabels_out <- datalabels
-  if (!is.null(datalabels.format) && !inherits(datalabels, c("Date", "POSIXt"))) {
-    datalabels_p <- trimws(format2(datalabels_out / sum(datalabels_out, na.rm = TRUE),
-                                   round = datalabels.round,
-                                   decimal.mark = decimal.mark,
-                                   big.mark = big.mark,
-                                   percent = TRUE))
-    datalabels_n <- trimws(format2(datalabels_out,
-                                   decimal.mark = decimal.mark,
-                                   big.mark = big.mark,
-                                   round = datalabels.round,
-                                   force.decimals = FALSE))
+  if (!is.null(datalabels.format) &&
+      mode(datalabels) == "numeric" &&
+      !inherits(datalabels, c("factor", "Date", "POSIXt"))) {
+    datalabels <- as.double(datalabels)
     datalabels_out <- rep(datalabels.format, length(datalabels_out))
-    datalabels_out <- mapply(gsub, x = datalabels_out, pattern = "%n", replacement = datalabels_n, USE.NAMES = FALSE)
-    datalabels_out <- mapply(gsub, x = datalabels_out, pattern = "%p", replacement = datalabels_p, USE.NAMES = FALSE)
+    if (datalabels.format %like% "%p") {
+      datalabels_p <- trimws(format2(datalabels / sum(datalabels, na.rm = TRUE),
+                                     round = datalabels.round,
+                                     decimal.mark = decimal.mark,
+                                     big.mark = big.mark,
+                                     percent = TRUE))
+      datalabels_out <- mapply(gsub,
+                               x = datalabels_out,
+                               pattern = "%p",
+                               replacement = datalabels_p,
+                               USE.NAMES = FALSE)
+    }
+    if (datalabels.format %like% "%n") {
+      datalabels_n <- trimws(format2(datalabels,
+                                     decimal.mark = decimal.mark,
+                                     big.mark = big.mark,
+                                     round = datalabels.round,
+                                     force.decimals = FALSE))
+      datalabels_out <- mapply(gsub,
+                               x = datalabels_out,
+                               pattern = "%n",
+                               replacement = datalabels_n,
+                               USE.NAMES = FALSE)
+    }
   }
   datalabels_out
 }

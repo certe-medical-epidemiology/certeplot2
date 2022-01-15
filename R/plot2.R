@@ -53,6 +53,7 @@
 #' @param category.focus a value of `category` that should be highlighted, meaning that all other values in `category` will be greyed out. This can also be a numeric value between 1 and the length of unique values of `category`, e.g. `category.focus = 2` to focus on the second legend item.
 #' @param colour colour(s) to set, will be evaluated with [`colourpicker()`][certestyle::colourpicker()] and defaults to Certe colours. This can also be one of the viridis colours for a continuous scale: `"viridis"`, `"magma"`, `"inferno"`, `"plasma"`, `"cividis"`, `"rocket"`, `"mako"` or `"turbo"`. This can also be a named vector to match values of `category`, see *Examples*. Using a named vector can also be used to manually sort the values of `category`.
 #' @param colour_fill colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
+#' @param colour_opacity amount of opacity for `colour`/`colour_fill` (0 = solid, 1 = transparent)
 #' @param x.lbl_angle angle to use for the x axis in a counter-clockwise direction (i.e., a value of `90` will orient the axis labels from bottom to top, a value of `270` will orient the axis labels from top to bottom)
 #' @param x.lbl_align alignment for the x axis between `0` (left aligned) and `1` (right aligned)
 #' @param x.lbl_italic [logical] to indicate whether the x labels should in in *italics*
@@ -292,6 +293,7 @@ plot2 <- function(.data,
                   category.focus = NULL,
                   colour = "certe",
                   colour_fill = NULL,
+                  colour_opacity = 0,
                   x.lbl_angle = 0,
                   x.lbl_align = NULL,
                   x.lbl_italic = FALSE,
@@ -418,6 +420,7 @@ plot2_exec <- function(.data,
                        category.focus,
                        colour,
                        colour_fill,
+                       colour_opacity,
                        x.lbl_angle,
                        x.lbl_align,
                        x.lbl_italic,
@@ -748,6 +751,7 @@ plot2_exec <- function(.data,
                           type = type,
                           colour = colour,
                           colour_fill = colour_fill,
+                          colour_opacity = colour_opacity,
                           misses_colour_fill = misses_colour_fill,
                           horizontal = horizontal)
   

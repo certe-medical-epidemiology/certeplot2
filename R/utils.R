@@ -251,7 +251,7 @@ has_datalabels <- function(df) {
 }
 
 determine_date_breaks_labels <- function(x) {
-  diff_range <- diff(range(x))
+  diff_range <- diff(range(x, na.rm = TRUE))
   if (diff_range < 30) {
     # 1 month
     out <- list(breaks = "1 day",
@@ -293,13 +293,13 @@ is_empty <- function(x) {
 }
 
 geom_is_continuous <- function(geom) {
-  geom %in% c("geom_boxplot", "geom_violin", "geom_point", "geom_jitter", "geom_histogram", "geom_density", "geom_sf", "geom_line")
+  geom %in% c("geom_boxplot", "geom_violin", "geom_point", "geom_jitter", "geom_histogram", "geom_density", "geom_sf", "geom_line", "geom_area", "geom_ribbon")
 }
 geom_is_continuous_x <- function(geom) {
   geom %in% c("geom_histogram", "geom_density")
 }
 geom_is_line <- function(geom) {
-  geom %in% c("geom_line", "geom_hline", "geom_vline", "geom_path", "geom_qq_line", "geom_linerange")
+  geom %in% c("geom_line", "geom_hline", "geom_vline", "geom_path", "geom_qq_line", "geom_linerange", "geom_area", "geom_ribbon")
 }
 geom_has_only_colour <- function(geom) {
   geom %in% c("geom_point", "geom_jitter", "geom_line", "geom_hline", "geom_vline",

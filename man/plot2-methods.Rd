@@ -48,6 +48,7 @@
   category.focus = NULL,
   colour = "certe",
   colour_fill = NULL,
+  colour_opacity = 0,
   x.lbl_angle = 0,
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
@@ -170,6 +171,7 @@
   category.focus = NULL,
   colour = "certe",
   colour_fill = NULL,
+  colour_opacity = 0,
   x.lbl_angle = 0,
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
@@ -292,6 +294,7 @@
   category.focus = NULL,
   colour = "certe",
   colour_fill = NULL,
+  colour_opacity = 0,
   x.lbl_angle = 0,
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
@@ -414,6 +417,7 @@
   category.focus = NULL,
   colour = "grey25",
   colour_fill = c("white", "certeblauw"),
+  colour_opacity = 0,
   x.lbl_angle = 0,
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
@@ -539,6 +543,7 @@
   category.focus = NULL,
   colour = "certe",
   colour_fill = NULL,
+  colour_opacity = 0,
   x.lbl_angle = 0,
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
@@ -661,6 +666,7 @@
   category.focus = NULL,
   colour = "certe_rsi2",
   colour_fill = NULL,
+  colour_opacity = 0,
   x.lbl_angle = ifelse(horizontal, 0, 90),
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
@@ -788,6 +794,7 @@
     "certegroen", `Rule 3` = "certeroze", `Rule 4` = "certegeel", `Rule 5` = "certelila",
     `Rule 6` = "certezachtlila", `Rule 7` = "certeblauw2", `Rule 8` = "certegroen2")),
   colour_fill = NULL,
+  colour_opacity = 0,
   x.lbl_angle = 0,
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
@@ -950,6 +957,8 @@
 \item{colour}{colour(s) to set, will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}} and defaults to Certe colours. This can also be one of the viridis colours for a continuous scale: \code{"viridis"}, \code{"magma"}, \code{"inferno"}, \code{"plasma"}, \code{"cividis"}, \code{"rocket"}, \code{"mako"} or \code{"turbo"}. This can also be a named vector to match values of \code{category}, see \emph{Examples}. Using a named vector can also be used to manually sort the values of \code{category}.}
 
 \item{colour_fill}{colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}}}
+
+\item{colour_opacity}{amount of opacity for \code{colour}/\code{colour_fill} (0 = solid, 1 = transparent)}
 
 \item{x.lbl_angle}{angle to use for the x axis in a counter-clockwise direction (i.e., a value of \code{90} will orient the axis labels from bottom to top, a value of \code{270} will orient the axis labels from top to bottom)}
 
