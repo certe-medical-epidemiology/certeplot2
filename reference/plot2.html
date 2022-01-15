@@ -122,6 +122,7 @@ See plot2-methods for all implemented methods for different object classes."><me
   category.focus <span class="op">=</span> <span class="cn">NULL</span>,
   colour <span class="op">=</span> <span class="st">"certe"</span>,
   colour_fill <span class="op">=</span> <span class="cn">NULL</span>,
+  colour_opacity <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_align <span class="op">=</span> <span class="cn">NULL</span>,
   x.lbl_italic <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -263,6 +264,8 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>colour(s) to set, will be evaluated with <code><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/colourpicker.html" class="external-link">colourpicker()</a></code> and defaults to Certe colours. This can also be one of the viridis colours for a continuous scale: <code>"viridis"</code>, <code>"magma"</code>, <code>"inferno"</code>, <code>"plasma"</code>, <code>"cividis"</code>, <code>"rocket"</code>, <code>"mako"</code> or <code>"turbo"</code>. This can also be a named vector to match values of <code>category</code>, see <em>Examples</em>. Using a named vector can also be used to manually sort the values of <code>category</code>.</p></dd>
 <dt>colour_fill</dt>
 <dd><p>colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with <code><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/colourpicker.html" class="external-link">colourpicker()</a></code></p></dd>
+<dt>colour_opacity</dt>
+<dd><p>amount of opacity for <code>colour</code>/<code>colour_fill</code> (0 = solid, 1 = transparent)</p></dd>
 <dt>x.lbl_angle</dt>
 <dd><p>angle to use for the x axis in a counter-clockwise direction (i.e., a value of <code>90</code> will orient the axis labels from bottom to top, a value of <code>270</code> will orient the axis labels from top to bottom)</p></dd>
 <dt>x.lbl_align</dt>
@@ -410,7 +413,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <li><p>Labels with data values can easily be printed and are automatically determined</p></li>
 </ul></li>
 <li><p>Support for any <code>ggplot2</code> extension based on <code><a href="https://ggplot2.tidyverse.org/reference/fortify.html" class="external-link">ggplot2::fortify()</a></code></p></li>
-</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 118 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
+</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 119 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
     </div>
 
     <div id="ref-examples">

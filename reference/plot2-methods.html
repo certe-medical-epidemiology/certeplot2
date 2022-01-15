@@ -121,6 +121,7 @@
   category.focus <span class="op">=</span> <span class="cn">NULL</span>,
   colour <span class="op">=</span> <span class="st">"certe"</span>,
   colour_fill <span class="op">=</span> <span class="cn">NULL</span>,
+  colour_opacity <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_align <span class="op">=</span> <span class="cn">NULL</span>,
   x.lbl_italic <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -244,6 +245,7 @@
   category.focus <span class="op">=</span> <span class="cn">NULL</span>,
   colour <span class="op">=</span> <span class="st">"certe"</span>,
   colour_fill <span class="op">=</span> <span class="cn">NULL</span>,
+  colour_opacity <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_align <span class="op">=</span> <span class="cn">NULL</span>,
   x.lbl_italic <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -367,6 +369,7 @@
   category.focus <span class="op">=</span> <span class="cn">NULL</span>,
   colour <span class="op">=</span> <span class="st">"certe"</span>,
   colour_fill <span class="op">=</span> <span class="cn">NULL</span>,
+  colour_opacity <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_align <span class="op">=</span> <span class="cn">NULL</span>,
   x.lbl_italic <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -490,6 +493,7 @@
   category.focus <span class="op">=</span> <span class="cn">NULL</span>,
   colour <span class="op">=</span> <span class="st">"grey25"</span>,
   colour_fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"certeblauw"</span><span class="op">)</span>,
+  colour_opacity <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_align <span class="op">=</span> <span class="cn">NULL</span>,
   x.lbl_italic <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -616,6 +620,7 @@
   category.focus <span class="op">=</span> <span class="cn">NULL</span>,
   colour <span class="op">=</span> <span class="st">"certe"</span>,
   colour_fill <span class="op">=</span> <span class="cn">NULL</span>,
+  colour_opacity <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_align <span class="op">=</span> <span class="cn">NULL</span>,
   x.lbl_italic <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -739,6 +744,7 @@
   category.focus <span class="op">=</span> <span class="cn">NULL</span>,
   colour <span class="op">=</span> <span class="st">"certe_rsi2"</span>,
   colour_fill <span class="op">=</span> <span class="cn">NULL</span>,
+  colour_opacity <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_angle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">horizontal</span>, <span class="fl">0</span>, <span class="fl">90</span><span class="op">)</span>,
   x.lbl_align <span class="op">=</span> <span class="cn">NULL</span>,
   x.lbl_italic <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -867,6 +873,7 @@
     <span class="st">"certegroen"</span>, `Rule 3` <span class="op">=</span> <span class="st">"certeroze"</span>, `Rule 4` <span class="op">=</span> <span class="st">"certegeel"</span>, `Rule 5` <span class="op">=</span> <span class="st">"certelila"</span>,
     `Rule 6` <span class="op">=</span> <span class="st">"certezachtlila"</span>, `Rule 7` <span class="op">=</span> <span class="st">"certeblauw2"</span>, `Rule 8` <span class="op">=</span> <span class="st">"certegroen2"</span><span class="op">)</span><span class="op">)</span>,
   colour_fill <span class="op">=</span> <span class="cn">NULL</span>,
+  colour_opacity <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_align <span class="op">=</span> <span class="cn">NULL</span>,
   x.lbl_italic <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -1030,6 +1037,8 @@
 <dd><p>colour(s) to set, will be evaluated with <code><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/colourpicker.html" class="external-link">colourpicker()</a></code> and defaults to Certe colours. This can also be one of the viridis colours for a continuous scale: <code>"viridis"</code>, <code>"magma"</code>, <code>"inferno"</code>, <code>"plasma"</code>, <code>"cividis"</code>, <code>"rocket"</code>, <code>"mako"</code> or <code>"turbo"</code>. This can also be a named vector to match values of <code>category</code>, see <em>Examples</em>. Using a named vector can also be used to manually sort the values of <code>category</code>.</p></dd>
 <dt>colour_fill</dt>
 <dd><p>colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with <code><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/colourpicker.html" class="external-link">colourpicker()</a></code></p></dd>
+<dt>colour_opacity</dt>
+<dd><p>amount of opacity for <code>colour</code>/<code>colour_fill</code> (0 = solid, 1 = transparent)</p></dd>
 <dt>x.lbl_angle</dt>
 <dd><p>angle to use for the x axis in a counter-clockwise direction (i.e., a value of <code>90</code> will orient the axis labels from bottom to top, a value of <code>270</code> will orient the axis labels from top to bottom)</p></dd>
 <dt>x.lbl_align</dt>
