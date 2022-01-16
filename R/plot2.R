@@ -119,6 +119,7 @@
 #' @param text_factor text factor to use, which will apply to all texts shown in the plot
 #' @param family font family to use, can be set with `options(plot2.family = "...")`
 #' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`). Can be set with `options(plot2.theme = "...")`.
+#' @param background the background colour of the entire plot, can also be `NA` to remove it. Only applies when `theme` is not empty.
 #' @param markdown a [logical] to turn all labels and titles into markdown-supported labels, by extending their S3 classes with [`"element_markdown"`][ggtext::element_markdown()], a feature of the `ggtext` package
 #' @param taxonomy_italic a [logical] to transform all labels and titles into italics that are in the `microorganisms` data set of the `AMR` package
 #' @param ... arguments passed on to methods
@@ -172,7 +173,9 @@
 #'       
 #' iris %>% 
 #'   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
-#'         colour = c("white", "red", "black")) # set own colours
+#'         colour = c("white", "red", "black"), # set own colours
+#'         background = NA,
+#'         facet.fill = NA)
 #'   
 #' admitted_patients
 #' 
@@ -374,6 +377,7 @@ plot2 <- function(.data,
                   text_factor = 1,
                   family = getOption("plot2.family"),
                   theme = getOption("plot2.theme", "theme_minimal2"),
+                  background = "white",
                   markdown = TRUE,
                   taxonomy_italic = FALSE,
                   ...) {
@@ -501,6 +505,7 @@ plot2_exec <- function(.data,
                        text_factor,
                        family,
                        theme,
+                       background,
                        markdown,
                        taxonomy_italic,
                        ...) {
@@ -536,6 +541,7 @@ plot2_exec <- function(.data,
     p <- ggplot() +
       validate_theme(theme = theme,
                      type = "",
+                     background = background,
                      markdown = markdown,
                      text_factor = text_factor,
                      family = family,
@@ -962,6 +968,7 @@ plot2_exec <- function(.data,
   p <- p + 
     validate_theme(theme = theme,
                    type = type,
+                   background = background,
                    markdown = markdown,
                    text_factor = text_factor,
                    family = family,

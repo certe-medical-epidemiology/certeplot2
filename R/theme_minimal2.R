@@ -50,7 +50,7 @@ theme_minimal2 <- function(...) {
       axis.line = element_line(size = 0.375, colour = "grey75"),
       axis.line.y = element_blank(),
       plot.margin = unit(c(5, 12, 5, 5), units = "pt"),
-      plot.background = element_blank(),
+      plot.background = element_rect(fill = "white", linetype = 0),
       plot.subtitle = element_text(size = unit(11, "pt"),
                                    hjust = 0.5,
                                    margin = margin(0, 0, 10, 0)),

@@ -129,6 +129,7 @@
   text_factor = 1,
   family = getOption("plot2.family"),
   theme = getOption("plot2.theme", "theme_minimal2"),
+  background = "white",
   markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
@@ -252,6 +253,7 @@
   text_factor = 1,
   family = getOption("plot2.family"),
   theme = getOption("plot2.theme", "theme_minimal2"),
+  background = "white",
   markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
@@ -375,6 +377,7 @@
   text_factor = 1,
   family = getOption("plot2.family"),
   theme = getOption("plot2.theme", "theme_minimal2"),
+  background = "white",
   markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
@@ -501,6 +504,7 @@
     element_blank(), panel.border = element_blank(), axis.title = element_blank(),
     axis.text = element_blank(), axis.line = element_blank(), axis.ticks =
     element_blank()),
+  background = "white",
   markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
@@ -624,6 +628,7 @@
   text_factor = 1,
   family = getOption("plot2.family"),
   theme = getOption("plot2.theme", "theme_minimal2"),
+  background = "white",
   markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
@@ -747,6 +752,7 @@
   text_factor = 1,
   family = getOption("plot2.family"),
   theme = getOption("plot2.theme", "theme_minimal2"),
+  background = "white",
   markdown = TRUE,
   taxonomy_italic = TRUE,
   minimum = 30,
@@ -875,6 +881,7 @@
   text_factor = 1,
   family = getOption("plot2.family"),
   theme = getOption("plot2.theme", "theme_minimal2"),
+  background = "white",
   markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
@@ -1149,6 +1156,8 @@
 \item{family}{font family to use, can be set with \code{options(plot2.family = "...")}}
 
 \item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}. This argument accepts themes (e.g., \code{theme_bw()}), functions (e.g., \code{theme_bw}) and characters themes (e.g., \code{"theme_bw"}). Can be set with \code{options(plot2.theme = "...")}.}
+
+\item{background}{the background colour of the entire plot, can also be \code{NA} to remove it. Only applies when \code{theme} is not empty.}
 
 \item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{\link[ggtext:element_markdown]{"element_markdown"}}, a feature of the \code{ggtext} package}
 

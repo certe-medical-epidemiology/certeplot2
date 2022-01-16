@@ -122,6 +122,7 @@ plot2(
   text_factor = 1,
   family = getOption("plot2.family"),
   theme = getOption("plot2.theme", "theme_minimal2"),
+  background = "white",
   markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
@@ -307,6 +308,8 @@ plot2(
 
 \item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}. This argument accepts themes (e.g., \code{theme_bw()}), functions (e.g., \code{theme_bw}) and characters themes (e.g., \code{"theme_bw"}). Can be set with \code{options(plot2.theme = "...")}.}
 
+\item{background}{the background colour of the entire plot, can also be \code{NA} to remove it. Only applies when \code{theme} is not empty.}
+
 \item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{\link[ggtext:element_markdown]{"element_markdown"}}, a feature of the \code{ggtext} package}
 
 \item{taxonomy_italic}{a \link{logical} to transform all labels and titles into italics that are in the \code{microorganisms} data set of the \code{AMR} package}
@@ -342,7 +345,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 119 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 120 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)
@@ -375,7 +378,9 @@ iris \%>\%
       
 iris \%>\% 
   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
-        colour = c("white", "red", "black")) # set own colours
+        colour = c("white", "red", "black"), # set own colours
+        background = NA,
+        facet.fill = NA)
   
 admitted_patients
 

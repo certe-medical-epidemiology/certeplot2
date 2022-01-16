@@ -561,8 +561,8 @@ validate_y_scale <- function(values,
                         y.breaks = NULL, y.expand = 0.25, stackedpercent = FALSE,
                         y.age = FALSE, y.percent = FALSE, y.percent_break = 10, y.24h = FALSE, y.limits = NULL,
                         ...) {
-    data_min <- min(0, values) * -(1 + y.expand)
-    data_max <- max(values)
+    data_min <- min(0, values, na.rm = TRUE) * -(1 + y.expand)
+    data_max <- max(values, na.rm = TRUE)
     if (!inherits(values, c("Date", "POSIXt"))) {
       data_max <- data_max * (1 + y.expand)
     }
@@ -577,18 +577,18 @@ validate_y_scale <- function(values,
       y.breaks
     } else if (isTRUE(y.age)) {
       # no decimal numbers, generate max 12 labels
-      function(x, ...) seq(from = min(0, x),
-                           to = min(120, max(x)),
+      function(x, ...) seq(from = min(0, x, na.rm = TRUE),
+                           to = min(120, max(x, na.rm = TRUE), na.rm = TRUE),
                            by = 10)
     } else if (isTRUE(y.24h)) {
-      function(x, ...) seq(from = min(0, x),
-                           to = max(x),
+      function(x, ...) seq(from = min(0, x, na.rm = TRUE),
+                           to = max(x, na.rm = TRUE),
                            by = 24)
     } else if (isTRUE(stackedpercent)) {
       # special case of y.percent, where the y scale is always 0 to 1
       function(x, y_percent_break = y.percent_break, ...) {
-        seq(from = min(0, x),
-            to = max(x),
+        seq(from = min(0, x, na.rm = TRUE),
+            to = max(x, na.rm = TRUE),
             by = y_percent_break)
       }
     } else if (isTRUE(y.percent)) {
@@ -596,29 +596,29 @@ validate_y_scale <- function(values,
       if (is.null(y.limits)) {
         y.limits <- c(data_min, data_max)
       }
-      labels_n <- (max(y.limits) - min(y.limits)) / y.percent_break
+      labels_n <- (max(y.limits, na.rm = TRUE) - min(y.limits, na.rm = TRUE)) / y.percent_break
       if (is.na(labels_n)) {
         labels_n <- 10
       }
       if (as.integer(labels_n) > 10) {
         plot2_warning("Printing at most 10 labels for ", font_blue("y"), ", set with ", font_blue("y.percent_break"))
-        y.percent_break <- round((max(y.limits) - min(y.limits)) / 10, 2)
+        y.percent_break <- round((max(y.limits, na.rm = TRUE) - min(y.limits, na.rm = TRUE)) / 10, 2)
       }
       function(x, y_percent_break = y.percent_break, ...) {
-        if (y_percent_break >= max(x)) {
-          y_percent_break <- max(x) / 10
+        if (y_percent_break >= max(x, na.rm = TRUE)) {
+          y_percent_break <- max(x, na.rm = TRUE) / 10
         }
-        seq(from = min(0, x),
-            to = max(x),
+        seq(from = min(0, x, na.rm = TRUE),
+            to = max(x, na.rm = TRUE),
             by = y_percent_break)
       }
     } else if (isTRUE(stackedpercent)) {
       seq(from = 0,
           to = 1,
           by = 0.1)
-    } else if (all(values %% 1 == 0) && data_max < 5) {
+    } else if (all(values %% 1 == 0, na.rm = TRUE) && data_max < 5) {
       # whole numbers - only strip decimal numbers if total y range is low
-      function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 3))))
+      function(x) unique(floor(pretty(seq(0, (max(x, na.rm = TRUE) + 1) * 3))))
     } else {
       pretty_breaks()
     }
@@ -649,12 +649,12 @@ validate_y_scale <- function(values,
       y.limits
     } else if (isTRUE(y.age)) {
       # so no function, but force a vector
-      c(0, max(values) * (1 + y.expand))
+      c(0, max(values, na.rm = TRUE) * (1 + y.expand))
     } else if (isTRUE(facet.fixed_y)) {
       # so no function, but force a vector
-      c(NA, max(values) * (1 + y.expand))
+      c(NA, max(values, na.rm = TRUE) * (1 + y.expand))
     } else {
-      function(x, y_expand = y.expand, ...) c(min(0, x), max(x))
+      function(x, y_expand = y.expand, ...) c(min(0, x, na.rm = TRUE), max(x, na.rm = TRUE))
     }
   }
   
@@ -664,7 +664,6 @@ validate_y_scale <- function(values,
     } else if (isTRUE(y.age) | isTRUE(stackedpercent)) {
       expansion(mult = c(0, 0))
     } else {
-      # ingestelde percentage toevoegen aan bovenkant bij positieve waarden en aan onderkant bij negatieve waarden
       expansion(mult = c(ifelse(any(values < 0), y.expand, 0),
                          ifelse(any(values > 0), y.expand, 0)))
     }
@@ -756,7 +755,7 @@ validate_category_scale <- function(values,
     if (!is.null(category.breaks)) {
       category.breaks
     } else if (isTRUE(category.percent)) {
-      if (max(c(1, values)) == 1) {
+      if (max(c(1, values), na.rm = TRUE) == 1) {
         seq(0, 1, 0.25)
       } else {
         # print 5 labels nicely
@@ -770,9 +769,9 @@ validate_category_scale <- function(values,
     if (!is.null(category.limits)) {
       category.limits
     } else if (isTRUE(category.percent)) {
-      function(x, ...) c(min(0, x), max(1, x))
+      function(x, ...) c(min(0, x, na.rm = TRUE), max(1, x, na.rm = TRUE))
     } else {
-      function(x, ...) c(min(x), max(x))
+      function(x, ...) c(min(x, na.rm = TRUE), max(x, na.rm = TRUE))
     }
   }
   if (is.numeric(category.expand)) {
@@ -1189,6 +1188,7 @@ validate_titles <- function(text, markdown = TRUE, max_length = NULL) {
 #' @importFrom certestyle colourpicker
 validate_theme <- function(theme,
                            type,
+                           background,
                            markdown,
                            text_factor,
                            family,
@@ -1221,7 +1221,8 @@ validate_theme <- function(theme,
     }
   }
   
-  if (is_empty(theme)) {
+  orginally_empty <- is_empty(theme)
+  if (isTRUE(orginally_empty)) {
     # turn to default ggplot2 theme, so we can at least:
     # - extend all element_text() classes with element_markdown()
     # - add all theme options set as arguments, like x.lbl_angle
@@ -1257,6 +1258,16 @@ validate_theme <- function(theme,
   }
   
   # set other properties to theme, that are set in plot2(...)
+  if (!isTRUE(orginally_empty)) {
+    theme$panel.background <- element_rect(fill = background,
+                                           colour = theme$panel.background$colour,
+                                           size = theme$panel.background$size,
+                                           linetype = theme$panel.background$linetype)
+    theme$plot.background <- element_rect(fill = background,
+                                          colour = theme$plot.background$colour,
+                                          size = theme$plot.background$size,
+                                          linetype = theme$plot.background$linetype)
+  }
   if (isTRUE(horizontal)) {
     if (isTRUE(x.lbl_italic)) {
       theme$axis.text.y$face <- "italic"
@@ -1827,7 +1838,7 @@ format_datalabels <- function(datalabels,
                                      decimal.mark = decimal.mark,
                                      big.mark = big.mark,
                                      round = datalabels.round,
-                                     force.decimals = FALSE))
+                                     force_decimals = FALSE))
       datalabels_out <- mapply(gsub,
                                x = datalabels_out,
                                pattern = "%n",

@@ -97,6 +97,14 @@ test_that("general mapping works", {
                c("y", "x", "fill", "colour"))
 })
 
+test_that("adding mapping works", {
+  p <- iris %>% plot2(Sepal.Length, Sepal.Width)
+  expect_length(p$mapping, 2)
+  p2 <- p %>% add_mapping(shape = Species)
+  expect_length(p2$mapping, 3)
+  expect_s3_class(p2, "gg")
+})
+
 test_that("adding types works", {
   
   expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% get_layers(), 1)
