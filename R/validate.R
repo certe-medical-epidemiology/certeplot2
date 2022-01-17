@@ -596,7 +596,7 @@ validate_y_scale <- function(values,
       if (is.null(y.limits)) {
         y.limits <- c(data_min, data_max)
       }
-      labels_n <- (max(y.limits, na.rm = TRUE) - min(y.limits, na.rm = TRUE)) / y.percent_break
+      labels_n <- (max(y.limits) - min(y.limits)) / y.percent_break
       if (is.na(labels_n)) {
         labels_n <- 10
       }
