@@ -18,7 +18,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.9</span>
       </span>
     </div>
 
@@ -144,6 +144,7 @@ See plot2-methods for all implemented methods for different object classes."><me
   y.remove <span class="op">=</span> <span class="cn">FALSE</span>,
   y.24h <span class="op">=</span> <span class="cn">FALSE</span>,
   y.age <span class="op">=</span> <span class="cn">FALSE</span>,
+  y.scientific <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent_break <span class="op">=</span> <span class="fl">0.1</span>,
   y.breaks <span class="op">=</span> <span class="cn">NULL</span>,
@@ -301,10 +302,12 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the y labels and breaks should be formatted as 24-hour sequences</p></dd>
 <dt>y.age</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the y labels and breaks should be formatted as ages in years</p></dd>
+<dt>y.scientific</dt>
+<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the y labels should be formatted in scientific notation, using <code><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/format2.html" class="external-link">format2_scientific()</a></code></p></dd>
 <dt>y.percent</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the y labels should be formatted as percentages</p></dd>
 <dt>y.percent_break</dt>
-<dd><p>number of percentages on which the y axis should have breaks</p></dd>
+<dd><p>a value on which the y axis should have breaks</p></dd>
 <dt>y.breaks</dt>
 <dd><p>a breaks function or numeric vector to use for the y axis</p></dd>
 <dt>y.limits</dt>
@@ -416,7 +419,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <li><p>Labels with data values can easily be printed and are automatically determined</p></li>
 </ul></li>
 <li><p>Support for any <code>ggplot2</code> extension based on <code><a href="https://ggplot2.tidyverse.org/reference/fortify.html" class="external-link">ggplot2::fortify()</a></code></p></li>
-</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 120 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
+</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 121 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
     </div>
 
     <div id="ref-examples">

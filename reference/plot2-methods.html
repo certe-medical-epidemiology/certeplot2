@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.9</span>
       </span>
     </div>
 
@@ -143,6 +143,7 @@
   y.remove <span class="op">=</span> <span class="cn">FALSE</span>,
   y.24h <span class="op">=</span> <span class="cn">FALSE</span>,
   y.age <span class="op">=</span> <span class="cn">FALSE</span>,
+  y.scientific <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent_break <span class="op">=</span> <span class="fl">0.1</span>,
   y.breaks <span class="op">=</span> <span class="cn">NULL</span>,
@@ -268,6 +269,7 @@
   y.remove <span class="op">=</span> <span class="cn">FALSE</span>,
   y.24h <span class="op">=</span> <span class="cn">FALSE</span>,
   y.age <span class="op">=</span> <span class="cn">FALSE</span>,
+  y.scientific <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent_break <span class="op">=</span> <span class="fl">0.1</span>,
   y.breaks <span class="op">=</span> <span class="cn">NULL</span>,
@@ -393,6 +395,7 @@
   y.remove <span class="op">=</span> <span class="cn">FALSE</span>,
   y.24h <span class="op">=</span> <span class="cn">FALSE</span>,
   y.age <span class="op">=</span> <span class="cn">FALSE</span>,
+  y.scientific <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent_break <span class="op">=</span> <span class="fl">0.1</span>,
   y.breaks <span class="op">=</span> <span class="cn">NULL</span>,
@@ -518,6 +521,7 @@
   y.remove <span class="op">=</span> <span class="cn">FALSE</span>,
   y.24h <span class="op">=</span> <span class="cn">FALSE</span>,
   y.age <span class="op">=</span> <span class="cn">FALSE</span>,
+  y.scientific <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent_break <span class="op">=</span> <span class="fl">0.1</span>,
   y.breaks <span class="op">=</span> <span class="cn">NULL</span>,
@@ -646,6 +650,7 @@
   y.remove <span class="op">=</span> <span class="cn">FALSE</span>,
   y.24h <span class="op">=</span> <span class="cn">FALSE</span>,
   y.age <span class="op">=</span> <span class="cn">FALSE</span>,
+  y.scientific <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent_break <span class="op">=</span> <span class="fl">0.1</span>,
   y.breaks <span class="op">=</span> <span class="cn">NULL</span>,
@@ -771,6 +776,7 @@
   y.remove <span class="op">=</span> <span class="cn">FALSE</span>,
   y.24h <span class="op">=</span> <span class="cn">FALSE</span>,
   y.age <span class="op">=</span> <span class="cn">FALSE</span>,
+  y.scientific <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent_break <span class="op">=</span> <span class="fl">0.1</span>,
   y.breaks <span class="op">=</span> <span class="cn">NULL</span>,
@@ -901,6 +907,7 @@
   y.remove <span class="op">=</span> <span class="cn">FALSE</span>,
   y.24h <span class="op">=</span> <span class="cn">FALSE</span>,
   y.age <span class="op">=</span> <span class="cn">FALSE</span>,
+  y.scientific <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent <span class="op">=</span> <span class="cn">FALSE</span>,
   y.percent_break <span class="op">=</span> <span class="fl">0.1</span>,
   y.breaks <span class="op">=</span> <span class="cn">NULL</span>,
@@ -1088,10 +1095,12 @@
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the y labels and breaks should be formatted as 24-hour sequences</p></dd>
 <dt>y.age</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the y labels and breaks should be formatted as ages in years</p></dd>
+<dt>y.scientific</dt>
+<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the y labels should be formatted in scientific notation, using <code><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/format2.html" class="external-link">format2_scientific()</a></code></p></dd>
 <dt>y.percent</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the y labels should be formatted as percentages</p></dd>
 <dt>y.percent_break</dt>
-<dd><p>number of percentages on which the y axis should have breaks</p></dd>
+<dd><p>a value on which the y axis should have breaks</p></dd>
 <dt>y.breaks</dt>
 <dd><p>a breaks function or numeric vector to use for the y axis</p></dd>
 <dt>y.limits</dt>
