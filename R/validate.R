@@ -538,7 +538,7 @@ validate_x_scale <- function(values,
 #' @importFrom ggplot2 waiver expansion scale_y_continuous
 #' @importFrom cleaner as.percentage
 #' @importFrom scales pretty_breaks
-#' @importFrom certestyle format2
+#' @importFrom certestyle format2 format2_scientific
 validate_y_scale <- function(values,
                              y.24h,
                              y.age,
@@ -638,7 +638,15 @@ validate_y_scale <- function(values,
     } else if (isTRUE(y.percent) | isTRUE(stackedpercent)) {
       function(x, dec = decimal.mark, big = big.mark, ...) format2(as.percentage(x), decimal.mark = dec, big.mark = big)
     } else {
-      function(x, dec = decimal.mark, big = big.mark, ...) format2(x, decimal.mark = dec, big.mark = big)
+      function(x, dec = decimal.mark, big = big.mark, ...) {
+        if (length(unique(format2(x[!is.na(x)]))) < length(format2(x[!is.na(x)])) ||
+            any(format(x) %like% "^(-?[0-9.]+e-?[0-9.]+|0)$")) {
+          # scientific notation or non-unique labels, use expression function from certestyle
+          format2_scientific(x,  decimal.mark = dec, big.mark = big)
+        } else {
+          format2(x, decimal.mark = dec, big.mark = big)
+        }
+      }
     }
   }
   
