@@ -542,12 +542,14 @@ validate_x_scale <- function(values,
 validate_y_scale <- function(values,
                              y.24h,
                              y.age,
+                             y.scientific,
                              y.breaks,
                              y.expand,
                              y.labels,
                              y.limits,
                              y.percent,
                              y.percent_break,
+                             misses_y.percent_break,
                              y.position,
                              y.trans,
                              stackedpercent,
@@ -565,12 +567,6 @@ validate_y_scale <- function(values,
     data_max <- max(values, na.rm = TRUE)
     if (!inherits(values, c("Date", "POSIXt"))) {
       data_max <- data_max * (1 + y.expand)
-    }
-    
-    if (y.percent_break >= 1) {
-      # for `y.percent_break = 25`, probably `y.percent_break = 0.25` was meant
-      y.percent_break <- y.percent_break / 100
-      plot2_message("Assuming ", font_blue("y.percent_break = ", y.percent_break, collapse = ""))
     }
     
     if (!is.null(y.breaks)) {
@@ -600,9 +596,9 @@ validate_y_scale <- function(values,
       if (is.na(labels_n)) {
         labels_n <- 10
       }
-      if (as.integer(labels_n) > 10) {
-        plot2_warning("Printing at most 10 labels for ", font_blue("y"), ", set with ", font_blue("y.percent_break"))
+      if (isTRUE(misses_y.percent_break) && as.integer(labels_n) > 10) {
         y.percent_break <- round((max(y.limits, na.rm = TRUE) - min(y.limits, na.rm = TRUE)) / 10, 2)
+        plot2_message("Using ", font_blue("y.percent_break =", y.percent_break), " to keep a maximum of ~10 labels")
       }
       function(x, y_percent_break = y.percent_break, ...) {
         if (y_percent_break >= max(x, na.rm = TRUE)) {
@@ -626,21 +622,33 @@ validate_y_scale <- function(values,
   
   labels_fn <- function(values, waiver,
                         y.labels,
-                        y.age, y.percent, y.24h, stackedpercent,
+                        y.age, y.scientific, y.percent, y.24h, stackedpercent,
                         decimal.mark, big.mark, ...) {
     if (!is.null(y.labels)) {
       y.labels
+    } else if (isTRUE(y.scientific)) {
+      format2_scientific
     } else if (isTRUE(y.24h)) {
-      function(x, dec = decimal.mark, big = big.mark, ...) paste0(format2(x, decimal.mark = dec, big.mark = big), "u (", x / 24, "d)")
+      function(x, dec = decimal.mark, big = big.mark, ...) 
+        paste0(format2(x, decimal.mark = dec, big.mark = big),
+               ifelse(Sys.getlocale("LC_COLLATE") %like% "nl|dutch", "u (", "h ("),
+               x / 24,
+               "d)")
     } else if (isTRUE(y.age)) {
-      function(x, dec = decimal.mark, big = big.mark, ...) paste0(format2(x, decimal.mark = dec, big.mark = big, round = 0),
-                                                                  ifelse(Sys.getlocale("LC_COLLATE") %like% "nl|dutch", " jr", " yrs"))
+      function(x, dec = decimal.mark, big = big.mark, ...) 
+        paste0(format2(x, decimal.mark = dec, big.mark = big, round = 0),
+               ifelse(Sys.getlocale("LC_COLLATE") %like% "nl|dutch", " jr", " yrs"))
     } else if (isTRUE(y.percent) | isTRUE(stackedpercent)) {
-      function(x, dec = decimal.mark, big = big.mark, ...) format2(as.percentage(x), decimal.mark = dec, big.mark = big)
+      function(x, dec = decimal.mark, big = big.mark, ...) 
+        format2(as.percentage(x), decimal.mark = dec, big.mark = big)
     } else {
       function(x, dec = decimal.mark, big = big.mark, ...) {
+        is_scientific <- any(format(x) %like% "^(-?[0-9.]+e-?[0-9.]+|0)$")
         if (length(unique(format2(x[!is.na(x)]))) < length(format2(x[!is.na(x)])) ||
-            any(format(x) %like% "^(-?[0-9.]+e-?[0-9.]+|0)$")) {
+            is_scientific) {
+          if (is_scientific) {
+            plot2_message("Assuming ", font_blue("y.scientific = TRUE"))
+          }
           # scientific notation or non-unique labels, use expression function from certestyle
           format2_scientific(x,  decimal.mark = dec, big.mark = big)
         } else {
@@ -699,6 +707,7 @@ validate_y_scale <- function(values,
                        y.percent = y.percent,
                        y.age = y.age,
                        y.24h = y.24h,
+                       y.scientific = y.scientific,
                        stackedpercent = stackedpercent,
                        decimal.mark = decimal.mark,
                        big.mark = big.mark,

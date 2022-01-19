@@ -69,8 +69,9 @@
 #' @param y.remove a [logical] to indicate whether the y labels and title should be removed
 #' @param y.24h a [logical] to indicate whether the y labels and breaks should be formatted as 24-hour sequences
 #' @param y.age a [logical] to indicate whether the y labels and breaks should be formatted as ages in years
+#' @param y.scientific a [logical] to indicate whether the y labels should be formatted in scientific notation, using [`format2_scientific()`][certestyle::format2_scientific()]
 #' @param y.percent a [logical] to indicate whether the y labels should be formatted as percentages
-#' @param y.percent_break number of percentages on which the y axis should have breaks
+#' @param y.percent_break a value on which the y axis should have breaks
 #' @param y.breaks a breaks function or numeric vector to use for the y axis
 #' @param y.limits limits to use for the y axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `y.limits = c(0, NA)` to have the scale start at zero.
 #' @param y.labels a labels function or character vector to use for the y axis
@@ -318,6 +319,7 @@ plot2 <- function(.data,
                   y.remove = FALSE,
                   y.24h = FALSE,
                   y.age = FALSE,
+                  y.scientific = FALSE,
                   y.percent = FALSE,
                   y.percent_break = 0.1,
                   y.breaks = NULL,
@@ -446,6 +448,7 @@ plot2_exec <- function(.data,
                        y.remove,
                        y.24h,
                        y.age,
+                       y.scientific,
                        y.percent,
                        y.percent_break,
                        y.breaks,
@@ -534,6 +537,7 @@ plot2_exec <- function(.data,
   misses_caption <- isTRUE(dots$`_misses.caption`)
   misses_zoom <- isTRUE(dots$`_misses.zoom`)
   misses_y.percent <- isTRUE(dots$`_misses.y.percent`)
+  misses_y.percent_break <- isTRUE(dots$`_misses.y.percent_break`)
   
   # no observations, return empty plot ----
   if (NROW(.data) == 0) {
@@ -948,12 +952,14 @@ plot2_exec <- function(.data,
         validate_y_scale(values = get_y(df),
                          y.24h = y.24h,
                          y.age = y.age,
+                         y.scientific = y.scientific,
                          y.breaks = y.breaks,
                          y.expand = y.expand,
                          y.labels = y.labels,
                          y.limits = y.limits,
                          y.percent = y.percent,
                          y.percent_break = y.percent_break,
+                         misses_y.percent_break = misses_y.percent_break,
                          y.position = y.position,
                          y.trans = y.trans,
                          stackedpercent = stackedpercent,

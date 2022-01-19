@@ -224,6 +224,13 @@ test_that("x scale works", {
                c(Sys.Date() - 13 - 1, Sys.Date() + 2 + 1))
 })
 
+test_that("y scale works", {
+  expect_s3_class(plotdata %>% plot2(y = n * 24, y.24h = TRUE), "gg")
+  expect_s3_class(plotdata %>% plot2(y = n * 12, y.age = TRUE), "gg")
+  expect_s3_class(plotdata %>% plot2(y = n * 10, y.scientific = TRUE), "gg")
+  expect_s3_class(plotdata %>% plot2(y.percent = TRUE), "gg")
+})
+
 test_that("category scale works", {
   # set as numeric
   expect_s3_class(plotdata %>% .[1:4, ] %>% plot2(x = x_char, y = 1, category = n), "gg")
