@@ -248,8 +248,9 @@
 #'         
 #' # sf objects (geographic plots, 'simple features') are also supported
 #' if (require("sf")) {
+#' # sf datalabels even support markdown:
 #'   netherlands %>% 
-#'     plot2(datalabels = paste0(province, "\n", round(area_km2)))
+#'     plot2(datalabels = paste0(province, "\n", round(area_km2), " km^2"))
 #' }
 #' 
 #' # Antimicrobial resistance (AMR) data analysis
@@ -1076,7 +1077,8 @@ plot2_exec <- function(.data,
                         family = family,
                         reverse = reverse,
                         horizontal = horizontal,
-                        misses_datalabels = misses_datalabels)
+                        misses_datalabels = misses_datalabels,
+                        markdown = markdown)
   }
   
   # turn plot horizontal if required ----

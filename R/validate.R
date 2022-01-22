@@ -834,11 +834,21 @@ validate_category_scale <- function(values,
                trans = category.trans)
   
   if (length(cols_category) == 1) {
-    # 1 colour, start with white
-    do.call(scale_colour_gradient,
-            args = c(list(low = "white",
-                          high =  cols_category),
-                     args))
+    if (is.na(cols_category) || cols_category %like% "[A-F0-9]{6}00$") {
+      # invisible, so don't return a scale
+      do.call(scale_colour_gradient,
+              args = c(list(low = cols_category,
+                            high =  cols_category),
+                       args))
+    } else {
+      # 1 colour, start with white
+      aest[aest == "fill"] <- "colour_fill"
+      plot2_message("Adding white to the ", font_blue("category"), " scale - set two colours to prevent this.")
+      do.call(scale_colour_gradient,
+              args = c(list(low = "white",
+                            high =  cols_category),
+                       args))
+    }
     
   } else if (length(cols_category) == 2) {
     # 2 colours, low and high
@@ -1043,7 +1053,7 @@ validate_colour <- function(df,
     viridis_colours <- c("viridis", "magma", "inferno", "plasma", "cividis", "rocket", "mako", "turbo")
     colour.bak <- colour
     # this is for validate_category_scale()
-    if (length(colour) == 1) {
+    if (length(colour) == 1 && !is.na(colour)) {
       if (colour == "certe") {
         # divergent Certe scale
         colour <- colourpicker(c("certeblauw0", "certegroen", "certegeel", "certeroze"),
@@ -1064,7 +1074,7 @@ validate_colour <- function(df,
     if (is.null(colour_fill) || identical(colour.bak, colour_fill)) {
       colour_fill <- colour
     } else {
-      if (length(colour_fill) == 1) {
+      if (length(colour_fill) == 1 && !is.na(colour_fill)) {
         if (colour_fill == "certe") {
           # divergent Certe scale
           colour_fill <- colourpicker(c("certeblauw0", "certegroen", "certegeel", "certeroze"),
@@ -1438,7 +1448,7 @@ validate_facet <- function(df,
   }
 }
 
-#' @importFrom ggplot2 geom_text geom_label geom_sf_text geom_sf_label aes position_fill position_stack position_dodge2
+#' @importFrom ggplot2 geom_text geom_label geom_sf_label geom_sf_text aes position_fill position_stack position_dodge2
 #' @importFrom certestyle colourpicker
 set_datalabels <- function(p,
                            df,
@@ -1453,7 +1463,8 @@ set_datalabels <- function(p,
                            family,
                            reverse,
                            horizontal,
-                           misses_datalabels) {
+                           misses_datalabels,
+                           markdown) {
   
   if (isTRUE(misses_datalabels) && nrow(df) > 50) {
     plot2_warning("Omitting printing of ", nrow(df), " datalabels - use ",
@@ -1500,17 +1511,21 @@ set_datalabels <- function(p,
     position_fn <- position_dodge2(width = width, preserve = "single")
   }
   
-  # set label and text functions
-  geom_label_fn <- ifelse(isTRUE(is_sf),  geom_sf_label, geom_label)
-  geom_text_fn <- ifelse(isTRUE(is_sf),  geom_sf_text, geom_text)
-  
+  original_values <- p$data$`_var_datalabels`
+  if (isTRUE(markdown)) {
+    p$data$`_var_datalabels` <- gsub("\n", "<br>", p$data$`_var_datalabels`, fixed = TRUE)
+    p$data$`_var_datalabels` <- gsub(" ^ ", "^", p$data$`_var_datalabels`, fixed = TRUE)
+  }
+ 
   if (!isTRUE(is_sf)) {
     geom_label_fn <- geom_label
     geom_text_fn <- geom_text
     geometry_fix_fn <- NULL
   } else {
     geom_label_fn <- geom_sf_label
-    geom_text_fn <- geom_sf_text
+    geom_text_fn <- ifelse(isTRUE(markdown),
+                           geom_sf_richtext, # manual function in utils.R
+                           geom_sf_text)
     # these functions from the 'sf' package fix invalid geometries
     st_is_valid <- getExportedValue(name = "st_is_valid", ns = asNamespace("sf"))
     st_point <- getExportedValue(name = "st_point", ns = asNamespace("sf"))
@@ -1526,10 +1541,10 @@ set_datalabels <- function(p,
   p <- p +
     # set background label
     do.call(geom_label_fn,
-            args = c(list(mapping = aes(label = ifelse(is.na(`_var_datalabels`),
+            args = c(list(mapping = aes(label = ifelse(is.na(original_values),
                                                        NA_character_,
-                                                       paste0(`_var_datalabels`,
-                                                              strrep("-", ceiling(nchar(`_var_datalabels`) * 0.33))))),
+                                                       paste0(original_values,
+                                                              strrep("-", ceiling(nchar(original_values) * 0.33))))),
                           colour = NA,
                           fill = datalabels.colour_fill,
                           size = datalabels.size,

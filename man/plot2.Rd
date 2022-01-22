@@ -455,8 +455,9 @@ if (require("certestats", warn.conflicts = FALSE)) {
         
 # sf objects (geographic plots, 'simple features') are also supported
 if (require("sf")) {
+# sf datalabels even support markdown:
   netherlands \%>\% 
-    plot2(datalabels = paste0(province, "\n", round(area_km2)))
+    plot2(datalabels = paste0(province, "\n", round(area_km2), " km^2"))
 }
 
 # Antimicrobial resistance (AMR) data analysis
