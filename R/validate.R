@@ -434,8 +434,10 @@ validate_data <- function(df,
                         datalabels.round = dots$datalabels.round,
                         datalabels.format = dots$datalabels.format)
     # sort on x, important when piping plot2()'s after plot2()'s
-    df <- df %>% 
-      arrange(across(`_var_x`))
+    if (has_x(df)) {
+      df <- df %>% 
+        arrange(across(`_var_x`))
+    }
   }
   
   # output
@@ -1198,7 +1200,7 @@ validate_titles <- function(text, markdown = TRUE, max_length = NULL) {
     } else {
       if (isTRUE(markdown)) {
         text <- gsub("\n", "<br>", text, fixed = TRUE)
-        text <- gsub(" ^ ", "^", text, fixed = TRUE)
+        text <- gsub(" *\\^ *", "^", text, perl = TRUE)
       }
       if (is.null(max_length)) {
         return(text)
@@ -1514,7 +1516,7 @@ set_datalabels <- function(p,
   original_values <- p$data$`_var_datalabels`
   if (isTRUE(markdown)) {
     p$data$`_var_datalabels` <- gsub("\n", "<br>", p$data$`_var_datalabels`, fixed = TRUE)
-    p$data$`_var_datalabels` <- gsub(" ^ ", "^", p$data$`_var_datalabels`, fixed = TRUE)
+    p$data$`_var_datalabels` <- gsub(" *\\^ *", "^", p$data$`_var_datalabels`, perl = TRUE)
   }
  
   if (!isTRUE(is_sf)) {
@@ -1567,7 +1569,7 @@ set_datalabels <- function(p,
     do.call(geom_text_fn,
             args = c(list(mapping = aes(label = `_var_datalabels`),
                           colour = datalabels.colour,
-                          size = datalabels.size,
+                          size = datalabels.size * ifelse(isTRUE(markdown) & isTRUE(is_sf), 1.05, 1),
                           family = family,
                           angle = datalabels.angle,
                           na.rm = TRUE),

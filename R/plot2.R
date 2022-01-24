@@ -387,7 +387,7 @@ plot2 <- function(.data,
   UseMethod("plot2")
 }
 
-#' @importFrom dplyr `%>%` mutate vars group_by across summarise select matches
+#' @importFrom dplyr `%>%` mutate vars group_by across summarise select matches ungroup
 #' @importFrom forcats fct_relabel
 #' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete
 #' @importFrom certestyle format2 font_red font_black font_blue
@@ -617,19 +617,24 @@ plot2_exec <- function(.data,
                   sep = sep) %>% 
     # add y
     { function(.data) {
-      if (dots$`_label.y` %like% ".+\\(.*\\)" &&
-          !(length(group_sizes(.data)) == 1 && group_sizes(.data) == nrow(.data))) {
-        # seems like a function with multiple groups, so calculate it over all groups that are available
-        # - this will support e.g. `data %>% plot2(y = n_distinct(id))`
-        .data %>% 
-          group_by(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
-                            matches("_var_(x|category|facet)")))) %>%
-          summarise(`_var_y` = {{ y }},
-                    .groups = "drop")
+      y_precalc <- .data %>%
+        ungroup() %>% 
+        summarise(val = {{ y }})
+      if (length(y_precalc$val) == 1) {
+        # outcome of y is a single calculated value (by using e.g. mean(...) or n_distinct(...)),
+        # so calculate it over all groups that are available
+        # this will support e.g. `data %>% plot2(y = n_distinct(id))`
+        tryCatch(.data %>% 
+                   group_by(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
+                                     matches("_var_(x|category|facet)")))) %>%
+                   summarise(`_var_y` = {{ y }},
+                             .groups = "drop"),
+                 error = function(e) stop(gsub("_var_y", "y", e$message), call. = FALSE))
       } else {
-        # nothing special, just run it as mutate
-        .data %>% 
-          mutate(`_var_y` = {{ y }})
+        # don't recalculate, just add the calculated values to save time
+        tryCatch(.data %>% 
+                   mutate(`_var_y` = y_precalc$val),
+                 error = function(e) stop(gsub("_var_y", "y", e$message), call. = FALSE))
       }}}() %>% 
     mutate(`_var_datalabels` = {{ datalabels }}) %>% 
     # this part will transform the data as needed
@@ -728,6 +733,7 @@ plot2_exec <- function(.data,
   if (type == "geom_sf") {
     df <- df %>% select(-`_var_x`)
   }
+  
   # keep only one of `stacked` and `stackedpercent`
   if (isTRUE(stacked) && isTRUE(stackedpercent)) {
     plot2_warning("Ignoring ", font_blue("stacked = TRUE"), ", since ", font_blue("stackedpercent = TRUE"))
