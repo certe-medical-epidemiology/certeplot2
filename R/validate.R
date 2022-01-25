@@ -1524,7 +1524,9 @@ set_datalabels <- function(p,
     geom_text_fn <- geom_text
     geometry_fix_fn <- NULL
   } else {
-    geom_label_fn <- geom_sf_label
+    geom_label_fn <- ifelse(isTRUE(markdown),
+                            geom_sf_richlabel, # manual function in utils.R
+                            geom_sf_label)
     geom_text_fn <- ifelse(isTRUE(markdown),
                            geom_sf_richtext, # manual function in utils.R
                            geom_sf_text)

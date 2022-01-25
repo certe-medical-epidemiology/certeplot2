@@ -387,7 +387,7 @@ plot2 <- function(.data,
   UseMethod("plot2")
 }
 
-#' @importFrom dplyr `%>%` mutate vars group_by across summarise select matches ungroup
+#' @importFrom dplyr `%>%` mutate vars group_by across summarise select matches
 #' @importFrom forcats fct_relabel
 #' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete
 #' @importFrom certestyle format2 font_red font_black font_blue
@@ -618,9 +618,11 @@ plot2_exec <- function(.data,
     # add y
     { function(.data) {
       y_precalc <- .data %>%
-        ungroup() %>% 
+        # no grouped tibbles, data.frames or sf objects:
+        as.data.frame(stringsAsFactors = FALSE) %>% 
         summarise(val = {{ y }})
-      if (length(y_precalc$val) == 1) {
+      y_precalc <- y_precalc$val # will be NULL if y is missing
+      if (length(y_precalc) == 1) {
         # outcome of y is a single calculated value (by using e.g. mean(...) or n_distinct(...)),
         # so calculate it over all groups that are available
         # this will support e.g. `data %>% plot2(y = n_distinct(id))`
@@ -633,7 +635,7 @@ plot2_exec <- function(.data,
       } else {
         # don't recalculate, just add the calculated values to save time
         tryCatch(.data %>% 
-                   mutate(`_var_y` = y_precalc$val),
+                   mutate(`_var_y` = y_precalc),
                  error = function(e) stop(gsub("_var_y", "y", e$message), call. = FALSE))
       }}}() %>% 
     mutate(`_var_datalabels` = {{ datalabels }}) %>% 

@@ -91,7 +91,14 @@ test_that("S3 implementations work", {
   # type should become boxplot here
   expect_s3_class(admitted_patients %>% plot2(x = hospital, y = certestats::z_score(age)), "gg")
   # this uses the certestyle::format2_scientific function for the y axis
-  expect_s3_class(admitted_patients %>% plot2(format(date, "%Y"), certestats::z_score(age), hospital), "gg")
+  expect_s3_class(admitted_patients %>%
+                    plot2(format(date, "%Y"),
+                          certestats::z_score(age),
+                          hospital,
+                          y.scientific = TRUE),
+                  "gg")
+  expect_s3_class(certegis::geo_provincies %>% plot2(markdown = TRUE), "gg")
+  expect_s3_class(certegis::geo_provincies %>% plot2(markdown = TRUE), "gg")
 })
 
 test_that("general mapping works", {
@@ -99,9 +106,7 @@ test_that("general mapping works", {
                c("y", "x", "fill", "colour"))
   # remove x axis
   expect_s3_class(admitted_patients %>% plot2(x = NULL, y = age), "gg")
-  # numeric x axis manually set
   expect_s3_class(admitted_patients %>% plot2(x = c(1:250), y = age), "gg")
-  # expect_error(admitted_patients %>% plot2(x = c(1:5), y = age))
 })
 
 test_that("adding mapping works", {
