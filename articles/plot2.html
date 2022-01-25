@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.12</span>
       </span>
     </div>
 
@@ -325,12 +325,12 @@
                           stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">character_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y z</span>
-<span class="co">#&gt; 1 a 3.880161 f</span>
-<span class="co">#&gt; 2 b 6.093540 g</span>
-<span class="co">#&gt; 3 c 6.540844 h</span>
-<span class="co">#&gt; 4 d 4.225533 i</span>
-<span class="co">#&gt; 5 e 5.500751 j</span>
-<span class="co">#&gt; 6 a 5.186892 f</span>
+<span class="co">#&gt; 1 a 5.826448 f</span>
+<span class="co">#&gt; 2 b 8.349668 g</span>
+<span class="co">#&gt; 3 c 5.738275 h</span>
+<span class="co">#&gt; 4 d 5.966569 i</span>
+<span class="co">#&gt; 5 e 4.791744 j</span>
+<span class="co">#&gt; 6 a 6.216425 f</span>
 
 <span class="va">numeric_z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span>,
                         y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">5</span><span class="op">)</span>,
@@ -339,12 +339,12 @@
                         stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">numeric_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y        z</span>
-<span class="co">#&gt; 1 a 4.982077 3.573745</span>
-<span class="co">#&gt; 2 b 3.275691 3.878384</span>
-<span class="co">#&gt; 3 c 4.231834 5.044858</span>
-<span class="co">#&gt; 4 d 5.123964 4.480733</span>
-<span class="co">#&gt; 5 e 5.295181 8.129785</span>
-<span class="co">#&gt; 6 a 4.947283 5.922093</span>
+<span class="co">#&gt; 1 a 5.771446 4.229989</span>
+<span class="co">#&gt; 2 b 6.658477 5.184986</span>
+<span class="co">#&gt; 3 c 3.793304 3.535757</span>
+<span class="co">#&gt; 4 d 3.790855 5.020945</span>
+<span class="co">#&gt; 5 e 6.956658 3.604409</span>
+<span class="co">#&gt; 6 a 5.084525 4.866175</span>
 
 <span class="va">character_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>, type <span class="op">=</span> <span class="st">"jitter"</span>,
@@ -362,7 +362,7 @@
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>,
           type <span class="op">=</span> <span class="st">"jitter"</span>,
           colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category.midpoint = 5.18</span><span style="color: #080808;"> (the current </span><span style="color: #0000BB;">category</span><span style="color: #080808;"> scale centre)</span></span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category.midpoint = 5.75</span><span style="color: #080808;"> (the current </span><span style="color: #0000BB;">category</span><span style="color: #080808;"> scale centre)</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-14-1.png" width="576"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">numeric_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  
