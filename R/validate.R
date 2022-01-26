@@ -387,7 +387,8 @@ validate_data <- function(df,
                                   summarise_function = dots$summarise_function,
                                   summarise_fn_name = dots$summarise_fn_name,
                                   horizontal = dots$horizontal,
-                                  drop = dots$x.drop)) %>%
+                                  drop = dots$x.drop,
+                                  direction = "x")) %>%
       arrange(across(`_var_x`))
     df[, get_x_name(df)] <- df$`_var_x` # required to keep sorting after summarising
   }
@@ -399,7 +400,8 @@ validate_data <- function(df,
                                          summarise_function = dots$summarise_function,
                                          summarise_fn_name = dots$summarise_fn_name,
                                          horizontal = dots$horizontal,
-                                         drop = TRUE))
+                                         drop = TRUE,
+                                         direction = "category"))
     df[, get_category_name(df)] <- df$`_var_category` # required to keep sorting after summarising
   }
   if (has_facet(df)) {
@@ -410,7 +412,8 @@ validate_data <- function(df,
                                       summarise_function = dots$summarise_function,
                                       summarise_fn_name = dots$summarise_fn_name,
                                       horizontal = FALSE, # never reversely sort when horizontal
-                                      drop = TRUE))
+                                      drop = TRUE,
+                                      direction = "facet"))
     df[, get_facet_name(df)] <- df$`_var_facet` # required to keep sorting after summarising
   }
   
@@ -1632,7 +1635,8 @@ sort_data <- function(original_values,
                       summarise_function,
                       summarise_fn_name,
                       horizontal,
-                      drop) {
+                      drop,
+                      direction) {
   if (is.null(sort_method) ||
       is.numeric(original_values) ||
       ((isTRUE(sort_method) && is.factor(original_values) && !isTRUE(horizontal)))) {
@@ -1690,14 +1694,14 @@ sort_data <- function(original_values,
   } else if (sort_method %in% c("false", "order", "inorder")) {
     out <- fct_inorder(as.character(original_values))
   } else if (sort_method %in% c("freq-asc", "infreq-asc")) {
-    plot2_message("Applying sorting ", font_blue(paste0("\"", sort_method, "\"")), " using ",
+    plot2_message("Applying ", font_blue(paste0(direction, ".sort = \"", sort_method, "\"")), " using ",
                   font_blue(paste0("summarise_function = ", summarise_fn_name)))
     out <- fct_reorder(.f = as.character(original_values),
                        .x = datapoints,
                        .fun = summarise_function,
                        .desc = FALSE)
   } else if (sort_method %in% c("freq-desc", "infreq-desc")) {
-    plot2_message("Applying sorting ", font_blue(paste0("\"", sort_method, "\"")), " using ",
+    plot2_message("Applying ", font_blue(paste0(direction, ".sort = \"", sort_method, "\"")), " using ",
                   font_blue(paste0("summarise_function = ", summarise_fn_name)))
     out <- fct_reorder(.f = as.character(original_values),
                        .x = datapoints,
