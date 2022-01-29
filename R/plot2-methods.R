@@ -1266,7 +1266,6 @@ plot2.data.frame <- function(.data,
                              ...) {
   
   if (isTRUE(is_grouped_df(.data))) {
-    plot2_warning("Groups are not supported at the moment and were ignored")
     .data <- ungroup(.data)
   }
   

@@ -33,7 +33,7 @@
 #' 
 #' * A shortcut. There is currently one supported shortcut: `"barpercent"`, which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
 #' 
-#' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and `"col"` otherwise. Use `type = "blank"` or `type = "geom_blank"` to *not* print a geom.
+#' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* print a geom.
 #' @param x.title text to show on the x axis
 #' @param y.title text to show on the y axis
 #' @param category.title title of the legend (if `legend.title` is not set), defaults to `TRUE` if the legend items are numeric.

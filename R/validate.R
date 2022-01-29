@@ -45,10 +45,10 @@ validate_type <- function(type, df = NULL) {
         plot2_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL),
                       font_black(" since all groups have size >= 3"))
       } else {
-        # otherwise: column
-        type <- "geom_col"
+        # otherwise: the default
+        type <- getOption("plot2.default_type", "geom_col")
         plot2_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL), 
-                      font_black(" as default"))
+                      font_black(" as the default"))
       }
     }
   } else if (type_unset && is.null(df)) {
@@ -375,42 +375,49 @@ validate_data <- function(df,
   }
   
   # apply sortings
+  df.bak <- df
   if (has_x(df) && type != "geom_sf") {
     if (is.null(dots$x.sort) && inherits(get_x(df), c("character", "factor"))) {
       dots$x.sort <- TRUE
     }
     
     df <- df %>% 
-      mutate(`_var_x` = sort_data(original_values = get_x(df),
+      mutate(`_var_x` = sort_data(values = get_x(df),
+                                  original_values = get_x(df.bak),
                                   sort_method = dots$x.sort,
                                   datapoints = get_y(df),
                                   summarise_function = dots$summarise_function,
                                   summarise_fn_name = dots$summarise_fn_name,
                                   horizontal = dots$horizontal,
-                                  drop = dots$x.drop)) %>%
+                                  drop = dots$x.drop,
+                                  argument = "x.sort")) %>%
       arrange(across(`_var_x`))
     df[, get_x_name(df)] <- df$`_var_x` # required to keep sorting after summarising
   }
   if (has_category(df)) {
     df <- df %>% 
-      mutate(`_var_category` = sort_data(original_values = get_category(df),
+      mutate(`_var_category` = sort_data(values = get_category(df),
+                                         original_values = get_category(df.bak),
                                          sort_method = dots$category.sort,
                                          datapoints = get_y(df),
                                          summarise_function = dots$summarise_function,
                                          summarise_fn_name = dots$summarise_fn_name,
                                          horizontal = dots$horizontal,
-                                         drop = TRUE))
+                                         drop = TRUE,
+                                         argument = "category.sort"))
     df[, get_category_name(df)] <- df$`_var_category` # required to keep sorting after summarising
   }
   if (has_facet(df)) {
     df <- df %>% 
-      mutate(`_var_facet` = sort_data(original_values = get_facet(df),
+      mutate(`_var_facet` = sort_data(values = get_facet(df),
+                                      original_values = get_facet(df.bak),
                                       sort_method = dots$facet.sort,
                                       datapoints = get_y(df),
                                       summarise_function = dots$summarise_function,
                                       summarise_fn_name = dots$summarise_fn_name,
                                       horizontal = FALSE, # never reversely sort when horizontal
-                                      drop = TRUE))
+                                      drop = TRUE,
+                                      argument = "facet.sort"))
     df[, get_facet_name(df)] <- df$`_var_facet` # required to keep sorting after summarising
   }
   
@@ -1609,6 +1616,7 @@ validate_sorting <- function(sort_method, horizontal) {
   sort_method <- gsub("[^a-z-]+", "", sort_method)
   sort_method <- gsub("true", "asc", sort_method)      # when sort_method = TRUE
   sort_method <- gsub("false", "inorder", sort_method) # when sort_method = FALSE
+  sort_method <- gsub("^order", "inorder", sort_method)
   sort_method <- gsub("asc[a-z]+", "asc", sort_method)
   sort_method <- gsub("desc[a-z]+", "desc", sort_method)
   if (sort_method %like% "freq$") {
@@ -1626,18 +1634,20 @@ validate_sorting <- function(sort_method, horizontal) {
 #' @importFrom forcats fct_inorder fct_reorder
 #' @importFrom stringr str_sort
 #' @importFrom certestyle font_blue
-sort_data <- function(original_values,
+sort_data <- function(values,
+                      original_values, # required for sort = FALSE, should be according to original values
                       sort_method,
                       datapoints,
                       summarise_function,
                       summarise_fn_name,
                       horizontal,
-                      drop) {
+                      drop,
+                      argument) {
   if (is.null(sort_method) ||
-      is.numeric(original_values) ||
-      ((isTRUE(sort_method) && is.factor(original_values) && !isTRUE(horizontal)))) {
+      is.numeric(values) ||
+      ((isTRUE(sort_method) && is.factor(values) && !isTRUE(horizontal)))) {
     # don't sort at all
-    return(original_values)
+    return(values)
   }
   
   # set up sort_method
@@ -1645,66 +1655,67 @@ sort_data <- function(original_values,
   sort_method <- validate_sorting(sort_method = sort_method, horizontal = horizontal)
   
   # factors get a special treatment - they are sorted on their levels
-  if (is.factor(original_values)) {
+  if (is.factor(values)) {
     if (sort_method %in% c("alpha", "alpha-asc", "asc")) {
       if (isTRUE(horizontal)) {
-        lvls <- rev(levels(original_values))
+        lvls <- rev(levels(values))
       } else {
-        lvls <- levels(original_values)
+        lvls <- levels(values)
       }
-      return(factor(as.character(original_values),
+      return(factor(as.character(values),
                     levels = lvls,
-                    ordered = is.ordered(original_values)))
+                    ordered = is.ordered(values)))
     } else if (sort_method %in% c("alpha-desc", "desc")) {
       if (isTRUE(horizontal)) {
-        lvls <- levels(original_values)
+        lvls <- levels(values)
       } else {
-        lvls <- rev(levels(original_values))
+        lvls <- rev(levels(values))
       }
-      return(factor(as.character(original_values),
+      return(factor(as.character(values),
                     levels = lvls,
-                    ordered = is.ordered(original_values)))
+                    ordered = is.ordered(values)))
     }
   }
   if (!isTRUE(drop)) {
-    levels <- levels(original_values)
+    levels <- levels(values)
   }
   
-  if (!is.numeric(original_values)) {
+  if (!is.numeric(values)) {
     # force characters for anything else than numbers
-    original_values <- as.character(original_values)
+    values <- as.character(values)
   }
   
   # start the sorting
-  numeric_sort <- any(original_values %like% "[0-9]", na.rm = TRUE)
+  numeric_sort <- any(values %like% "[0-9]", na.rm = TRUE)
   if (sort_method %in% c("alpha", "alpha-asc", "asc")) {
     # alphabetical, or ascending
-    out <- factor(original_values,
-                  levels = str_sort(unique(original_values),
+    out <- factor(values,
+                  levels = str_sort(unique(values),
                                     numeric = numeric_sort))
   } else if (sort_method %in% c("alpha-desc", "desc")) {
-    out <- factor(original_values,
-                  levels = str_sort(unique(original_values),
+    out <- factor(values,
+                  levels = str_sort(unique(values),
                                     numeric = numeric_sort,
                                     decreasing = TRUE))
-  } else if (sort_method %in% c("false", "order", "inorder")) {
-    out <- fct_inorder(as.character(original_values))
+  } else if (sort_method == "inorder") {
+    out <- factor(as.character(values),
+                  levels = levels(fct_inorder(as.character(original_values))))
   } else if (sort_method %in% c("freq-asc", "infreq-asc")) {
-    plot2_message("Applying sorting ", font_blue(paste0("\"", sort_method, "\"")), " using ",
+    plot2_message("Applying ", font_blue(paste0(argument, " = \"", sort_method, "\"")), " using ",
                   font_blue(paste0("summarise_function = ", summarise_fn_name)))
-    out <- fct_reorder(.f = as.character(original_values),
+    out <- fct_reorder(.f = as.character(values),
                        .x = datapoints,
                        .fun = summarise_function,
                        .desc = FALSE)
   } else if (sort_method %in% c("freq-desc", "infreq-desc")) {
-    plot2_message("Applying sorting ", font_blue(paste0("\"", sort_method, "\"")), " using ",
+    plot2_message("Applying ", font_blue(paste0(argument, " = \"", sort_method, "\"")), " using ",
                   font_blue(paste0("summarise_function = ", summarise_fn_name)))
-    out <- fct_reorder(.f = as.character(original_values),
+    out <- fct_reorder(.f = as.character(values),
                        .x = datapoints,
                        .fun = summarise_function,
                        .desc = TRUE)
   } else {
-    stop("invalid sorting option: '", sort_method.bak, "'")
+    stop("invalid sorting option: '", sort_method.bak, "'", call. = FALSE)
   }
   
   if (!isTRUE(drop) && !is.null(levels)) {
