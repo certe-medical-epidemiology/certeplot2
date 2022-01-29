@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.13</span>
       </span>
     </div>
 
@@ -989,7 +989,7 @@
 <dt>type</dt>
 <dd><p>type of visualisation to use. This can be:</p><ul><li><p>A <code>ggplot2</code> geom name, all geoms are supported (including <code><a href="https://ggplot2.tidyverse.org/reference/geom_blank.html" class="external-link">geom_blank()</a></code>). Full function names can be used (e.g., <code>"geom_histogram"</code>), but they can also be abbreviated (e.g., <code>"h"</code>, <code>"hist"</code>). These geoms can be abbreviated by their first character: area (<code>"a"</code>), boxplot (<code>"b"</code>), column (<code>"c"</code>), histogram (<code>"h"</code>), jitter (<code>"j"</code>), line (<code>"l"</code>), point (<code>"p"</code>), ribbon (<code>"r"</code>), violin (<code>"v"</code>). <strong>Please note:</strong> in <code>ggplot2</code>, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, <code>type = "bar"</code> will set <code>type = "col"</code> and <code>horizontal = TRUE</code>.</p></li>
 <li><p>A shortcut. There is currently one supported shortcut: <code>"barpercent"</code>, which will set <code>type = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc"</code> and <code>datalabels.format = "%n (%p)"</code>.</p></li>
-<li><p>Left blank. In this case, the type will be determined automatically: <code>"boxplot"</code> if there is no X axis or if the length of unique values per X axis item is at least 3, <code>"point"</code> if both the Y and X axes are numeric, and <code>"col"</code> otherwise. Use <code>type = "blank"</code> or <code>type = "geom_blank"</code> to <em>not</em> print a geom.</p></li>
+<li><p>Left blank. In this case, the type will be determined automatically: <code>"boxplot"</code> if there is no X axis or if the length of unique values per X axis item is at least 3, <code>"point"</code> if both the Y and X axes are numeric, and the <a href="https://rdrr.io/r/base/options.html" class="external-link">option</a> <code>"plot2.default_type"</code> otherwise (which defaults to <code>"col"</code>). Use <code>type = "blank"</code> or <code>type = "geom_blank"</code> to <em>not</em> print a geom.</p></li>
 </ul></dd>
 <dt>x.title</dt>
 <dd><p>text to show on the x axis</p></dd>
