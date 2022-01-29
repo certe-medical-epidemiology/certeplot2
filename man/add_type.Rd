@@ -11,8 +11,8 @@ add_type(plot, type = NULL, mapping = aes(), ...)
 
 add_line(
   plot,
-  y,
-  x,
+  y = NULL,
+  x = NULL,
   group = 1,
   colour = "certeblauw",
   size,
@@ -23,8 +23,8 @@ add_line(
 
 add_col(
   plot,
-  y,
-  x,
+  y = NULL,
+  x = NULL,
   colour = "certeblauw",
   colour_fill = "certeblauw",
   width,
