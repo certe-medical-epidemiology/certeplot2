@@ -87,7 +87,7 @@ add_type <- function(plot, type = NULL, mapping = aes(), ...) {
 #' @importFrom ggplot2 aes_string
 #' @importFrom certestyle colourpicker
 #' @export
-add_line <- function(plot, y, x, group = 1, colour = "certeblauw", size, linetype, ..., inherit.aes = TRUE) {
+add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw", size, linetype, ..., inherit.aes = TRUE) {
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
   }
@@ -143,7 +143,7 @@ add_line <- function(plot, y, x, group = 1, colour = "certeblauw", size, linetyp
 #' @importFrom ggplot2 aes_string
 #' @importFrom certestyle colourpicker
 #' @export
-add_col <- function(plot, y, x, colour = "certeblauw", colour_fill = "certeblauw", width, ..., inherit.aes = TRUE) {
+add_col <- function(plot, y = NULL, x = NULL, colour = "certeblauw", colour_fill = "certeblauw", width, ..., inherit.aes = TRUE) {
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
   }
