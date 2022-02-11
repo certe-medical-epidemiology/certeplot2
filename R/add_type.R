@@ -23,7 +23,7 @@
 #' @param plot a `ggplot2` plot
 #' @param type a `ggplot2` geom name, all geoms are supported. Full function names can be used (e.g., `"geom_line"`), but they can also be abbreviated (e.g., `"l"`, `"line"`). These geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), violin (`"v"`).
 #' @param mapping a mapping created with [ggplot2::aes()] to pass on to the geom
-#' @param group,linetype,size,width,... arguments passed on to the geom
+#' @param group,linetype,shape,size,width,... arguments passed on to the geom
 #' @importFrom ggplot2 is.ggplot aes
 #' @rdname add_type
 #' @export
@@ -134,6 +134,59 @@ add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw",
   # add the geom
   add_type(plot = plot,
            type = "line",
+           mapping = mapping,
+           params)
+}
+
+#' @rdname add_type
+#' @export
+add_point <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw", size, shape, ..., inherit.aes = TRUE) {
+  if (!is.ggplot(plot)) {
+    stop("`plot` must be a ggplot2 model.", call. = FALSE)
+  }
+  label_line_y <- deparse(substitute(y))
+  label_line_x <- deparse(substitute(x))
+  
+  df <- plot$data %>% 
+    mutate(`_var_line_y` = {{ y }},
+           `_var_line_x` = {{ x }})
+  colnames(df)[colnames(df) == "_var_line_y"] <- label_line_y
+  colnames(df)[colnames(df) == "_var_line_x"] <- label_line_x
+  
+  # build mapping
+  if (missing(group) && !"group" %in% names(plot$mapping) && "colour" %in% names(plot$mapping)) {
+    # be sure to add the group as the category
+    mapping <- aes_string(group = gsub("^~", "", deparse(plot$mapping$colour)))
+  } else if (!missing(group) || !isTRUE(inherit.aes) || !"group" %in% names(plot$mapping)) {
+    mapping <- aes_string(group = group)
+  } else {
+    mapping <- aes()
+  }
+  if (label_line_y != "") {
+    mapping <- utils::modifyList(mapping, aes_string(y = label_line_y))
+  }
+  if (label_line_x != "") {
+    mapping <- utils::modifyList(mapping, aes_string(x = label_line_x))
+  }
+  
+  # build additional parameters
+  params <- list(inherit.aes = inherit.aes)
+  if (!missing(colour) || !isTRUE(inherit.aes) || !"colour" %in% names(plot$mapping)) {
+    params <- c(params, list(colour = colourpicker(colour)))
+  }
+  if (!missing(size)) {
+    params <- c(params, list(size = size))
+  }
+  if (!missing(shape)) {
+    params <- c(params, list(shape = shape))
+  }
+  if (length(list(...)) > 0) {
+    params <- c(params, list(...))
+  }
+  
+  # add the geom
+  add_type(plot = plot,
+           type = "point",
            mapping = mapping,
            params)
 }

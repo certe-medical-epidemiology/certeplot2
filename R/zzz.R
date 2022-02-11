@@ -17,5 +17,15 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-#' @keywords internal
-"_PACKAGE"
+#' @importFrom showtext showtext_begin
+.onLoad <- function(libname, pkgname) {
+  # this will support any foreign font in e.g. R Markdown
+  # sysfonts::font_add() can be used to add font files to R
+  try(showtext_begin(), silent = TRUE)
+}
+
+#' @importFrom showtext showtext_end
+.onUnload <- function(libpath) {
+  # this will close support any foreign font in e.g. R Markdown
+  try(showtext_end(), silent = TRUE)
+}

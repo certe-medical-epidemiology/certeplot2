@@ -3,6 +3,7 @@
 \name{add_type}
 \alias{add_type}
 \alias{add_line}
+\alias{add_point}
 \alias{add_col}
 \alias{add_sf}
 \title{Add Plot Element}
@@ -17,6 +18,18 @@ add_line(
   colour = "certeblauw",
   size,
   linetype,
+  ...,
+  inherit.aes = TRUE
+)
+
+add_point(
+  plot,
+  y = NULL,
+  x = NULL,
+  group = 1,
+  colour = "certeblauw",
+  size,
+  shape,
   ...,
   inherit.aes = TRUE
 )
@@ -53,7 +66,7 @@ add_sf(
 
 \item{x, y}{aesthetic arguments}
 
-\item{group, linetype, size, width, ...}{arguments passed on to the geom}
+\item{group, linetype, shape, size, width, ...}{arguments passed on to the geom}
 
 \item{colour, colour_fill}{colour of the line or column, will be evaluated with \code{\link[certestyle:colourpicker]{certestyle::colourpicker()}}. If \code{colour_fill} is missing but \code{colour} is given, \code{colour_fill} will inherit the colour set with \code{colour}.}
 

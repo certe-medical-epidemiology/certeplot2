@@ -473,6 +473,9 @@ validate_x_scale <- function(values,
   if (isTRUE(zoom)) {
     x.limits <- c(NA_real_, NA_real_)
   }
+  if (is.null(x.trans)) {
+    x.trans <- "identity"
+  }
   if (!is.null(x.limits)) {
     if (length(x.limits) != 2) {
       stop("`x.limits` must be of length 2", call. = FALSE)
@@ -533,6 +536,10 @@ validate_x_scale <- function(values,
       if (is.null(x.limits)) {
         x.limits <- c(ifelse(min(values) < 0, NA_real_, 0), NA)
       }
+      if (x.trans != "identity") {
+        # some transformations, such as log, do not allow 0
+        x.limits[x.limits == 0] <- NA_real_
+      }
       scale_x_continuous(labels = function(x, ...) format2(x, decimal.mark = decimal.mark, big.mark = big.mark),
                          breaks = if (!is.null(x.breaks)) x.breaks else waiver(),
                          n.breaks = x.breaks_n,
@@ -567,7 +574,9 @@ validate_y_scale <- function(values,
                              big.mark,
                              zoom,
                              ...) {
-  
+  if (is.null(y.trans)) {
+    y.trans <- "identity"
+  }
   breaks_fn <- function(values, waiver,
                         y.breaks = NULL, y.expand = 0.25, stackedpercent = FALSE,
                         y.age = FALSE, y.percent = FALSE, y.percent_break = 10, y.24h = FALSE, y.limits = NULL,
@@ -668,18 +677,24 @@ validate_y_scale <- function(values,
   }
   
   limits_fn <- function(values, y.limits,
-                        y.expand, facet.fixed_y, y.age,
+                        y.expand, facet.fixed_y, y.age, y.trans,
                         ...) {
+    min_value <- 0
+    if (y.trans != "identity") {
+      # in certain transformations, such as log, 0 is not allowed
+      min_value <- NA_real_
+    }
     if (!is.null(y.limits)) {
+      y.limits[y.limits == 0] <- min_value
       y.limits
     } else if (isTRUE(y.age)) {
       # so no function, but force a vector
-      c(0, max(values, na.rm = TRUE) * (1 + y.expand))
+      c(min_value, max(values, na.rm = TRUE) * (1 + y.expand))
     } else if (isTRUE(facet.fixed_y)) {
       # so no function, but force a vector
-      c(NA, max(values, na.rm = TRUE) * (1 + y.expand))
+      c(NA_real_, max(values, na.rm = TRUE) * (1 + y.expand))
     } else {
-      function(x, y_expand = y.expand, ...) c(min(0, x, na.rm = TRUE), max(x, na.rm = TRUE))
+      function(x, y_expand = y.expand, min_val = min_value, ...) c(min(min_val, x, na.rm = TRUE), max(x, na.rm = TRUE))
     }
   }
   
@@ -697,7 +712,6 @@ validate_y_scale <- function(values,
   if (isTRUE(zoom)) {
     y.limits <- c(NA_real_, NA_real_)
   }
-  
   scale_y_continuous(
     breaks = breaks_fn(values = values,
                        waiver = waiver(),
@@ -726,6 +740,7 @@ validate_y_scale <- function(values,
                        y.expand = y.expand,
                        facet.fixed_y = facet.fixed_y,
                        y.age = y.age,
+                       y.trans = y.trans,
                        ...),
     expand = expand_fn(values = values,
                        y.expand = y.expand,

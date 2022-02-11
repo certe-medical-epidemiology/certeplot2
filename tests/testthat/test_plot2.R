@@ -56,6 +56,8 @@ test_that("general types work", {
                   "gg")
   expect_s3_class(admitted_patients %>% plot2(hospital, n(), where(is.character)), "gg")
   expect_s3_class(admitted_patients %>% plot2(hospital, n(), c(gender, ward)), "gg")
+  
+  expect_s3_class(plotdata %>% plot2(y.trans = "log2"), "gg")
 })
 
 test_that("na.rm works", {
@@ -121,6 +123,7 @@ test_that("adding types works", {
   
   expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% get_layers(), 1)
   expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% add_line() %>% get_layers(), 2)
+  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% add_point(shape = 4, size = 5) %>% get_layers(), 2)
   expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% add_col() %>% get_layers(), 2)
   expect_error(mtcars %>% plot2(mpg, hp, cyl) %>% add_type(type = NULL))
   
@@ -225,6 +228,7 @@ test_that("x scale works", {
   expect_s3_class(plotdata %>% plot2(n, type = "jitter"), "gg")
   expect_s3_class(plotdata %>% plot2(type = "line"), "gg")
   expect_s3_class(plotdata %>% plot2(type = "barpercent"), "gg")
+  expect_s3_class(plotdata %>% plot2(x.trans = "log2"), "gg")
   
   p <- plotdata %>%
     plot2(x = x_date,
