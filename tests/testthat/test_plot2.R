@@ -347,17 +347,17 @@ test_that("messaging works", {
 })
 
 test_that("date labels work", {
-  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 30 - 1)),
+  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 30 - 1)),
                list(breaks = "1 day", labels = "d mmm"))
-  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 92 - 1)),
+  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 92 - 1)),
                list(breaks = "4 days", labels = "d mmm"))
-  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 183 - 1)),
+  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 183 - 1)),
                list(breaks = "2 weeks", labels = "d mmm"))
-  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 365 - 1)),
+  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 365 - 1)),
                list(breaks = "1 month", labels = "mmmm yyyy"))
-  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 730 - 1)),
+  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 730 - 1)),
                list(breaks = "3 months", labels = "mmm yyyy"))
-  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 1095 - 1)),
+  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 1095 - 1)),
                list(breaks = "6 months", labels = "mmm yyyy"))
   expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 2556 - 1)),
                list(breaks = "1 year", labels = "mmm yyyy"))

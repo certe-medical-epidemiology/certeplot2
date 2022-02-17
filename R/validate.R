@@ -582,7 +582,7 @@ validate_y_scale <- function(values,
                         y.breaks, y.n_breaks, y.expand, stackedpercent,
                         y.age, y.percent, y.percent_break, y.24h, y.limits,
                         ...) {
-    data_min <- min(0, values, na.rm = TRUE) * -(1 + y.expand)
+    data_min <- min(0, values, na.rm = TRUE) * - (1 + y.expand)
     data_max <- max(values, na.rm = TRUE)
     if (!inherits(values, c("Date", "POSIXt"))) {
       data_max <- data_max * (1 + y.expand)
@@ -876,7 +876,9 @@ validate_category_scale <- function(values,
     } else {
       # 1 colour, start with white
       aest[aest == "fill"] <- "colour_fill"
-      plot2_message("Adding white to the ", font_blue("category"), " scale - set two colours to prevent this.")
+      plot2_message("Adding white to the ", font_blue("category"),
+                    " scale - set two colours to ", font_blue("colour_fill"),
+                    " to prevent this.")
       do.call(scale_colour_gradient,
               args = c(list(low = "white",
                             high =  cols_category),

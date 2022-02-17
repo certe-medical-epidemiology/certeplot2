@@ -263,6 +263,7 @@
 #'     bug_drug_combinations(FUN = mo_gramstain) %>%
 #'     plot2(y.percent_break = 0.25)
 #' }
+#' @importFrom ggplot2 ggplot labs
 plot2 <- function(.data,
                   x = NULL,
                   y = NULL,
@@ -289,7 +290,7 @@ plot2 <- function(.data,
                   facet.size = 10,
                   facet.margin = 8,
                   facet.repeat_lbls_x = TRUE,
-                  facet.repeat_lbls_y = FALSE,
+                  facet.repeat_lbls_y = TRUE,
                   facet.fixed_y = FALSE,
                   facet.drop = FALSE,
                   facet.nrow = NULL,
@@ -386,8 +387,47 @@ plot2 <- function(.data,
                   markdown = TRUE,
                   taxonomy_italic = FALSE,
                   ...) {
+  
+  # no observations, return empty plot immediately
+  if (NROW(.data) == 0) {
+    plot2_warning("No observations, returning an empty plot")
+    p <- ggplot() +
+      validate_theme(theme = theme,
+                     type = "",
+                     background = background,
+                     markdown = markdown,
+                     text_factor = text_factor,
+                     family = family,
+                     horizontal = horizontal,
+                     x.remove = x.remove,
+                     x.lbl_angle = x.lbl_angle,
+                     x.lbl_align = x.lbl_align,
+                     x.lbl_italic = x.lbl_italic,
+                     facet.fill = facet.fill,
+                     facet.bold = facet.bold,
+                     facet.italic = facet.italic,
+                     facet.size = facet.size,
+                     facet.margin = facet.margin,
+                     legend.italic = legend.italic,
+                     title.colour = title.colour,
+                     subtitle.colour = subtitle.colour)
+    if (!missing(x.title)) p <- p + labs(x = validate_titles(x.title))
+    if (!missing(y.title)) p <- p + labs(y = validate_titles(y.title))
+    if (!missing(title)) p <- p + labs(title = validate_titles(title, markdown = markdown, max_length = title.linelength))
+    if (!missing(subtitle)) p <- p + labs(subtitle = validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
+    if (!missing(tag)) p <- p + labs(tag = validate_titles(tag))
+    if (!missing(caption)) p <- p + labs(caption = validate_titles(caption))
+    if (isTRUE(print)) {
+      print(p)
+      return(invisible())
+    } else {
+      return(p)
+    }
+  }
+  
   if (!inherits(.data, "sf") &&
-      isTRUE(attributes(.data)$sf_column %in% colnames(.data)) &&
+      ((isTRUE("geometry" %in% colnames(.data)) && suppressWarnings(inherits(.data$geometry, "sfc")))
+       || isTRUE(attributes(.data)$sf_column %in% colnames(.data))) &&
       "sf" %in% rownames(utils::installed.packages())) {
     # force calling plot2.sf() and its arguments, data will be transformed in that function:
     UseMethod("plot2", object = structure(data.frame(), class = "sf"))
@@ -549,39 +589,7 @@ plot2_exec <- function(.data,
   misses_zoom <- isTRUE(dots$`_misses.zoom`)
   misses_y.percent <- isTRUE(dots$`_misses.y.percent`)
   misses_y.percent_break <- isTRUE(dots$`_misses.y.percent_break`)
-  
-  # no observations, return empty plot ----
-  if (NROW(.data) == 0) {
-    plot2_warning("No observations, returning an empty plot")
-    p <- ggplot() +
-      validate_theme(theme = theme,
-                     type = "",
-                     background = background,
-                     markdown = markdown,
-                     text_factor = text_factor,
-                     family = family,
-                     horizontal = horizontal,
-                     x.remove = x.remove,
-                     x.lbl_angle = x.lbl_angle,
-                     x.lbl_align = x.lbl_align,
-                     x.lbl_italic = x.lbl_italic,
-                     facet.fill = facet.fill,
-                     facet.bold = facet.bold,
-                     facet.italic = facet.italic,
-                     facet.size = facet.size,
-                     facet.margin = facet.margin,
-                     legend.italic = legend.italic,
-                     title.colour = title.colour,
-                     subtitle.colour = subtitle.colour)
-    if (!misses_x.title) p <- p + labs(x = validate_titles(x.title))
-    if (!misses_y.title) p <- p + labs(y = validate_titles(y.title))
-    if (!misses_title) p <- p + labs(title = validate_titles(title, markdown = markdown, max_length = title.linelength))
-    if (!misses_subtitle) p <- p + labs(subtitle = validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
-    if (!misses_tag) p <- p + labs(tag = validate_titles(tag))
-    if (!misses_caption) p <- p + labs(caption = validate_titles(caption))
-    return(p)
-  }
-  
+ 
   # prevalidate types for special types ----
   if (!is_empty(type) && !is.character(type)) {
     stop("'type' must be a character", call. = FALSE)
@@ -787,9 +795,7 @@ plot2_exec <- function(.data,
   # generate mapping / aesthetics ----
   # IMPORTANT: in this part, the mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
   # this is done for convenience - this is restored before returning the `ggplot` object in the end
-  if (type == "geom_sf" && !is.null(dots$`_sf.column`)) {
-    mapping <- aes_string(geometry = dots$`_sf.column`)
-  } else if (!geom_is_continuous_x(type)) {
+  if (type != "geom_sf" && !geom_is_continuous_x(type)) {
     # histograms etc. have a continuous x variable, so only set y if not a histogram-like
     mapping <- aes(y = `_var_y`, group = 1)
   } else {

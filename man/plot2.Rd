@@ -31,7 +31,7 @@ plot2(
   facet.size = 10,
   facet.margin = 8,
   facet.repeat_lbls_x = TRUE,
-  facet.repeat_lbls_y = FALSE,
+  facet.repeat_lbls_y = TRUE,
   facet.fixed_y = FALSE,
   facet.drop = FALSE,
   facet.nrow = NULL,
