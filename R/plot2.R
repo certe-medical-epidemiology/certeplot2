@@ -60,7 +60,7 @@
 #' @param x.remove [logical] to indicate whether the x labels and title should be removed
 #' @param x.position position of the x axis, defaults to `"bottom"`
 #' @param x.breaks breaks function or numeric vector to use for the x axis
-#' @param x.breaks_n number of breaks to use for the x axis
+#' @param x.n_breaks number of breaks to use for the x axis
 #' @param x.trans transformation function to use for the x axis, e.g. `"log2"`
 #' @param x.expand expansion to use for the x axis, can be length 1 or 2
 #' @param x.limits limits to use for the x axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `x.limits = c(0, NA)` to have the scale start at zero.
@@ -73,6 +73,7 @@
 #' @param y.percent a [logical] to indicate whether the y labels should be formatted as percentages
 #' @param y.percent_break a value on which the y axis should have breaks
 #' @param y.breaks a breaks function or numeric vector to use for the y axis
+#' @param y.n_breaks number of breaks, only useful if `y.breaks` is `NULL`
 #' @param y.limits limits to use for the y axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `y.limits = c(0, NA)` to have the scale start at zero.
 #' @param y.labels a labels function or character vector to use for the y axis
 #' @param y.expand expansion to use for the y axis, can be length 1 or 2
@@ -311,7 +312,7 @@ plot2 <- function(.data,
                   facet.max_items = Inf,
                   facet.max_txt = "(rest, x %n)",
                   x.breaks = NULL,
-                  x.breaks_n = NULL,
+                  x.n_breaks = NULL,
                   x.trans = "identity",
                   x.expand = 0.5,
                   x.limits = NULL,
@@ -324,6 +325,7 @@ plot2 <- function(.data,
                   y.percent = FALSE,
                   y.percent_break = 0.1,
                   y.breaks = NULL,
+                  y.n_breaks = NULL,
                   y.limits = NULL,
                   y.labels = NULL,
                   y.expand = 0.25,
@@ -384,7 +386,14 @@ plot2 <- function(.data,
                   markdown = TRUE,
                   taxonomy_italic = FALSE,
                   ...) {
-  UseMethod("plot2")
+  if (!inherits(.data, "sf") &&
+      isTRUE(attributes(.data)$sf_column %in% colnames(.data)) &&
+      "sf" %in% rownames(utils::installed.packages())) {
+    # force calling plot2.sf() and its arguments, data will be transformed in that function:
+    UseMethod("plot2", object = structure(data.frame(), class = "sf"))
+  } else {
+    UseMethod("plot2")
+  }
 }
 
 #' @importFrom dplyr `%>%` mutate vars group_by across summarise select matches
@@ -440,7 +449,7 @@ plot2_exec <- function(.data,
                        facet.max_items,
                        facet.max_txt,
                        x.breaks,
-                       x.breaks_n,
+                       x.n_breaks,
                        x.trans,
                        x.expand,
                        x.limits,
@@ -453,6 +462,7 @@ plot2_exec <- function(.data,
                        y.percent,
                        y.percent_break,
                        y.breaks,
+                       y.n_breaks,
                        y.limits,
                        y.labels,
                        y.expand,
@@ -942,7 +952,7 @@ plot2_exec <- function(.data,
                          x.date_labels = x.date_labels,
                          x.breaks = x.breaks,
                          x.expand = x.expand,
-                         x.breaks_n = x.breaks_n,
+                         x.n_breaks = x.n_breaks,
                          x.limits = x.limits,
                          x.position = x.position,
                          x.trans = x.trans,
@@ -963,6 +973,7 @@ plot2_exec <- function(.data,
                          y.age = y.age,
                          y.scientific = y.scientific,
                          y.breaks = y.breaks,
+                         y.n_breaks = y.n_breaks,
                          y.expand = y.expand,
                          y.labels = y.labels,
                          y.limits = y.limits,

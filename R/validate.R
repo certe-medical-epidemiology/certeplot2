@@ -106,7 +106,7 @@ validate_legend.position <- function(legend.position) {
   legend.position
 }
 
-#' @importFrom dplyr `%>%` select pull mutate arrange across
+#' @importFrom dplyr `%>%` select pull mutate arrange across if_any
 #' @importFrom certestyle font_bold font_blue font_red
 validate_data <- function(df,
                           misses_x,
@@ -336,7 +336,7 @@ validate_data <- function(df,
     mode(x) == "numeric" || is.numeric(x) || inherits(x, c("Date", "POSIXt"))
   }
   df_noNA <- df %>%
-    filter(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
+    filter(if_any(c(get_x_name(.), get_category_name(.), get_facet_name(.),
                     matches("_var_(x|category|facet)")),
                   function(x) {
                     if (is_numeric(x) & !is.factor(x)) {
@@ -459,7 +459,7 @@ validate_x_scale <- function(values,
                              x.date_breaks,
                              x.date_labels,
                              x.breaks,
-                             x.breaks_n,
+                             x.n_breaks,
                              x.expand,
                              x.limits,
                              x.position,
@@ -542,7 +542,7 @@ validate_x_scale <- function(values,
       }
       scale_x_continuous(labels = function(x, ...) format2(x, decimal.mark = decimal.mark, big.mark = big.mark),
                          breaks = if (!is.null(x.breaks)) x.breaks else waiver(),
-                         n.breaks = x.breaks_n,
+                         n.breaks = x.n_breaks,
                          trans = x.trans,
                          position = x.position,
                          limits = x.limits,
@@ -560,6 +560,7 @@ validate_y_scale <- function(values,
                              y.age,
                              y.scientific,
                              y.breaks,
+                             y.n_breaks,
                              y.expand,
                              y.labels,
                              y.limits,
@@ -577,9 +578,9 @@ validate_y_scale <- function(values,
   if (is.null(y.trans)) {
     y.trans <- "identity"
   }
-  breaks_fn <- function(values, waiver,
-                        y.breaks = NULL, y.expand = 0.25, stackedpercent = FALSE,
-                        y.age = FALSE, y.percent = FALSE, y.percent_break = 10, y.24h = FALSE, y.limits = NULL,
+  breaks_fn <- function(values,
+                        y.breaks, y.n_breaks, y.expand, stackedpercent,
+                        y.age, y.percent, y.percent_break, y.24h, y.limits,
                         ...) {
     data_min <- min(0, values, na.rm = TRUE) * -(1 + y.expand)
     data_max <- max(values, na.rm = TRUE)
@@ -634,7 +635,7 @@ validate_y_scale <- function(values,
       # whole numbers - only strip decimal numbers if total y range is low
       function(x) unique(floor(pretty(seq(0, (max(x, na.rm = TRUE) + 1) * 3))))
     } else {
-      pretty_breaks()
+      pretty_breaks(n = ifelse(is.null(y.n_breaks), 5, y.n_breaks))
     }
   }
   
@@ -714,16 +715,16 @@ validate_y_scale <- function(values,
   }
   scale_y_continuous(
     breaks = breaks_fn(values = values,
-                       waiver = waiver(),
                        y.breaks = y.breaks,
+                       y.n_breaks = y.n_breaks,
                        y.expand = y.expand,
                        stackedpercent = stackedpercent,
                        y.age = y.age,
                        y.percent = y.percent,
                        y.percent_break = y.percent_break,
                        y.24h = y.24h,
-                       y.limits = y.limits,
-                       ...),
+                       y.limits = y.limits),
+    n.breaks = y.n_breaks,
     labels = labels_fn(values = values,
                        waiver = waiver(),
                        y.labels,
@@ -733,20 +734,17 @@ validate_y_scale <- function(values,
                        y.scientific = y.scientific,
                        stackedpercent = stackedpercent,
                        decimal.mark = decimal.mark,
-                       big.mark = big.mark,
-                       ...),
+                       big.mark = big.mark),
     limits = limits_fn(values = values,
                        y.limits,
                        y.expand = y.expand,
                        facet.fixed_y = facet.fixed_y,
                        y.age = y.age,
-                       y.trans = y.trans,
-                       ...),
+                       y.trans = y.trans),
     expand = expand_fn(values = values,
                        y.expand = y.expand,
                        y.age = y.age,
-                       stackedpercent = stackedpercent,
-                       ...),
+                       stackedpercent = stackedpercent),
     trans = y.trans,
     position = y.position
   )
@@ -812,7 +810,18 @@ validate_category_scale <- function(values,
     } else if (isTRUE(category.percent)) {
       function(x, ...) c(min(0, x, na.rm = TRUE), max(1, x, na.rm = TRUE))
     } else {
-      function(x, ...) c(min(x, na.rm = TRUE), max(x, na.rm = TRUE))
+      function(x, ...) {
+        # now determine if we should start at zero:
+        # x will be the lower and upper limit - if zero under lower minus fifth of upper then start at zero
+        upper <- max(x, na.rm = TRUE)
+        lower <- min(x, na.rm = TRUE)
+        # round upper to significance of lower
+        upper <- max(upper, round(upper, digits = nchar(lower) * -1))
+        if (lower - (upper / 5) < 0) {
+          lower <- 0
+        }
+        c(lower, upper)
+      }
     }
   }
   if (is.numeric(category.expand)) {

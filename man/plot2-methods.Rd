@@ -61,7 +61,7 @@
   facet.max_items = Inf,
   facet.max_txt = "(rest, x \%n)",
   x.breaks = NULL,
-  x.breaks_n = NULL,
+  x.n_breaks = NULL,
   x.trans = "identity",
   x.expand = 0.5,
   x.limits = NULL,
@@ -74,6 +74,7 @@
   y.percent = FALSE,
   y.percent_break = 0.1,
   y.breaks = NULL,
+  y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
   y.expand = 0.25,
@@ -186,7 +187,7 @@
   facet.max_items = Inf,
   facet.max_txt = "(rest, x \%n)",
   x.breaks = NULL,
-  x.breaks_n = NULL,
+  x.n_breaks = NULL,
   x.trans = "identity",
   x.expand = 0.5,
   x.limits = NULL,
@@ -199,6 +200,7 @@
   y.percent = FALSE,
   y.percent_break = 0.1,
   y.breaks = NULL,
+  y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
   y.expand = 0.25,
@@ -311,7 +313,7 @@
   facet.max_items = Inf,
   facet.max_txt = "(rest, x \%n)",
   x.breaks = NULL,
-  x.breaks_n = NULL,
+  x.n_breaks = NULL,
   x.trans = "identity",
   x.expand = 0.5,
   x.limits = NULL,
@@ -324,6 +326,7 @@
   y.percent = FALSE,
   y.percent_break = 0.1,
   y.breaks = NULL,
+  y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
   y.expand = 0.25,
@@ -395,7 +398,7 @@
   type = NULL,
   x.title = NULL,
   y.title = NULL,
-  category.title = TRUE,
+  category.title = NULL,
   title = NULL,
   subtitle = NULL,
   caption = NULL,
@@ -421,7 +424,7 @@
   x.date_breaks = NULL,
   x.date_labels = NULL,
   category.focus = NULL,
-  colour = "grey25",
+  colour = "grey50",
   colour_fill = c("white", "certeblauw"),
   colour_opacity = 0,
   x.lbl_angle = 0,
@@ -436,7 +439,7 @@
   facet.max_items = Inf,
   facet.max_txt = "(rest, x \%n)",
   x.breaks = NULL,
-  x.breaks_n = NULL,
+  x.n_breaks = NULL,
   x.trans = "identity",
   x.expand = 0,
   x.limits = NULL,
@@ -449,6 +452,7 @@
   y.percent = FALSE,
   y.percent_break = 0.1,
   y.breaks = NULL,
+  y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
   y.expand = 0,
@@ -493,7 +497,7 @@
   jitter_seed = NA,
   violin_scale = "count",
   legend.position = "right",
-  legend.title = TRUE,
+  legend.title = NULL,
   legend.reverse = FALSE,
   legend.barheight = 6,
   legend.barwidth = 1.5,
@@ -505,9 +509,9 @@
   text_factor = 1,
   family = getOption("plot2.family"),
   theme = theme_minimal2(panel.grid.major = element_blank(), panel.grid.minor =
-    element_blank(), panel.border = element_blank(), axis.title = element_blank(),
-    axis.text = element_blank(), axis.line = element_blank(), axis.ticks =
-    element_blank()),
+    element_blank(), panel.border = element_blank(), plot.margin = unit(c(-15, 5, -15,
+    5), units = "pt"), axis.title = element_blank(), axis.text = element_blank(),
+    axis.line = element_blank(), axis.ticks = element_blank()),
   background = "white",
   markdown = TRUE,
   taxonomy_italic = FALSE,
@@ -564,7 +568,7 @@
   facet.max_items = Inf,
   facet.max_txt = "(rest, x \%n)",
   x.breaks = NULL,
-  x.breaks_n = NULL,
+  x.n_breaks = NULL,
   x.trans = "identity",
   x.expand = 0.5,
   x.limits = NULL,
@@ -577,6 +581,7 @@
   y.percent = FALSE,
   y.percent_break = 0.1,
   y.breaks = NULL,
+  y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
   y.expand = 0.25,
@@ -689,7 +694,7 @@
   facet.max_items = Inf,
   facet.max_txt = "(rest, x \%n)",
   x.breaks = NULL,
-  x.breaks_n = NULL,
+  x.n_breaks = NULL,
   x.trans = "identity",
   x.expand = 0.5,
   x.limits = NULL,
@@ -702,6 +707,7 @@
   y.percent = FALSE,
   y.percent_break = 0.1,
   y.breaks = NULL,
+  y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
   y.expand = 0.25,
@@ -819,7 +825,7 @@
   facet.max_items = Inf,
   facet.max_txt = "(rest, x \%n)",
   x.breaks = NULL,
-  x.breaks_n = NULL,
+  x.n_breaks = NULL,
   x.trans = "identity",
   x.expand = 0.5,
   x.limits = NULL,
@@ -832,6 +838,7 @@
   y.percent = FALSE,
   y.percent_break = 0.1,
   y.breaks = NULL,
+  y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
   y.expand = 0.25,
@@ -998,7 +1005,7 @@
 
 \item{x.breaks}{breaks function or numeric vector to use for the x axis}
 
-\item{x.breaks_n}{number of breaks to use for the x axis}
+\item{x.n_breaks}{number of breaks to use for the x axis}
 
 \item{x.trans}{transformation function to use for the x axis, e.g. \code{"log2"}}
 
@@ -1023,6 +1030,8 @@
 \item{y.percent_break}{a value on which the y axis should have breaks}
 
 \item{y.breaks}{a breaks function or numeric vector to use for the y axis}
+
+\item{y.n_breaks}{number of breaks, only useful if \code{y.breaks} is \code{NULL}}
 
 \item{y.limits}{limits to use for the y axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the scale start at zero.}
 
