@@ -217,6 +217,11 @@ test_that("max items and sorting work", {
                  get_range_x(),
                c("2008", "2004", "2009", "2015", "(rest, x 12)"))
   
+  expect_s3_class(admitted_patients %>%
+                    plot2(x = format(date, "%Y"), y = n(), category = hospital, facet = age_group,
+                          x.max_items = 2, category.max_items = 2, facet.max_items = 2),
+                  "gg")
+  
 })
 
 test_that("x scale works", {
@@ -229,6 +234,8 @@ test_that("x scale works", {
   expect_s3_class(plotdata %>% plot2(type = "line"), "gg")
   expect_s3_class(plotdata %>% plot2(type = "barpercent"), "gg")
   expect_s3_class(plotdata %>% plot2(x.trans = "log2"), "gg")
+  expect_s3_class(mtcars %>% plot2(mpg, hp, x.lbl_angle = 40), "gg")
+  expect_s3_class(mtcars %>% plot2(mpg, hp, x.lbl_angle = 200), "gg")
   
   p <- plotdata %>%
     plot2(x = x_date,
@@ -239,10 +246,16 @@ test_that("x scale works", {
 })
 
 test_that("y scale works", {
+  expect_error(data.frame(a = c(1:10), b = letters[10]) %>% plot2(x = a, y = b))
   expect_s3_class(plotdata %>% plot2(y = n * 24, y.24h = TRUE), "gg")
   expect_s3_class(plotdata %>% plot2(y = n * 12, y.age = TRUE), "gg")
   expect_s3_class(plotdata %>% plot2(y = n * 10, y.scientific = TRUE), "gg")
   expect_s3_class(plotdata %>% plot2(y.percent = TRUE), "gg")
+  expect_s3_class(data.frame(a = letters[1:10], y = 10 ^ c(1:10)) %>% plot2(), "gg")
+  expect_s3_class(data.frame(a = letters[1:10], b = 10 ^ c(1:10)) %>% plot2(y.trans = "log10", y.n_breaks = 10), "gg")
+  expect_s3_class(data.frame(a = letters[1:10], b = 10 ^ c(1:10)) %>% plot2(y.trans = "log10", y.n_breaks = 10), "gg")
+  expect_s3_class(data.frame(a = letters[1:10], y = 1) %>% plot2(y.percent = TRUE, y.percent_break = 500), "gg")
+  expect_s3_class(data.frame(a = letters[1:10], y = 1) %>% plot2(y.percent = TRUE), "gg")
 })
 
 test_that("category scale works", {
@@ -269,6 +282,13 @@ test_that("category scale works", {
                        get_mapping())))
   expect_s3_class(mtcars %>% plot2(mpg, hp, as.character(cyl), category.focus = 2), "gg")
   expect_s3_class(mtcars %>% plot2(mpg, hp, as.character(cyl), category.focus = "4"), "gg")
+  # adding white to geoplot if only one colour set
+  expect_s3_class(certegis::geo_provincies %>% plot2(colour_fill = "red"), "gg")
+  expect_s3_class(certegis::geo_provincies %>% plot2(colour_fill = "red", 
+                                                     category.trans = "log10",
+                                                     category.limits = c(NA, 10e3)),
+                  "gg")
+  
 })
 
 test_that("facet scale works", {
@@ -278,11 +298,26 @@ test_that("facet scale works", {
                                  Species, facet.relative = TRUE), "gg")
   expect_s3_class(iris %>% plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
                                  Species, facet.relative = TRUE, facet.nrow = 2), "gg")
+  expect_s3_class(iris %>% plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
+                                 Species,
+                                 facet.repeat_lbls_x = TRUE,
+                                 facet.repeat_lbls_y = FALSE), "gg")
+  
+  expect_s3_class(iris %>% plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
+                                 Species,
+                                 facet.repeat_lbls_x = FALSE,
+                                 facet.repeat_lbls_y = TRUE), "gg")
 })
 
 test_that("blank plot works", {
   expect_s3_class(plotdata %>% subset(n < 0) %>% plot2(), "gg")
-  expect_s3_class(plotdata %>% plot2(type = "blank"), "gg")
+  expect_s3_class(data.frame() %>% plot2(type = "blank",
+                                         x.title = "test",
+                                         y.title = "test",
+                                         title = "test",
+                                         subtitle = "test",
+                                         tag = "test",
+                                         caption = "test"), "gg")
 })
 
 test_that("misc elements works", {

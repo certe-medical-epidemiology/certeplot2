@@ -578,17 +578,28 @@ validate_y_scale <- function(values,
   if (is.null(y.trans)) {
     y.trans <- "identity"
   }
-  breaks_fn <- function(values,
+  if (mode(values) != "numeric") {
+    stop("The y scale cannot be non-numeric (current class: ",
+         paste0(class(values), collapse = "/"), ")",
+         call. = FALSE)
+  }
+  
+  breaks_fn <- function(values, waiver,
                         y.breaks, y.n_breaks, y.expand, stackedpercent,
                         y.age, y.percent, y.percent_break, y.24h, y.limits,
-                        ...) {
+                        y.trans) {
     data_min <- min(0, values, na.rm = TRUE) * - (1 + y.expand)
     data_max <- max(values, na.rm = TRUE)
     if (!inherits(values, c("Date", "POSIXt"))) {
       data_max <- data_max * (1 + y.expand)
     }
-    
-    if (!is.null(y.breaks)) {
+    if (y.trans != "identity") {
+      if (!is.null(y.breaks)) {
+        plot2_warning("Ignoring ", font_blue("y.breaks"), " since ",
+                      font_blue(paste0("y.trans = \"", y.trans, "\"")))
+      }
+      return(waiver)
+    } else if (!is.null(y.breaks)) {
       y.breaks
     } else if (isTRUE(y.age)) {
       # no decimal numbers, generate max 12 labels
@@ -619,21 +630,19 @@ validate_y_scale <- function(values,
         y.percent_break <- round((max(y.limits, na.rm = TRUE) - min(y.limits, na.rm = TRUE)) / 10, 2)
         plot2_message("Using ", font_blue("y.percent_break =", y.percent_break), " to keep a maximum of ~10 labels")
       }
-      function(x, y_percent_break = y.percent_break, ...) {
-        if (y_percent_break >= max(x, na.rm = TRUE)) {
-          y_percent_break <- max(x, na.rm = TRUE) / 10
-        }
-        seq(from = min(0, x, na.rm = TRUE),
-            to = max(x, na.rm = TRUE),
-            by = y_percent_break)
+      if (y.percent_break >= max(y.limits, na.rm = TRUE)) {
+        y.percent_break.bak <- y.percent_break
+        y.percent_break <- max(y.limits, na.rm = TRUE) / 10
+        plot2_message("Using ", font_blue("y.percent_break =", y.percent_break), 
+                      " since the original setting (", font_blue(y.percent_break.bak), ") was too high")
       }
-    } else if (isTRUE(stackedpercent)) {
-      seq(from = 0,
-          to = 1,
-          by = 0.1)
+      seq(from = min(0, y.limits, na.rm = TRUE),
+          to = max(y.limits, na.rm = TRUE),
+          by = y.percent_break)
+      
     } else if (all(values %% 1 == 0, na.rm = TRUE) && data_max < 5) {
       # whole numbers - only strip decimal numbers if total y range is low
-      function(x) unique(floor(pretty(seq(0, (max(x, na.rm = TRUE) + 1) * 3))))
+      function(x, ...) unique(floor(pretty(seq(0, (max(x, na.rm = TRUE) + 1) * 3))))
     } else {
       pretty_breaks(n = ifelse(is.null(y.n_breaks), 5, y.n_breaks))
     }
@@ -642,7 +651,7 @@ validate_y_scale <- function(values,
   labels_fn <- function(values, waiver,
                         y.labels,
                         y.age, y.scientific, y.percent, y.24h, stackedpercent,
-                        decimal.mark, big.mark, ...) {
+                        decimal.mark, big.mark) {
     if (!is.null(y.labels)) {
       y.labels
     } else if (isTRUE(y.scientific)) {
@@ -662,9 +671,10 @@ validate_y_scale <- function(values,
         format2(as.percentage(x), decimal.mark = dec, big.mark = big)
     } else {
       function(x, dec = decimal.mark, big = big.mark, ...) {
-        is_scientific <- any(format(x) %like% "^(-?[0-9.]+e-?[0-9.]+|0)$")
-        if (length(unique(format2(x[!is.na(x)]))) < length(format2(x[!is.na(x)])) ||
-            is_scientific) {
+        is_scientific <- any(format(x) %like% "^(-?[0-9.]+e-?[0-9.]+)$") ||
+          diff(range(values)) > 10e3
+        non_unique <- length(unique(format2(x[!is.na(x)]))) < length(format2(x[!is.na(x)]))
+        if (non_unique || (is_scientific && is.null(y.scientific))) {
           if (is_scientific) {
             plot2_message("Assuming ", font_blue("y.scientific = TRUE"))
           }
@@ -678,8 +688,7 @@ validate_y_scale <- function(values,
   }
   
   limits_fn <- function(values, y.limits,
-                        y.expand, facet.fixed_y, y.age, y.trans,
-                        ...) {
+                        y.expand, facet.fixed_y, y.age, y.trans) {
     min_value <- 0
     if (y.trans != "identity") {
       # in certain transformations, such as log, 0 is not allowed
@@ -699,7 +708,7 @@ validate_y_scale <- function(values,
     }
   }
   
-  expand_fn <- function(values, y.expand, y.age, stackedpercent, ...) {
+  expand_fn <- function(values, y.expand, y.age, stackedpercent) {
     if (is.function(y.expand)) {
       y.expand
     } else if (isTRUE(y.age) | isTRUE(stackedpercent)) {
@@ -715,6 +724,7 @@ validate_y_scale <- function(values,
   }
   scale_y_continuous(
     breaks = breaks_fn(values = values,
+                       waiver = waiver(),
                        y.breaks = y.breaks,
                        y.n_breaks = y.n_breaks,
                        y.expand = y.expand,
@@ -723,7 +733,8 @@ validate_y_scale <- function(values,
                        y.percent = y.percent,
                        y.percent_break = y.percent_break,
                        y.24h = y.24h,
-                       y.limits = y.limits),
+                       y.limits = y.limits,
+                       y.trans = y.trans),
     n.breaks = y.n_breaks,
     labels = labels_fn(values = values,
                        waiver = waiver(),
@@ -753,6 +764,7 @@ validate_y_scale <- function(values,
 #' @importFrom ggplot2 scale_colour_gradient2 scale_colour_gradient scale_colour_gradientn expansion guide_colourbar element_text
 #' @importFrom certestyle format2
 #' @importFrom cleaner as.percentage
+#' @importFrom scales pretty_breaks
 validate_category_scale <- function(values,
                                     type,
                                     cols,
@@ -775,13 +787,16 @@ validate_category_scale <- function(values,
                                     ...) {
   # only for a numeric category scale
   
+  if (is.null(category.trans)) {
+    category.trans <- "identity"
+  }
   if (is.null(legend.position)) {
     legend.position <- "right"
   } else {
     legend.position <- validate_legend.position(legend.position)
   }
   
-  labels_fn <- function(values, category.labels, category.percent, stackedpercent, decimal.mark, big.mark, ...) {
+  labels_fn <- function(values, category.labels, category.percent, stackedpercent, decimal.mark, big.mark) {
     if (!is.null(category.labels)) {
       category.labels
     } else if (isTRUE(category.percent) | isTRUE(stackedpercent)) {
@@ -790,22 +805,35 @@ validate_category_scale <- function(values,
       function(x, dec = decimal.mark, big = big.mark, ...) format2(x, decimal.mark = dec, big.mark = big)
     }
   }
-  breaks_fn <- function(category.breaks = NULL, category.percent = FALSE, waiver = NULL, ...) {
-    if (!is.null(category.breaks)) {
+  breaks_fn <- function(category.breaks, category.percent, category.trans, waiver) {
+    if (category.trans != "identity") {
+      if (!is.null(category.breaks)) {
+        plot2_warning("Ignoring ", font_blue("category.breaks"), " since ",
+                      font_blue(paste0("category.trans = \"", category.trans, "\"")))
+      }
+      return(waiver)
+    } else if (!is.null(category.breaks)) {
       category.breaks
     } else if (isTRUE(category.percent)) {
       if (max(c(1, values), na.rm = TRUE) == 1) {
         seq(0, 1, 0.25)
       } else {
         # print 5 labels nicely
-        scales::pretty_breaks()(values, 5)
+        pretty_breaks()(values, 5)
       }
     } else {
-      scales::pretty_breaks()
+      pretty_breaks()
     }
   }
-  limits_fn <- function(category.limits, category.percent = FALSE, ...) {
-    if (!is.null(category.limits)) {
+  limits_fn <- function(category.limits, category.percent, category.trans, waiver) {
+    if (category.trans != "identity") {
+      # in certain transformations, such as log, 0 is not allowed
+      if (!is.null(category.limits)) {
+        plot2_warning("Ignoring ", font_blue("category.limits"), " since ",
+                      font_blue(paste0("category.trans = \"", category.trans, "\"")))
+      }
+      c(NA_real_, NA_real_)
+    } else if (!is.null(category.limits)) {
       category.limits
     } else if (isTRUE(category.percent)) {
       function(x, ...) c(min(0, x, na.rm = TRUE), max(1, x, na.rm = TRUE))
@@ -835,7 +863,6 @@ validate_category_scale <- function(values,
     aest <- "fill"
     cols_category <- cols$colour_fill
   }
-  
   # general arguments for any scale function below (they are called with do.call())
   args <- list(aesthetics = aest,
                na.value = "white",
@@ -855,15 +882,14 @@ validate_category_scale <- function(values,
                                   category.percent = category.percent,
                                   stackedpercent = stackedpercent,
                                   decimal.mark = decimal.mark,
-                                  big.mark = big.mark,
-                                  ...),
+                                  big.mark = big.mark),
                breaks = breaks_fn(category.breaks = category.breaks,
                                   category.percent = category.percent,
-                                  waiver = waiver(),
-                                  ...),
+                                  category.trans = category.trans,
+                                  waiver = waiver()),
                limits = limits_fn(category.limits = category.limits,
                                   category.percent = category.percent,
-                                  ...),
+                                  category.trans = category.trans),
                trans = category.trans)
   
   if (length(cols_category) == 1) {
@@ -881,7 +907,7 @@ validate_category_scale <- function(values,
                     " to prevent this.")
       do.call(scale_colour_gradient,
               args = c(list(low = "white",
-                            high =  cols_category),
+                            high = cols_category),
                        args))
     }
     
@@ -1202,7 +1228,9 @@ validate_colour <- function(df,
 
 validate_size <- function(size, type) {
   if (is.null(size)) {
-    if (type %in% c("geom_boxplot", "geom_violin", "geom_area", "geom_ribbon") | geom_is_continuous_x(type)) {
+    if (type == "geom_sf") {
+      size <- 0.1
+    } else if (type %in% c("geom_boxplot", "geom_violin", "geom_area", "geom_ribbon") | geom_is_continuous_x(type)) {
       size <- 0.5
     } else if (type %in% c("geom_point", "geom_jitter")) {
       size <- 2

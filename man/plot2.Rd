@@ -63,7 +63,7 @@ plot2(
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
-  y.scientific = FALSE,
+  y.scientific = NULL,
   y.percent = FALSE,
   y.percent_break = 0.1,
   y.breaks = NULL,
@@ -222,7 +222,7 @@ plot2(
 
 \item{y.age}{a \link{logical} to indicate whether the y labels and breaks should be formatted as ages in years}
 
-\item{y.scientific}{a \link{logical} to indicate whether the y labels should be formatted in scientific notation, using \code{\link[certestyle:format2]{format2_scientific()}}}
+\item{y.scientific}{a \link{logical} to indicate whether the y labels should be formatted in scientific notation, using \code{\link[certestyle:format2]{format2_scientific()}}. Defaults to \code{TRUE} only if the range of the y values spans more than \code{10e3}.}
 
 \item{y.percent}{a \link{logical} to indicate whether the y labels should be formatted as percentages}
 

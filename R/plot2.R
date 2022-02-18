@@ -69,7 +69,7 @@
 #' @param y.remove a [logical] to indicate whether the y labels and title should be removed
 #' @param y.24h a [logical] to indicate whether the y labels and breaks should be formatted as 24-hour sequences
 #' @param y.age a [logical] to indicate whether the y labels and breaks should be formatted as ages in years
-#' @param y.scientific a [logical] to indicate whether the y labels should be formatted in scientific notation, using [`format2_scientific()`][certestyle::format2_scientific()]
+#' @param y.scientific a [logical] to indicate whether the y labels should be formatted in scientific notation, using [`format2_scientific()`][certestyle::format2_scientific()]. Defaults to `TRUE` only if the range of the y values spans more than `10e3`.
 #' @param y.percent a [logical] to indicate whether the y labels should be formatted as percentages
 #' @param y.percent_break a value on which the y axis should have breaks
 #' @param y.breaks a breaks function or numeric vector to use for the y axis
@@ -322,7 +322,7 @@ plot2 <- function(.data,
                   y.remove = FALSE,
                   y.24h = FALSE,
                   y.age = FALSE,
-                  y.scientific = FALSE,
+                  y.scientific = NULL,
                   y.percent = FALSE,
                   y.percent_break = 0.1,
                   y.breaks = NULL,
@@ -389,7 +389,7 @@ plot2 <- function(.data,
                   ...) {
   
   # no observations, return empty plot immediately
-  if (NROW(.data) == 0) {
+  if (tryCatch(NROW(.data) == 0, error = function(e) stop(e$message, call. = FALSE))) {
     plot2_warning("No observations, returning an empty plot")
     p <- ggplot() +
       validate_theme(theme = theme,
