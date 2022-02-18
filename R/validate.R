@@ -630,15 +630,15 @@ validate_y_scale <- function(values,
         y.percent_break <- round((max(y.limits, na.rm = TRUE) - min(y.limits, na.rm = TRUE)) / 10, 2)
         plot2_message("Using ", font_blue("y.percent_break =", y.percent_break), " to keep a maximum of ~10 labels")
       }
-      if (y.percent_break >= max(y.limits, na.rm = TRUE)) {
+      if (!all(is.na(y.limits)) && y.percent_break >= max(y.limits, na.rm = TRUE)) {
         y.percent_break.bak <- y.percent_break
         y.percent_break <- max(y.limits, na.rm = TRUE) / 10
         plot2_message("Using ", font_blue("y.percent_break =", y.percent_break), 
                       " since the original setting (", font_blue(y.percent_break.bak), ") was too high")
       }
-      seq(from = min(0, y.limits, na.rm = TRUE),
-          to = max(y.limits, na.rm = TRUE),
-          by = y.percent_break)
+      function(x, ...) seq(from = min(0, x, na.rm = TRUE),
+                           to = max(x, na.rm = TRUE),
+                           by = y.percent_break)
       
     } else if (all(values %% 1 == 0, na.rm = TRUE) && data_max < 5) {
       # whole numbers - only strip decimal numbers if total y range is low
