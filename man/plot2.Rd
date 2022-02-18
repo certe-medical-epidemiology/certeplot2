@@ -31,7 +31,7 @@ plot2(
   facet.size = 10,
   facet.margin = 8,
   facet.repeat_lbls_x = TRUE,
-  facet.repeat_lbls_y = FALSE,
+  facet.repeat_lbls_y = TRUE,
   facet.fixed_y = FALSE,
   facet.drop = FALSE,
   facet.nrow = NULL,
@@ -54,7 +54,7 @@ plot2(
   facet.max_items = Inf,
   facet.max_txt = "(rest, x \%n)",
   x.breaks = NULL,
-  x.breaks_n = NULL,
+  x.n_breaks = NULL,
   x.trans = "identity",
   x.expand = 0.5,
   x.limits = NULL,
@@ -63,10 +63,11 @@ plot2(
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
-  y.scientific = FALSE,
+  y.scientific = NULL,
   y.percent = FALSE,
   y.percent_break = 0.1,
   y.breaks = NULL,
+  y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
   y.expand = 0.25,
@@ -203,7 +204,7 @@ plot2(
 
 \item{x.breaks}{breaks function or numeric vector to use for the x axis}
 
-\item{x.breaks_n}{number of breaks to use for the x axis}
+\item{x.n_breaks}{number of breaks to use for the x axis}
 
 \item{x.trans}{transformation function to use for the x axis, e.g. \code{"log2"}}
 
@@ -221,13 +222,15 @@ plot2(
 
 \item{y.age}{a \link{logical} to indicate whether the y labels and breaks should be formatted as ages in years}
 
-\item{y.scientific}{a \link{logical} to indicate whether the y labels should be formatted in scientific notation, using \code{\link[certestyle:format2]{format2_scientific()}}}
+\item{y.scientific}{a \link{logical} to indicate whether the y labels should be formatted in scientific notation, using \code{\link[certestyle:format2]{format2_scientific()}}. Defaults to \code{TRUE} only if the range of the y values spans more than \code{10e3}.}
 
 \item{y.percent}{a \link{logical} to indicate whether the y labels should be formatted as percentages}
 
 \item{y.percent_break}{a value on which the y axis should have breaks}
 
 \item{y.breaks}{a breaks function or numeric vector to use for the y axis}
+
+\item{y.n_breaks}{number of breaks, only useful if \code{y.breaks} is \code{NULL}}
 
 \item{y.limits}{limits to use for the y axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the scale start at zero.}
 
@@ -348,7 +351,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 121 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 122 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)

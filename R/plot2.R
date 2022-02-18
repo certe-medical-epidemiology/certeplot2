@@ -60,7 +60,7 @@
 #' @param x.remove [logical] to indicate whether the x labels and title should be removed
 #' @param x.position position of the x axis, defaults to `"bottom"`
 #' @param x.breaks breaks function or numeric vector to use for the x axis
-#' @param x.breaks_n number of breaks to use for the x axis
+#' @param x.n_breaks number of breaks to use for the x axis
 #' @param x.trans transformation function to use for the x axis, e.g. `"log2"`
 #' @param x.expand expansion to use for the x axis, can be length 1 or 2
 #' @param x.limits limits to use for the x axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `x.limits = c(0, NA)` to have the scale start at zero.
@@ -69,10 +69,11 @@
 #' @param y.remove a [logical] to indicate whether the y labels and title should be removed
 #' @param y.24h a [logical] to indicate whether the y labels and breaks should be formatted as 24-hour sequences
 #' @param y.age a [logical] to indicate whether the y labels and breaks should be formatted as ages in years
-#' @param y.scientific a [logical] to indicate whether the y labels should be formatted in scientific notation, using [`format2_scientific()`][certestyle::format2_scientific()]
+#' @param y.scientific a [logical] to indicate whether the y labels should be formatted in scientific notation, using [`format2_scientific()`][certestyle::format2_scientific()]. Defaults to `TRUE` only if the range of the y values spans more than `10e3`.
 #' @param y.percent a [logical] to indicate whether the y labels should be formatted as percentages
 #' @param y.percent_break a value on which the y axis should have breaks
 #' @param y.breaks a breaks function or numeric vector to use for the y axis
+#' @param y.n_breaks number of breaks, only useful if `y.breaks` is `NULL`
 #' @param y.limits limits to use for the y axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `y.limits = c(0, NA)` to have the scale start at zero.
 #' @param y.labels a labels function or character vector to use for the y axis
 #' @param y.expand expansion to use for the y axis, can be length 1 or 2
@@ -262,6 +263,7 @@
 #'     bug_drug_combinations(FUN = mo_gramstain) %>%
 #'     plot2(y.percent_break = 0.25)
 #' }
+#' @importFrom ggplot2 ggplot labs
 plot2 <- function(.data,
                   x = NULL,
                   y = NULL,
@@ -288,7 +290,7 @@ plot2 <- function(.data,
                   facet.size = 10,
                   facet.margin = 8,
                   facet.repeat_lbls_x = TRUE,
-                  facet.repeat_lbls_y = FALSE,
+                  facet.repeat_lbls_y = TRUE,
                   facet.fixed_y = FALSE,
                   facet.drop = FALSE,
                   facet.nrow = NULL,
@@ -311,7 +313,7 @@ plot2 <- function(.data,
                   facet.max_items = Inf,
                   facet.max_txt = "(rest, x %n)",
                   x.breaks = NULL,
-                  x.breaks_n = NULL,
+                  x.n_breaks = NULL,
                   x.trans = "identity",
                   x.expand = 0.5,
                   x.limits = NULL,
@@ -320,10 +322,11 @@ plot2 <- function(.data,
                   y.remove = FALSE,
                   y.24h = FALSE,
                   y.age = FALSE,
-                  y.scientific = FALSE,
+                  y.scientific = NULL,
                   y.percent = FALSE,
                   y.percent_break = 0.1,
                   y.breaks = NULL,
+                  y.n_breaks = NULL,
                   y.limits = NULL,
                   y.labels = NULL,
                   y.expand = 0.25,
@@ -384,7 +387,53 @@ plot2 <- function(.data,
                   markdown = TRUE,
                   taxonomy_italic = FALSE,
                   ...) {
-  UseMethod("plot2")
+  
+  # no observations, return empty plot immediately
+  if (tryCatch(NROW(.data) == 0, error = function(e) stop(e$message, call. = FALSE))) {
+    plot2_warning("No observations, returning an empty plot")
+    p <- ggplot() +
+      validate_theme(theme = theme,
+                     type = "",
+                     background = background,
+                     markdown = markdown,
+                     text_factor = text_factor,
+                     family = family,
+                     horizontal = horizontal,
+                     x.remove = x.remove,
+                     x.lbl_angle = x.lbl_angle,
+                     x.lbl_align = x.lbl_align,
+                     x.lbl_italic = x.lbl_italic,
+                     facet.fill = facet.fill,
+                     facet.bold = facet.bold,
+                     facet.italic = facet.italic,
+                     facet.size = facet.size,
+                     facet.margin = facet.margin,
+                     legend.italic = legend.italic,
+                     title.colour = title.colour,
+                     subtitle.colour = subtitle.colour)
+    if (!missing(x.title)) p <- p + labs(x = validate_titles(x.title))
+    if (!missing(y.title)) p <- p + labs(y = validate_titles(y.title))
+    if (!missing(title)) p <- p + labs(title = validate_titles(title, markdown = markdown, max_length = title.linelength))
+    if (!missing(subtitle)) p <- p + labs(subtitle = validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
+    if (!missing(tag)) p <- p + labs(tag = validate_titles(tag))
+    if (!missing(caption)) p <- p + labs(caption = validate_titles(caption))
+    if (isTRUE(print)) {
+      print(p)
+      return(invisible())
+    } else {
+      return(p)
+    }
+  }
+  
+  if (!inherits(.data, "sf") &&
+      ((isTRUE("geometry" %in% colnames(.data)) && suppressWarnings(inherits(.data$geometry, "sfc")))
+       || isTRUE(attributes(.data)$sf_column %in% colnames(.data))) &&
+      "sf" %in% rownames(utils::installed.packages())) {
+    # force calling plot2.sf() and its arguments, data will be transformed in that function:
+    UseMethod("plot2", object = structure(data.frame(), class = "sf"))
+  } else {
+    UseMethod("plot2")
+  }
 }
 
 #' @importFrom dplyr `%>%` mutate vars group_by across summarise select matches
@@ -440,7 +489,7 @@ plot2_exec <- function(.data,
                        facet.max_items,
                        facet.max_txt,
                        x.breaks,
-                       x.breaks_n,
+                       x.n_breaks,
                        x.trans,
                        x.expand,
                        x.limits,
@@ -453,6 +502,7 @@ plot2_exec <- function(.data,
                        y.percent,
                        y.percent_break,
                        y.breaks,
+                       y.n_breaks,
                        y.limits,
                        y.labels,
                        y.expand,
@@ -539,39 +589,7 @@ plot2_exec <- function(.data,
   misses_zoom <- isTRUE(dots$`_misses.zoom`)
   misses_y.percent <- isTRUE(dots$`_misses.y.percent`)
   misses_y.percent_break <- isTRUE(dots$`_misses.y.percent_break`)
-  
-  # no observations, return empty plot ----
-  if (NROW(.data) == 0) {
-    plot2_warning("No observations, returning an empty plot")
-    p <- ggplot() +
-      validate_theme(theme = theme,
-                     type = "",
-                     background = background,
-                     markdown = markdown,
-                     text_factor = text_factor,
-                     family = family,
-                     horizontal = horizontal,
-                     x.remove = x.remove,
-                     x.lbl_angle = x.lbl_angle,
-                     x.lbl_align = x.lbl_align,
-                     x.lbl_italic = x.lbl_italic,
-                     facet.fill = facet.fill,
-                     facet.bold = facet.bold,
-                     facet.italic = facet.italic,
-                     facet.size = facet.size,
-                     facet.margin = facet.margin,
-                     legend.italic = legend.italic,
-                     title.colour = title.colour,
-                     subtitle.colour = subtitle.colour)
-    if (!misses_x.title) p <- p + labs(x = validate_titles(x.title))
-    if (!misses_y.title) p <- p + labs(y = validate_titles(y.title))
-    if (!misses_title) p <- p + labs(title = validate_titles(title, markdown = markdown, max_length = title.linelength))
-    if (!misses_subtitle) p <- p + labs(subtitle = validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
-    if (!misses_tag) p <- p + labs(tag = validate_titles(tag))
-    if (!misses_caption) p <- p + labs(caption = validate_titles(caption))
-    return(p)
-  }
-  
+ 
   # prevalidate types for special types ----
   if (!is_empty(type) && !is.character(type)) {
     stop("'type' must be a character", call. = FALSE)
@@ -777,9 +795,7 @@ plot2_exec <- function(.data,
   # generate mapping / aesthetics ----
   # IMPORTANT: in this part, the mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
   # this is done for convenience - this is restored before returning the `ggplot` object in the end
-  if (type == "geom_sf" && !is.null(dots$`_sf.column`)) {
-    mapping <- aes_string(geometry = dots$`_sf.column`)
-  } else if (!geom_is_continuous_x(type)) {
+  if (type != "geom_sf" && !geom_is_continuous_x(type)) {
     # histograms etc. have a continuous x variable, so only set y if not a histogram-like
     mapping <- aes(y = `_var_y`, group = 1)
   } else {
@@ -942,7 +958,7 @@ plot2_exec <- function(.data,
                          x.date_labels = x.date_labels,
                          x.breaks = x.breaks,
                          x.expand = x.expand,
-                         x.breaks_n = x.breaks_n,
+                         x.n_breaks = x.n_breaks,
                          x.limits = x.limits,
                          x.position = x.position,
                          x.trans = x.trans,
@@ -963,6 +979,7 @@ plot2_exec <- function(.data,
                          y.age = y.age,
                          y.scientific = y.scientific,
                          y.breaks = y.breaks,
+                         y.n_breaks = y.n_breaks,
                          y.expand = y.expand,
                          y.labels = y.labels,
                          y.limits = y.limits,

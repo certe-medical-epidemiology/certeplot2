@@ -21,7 +21,7 @@
 # This is to prevent dependency on one another.
 # They are also exported in the 'certetoolbox' package.
 
-like <- function (x, pattern) {
+like <- function(x, pattern) {
   x <- tolower(x)
   pattern <- tolower(pattern)
   if (length(pattern) == 1) {
