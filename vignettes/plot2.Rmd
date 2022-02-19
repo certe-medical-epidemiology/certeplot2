@@ -406,6 +406,15 @@ Now, we had to use 7 functions to get the desired functional part of the plot wh
 
 And why is 2009 still so wide?? I'll give you this: if you know the solution, you're way deeper into `ggplot2` than should ever be necessary for an R package. 
 
+# Support for any font, including Google Fonts
+
+By using the `showtext` package internally, `plot2` supports any font and downloads the missing fonts automatically if required:
+
+```{r}
+mtcars %>%
+  plot2(mpg, hp, family = "Rock Salt")
+```
+
 # Plotting geometries (`sf` objects)
 
 Objects of class `sf` (*simple feature*) are treated specially by the `ggplot2` package, although `plot2()` handles these objects like any other data set. Instead it returns a `ggplot` object created with `geom_sf()` internally, but most arguments are usable and even the `theme_minimal2()` theme has good use for `sf` plots.

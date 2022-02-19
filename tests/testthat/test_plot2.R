@@ -397,3 +397,7 @@ test_that("date labels work", {
   expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 2556 - 1)),
                list(breaks = "1 year", labels = "mmm yyyy"))
 })
+
+test_that("manual fonts work", {
+  expect_s3_class(mtcars %>% plot2(mpg, hp, family = "Rock Salt"), "gg")
+})

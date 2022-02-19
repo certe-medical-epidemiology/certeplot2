@@ -909,9 +909,7 @@ plot2_exec <- function(.data,
   }
   
   # add the right scales ----
-  if (is_empty(family)) {
-    family <- ""
-  }
+  family <- validate_font(family)
   if (has_category(df) && is.numeric(get_category(df))) {
     p <- p +
       validate_category_scale(values = get_category(df),

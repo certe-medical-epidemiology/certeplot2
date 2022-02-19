@@ -844,7 +844,11 @@ validate_category_scale <- function(values,
         upper <- max(x, na.rm = TRUE)
         lower <- min(x, na.rm = TRUE)
         # round upper to significance of lower
-        upper <- max(upper, round(upper, digits = nchar(lower) * -1))
+        new_upper <- max(upper, round(upper, digits = nchar(lower) * -1))
+        # but only if within a 5th of the scale
+        if (upper / new_upper >= 0.8) {
+          upper <- new_upper
+        }
         if (lower - (upper / 5) < 0) {
           lower <- 0
         }
@@ -1661,6 +1665,70 @@ set_datalabels <- function(p,
   
   p
 }
+
+#' @importFrom sysfonts font_families font_add font_add_google
+#' @importFrom showtextdb google_fonts font_install load_showtext_fonts
+validate_font <- function(family) {
+  if (is_empty(family)) {
+    # no font set, so return empty string to use default
+    return("")
+  }
+  if (is.null(plot2_env$fonts)) {
+    plot2_warning("Ignoring unknown font family \"", family.bak, "\"")
+    return("")
+  }
+  family.bak <- family
+  family <- trimws(tolower(family)[1L])
+  if (family %in% tolower(font_families())) {
+    # this is for previously activated fonts, or fonts installed from Google Fonts
+    return(font_families()[tolower(font_families()) == family])
+  }
+  
+  # get font files from system
+  fonts <- plot2_env$fonts[which(tolower(plot2_env$fonts$family) == trimws(tolower(family)[1L])), , drop = FALSE]
+  # helper function for adding fonts
+  set_if_not_null <- function(type) {
+    fonts$fullpath <- paste(fonts$path, fonts$file, sep = "/")
+    fonts$plainface <- gsub(" +", "", trimws(tolower(fonts$face)))
+    font <- fonts[which(fonts$plainface == type), "fullpath", drop = TRUE]
+    if (length(font) == 0) {
+      NULL
+    } else {
+      font
+    }
+  }
+  
+  if (NROW(fonts) == 0) {
+    # font does not exist yet - try to download from Google Fonts
+    font_urls <- tryCatch(google_fonts(family.bak),
+                          error = function(e) NULL)
+    if (is.null(font_urls)) {
+      plot2_warning("Ignoring unknown font family \"", family.bak, "\"")
+      return("")
+    }
+    plot2_message("Installing font family from Google Fonts...")
+    # install and register using showtextdb
+    suppressMessages(font_install(font_urls, quiet = TRUE))
+    load_showtext_fonts()
+    
+  } else if (!fonts$family[1L] %in% sysfonts::font_families()) {
+    # still has to be 'registered' with sysfonts, so do it
+    font_add(family = fonts$family[1L],
+                       regular = set_if_not_null("regular"),
+                       bold = set_if_not_null("bold"),
+                       italic = set_if_not_null("italic"),
+                       bolditalic = set_if_not_null("bolditalic"))
+  }
+  
+  # return the font if it is now 'activated'
+  if (family %in% tolower(font_families())) {
+    return(font_families()[tolower(font_families()) == family])
+  } else {
+    plot2_warning("Ignoring unknown font family \"", family.bak, "\"")
+    return("")
+  }
+}
+
 
 validate_sorting <- function(sort_method, horizontal) {
   if (is.null(sort_method)) {

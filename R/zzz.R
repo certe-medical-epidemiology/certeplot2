@@ -17,15 +17,19 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-#' @importFrom showtext showtext_begin
+#' @importFrom showtext showtext_auto
+#' @importFrom sysfonts font_files
 .onLoad <- function(libname, pkgname) {
-  # this will support any foreign font in e.g. R Markdown
-  # sysfonts::font_add() can be used to add font files to R
-  try(showtext_begin(), silent = TRUE)
+  try({
+    # this will support any foreign font in e.g. R Markdown
+    showtext_auto()
+    # save current font map to environment to use for plot2():
+    plot2_env$fonts <- font_files()
+  }, silent = TRUE)
 }
 
-#' @importFrom showtext showtext_end
+#' @importFrom showtext showtext_auto
 .onUnload <- function(libpath) {
   # this will close support any foreign font in e.g. R Markdown
-  try(showtext_end(), silent = TRUE)
+  try(showtext_auto(enable = FALSE), silent = TRUE)
 }
