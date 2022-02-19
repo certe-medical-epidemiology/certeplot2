@@ -1700,27 +1700,23 @@ validate_font <- function(family) {
   
   if (NROW(fonts) == 0) {
     # font does not exist yet - try to download from Google Fonts
-    font_urls <- tryCatch(google_fonts(family.bak),
-                          error = function(e) NULL)
-    if (is.null(font_urls)) {
-      plot2_warning("Ignoring unknown font family \"", family.bak, "\"")
-      return("")
-    }
-    plot2_message("Installing font family from Google Fonts...")
-    # install and register using showtextdb
-    suppressMessages(font_install(font_urls, quiet = TRUE))
-    load_showtext_fonts()
-    
-  } else if (!fonts$family[1L] %in% sysfonts::font_families()) {
+    tryCatch({
+      font_urls <- google_fonts(family.bak)
+      # install and register using showtextdb
+      suppressMessages(font_install(font_urls, quiet = TRUE))
+      load_showtext_fonts()
+    }, error = function(e) invisible())
+
+  } else if (!fonts$family[1L] %in% font_families()) {
     # still has to be 'registered' with sysfonts, so do it
     font_add(family = fonts$family[1L],
-                       regular = set_if_not_null("regular"),
-                       bold = set_if_not_null("bold"),
-                       italic = set_if_not_null("italic"),
-                       bolditalic = set_if_not_null("bolditalic"))
+             regular = set_if_not_null("regular"),
+             bold = set_if_not_null("bold"),
+             italic = set_if_not_null("italic"),
+             bolditalic = set_if_not_null("bolditalic"))
   }
   
-  # return the font if it is now 'activated'
+  # return the font if it is available
   if (family %in% tolower(font_families())) {
     return(font_families()[tolower(font_families()) == family])
   } else {

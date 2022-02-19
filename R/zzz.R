@@ -21,7 +21,7 @@
 #' @importFrom sysfonts font_files
 .onLoad <- function(libname, pkgname) {
   try({
-    # this will support any foreign font in e.g. R Markdown
+    # this will allow support for any foreign font in e.g. R Markdown
     showtext_auto()
     # save current font map to environment to use for plot2():
     plot2_env$fonts <- font_files()
@@ -30,6 +30,6 @@
 
 #' @importFrom showtext showtext_auto
 .onUnload <- function(libpath) {
-  # this will close support any foreign font in e.g. R Markdown
+  # this will close support for any foreign font in e.g. R Markdown
   try(showtext_auto(enable = FALSE), silent = TRUE)
 }
