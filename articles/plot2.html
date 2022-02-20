@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
       </span>
     </div>
 
@@ -131,6 +131,7 @@
 <li>Easy limiting values, e.g. by setting <code>x.max_items = 5</code> or <code>category.max_items = 5</code>
 </li>
 <li>Markdown support for any label, with any theme</li>
+<li>Integrated support for any Google Font and any installed system font</li>
 <li>An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: <code><a href="../reference/theme_minimal2.html">theme_minimal2()</a></code>
 </li>
 <li>Some conveniences from Microsoft Excel:
@@ -279,7 +280,7 @@
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">y = y</span></span>
 <span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = x</span></span>
-<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x.date_breaks = "1 day"</span><span style="color: #080808;"> based on data</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x.date_breaks = "4 days"</span><span style="color: #080808;"> based on data</span></span>
 <span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x.date_labels = "d mmm"</span><span style="color: #080808;"> based on data</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-10-3.png" width="576"></p>
 <p>If you have crowded x labels, it’s easy to turn them:</p>
@@ -326,12 +327,12 @@
                           stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">character_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y z</span>
-<span class="co">#&gt; 1 a 3.681611 f</span>
-<span class="co">#&gt; 2 b 6.353411 g</span>
-<span class="co">#&gt; 3 c 5.846154 h</span>
-<span class="co">#&gt; 4 d 5.396919 i</span>
-<span class="co">#&gt; 5 e 3.418117 j</span>
-<span class="co">#&gt; 6 a 4.746088 f</span>
+<span class="co">#&gt; 1 a 5.642363 f</span>
+<span class="co">#&gt; 2 b 4.524717 g</span>
+<span class="co">#&gt; 3 c 3.887239 h</span>
+<span class="co">#&gt; 4 d 4.355383 i</span>
+<span class="co">#&gt; 5 e 5.306527 j</span>
+<span class="co">#&gt; 6 a 4.718409 f</span>
 
 <span class="va">numeric_z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span>,
                         y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">5</span><span class="op">)</span>,
@@ -340,12 +341,12 @@
                         stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">numeric_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y        z</span>
-<span class="co">#&gt; 1 a 5.194985 3.827730</span>
-<span class="co">#&gt; 2 b 3.982344 4.489941</span>
-<span class="co">#&gt; 3 c 3.289374 5.138184</span>
-<span class="co">#&gt; 4 d 4.573019 4.717128</span>
-<span class="co">#&gt; 5 e 2.435554 4.880459</span>
-<span class="co">#&gt; 6 a 6.175363 5.260786</span>
+<span class="co">#&gt; 1 a 6.179875 6.048082</span>
+<span class="co">#&gt; 2 b 2.344461 2.847991</span>
+<span class="co">#&gt; 3 c 5.364568 5.925135</span>
+<span class="co">#&gt; 4 d 7.144653 3.056612</span>
+<span class="co">#&gt; 5 e 3.576959 5.167018</span>
+<span class="co">#&gt; 6 a 6.457406 3.974431</span>
 
 <span class="va">character_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>, type <span class="op">=</span> <span class="st">"jitter"</span>,
@@ -363,7 +364,7 @@
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>,
           type <span class="op">=</span> <span class="st">"jitter"</span>,
           colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category.midpoint = 4.84</span><span style="color: #080808;"> (the current </span><span style="color: #0000BB;">category</span><span style="color: #080808;"> scale centre)</span></span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category.midpoint = 4.94</span><span style="color: #080808;"> (the current </span><span style="color: #0000BB;">category</span><span style="color: #080808;"> scale centre)</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-14-1.png" width="576"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">numeric_z</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  
@@ -589,11 +590,21 @@
 <p>And why is 2009 still so wide?? I’ll give you this: if you know the solution, you’re way deeper into <code>ggplot2</code> than should ever be necessary for an R package.</p>
 </div>
 <div class="section level2">
+<h2 id="support-for-any-font-including-google-fonts">Support for any font, including Google Fonts<a class="anchor" aria-label="anchor" href="#support-for-any-font-including-google-fonts"></a>
+</h2>
+<p>Any installed font and any Google Font is support in <code>plot2</code>, since it uses the <code>showtext</code> package internally. Missing fontss will be downloaded automatically:</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mtcars</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">hp</span>, font <span class="op">=</span> <span class="st">"Rock Salt"</span><span class="op">)</span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span></code></pre></div>
+<p><img src="plot2_files/figure-html/unnamed-chunk-26-1.png" width="576"></p>
+</div>
+<div class="section level2">
 <h2 id="plotting-geometries-sf-objects">Plotting geometries (<code>sf</code> objects)<a class="anchor" aria-label="anchor" href="#plotting-geometries-sf-objects"></a>
 </h2>
 <p>Objects of class <code>sf</code> (<em>simple feature</em>) are treated specially by the <code>ggplot2</code> package, although <code><a href="../reference/plot2.html">plot2()</a></code> handles these objects like any other data set. Instead it returns a <code>ggplot</code> object created with <code><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf()</a></code> internally, but most arguments are usable and even the <code><a href="../reference/theme_minimal2.html">theme_minimal2()</a></code> theme has good use for <code>sf</code> plots.</p>
 <p>The <code>netherlands</code> data set is such an <code>sf</code> object:</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
 <span class="co">#&gt; Linking to GEOS 3.8.0, GDAL 3.0.4, PROJ 6.3.1; sf_use_s2() is TRUE</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">netherlands</span><span class="op">)</span>
@@ -615,24 +626,24 @@
 <span class="co">#&gt; 9   Zuid-Holland 2967.352 MULTIPOLYGON (((4.547322 52...</span>
 <span class="co">#&gt; 10       Zeeland 1838.376 MULTIPOLYGON (((3.842477 51...</span></code></pre></div>
 <p>These objects can be given to <code><a href="../reference/plot2.html">plot2()</a></code>, and its built-in <code><a href="../reference/theme_minimal2.html">theme_minimal2()</a></code> makes sure you get a clean map:</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">netherlands</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category = area_km2</span></span>
 <span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">datalabels = province</span></span></code></pre></div>
-<p><img src="plot2_files/figure-html/unnamed-chunk-27-1.png" width="576"></p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<p><img src="plot2_files/figure-html/unnamed-chunk-28-1.png" width="576"></p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">netherlands</span>,
       colour_fill <span class="op">=</span> <span class="st">"certe"</span>,
       datalabels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category = area_km2</span></span></code></pre></div>
-<p><img src="plot2_files/figure-html/unnamed-chunk-27-2.png" width="576"></p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<p><img src="plot2_files/figure-html/unnamed-chunk-28-2.png" width="576"></p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">netherlands</span>,
       colour_fill <span class="op">=</span> <span class="st">"viridis"</span>,
       <span class="co"># datalabels support tidy evaluation too:</span>
       datalabels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">province</span>, <span class="st">"\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">area_km2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category = area_km2</span></span></code></pre></div>
-<p><img src="plot2_files/figure-html/unnamed-chunk-27-3.png" width="576"></p>
+<p><img src="plot2_files/figure-html/unnamed-chunk-28-3.png" width="576"></p>
 </div>
   </div>
 
