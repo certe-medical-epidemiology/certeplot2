@@ -122,7 +122,7 @@ plot2(
   sep = " / ",
   print = FALSE,
   text_factor = 1,
-  family = getOption("plot2.family"),
+  font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
   markdown = TRUE,
@@ -310,7 +310,7 @@ plot2(
 
 \item{text_factor}{text factor to use, which will apply to all texts shown in the plot}
 
-\item{family}{font family to use, can be set with \code{options(plot2.family = "...")}}
+\item{font}{font (family) to use, can be set with \code{options(plot2.font = "...")}. Can be any installed system font or any of the > 1000 font names from \href{https://fonts.google.com}{Google Fonts}.}
 
 \item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}. This argument accepts themes (e.g., \code{theme_bw()}), functions (e.g., \code{theme_bw}) and characters themes (e.g., \code{"theme_bw"}). Can be set with \code{options(plot2.theme = "...")}.}
 
@@ -340,6 +340,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': \code{x.sort}, \code{category.sort} and \code{facet.sort}
 \item Easy limiting values, e.g. by setting \code{x.max_items = 5} or \code{category.max_items = 5}
 \item Markdown support for any label, with any theme
+\item Integrated support for any Google Font and any installed system font
 \item An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: \code{theme_minimal2()}
 \item Some conveniences from Microsoft Excel:
 \itemize{

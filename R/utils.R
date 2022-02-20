@@ -49,10 +49,9 @@ dplyr::n
 dplyr::n_distinct
 
 #' @importFrom certestyle font_black font_blue font_red_bg font_white font_bold
-plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", geom = "info") {
+plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", type = "info") {
   # at default, only prints in interactive mode and for the website generation
   if (isTRUE(print)) {
-    msg <- paste0(font_black(c(...), collapse = NULL), collapse = "")
     # get info icon
     if (isTRUE(base::l10n_info()$`UTF-8`) && interactive()) {
       # \u2139 is a symbol officially named 'information source'
@@ -60,17 +59,20 @@ plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") 
     } else {
       icon <- "i"
     }
-    if (geom == "info") {
+    if (type == "info") {
+      fn <- font_black
       icon <- font_blue(icon)
     } else {
-      icon <- font_red(icon)
+      fn <- font_red
+      icon <- font_red("!")
     }
-    message(paste(icon, font_black(msg)))
+    msg <- paste0(fn(c(...), collapse = NULL), collapse = "")
+    message(paste(icon, fn(msg)))
   }
 }
 
 plot2_warning <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "") {
-  plot2_message(..., print = print, geom = "warning")
+  plot2_message(..., print = print, type = "warning")
 }
 
 requires_numeric_coercion <- function(x) {
