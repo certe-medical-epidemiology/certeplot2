@@ -129,7 +129,7 @@
   sep = " / ",
   print = FALSE,
   text_factor = 1,
-  family = getOption("plot2.family"),
+  font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
   markdown = TRUE,
@@ -255,7 +255,7 @@
   sep = " / ",
   print = FALSE,
   text_factor = 1,
-  family = getOption("plot2.family"),
+  font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
   markdown = TRUE,
@@ -381,7 +381,7 @@
   sep = " / ",
   print = FALSE,
   text_factor = 1,
-  family = getOption("plot2.family"),
+  font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
   markdown = TRUE,
@@ -507,7 +507,7 @@
   sep = " / ",
   print = FALSE,
   text_factor = 1,
-  family = getOption("plot2.family"),
+  font = getOption("plot2.font"),
   theme = theme_minimal2(panel.grid.major = element_blank(), panel.grid.minor =
     element_blank(), panel.border = element_blank(), plot.margin = unit(c(-15, 5, -15,
     5), units = "pt"), axis.title = element_blank(), axis.text = element_blank(),
@@ -636,7 +636,7 @@
   sep = " / ",
   print = FALSE,
   text_factor = 1,
-  family = getOption("plot2.family"),
+  font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
   markdown = TRUE,
@@ -762,7 +762,7 @@
   sep = " / ",
   print = FALSE,
   text_factor = 1,
-  family = getOption("plot2.family"),
+  font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
   markdown = TRUE,
@@ -893,7 +893,7 @@
   sep = " / ",
   print = FALSE,
   text_factor = 1,
-  family = getOption("plot2.family"),
+  font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
   markdown = TRUE,
@@ -1171,7 +1171,7 @@
 
 \item{text_factor}{text factor to use, which will apply to all texts shown in the plot}
 
-\item{family}{font family to use, can be set with \code{options(plot2.family = "...")}}
+\item{font}{font (family) to use, can be set with \code{options(plot2.font = "...")}. Can be any installed system font or any of the > 1000 font names from \href{https://fonts.google.com}{Google Fonts}.}
 
 \item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}. This argument accepts themes (e.g., \code{theme_bw()}), functions (e.g., \code{theme_bw}) and characters themes (e.g., \code{"theme_bw"}). Can be set with \code{options(plot2.theme = "...")}.}
 

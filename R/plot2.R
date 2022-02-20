@@ -119,7 +119,7 @@
 #' @param sep separator character to use if multiple columns are given to either of the three directions: `x`, `category` and `facet`, e.g. `facet = c(column1, column2)`
 #' @param print a [logical] to indicate if the result should be [printed][print()] instead of just returned
 #' @param text_factor text factor to use, which will apply to all texts shown in the plot
-#' @param family font family to use, can be set with `options(plot2.family = "...")`
+#' @param font font (family) to use, can be set with `options(plot2.font = "...")`. Can be any installed system font or any of the > 1000 font names from [Google Fonts](https://fonts.google.com).
 #' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`). Can be set with `options(plot2.theme = "...")`.
 #' @param background the background colour of the entire plot, can also be `NA` to remove it. Only applies when `theme` is not empty.
 #' @param markdown a [logical] to turn all labels and titles into markdown-supported labels, by extending their S3 classes with [`"element_markdown"`][ggtext::element_markdown()], a feature of the `ggtext` package
@@ -133,6 +133,7 @@
 #'   * Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': `x.sort`, `category.sort` and `facet.sort`
 #'   * Easy limiting values, e.g. by setting `x.max_items = 5` or `category.max_items = 5`
 #'   * Markdown support for any label, with any theme
+#'   * Integrated support for any Google Font and any installed system font
 #'   * An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: `theme_minimal2()`
 #'   * Some conveniences from Microsoft Excel:
 #'     * The y axis starts at 0 if possible
@@ -381,7 +382,7 @@ plot2 <- function(.data,
                   sep = " / ",
                   print = FALSE,
                   text_factor = 1,
-                  family = getOption("plot2.family"),
+                  font = getOption("plot2.font"),
                   theme = getOption("plot2.theme", "theme_minimal2"),
                   background = "white",
                   markdown = TRUE,
@@ -397,7 +398,7 @@ plot2 <- function(.data,
                      background = background,
                      markdown = markdown,
                      text_factor = text_factor,
-                     family = family,
+                     font = font,
                      horizontal = horizontal,
                      x.remove = x.remove,
                      x.lbl_angle = x.lbl_angle,
@@ -557,7 +558,7 @@ plot2_exec <- function(.data,
                        sep,
                        print,
                        text_factor,
-                       family,
+                       font,
                        theme,
                        background,
                        markdown,
@@ -909,7 +910,7 @@ plot2_exec <- function(.data,
   }
   
   # add the right scales ----
-  family <- validate_font(family)
+  font <- validate_font(font)
   if (has_category(df) && is.numeric(get_category(df))) {
     p <- p +
       validate_category_scale(values = get_category(df),
@@ -930,7 +931,7 @@ plot2_exec <- function(.data,
                               legend.position = legend.position,
                               decimal.mark = decimal.mark,
                               big.mark = big.mark,
-                              family = family)
+                              font = font)
   } else if (type != "geom_sf") {
     p <- p +
       scale_colour_manual(values = cols$colour,
@@ -1001,7 +1002,7 @@ plot2_exec <- function(.data,
                    background = background,
                    markdown = markdown,
                    text_factor = text_factor,
-                   family = family,
+                   font = font,
                    horizontal = horizontal,
                    x.remove = x.remove,
                    x.lbl_angle = x.lbl_angle,
@@ -1097,7 +1098,7 @@ plot2_exec <- function(.data,
                         datalabels.colour = datalabels.colour,
                         datalabels.size = datalabels.size,
                         datalabels.angle = datalabels.angle,
-                        family = family,
+                        font = font,
                         reverse = reverse,
                         horizontal = horizontal,
                         misses_datalabels = misses_datalabels,

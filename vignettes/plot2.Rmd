@@ -21,7 +21,6 @@ library(certeplot2)
 library(ggplot2) 
 library(dplyr, warn.conflicts = FALSE)
 args <- names(formals(plot2))
-args <- args[!args %in% c("x.category", "y.category")]
 x_settings <- args[grepl("^x[.]", args)]
 category_settings <- args[grepl("^category[.]", args)]
 facet_settings <- args[grepl("^facet[.]", args)]
@@ -40,6 +39,7 @@ The `plot2()` function is a convenient wrapper around many `ggplot2` functions s
   * Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': `x.sort`, `category.sort` and `facet.sort`
   * Easy limiting values, e.g. by setting `x.max_items = 5` or `category.max_items = 5`
   * Markdown support for any label, with any theme
+  * Integrated support for any Google Font and any installed system font
   * An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: `theme_minimal2()`
   * Some conveniences from Microsoft Excel:
     * The y axis starts at 0 if possible
@@ -408,11 +408,11 @@ And why is 2009 still so wide?? I'll give you this: if you know the solution, yo
 
 # Support for any font, including Google Fonts
 
-By using the `showtext` package internally, `plot2` supports any font and downloads the missing fonts automatically if required:
+Any installed font and any Google Font is support in `plot2`, since it uses the  `showtext` package internally. Missing fontss will be downloaded automatically:
 
 ```{r}
 mtcars %>%
-  plot2(mpg, hp, family = "Rock Salt")
+  plot2(mpg, hp, font = "Rock Salt")
 ```
 
 # Plotting geometries (`sf` objects)

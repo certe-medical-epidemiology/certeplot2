@@ -783,7 +783,7 @@ validate_category_scale <- function(values,
                                     legend.position,
                                     decimal.mark,
                                     big.mark,
-                                    family,
+                                    font,
                                     ...) {
   # only for a numeric category scale
   
@@ -1285,7 +1285,7 @@ validate_theme <- function(theme,
                            background,
                            markdown,
                            text_factor,
-                           family,
+                           font,
                            horizontal,
                            x.remove,
                            x.lbl_angle,
@@ -1418,11 +1418,11 @@ validate_theme <- function(theme,
   theme$strip.text$margin <- margin(t = facet.margin, b = facet.margin / 2)
   theme$strip.text$size <- unit(facet.size, "pt")
   
-  # set the font family and font size, taking text_factor into account
+  # set the font font and font size, taking text_factor into account
   attr_bak <- attributes(theme)
   theme <- lapply(theme, function(el) {
     if (inherits(el, "element_text")) {
-      el$family <- family
+      el$family <- font
       if (text_factor != 1 && !is.null(el$size) && is.numeric(el$size)) {
         attr_el_bak <- attributes(el$size)
         el$size <- as.double(el$size) * text_factor
@@ -1527,7 +1527,7 @@ set_datalabels <- function(p,
                            datalabels.colour,
                            datalabels.size,
                            datalabels.angle,
-                           family,
+                           font,
                            reverse,
                            horizontal,
                            misses_datalabels,
@@ -1617,7 +1617,7 @@ set_datalabels <- function(p,
                           colour = NA,
                           fill = datalabels.colour_fill,
                           size = datalabels.size,
-                          family = family,
+                          family = font,
                           angle = datalabels.angle,
                           na.rm = TRUE),
                      # only when there's a category:
@@ -1637,7 +1637,7 @@ set_datalabels <- function(p,
             args = c(list(mapping = aes(label = `_var_datalabels`),
                           colour = datalabels.colour,
                           size = datalabels.size * ifelse(isTRUE(markdown) & isTRUE(is_sf), 1.05, 1),
-                          family = family,
+                          family = font,
                           angle = datalabels.angle,
                           na.rm = TRUE),
                      # only when there's a category:
@@ -1666,48 +1666,50 @@ set_datalabels <- function(p,
   p
 }
 
-#' @importFrom sysfonts font_families font_add font_add_google
+#' @importFrom sysfonts font_families font_add
 #' @importFrom showtextdb google_fonts font_install load_showtext_fonts
-validate_font <- function(family) {
-  if (is_empty(family)) {
+#' @importFrom showtext showtext_opts
+validate_font <- function(font) {
+  if (!interactive() && "knitr" %in% rownames(utils::installed.packages())) {
+    # if in knitr (R Markdown) set the right DPI for this plot according to current chunk setting
+    showtext_opts(dpi = knitr::opts_current$get("dpi"))
+  }
+  
+  if (is_empty(font)) {
     # no font set, so return empty string to use default
     return("")
   }
-  if (is.null(plot2_env$fonts)) {
-    plot2_warning("Ignoring unknown font family \"", family.bak, "\"")
-    return("")
-  }
-  family.bak <- family
-  family <- trimws(tolower(family)[1L])
-  if (family %in% tolower(font_families())) {
+  font.bak <- font
+  font <- trimws(tolower(font)[1L])
+  if (font %in% tolower(font_families())) {
     # this is for previously activated fonts, or fonts installed from Google Fonts
-    return(font_families()[tolower(font_families()) == family])
+    return(font_families()[tolower(font_families()) == font])
   }
   
   # get font files from system
-  fonts <- plot2_env$fonts[which(tolower(plot2_env$fonts$family) == trimws(tolower(family)[1L])), , drop = FALSE]
-  # helper function for adding fonts
-  set_if_not_null <- function(type) {
-    fonts$fullpath <- paste(fonts$path, fonts$file, sep = "/")
-    fonts$plainface <- gsub(" +", "", trimws(tolower(fonts$face)))
-    font <- fonts[which(fonts$plainface == type), "fullpath", drop = TRUE]
-    if (length(font) == 0) {
-      NULL
-    } else {
-      font
-    }
-  }
+  fonts <- plot2_env$fonts[which(tolower(plot2_env$fonts$family) == trimws(tolower(font)[1L])), , drop = FALSE]
   
   if (NROW(fonts) == 0) {
     # font does not exist yet - try to download from Google Fonts
     tryCatch({
-      font_urls <- google_fonts(family.bak)
+      font_urls <- google_fonts(font.bak)
       # install and register using showtextdb
       suppressMessages(font_install(font_urls, quiet = TRUE))
       load_showtext_fonts()
     }, error = function(e) invisible())
 
   } else if (!fonts$family[1L] %in% font_families()) {
+    # helper function for adding fonts
+    set_if_not_null <- function(type) {
+      fonts$fullpath <- paste(fonts$path, fonts$file, sep = "/")
+      fonts$plainface <- gsub(" +", "", trimws(tolower(fonts$face)))
+      font <- fonts[which(fonts$plainface == type), "fullpath", drop = TRUE]
+      if (length(font) == 0) {
+        NULL
+      } else {
+        font
+      }
+    }
     # still has to be 'registered' with sysfonts, so do it
     font_add(family = fonts$family[1L],
              regular = set_if_not_null("regular"),
@@ -1717,10 +1719,10 @@ validate_font <- function(family) {
   }
   
   # return the font if it is available
-  if (family %in% tolower(font_families())) {
-    return(font_families()[tolower(font_families()) == family])
+  if (font %in% tolower(font_families())) {
+    return(font_families()[tolower(font_families()) == font])
   } else {
-    plot2_warning("Ignoring unknown font family \"", family.bak, "\"")
+    plot2_warning("Ignoring unknown font font \"", font.bak, "\"")
     return("")
   }
 }

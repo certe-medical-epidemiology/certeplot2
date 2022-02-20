@@ -49,7 +49,7 @@ dplyr::n
 dplyr::n_distinct
 
 #' @importFrom certestyle font_black font_blue font_red_bg font_white font_bold
-plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", geom = "info") {
+plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", type = "info") {
   # at default, only prints in interactive mode and for the website generation
   if (isTRUE(print)) {
     # get info icon
@@ -59,7 +59,7 @@ plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") 
     } else {
       icon <- "i"
     }
-    if (geom == "info") {
+    if (type == "info") {
       fn <- font_black
       icon <- font_blue(icon)
     } else {
@@ -72,7 +72,7 @@ plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") 
 }
 
 plot2_warning <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "") {
-  plot2_message(..., print = print, geom = "warning")
+  plot2_message(..., print = print, type = "warning")
 }
 
 requires_numeric_coercion <- function(x) {

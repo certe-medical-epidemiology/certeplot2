@@ -399,8 +399,8 @@ test_that("date labels work", {
 })
 
 test_that("manual fonts work", {
-  expect_s3_class(mtcars %>% plot2(mpg, hp, family = "Rock Salt"), "gg")
-  expect_s3_class(mtcars %>% plot2(mpg, hp, family = "Rock Salt"), "gg")
-  expect_s3_class(mtcars %>% plot2(mpg, hp, family = "Courier"), "gg")
-  expect_s3_class(mtcars %>% plot2(mpg, hp, family = "Courier"), "gg")
+  expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Rock Salt"), "gg")
+  expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Rock Salt"), "gg")
+  expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Courier"), "gg")
+  expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Courier"), "gg")
 })
