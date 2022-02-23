@@ -1673,6 +1673,9 @@ validate_font <- function(font) {
   if (!interactive() && "knitr" %in% rownames(utils::installed.packages())) {
     # if in knitr (R Markdown) set the right DPI for this plot according to current chunk setting
     showtext_opts(dpi = knitr::opts_current$get("dpi"))
+  } else {
+    # the default
+    showtext_opts(dpi = 96)
   }
   
   if (is_empty(font)) {
