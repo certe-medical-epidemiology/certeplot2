@@ -1418,7 +1418,7 @@ validate_theme <- function(theme,
   theme$strip.text$margin <- margin(t = facet.margin, b = facet.margin / 2)
   theme$strip.text$size <- unit(facet.size, "pt")
   
-  # set the font font and font size, taking text_factor into account
+  # set the font family and font size, taking text_factor into account
   attr_bak <- attributes(theme)
   theme <- lapply(theme, function(el) {
     if (inherits(el, "element_text")) {
@@ -1725,7 +1725,7 @@ validate_font <- function(font) {
   if (font %in% tolower(font_families())) {
     return(font_families()[tolower(font_families()) == font])
   } else {
-    plot2_warning("Ignoring unknown font font \"", font.bak, "\"")
+    plot2_warning("Ignoring unknown font family \"", font.bak, "\"")
     return("")
   }
 }
