@@ -20,12 +20,15 @@
 #' @importFrom showtext showtext_auto
 #' @importFrom sysfonts font_files
 .onLoad <- function(libname, pkgname) {
-  try({
-    # this will allow support for any foreign font in e.g. R Markdown
-    showtext_auto()
-    # save current font map to environment to use for plot2():
-    plot2_env$fonts <- font_files()
-  }, silent = TRUE)
+  if (!identical(Sys.getenv("IN_PKGDOWN"), "true")) {
+    # not in pkgdown (website generation):
+    try({
+      # this will allow support for any foreign font in e.g. R Markdown
+      showtext_auto(enable = TRUE)
+      # save current font map to environment to use for plot2():
+      plot2_env$fonts <- font_files()
+    }, silent = TRUE)
+  }
 }
 
 #' @importFrom showtext showtext_auto
