@@ -102,7 +102,7 @@ plot2(
   smooth.formula = NULL,
   smooth.se = TRUE,
   smooth.level = 0.95,
-  smooth.alpha = 0.15,
+  smooth.alpha = 0.1,
   smooth.size = 0.75,
   smooth.linetype = 3,
   size = NULL,

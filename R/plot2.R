@@ -362,7 +362,7 @@ plot2 <- function(.data,
                   smooth.formula = NULL,
                   smooth.se = TRUE,
                   smooth.level = 0.95,
-                  smooth.alpha = 0.15,
+                  smooth.alpha = 0.1,
                   smooth.size = 0.75,
                   smooth.linetype = 3,
                   size = NULL,
@@ -820,10 +820,11 @@ plot2_exec <- function(.data,
                                                 group = `_var_category`))
     }
   }
-  if (geom_is_continuous(type) && !geom_is_line(type)) {
+  if (geom_is_continuous(type) && !geom_is_line(type) && !has_category(df)) {
     # remove the group from the mapping
     mapping <- utils::modifyList(mapping, aes(group = NULL))
-  } else if (geom_is_line(type) && !has_category(df)) {
+  }
+  if ((geom_is_line(type) | geom_has_only_colour(type)) && !has_category(df)) {
     # exception for line plots without colour/fill, force group = 1
     mapping <- utils::modifyList(mapping, aes(group = 1))
   }
@@ -877,7 +878,6 @@ plot2_exec <- function(.data,
       p <- p +
         do.call(geom_smooth,
                 c(list(mapping = mapping,
-                       fill = "grey60",
                        formula = smooth.formula,
                        se = smooth.se,
                        method = smooth.method,
@@ -886,7 +886,8 @@ plot2_exec <- function(.data,
                        linetype = smooth.linetype,
                        size = smooth.size,
                        na.rm = na.rm),
-                  list(colour = cols$colour[1L])[!has_category(df)]))
+                  list(colour = cols$colour[1L])[!has_category(df)],
+                  list(fill = cols$colour[1L])[!has_category(df)]))
     }
   }
   
