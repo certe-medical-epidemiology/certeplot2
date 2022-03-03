@@ -820,7 +820,8 @@ plot2_exec <- function(.data,
                                                 group = `_var_category`))
     }
   }
-  if (geom_is_continuous(type) && !geom_is_line(type) && !has_category(df)) {
+  if (geom_is_continuous(type) && !geom_is_line(type) &&
+      (!has_category(df) | type %in% c("geom_boxplot", "geom_violin"))) {
     # remove the group from the mapping
     mapping <- utils::modifyList(mapping, aes(group = NULL))
   }
