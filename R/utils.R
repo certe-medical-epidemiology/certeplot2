@@ -439,3 +439,7 @@ geom_sf_richlabel <- function(mapping = aes(),
                          label.size = label.size, na.rm = na.rm, 
                          fun.geometry = fun.geometry, ...))
 }
+
+sigfigs <- function(x){
+  nchar(gsub("[.](0+).*", "\\1", as.character(format(x, scientific = FALSE))))
+}

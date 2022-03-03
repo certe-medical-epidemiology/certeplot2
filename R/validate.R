@@ -540,7 +540,10 @@ validate_x_scale <- function(values,
         # some transformations, such as log, do not allow 0
         x.limits[x.limits == 0] <- NA_real_
       }
-      scale_x_continuous(labels = function(x, ...) format2(x, decimal.mark = decimal.mark, big.mark = big.mark),
+      scale_x_continuous(labels = function(x, ...) format2(x,
+                                                           round = max(2, sigfigs(diff(range(x))) + 1),
+                                                           decimal.mark = decimal.mark,
+                                                           big.mark = big.mark),
                          breaks = if (!is.null(x.breaks)) x.breaks else waiver(),
                          n.breaks = x.n_breaks,
                          trans = x.trans,
@@ -1057,14 +1060,16 @@ generate_geom <- function(type,
       values <- get_x(df)
       values <- values[!is.infinite(values)]
       binwidth <- as.double(diff(range(values, na.rm = TRUE))) / (12 + min(10, length(unique(values)) / 20))
-      if (binwidth < 0) {
+      if (binwidth < 0.01) {
+        # do not round
+      } else if (binwidth < 1) {
         binwidth <- round(binwidth, 3)
       } else if (binwidth > 10) {
         binwidth <- round(binwidth, 0)
       } else {
         binwidth <- round(binwidth, 1)
       }
-      plot2_message("Using ", font_blue("binwidth =", binwidth), " based on data")
+      plot2_message("Using ", font_blue("binwidth =", format(binwidth, scientific = FALSE)), " based on data")
     }
     do.call(geom_fn,
             args = c(list(size = size,

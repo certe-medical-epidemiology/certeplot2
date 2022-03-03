@@ -430,18 +430,24 @@ plot2.numeric <- function(.data,
     .data <- y
     y_deparse <- "y"
   }
-  df <- data.frame(y = .data, stringsAsFactors = FALSE)
-  colnames(df) <- ifelse(y_deparse == "x", "y", y_deparse) # support `plot2(x)` if x is a dbl vector
-  if (missing(x)) {
-    df$x <- seq_len(nrow(df))
+  if (geom_is_continuous_x(validate_type(type))) {
+    df <- data.frame(x = .data, stringsAsFactors = FALSE)
   } else {
-    df$x <- x
+    df <- data.frame(y = .data, stringsAsFactors = FALSE)
+    colnames(df) <- ifelse(y_deparse == "x", "y", y_deparse) # support `plot2(x)` if x is a dbl vector
+    if (missing(x)) {
+      df$x <- seq_len(nrow(df))
+    } else {
+      df$x <- x
+    }
   }
+  
   if (is.null(type)) {
     type <- getOption("plot2.default_type", "geom_col")
     plot2_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL), 
                   font_black(" as the default"))
   }
+  
   plot2_exec(df,
              x = x,
              y = {{ y }},

@@ -104,8 +104,8 @@ test_that("S3 implementations work", {
 })
 
 test_that("general mapping works", {
-  expect_equal(plotdata %>% plot2() %>% .$mapping %>% names(),
-               c("y", "x", "fill", "colour"))
+  expect_equal(plotdata %>% plot2() %>% get_mapping() %>% names(),
+               c("y", "group", "x", "fill", "colour"))
   # remove x axis
   expect_s3_class(admitted_patients %>% plot2(x = NULL, y = age), "gg")
   expect_s3_class(admitted_patients %>% plot2(x = c(1:250), y = age), "gg")
@@ -113,9 +113,9 @@ test_that("general mapping works", {
 
 test_that("adding mapping works", {
   p <- iris %>% plot2(Sepal.Length, Sepal.Width)
-  expect_length(p$mapping, 2)
+  expect_length(p$mapping, 3)
   p2 <- p %>% add_mapping(shape = Species)
-  expect_length(p2$mapping, 3)
+  expect_length(p2$mapping, 4)
   expect_s3_class(p2, "gg")
 })
 
@@ -162,20 +162,20 @@ test_that("adding types works", {
 })
 
 test_that("titles work", {
-  expect_equal(mtcars %>%
-                 plot2(caption = "caption",
-                       tag = "tag",
-                       subtitle = "subtitle",
-                       title = "title",
-                       y.title = "y.title",
-                       x.title = "x.title") %>%
-                 get_labels(),
-               c(caption = "caption",
-                 tag = "tag",
-                 subtitle = "subtitle",
-                 title = "title",
-                 y = "y.title",
-                 x = "x.title"))
+  expect_true(all(c(caption = "caption",
+                    tag = "tag",
+                    subtitle = "subtitle",
+                    title = "title",
+                    y = "y.title",
+                    x = "x.title")
+                  %in% (mtcars %>%
+                    plot2(caption = "caption",
+                          tag = "tag",
+                          subtitle = "subtitle",
+                          title = "title",
+                          y.title = "y.title",
+                          x.title = "x.title") %>%
+                    get_labels())))
 })
 
 test_that("max items and sorting work", {
@@ -236,6 +236,7 @@ test_that("x scale works", {
   expect_s3_class(plotdata %>% plot2(x.trans = "log2"), "gg")
   expect_s3_class(mtcars %>% plot2(mpg, hp, x.lbl_angle = 40), "gg")
   expect_s3_class(mtcars %>% plot2(mpg, hp, x.lbl_angle = 200), "gg")
+  expect_s3_class(runif(n = 100, min = 2.0004, max = 2.0006) %>% plot2(type = "h"), "gg")
   
   p <- plotdata %>%
     plot2(x = x_date,
