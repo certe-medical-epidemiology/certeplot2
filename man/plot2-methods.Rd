@@ -39,7 +39,7 @@
   facet.margin = 8,
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
-  facet.fixed_y = FALSE,
+  facet.fixed_y = NULL,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -165,7 +165,7 @@
   facet.margin = 8,
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
-  facet.fixed_y = FALSE,
+  facet.fixed_y = NULL,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -291,7 +291,7 @@
   facet.margin = 8,
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
-  facet.fixed_y = FALSE,
+  facet.fixed_y = NULL,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -417,7 +417,7 @@
   facet.margin = 8,
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
-  facet.fixed_y = FALSE,
+  facet.fixed_y = NULL,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -546,7 +546,7 @@
   facet.margin = 8,
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
-  facet.fixed_y = FALSE,
+  facet.fixed_y = NULL,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -672,7 +672,7 @@
   facet.margin = 8,
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
-  facet.fixed_y = FALSE,
+  facet.fixed_y = NULL,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -801,7 +801,7 @@
   facet.margin = 8,
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
-  facet.fixed_y = FALSE,
+  facet.fixed_y = NULL,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -945,29 +945,29 @@
 
 \item{na.rm}{remove \code{NA} values from showing in the plot}
 
-\item{facet.position}{settings for the plotting direction \code{facet}}
+\item{facet.position}{additional settings for the plotting direction \code{facet}}
 
-\item{facet.fill}{settings for the plotting direction \code{facet}}
+\item{facet.fill}{additional settings for the plotting direction \code{facet}}
 
-\item{facet.bold}{settings for the plotting direction \code{facet}}
+\item{facet.bold}{additional settings for the plotting direction \code{facet}}
 
-\item{facet.italic}{settings for the plotting direction \code{facet}}
+\item{facet.italic}{additional settings for the plotting direction \code{facet}}
 
-\item{facet.size}{settings for the plotting direction \code{facet}}
+\item{facet.size}{additional settings for the plotting direction \code{facet}}
 
-\item{facet.margin}{settings for the plotting direction \code{facet}}
+\item{facet.margin}{additional settings for the plotting direction \code{facet}}
 
-\item{facet.repeat_lbls_x}{settings for the plotting direction \code{facet}}
+\item{facet.repeat_lbls_x}{additional settings for the plotting direction \code{facet}}
 
-\item{facet.repeat_lbls_y}{settings for the plotting direction \code{facet}}
+\item{facet.repeat_lbls_y}{additional settings for the plotting direction \code{facet}}
 
-\item{facet.fixed_y}{settings for the plotting direction \code{facet}}
+\item{facet.fixed_y}{a \link{logical} to indicate whether all y scales should have the same limits. Defaults to \code{TRUE} only if the \link[certestats:distribution_metrics]{coefficient of variation} (sd divided by mean) of the maximum values of y is less than 15\%.}
 
-\item{facet.drop}{settings for the plotting direction \code{facet}}
+\item{facet.drop}{additional settings for the plotting direction \code{facet}}
 
-\item{facet.nrow}{settings for the plotting direction \code{facet}}
+\item{facet.nrow}{additional settings for the plotting direction \code{facet}}
 
-\item{facet.relative}{settings for the plotting direction \code{facet}}
+\item{facet.relative}{additional settings for the plotting direction \code{facet}}
 
 \item{x.date_breaks}{breaks to use when the x axis contains dates, will be determined automatically if left blank}
 

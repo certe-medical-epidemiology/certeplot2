@@ -47,7 +47,8 @@
 #' @param subtitle.colour text colour of the subtitle
 #' @param na.replace character to put in place of `NA` values if `na.rm = FALSE`
 #' @param na.rm remove `NA` values from showing in the plot
-#' @param facet.position,facet.fill,facet.bold,facet.italic,facet.size,facet.margin,facet.repeat_lbls_x,facet.repeat_lbls_y,facet.fixed_y,facet.drop,facet.nrow,facet.relative settings for the plotting direction `facet`
+#' @param facet.fixed_y a [logical] to indicate whether all y scales should have the same limits. Defaults to `TRUE` only if the [coefficient of variation][certestats::cv()] (sd divided by mean) of the maximum values of y is less than 15%.
+#' @param facet.position,facet.fill,facet.bold,facet.italic,facet.size,facet.margin,facet.repeat_lbls_x,facet.repeat_lbls_y,facet.drop,facet.nrow,facet.relative additional settings for the plotting direction `facet`
 #' @param x.date_breaks breaks to use when the x axis contains dates, will be determined automatically if left blank
 #' @param x.date_labels labels to use when the x axis contains dates, will be determined automatically if left blank
 #' @param category.focus a value of `category` that should be highlighted, meaning that all other values in `category` will be greyed out. This can also be a numeric value between 1 and the length of unique values of `category`, e.g. `category.focus = 2` to focus on the second legend item.
@@ -292,7 +293,7 @@ plot2 <- function(.data,
                   facet.margin = 8,
                   facet.repeat_lbls_x = TRUE,
                   facet.repeat_lbls_y = TRUE,
-                  facet.fixed_y = FALSE,
+                  facet.fixed_y = NULL,
                   facet.drop = FALSE,
                   facet.nrow = NULL,
                   facet.relative = FALSE,
@@ -820,8 +821,7 @@ plot2_exec <- function(.data,
                                                 group = `_var_category`))
     }
   }
-  if (geom_is_continuous(type) && !geom_is_line(type) &&
-      (!has_category(df) | type %in% c("geom_boxplot", "geom_violin"))) {
+  if (geom_is_continuous(type) && !geom_is_line(type) && has_category(df)) {
     # remove the group from the mapping
     mapping <- utils::modifyList(mapping, aes(group = NULL))
   }
@@ -975,7 +975,7 @@ plot2_exec <- function(.data,
     }
     if (has_y(df)) {
       p <- p +
-        validate_y_scale(values = get_y(df),
+        validate_y_scale(df = df,
                          y.24h = y.24h,
                          y.age = y.age,
                          y.scientific = y.scientific,

@@ -105,7 +105,7 @@ test_that("S3 implementations work", {
 
 test_that("general mapping works", {
   expect_equal(plotdata %>% plot2() %>% get_mapping() %>% names(),
-               c("y", "group", "x", "fill", "colour"))
+               c("y", "x", "fill", "colour"))
   # remove x axis
   expect_s3_class(admitted_patients %>% plot2(x = NULL, y = age), "gg")
   expect_s3_class(admitted_patients %>% plot2(x = c(1:250), y = age), "gg")

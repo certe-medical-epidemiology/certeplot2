@@ -554,11 +554,12 @@ validate_x_scale <- function(values,
   }
 }
 
+#' @importFrom dplyr `%>%` group_by across summarise
 #' @importFrom ggplot2 waiver expansion scale_y_continuous
 #' @importFrom cleaner as.percentage
 #' @importFrom scales pretty_breaks
 #' @importFrom certestyle format2 format2_scientific
-validate_y_scale <- function(values,
+validate_y_scale <- function(df,
                              y.24h,
                              y.age,
                              y.scientific,
@@ -576,8 +577,8 @@ validate_y_scale <- function(values,
                              facet.fixed_y,
                              decimal.mark,
                              big.mark,
-                             zoom,
-                             ...) {
+                             zoom) {
+  values <- get_y(df)
   if (is.null(y.trans)) {
     y.trans <- "identity"
   }
@@ -585,6 +586,19 @@ validate_y_scale <- function(values,
     stop("The y scale cannot be non-numeric (current class: ",
          paste0(class(values), collapse = "/"), ")",
          call. = FALSE)
+  }
+  
+  if (is.null(facet.fixed_y) && has_facet(df)) {
+    # determine if scales should be fixed - if CV_ymax < 15% then fix them:
+    y_maxima <- df %>%
+      group_by(across(get_facet_name(.))) %>% 
+      summarise(max = max(`_var_y`, na.rm = TRUE))
+    coeff_of_variation <- stats::sd(y_maxima$max) / mean(y_maxima$max)
+    if (coeff_of_variation < 0.15) {
+      plot2_message("Assuming ", font_blue("facet.fixed_y = TRUE"), 
+                    " since the ", nrow(y_maxima), " y scales are roughly equal")
+      facet.fixed_y <- TRUE
+    }
   }
   
   breaks_fn <- function(values, waiver,
@@ -674,11 +688,11 @@ validate_y_scale <- function(values,
         format2(as.percentage(x), decimal.mark = dec, big.mark = big)
     } else {
       function(x, dec = decimal.mark, big = big.mark, ...) {
-        is_scientific <- any(format(x) %like% "^(-?[0-9.]+e-?[0-9.]+)$") ||
-          diff(range(values)) > 10e3
+        is_scientific <- any(format(x) %like% "^(-?[0-9.]+e-?[0-9.]+)$", na.rm = TRUE) ||
+          diff(range(values, na.rm = TRUE)) > 10e3
         non_unique <- length(unique(format2(x[!is.na(x)]))) < length(format2(x[!is.na(x)]))
-        if (non_unique || (is_scientific && is.null(y.scientific))) {
-          if (is_scientific) {
+        if (isTRUE(non_unique) || (isTRUE(is_scientific) && is.null(y.scientific))) {
+          if (isTRUE(is_scientific)) {
             plot2_message("Assuming ", font_blue("y.scientific = TRUE"))
           }
           # scientific notation or non-unique labels, use expression function from certestyle
@@ -692,7 +706,7 @@ validate_y_scale <- function(values,
   
   limits_fn <- function(values, y.limits,
                         y.expand, facet.fixed_y, y.age, y.trans) {
-    min_value <- 0
+    min_value <- min(0, min(values, na.rm = TRUE))
     if (y.trans != "identity") {
       # in certain transformations, such as log, 0 is not allowed
       min_value <- NA_real_
@@ -701,11 +715,11 @@ validate_y_scale <- function(values,
       y.limits[y.limits == 0] <- min_value
       y.limits
     } else if (isTRUE(y.age)) {
-      # so no function, but force a vector
+      # so no function, but force a vector (y.expand is needed since it won't expand)
       c(min_value, max(values, na.rm = TRUE) * (1 + y.expand))
     } else if (isTRUE(facet.fixed_y)) {
       # so no function, but force a vector
-      c(NA_real_, max(values, na.rm = TRUE) * (1 + y.expand))
+      c(min_value, max(values, na.rm = TRUE))
     } else {
       function(x, y_expand = y.expand, min_val = min_value, ...) c(min(min_val, x, na.rm = TRUE), max(x, na.rm = TRUE))
     }
