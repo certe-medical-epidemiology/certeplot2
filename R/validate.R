@@ -588,7 +588,7 @@ validate_y_scale <- function(df,
          call. = FALSE)
   }
   
-  if (is.null(facet.fixed_y) && has_facet(df)) {
+  if (is.null(facet.fixed_y) && has_facet(df) && !isTRUE(stackedpercent)) {
     # determine if scales should be fixed - if CV_ymax < 15% then fix them:
     y_maxima <- df %>%
       group_by(across(get_facet_name(.))) %>% 
@@ -1275,7 +1275,38 @@ validate_width <- function(width, type) {
   width
 }
 
-validate_titles <- function(text, markdown = TRUE, max_length = NULL) {
+validate_markdown <- function(markdown,
+                              x.title,
+                              y.title,
+                              title,
+                              subtitle,
+                              tag,
+                              caption,
+                              df = NULL) {
+  if (!is.null(markdown)) {
+    return(isTRUE(markdown))
+  }
+  if (!is.null(df) && "_var_datalabels" %in% colnames(df)) {
+    datalabels <- df$`_var_datalabels`
+  } else {
+    datalabels <- NULL
+  }
+  txt <- paste(c(tryCatch(as.character(x.title), error = function(e) ""),
+                 tryCatch(as.character(y.title), error = function(e) ""),
+                 tryCatch(as.character(title), error = function(e) ""),
+                 tryCatch(as.character(subtitle), error = function(e) ""),
+                 tryCatch(as.character(tag), error = function(e) ""),
+                 tryCatch(as.character(caption),  error = function(e) ""),
+                 tryCatch(as.character(datalabels),  error = function(e) "")),
+               collapse = "")
+  out <- txt %like% "[*_^]"
+  if (isTRUE(out)) {
+    plot2_message("Assuming ", font_blue("markdown = TRUE"))
+  }
+  out
+}
+
+validate_titles <- function(text, markdown, max_length = NULL) {
   if (is_empty(text)) {
     return(NULL)
   } else {
@@ -1290,7 +1321,7 @@ validate_titles <- function(text, markdown = TRUE, max_length = NULL) {
         return(text)
       } else {
         return(paste(strwrap(x = text, width = max_length),
-                     collapse = ifelse(markdown, "<br>", "\n")))
+                     collapse = ifelse(isTRUE(markdown), "<br>", "\n")))
       }
     }
   }

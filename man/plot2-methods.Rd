@@ -132,7 +132,7 @@
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
-  markdown = TRUE,
+  markdown = NULL,
   taxonomy_italic = FALSE,
   ...
 )
@@ -258,7 +258,7 @@
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
-  markdown = TRUE,
+  markdown = NULL,
   taxonomy_italic = FALSE,
   ...
 )
@@ -384,7 +384,7 @@
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
-  markdown = TRUE,
+  markdown = NULL,
   taxonomy_italic = FALSE,
   ...
 )
@@ -513,7 +513,7 @@
     5), units = "pt"), axis.title = element_blank(), axis.text = element_blank(),
     axis.line = element_blank(), axis.ticks = element_blank()),
   background = "white",
-  markdown = TRUE,
+  markdown = NULL,
   taxonomy_italic = FALSE,
   ...
 )
@@ -639,7 +639,7 @@
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
-  markdown = TRUE,
+  markdown = NULL,
   taxonomy_italic = FALSE,
   ...
 )
@@ -765,7 +765,7 @@
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
-  markdown = TRUE,
+  markdown = NULL,
   taxonomy_italic = TRUE,
   minimum = 30,
   remove_intrinsic_resistant = TRUE,
@@ -896,7 +896,7 @@
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
-  markdown = TRUE,
+  markdown = NULL,
   taxonomy_italic = FALSE,
   ...
 )
@@ -1177,7 +1177,7 @@
 
 \item{background}{the background colour of the entire plot, can also be \code{NA} to remove it. Only applies when \code{theme} is not empty.}
 
-\item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{\link[ggtext:element_markdown]{"element_markdown"}}, a feature of the \code{ggtext} package}
+\item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{\link[ggtext:element_markdown]{"element_markdown"}}, a feature of the \code{ggtext} package. Defaults to \code{TRUE} only if any of the titles/labels contains markdown characters.}
 
 \item{taxonomy_italic}{a \link{logical} to transform all labels and titles into italics that are in the \code{microorganisms} data set of the \code{AMR} package}
 

@@ -123,7 +123,7 @@
 #' @param font font (family) to use, can be set with `options(plot2.font = "...")`. Can be any installed system font or any of the > 1000 font names from [Google Fonts](https://fonts.google.com).
 #' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`). Can be set with `options(plot2.theme = "...")`.
 #' @param background the background colour of the entire plot, can also be `NA` to remove it. Only applies when `theme` is not empty.
-#' @param markdown a [logical] to turn all labels and titles into markdown-supported labels, by extending their S3 classes with [`"element_markdown"`][ggtext::element_markdown()], a feature of the `ggtext` package
+#' @param markdown a [logical] to turn all labels and titles into markdown-supported labels, by extending their S3 classes with [`"element_markdown"`][ggtext::element_markdown()], a feature of the `ggtext` package. Defaults to `TRUE` only if any of the titles/labels contains markdown characters.
 #' @param taxonomy_italic a [logical] to transform all labels and titles into italics that are in the `microorganisms` data set of the `AMR` package
 #' @param ... arguments passed on to methods
 #' @details The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions such as [`ggplot()`][ggplot2::ggplot()], [`aes()`][ggplot2::aes()], [`geom_col()`][ggplot2::geom_col()], [`facet_wrap()`][ggplot2::facet_wrap()], [`labs()`][ggplot2::labs()], etc., and provides:
@@ -386,12 +386,14 @@ plot2 <- function(.data,
                   font = getOption("plot2.font"),
                   theme = getOption("plot2.theme", "theme_minimal2"),
                   background = "white",
-                  markdown = TRUE,
+                  markdown = NULL,
                   taxonomy_italic = FALSE,
                   ...) {
   
   # no observations, return empty plot immediately
   if (tryCatch(NROW(.data) == 0, error = function(e) stop(e$message, call. = FALSE))) {
+    # check if markdown is required
+    markdown <- validate_markdown(markdown, x.title, y.title, title, subtitle, tag, caption)
     plot2_warning("No observations, returning an empty plot")
     p <- ggplot() +
       validate_theme(theme = theme,
@@ -413,12 +415,12 @@ plot2 <- function(.data,
                      legend.italic = legend.italic,
                      title.colour = title.colour,
                      subtitle.colour = subtitle.colour)
-    if (!missing(x.title)) p <- p + labs(x = validate_titles(x.title))
-    if (!missing(y.title)) p <- p + labs(y = validate_titles(y.title))
+    if (!missing(x.title)) p <- p + labs(x = validate_titles(x.title, markdown = markdown))
+    if (!missing(y.title)) p <- p + labs(y = validate_titles(y.title, markdown = markdown))
     if (!missing(title)) p <- p + labs(title = validate_titles(title, markdown = markdown, max_length = title.linelength))
     if (!missing(subtitle)) p <- p + labs(subtitle = validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
-    if (!missing(tag)) p <- p + labs(tag = validate_titles(tag))
-    if (!missing(caption)) p <- p + labs(caption = validate_titles(caption))
+    if (!missing(tag)) p <- p + labs(tag = validate_titles(tag, markdown = markdown))
+    if (!missing(caption)) p <- p + labs(caption = validate_titles(caption, markdown = markdown))
     if (isTRUE(print)) {
       print(p)
       return(invisible())
@@ -689,8 +691,11 @@ plot2_exec <- function(.data,
                   na.replace = na.replace,
                   ...)
   
+  # check if markdown is required
+  markdown <- validate_markdown(markdown, x.title, y.title, title, subtitle, tag, caption, df)
+  
   # apply taxonomic italics ----
-  if (isTRUE(taxonomy_italic) && isTRUE(markdown)) {
+  if (isTRUE(taxonomy_italic) && (isTRUE(markdown) || is.null(markdown))) {
     if ("AMR" %in% rownames(utils::installed.packages())) {
       requireNamespace("AMR")
       taxonomic_nms <- unique(c(AMR::microorganisms$family,
@@ -720,12 +725,12 @@ plot2_exec <- function(.data,
       df <- df %>%
         mutate(across(where(is.character), make_taxonomy_italic),
                across(where(is.factor), ~fct_relabel(.x, make_taxonomy_italic)))
-      if (!misses_x.title) x.title <- make_taxonomy_italic(validate_titles(x.title))
-      if (!misses_y.title) y.title <- make_taxonomy_italic(validate_titles(y.title))
-      if (!misses_title) title <- make_taxonomy_italic(validate_titles(title))
-      if (!misses_subtitle) subtitle <- make_taxonomy_italic(validate_titles(subtitle))
-      if (!misses_tag) tag <- make_taxonomy_italic(validate_titles(tag))
-      if (!misses_caption) caption <- make_taxonomy_italic(validate_titles(caption))
+      if (!misses_x.title) x.title <- make_taxonomy_italic(validate_titles(x.title, markdown = markdown))
+      if (!misses_y.title) y.title <- make_taxonomy_italic(validate_titles(y.title, markdown = markdown))
+      if (!misses_title) title <- make_taxonomy_italic(validate_titles(title, markdown = markdown, max_length = title.linelength))
+      if (!misses_subtitle) subtitle <- make_taxonomy_italic(validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
+      if (!misses_tag) tag <- make_taxonomy_italic(validate_titles(tag, markdown = markdown))
+      if (!misses_caption) caption <- make_taxonomy_italic(validate_titles(caption, markdown = markdown))
     }
   }
   
@@ -825,7 +830,7 @@ plot2_exec <- function(.data,
     # remove the group from the mapping
     mapping <- utils::modifyList(mapping, aes(group = NULL))
   }
-  if ((geom_is_line(type) | geom_has_only_colour(type)) && !has_category(df)) {
+  if ((geom_is_line(type) | geom_is_continuous_x(type) | geom_has_only_colour(type)) && !has_category(df)) {
     # exception for line plots without colour/fill, force group = 1
     mapping <- utils::modifyList(mapping, aes(group = 1))
   }
@@ -1020,12 +1025,12 @@ plot2_exec <- function(.data,
                    subtitle.colour = subtitle.colour)
   
   # add titles ----
-  if (!misses_x.title) p <- p + labs(x = validate_titles(x.title)) # this will overwrite the var name
-  if (!misses_y.title) p <- p + labs(y = validate_titles(y.title)) # this will overwrite the var name
+  if (!misses_x.title) p <- p + labs(x = validate_titles(x.title, markdown = markdown)) # this will overwrite the var name
+  if (!misses_y.title) p <- p + labs(y = validate_titles(y.title, markdown = markdown)) # this will overwrite the var name
   if (!misses_title) p <- p + labs(title = validate_titles(title, markdown = markdown, max_length = title.linelength))
   if (!misses_subtitle) p <- p + labs(subtitle = validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
-  if (!misses_tag) p <- p + labs(tag = validate_titles(tag))
-  if (!misses_caption) p <- p + labs(caption = validate_titles(caption))
+  if (!misses_tag) p <- p + labs(tag = validate_titles(tag, markdown = markdown))
+  if (!misses_caption) p <- p + labs(caption = validate_titles(caption, markdown = markdown))
   if (has_category(df)) {
     # legend
     if (is.null(legend.title) && all(get_category(df) %like% "^[0-9.,]+$", na.rm = TRUE)) {
@@ -1035,13 +1040,13 @@ plot2_exec <- function(.data,
       legend.title <- get_category_name(df)
     }
     if ("colour" %in% names(mapping)) {
-      p <- p + labs(colour = validate_titles(legend.title))
+      p <- p + labs(colour = validate_titles(legend.title, markdown = markdown))
     }
     if ("fill" %in% names(mapping)) {
-      p <- p + labs(fill = validate_titles(legend.title))
+      p <- p + labs(fill = validate_titles(legend.title, markdown = markdown))
     }
     if ("group" %in% names(mapping)) {
-      p <- p + labs(group = validate_titles(legend.title))
+      p <- p + labs(group = validate_titles(legend.title, markdown = markdown))
     }
   }
   

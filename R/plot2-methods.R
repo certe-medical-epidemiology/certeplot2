@@ -145,7 +145,7 @@ plot2.default <- function(.data,
                           font = getOption("plot2.font"),
                           theme = getOption("plot2.theme", "theme_minimal2"),
                           background = "white",
-                          markdown = TRUE,
+                          markdown = NULL,
                           taxonomy_italic = FALSE,
                           ...) {
   
@@ -422,7 +422,7 @@ plot2.numeric <- function(.data,
                           font = getOption("plot2.font"),
                           theme = getOption("plot2.theme", "theme_minimal2"),
                           background = "white",
-                          markdown = TRUE,
+                          markdown = NULL,
                           taxonomy_italic = FALSE,
                           ...) {
   y_deparse <- deparse(substitute(.data))
@@ -715,7 +715,7 @@ plot2.freq <- function(.data,
                        font = getOption("plot2.font"),
                        theme = getOption("plot2.theme", "theme_minimal2"),
                        background = "white",
-                       markdown = TRUE,
+                       markdown = NULL,
                        taxonomy_italic = FALSE,
                        ...) {
   plot2_exec(as.data.frame(.data, stringsAsFactors = FALSE)[, 1:2, drop = FALSE],
@@ -993,7 +993,7 @@ plot2.sf <- function(.data,
                                             axis.line = element_blank(),
                                             axis.ticks = element_blank()),
                      background = "white",
-                     markdown = TRUE,
+                     markdown = NULL,
                      taxonomy_italic = FALSE,
                      ...) {
   if (!"sf" %in% rownames(utils::installed.packages())) {
@@ -1287,7 +1287,7 @@ plot2.data.frame <- function(.data,
                              font = getOption("plot2.font"),
                              theme = getOption("plot2.theme", "theme_minimal2"),
                              background = "white",
-                             markdown = TRUE,
+                             markdown = NULL,
                              taxonomy_italic = FALSE,
                              ...) {
   
@@ -1567,7 +1567,7 @@ plot2.bug_drug_combinations <- function(.data,
                                         font = getOption("plot2.font"),
                                         theme = getOption("plot2.theme", "theme_minimal2"),
                                         background = "white",
-                                        markdown = TRUE,
+                                        markdown = NULL,
                                         taxonomy_italic = TRUE,
                                         minimum = 30,
                                         remove_intrinsic_resistant = TRUE,
@@ -1868,9 +1868,12 @@ plot2.qc_test <- function(.data,
                           font = getOption("plot2.font"),
                           theme = getOption("plot2.theme", "theme_minimal2"),
                           background = "white",
-                          markdown = TRUE,
+                          markdown = NULL,
                           taxonomy_italic = FALSE,
                           ...) {
+  
+  # check if markdown is required
+  markdown <- validate_markdown(markdown, x.title, y.title, title, subtitle, tag, caption)
   
   att <- attributes(.data)
   df <- data.frame(x = seq_len(length(att$values)),
