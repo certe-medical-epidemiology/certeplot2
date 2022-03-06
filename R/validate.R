@@ -1286,10 +1286,14 @@ validate_markdown <- function(markdown,
   if (!is.null(markdown)) {
     return(isTRUE(markdown))
   }
-  if (!is.null(df) && "_var_datalabels" %in% colnames(df)) {
-    datalabels <- df$`_var_datalabels`
+  if (!is.null(df)) {
+    df_titles <- c(get_x_name(df),
+                   get_y_name(df),
+                   get_category_name(df),
+                   get_facet_name(df),
+                   get_datalabels(df))
   } else {
-    datalabels <- NULL
+    df_titles <- NULL
   }
   txt <- paste(c(tryCatch(as.character(x.title), error = function(e) ""),
                  tryCatch(as.character(y.title), error = function(e) ""),
@@ -1297,7 +1301,7 @@ validate_markdown <- function(markdown,
                  tryCatch(as.character(subtitle), error = function(e) ""),
                  tryCatch(as.character(tag), error = function(e) ""),
                  tryCatch(as.character(caption),  error = function(e) ""),
-                 tryCatch(as.character(datalabels),  error = function(e) "")),
+                 tryCatch(as.character(df_titles),  error = function(e) "")),
                collapse = "")
   out <- txt %like% "[*_^]"
   if (isTRUE(out)) {

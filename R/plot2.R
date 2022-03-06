@@ -639,10 +639,11 @@ plot2_exec <- function(.data,
                   sep = sep) %>% 
     # add y
     { function(.data) {
-      y_precalc <- .data %>%
-        # no grouped tibbles, data.frames or sf objects:
-        as.data.frame(stringsAsFactors = FALSE) %>% 
-        summarise(val = {{ y }})
+      tryCatch(y_precalc <- .data %>%
+                 # no grouped tibbles, data.frames or sf objects:
+                 as.data.frame(stringsAsFactors = FALSE) %>% 
+                 summarise(val = {{ y }}),
+               error = function(e) stop(gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", e$message), call. = FALSE))
       y_precalc <- y_precalc$val # will be NULL if y is missing
       if (length(y_precalc) == 1) {
         # outcome of y is a single calculated value (by using e.g. mean(...) or n_distinct(...)),
