@@ -1303,7 +1303,7 @@ validate_markdown <- function(markdown,
                  tryCatch(as.character(caption),  error = function(e) ""),
                  tryCatch(as.character(df_titles),  error = function(e) "")),
                collapse = "")
-  out <- txt %like% "[*_^]"
+  out <- txt %like% "(\\^|[_*].+[_*])"
   if (isTRUE(out)) {
     plot2_message("Assuming ", font_blue("markdown = TRUE"))
   }
