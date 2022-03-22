@@ -1721,8 +1721,15 @@ set_datalabels <- function(p,
 }
 
 validate_font <- function(font) {
-  if (is_empty(font) || !"showtext" %in% rownames(utils::installed.packages())) {
+  if (is_empty(font)) {
     # no font set, so return empty string to use default
+    return("")
+  }
+  required_pkg <- c("showtext", "showtextdb", "sysfonts")
+  misses_pkg <- !required_pkg %in% rownames(utils::installed.packages())
+  if (any(misses_pkg)) {
+    plot2_warning("Package ", paste0("'", required_pkg[misses_pkg], "'", collapse = " and "),
+                  " not installed, ignoring ", font_blue("font = \"", font, "\"", collapse = ""))
     return("")
   }
   
