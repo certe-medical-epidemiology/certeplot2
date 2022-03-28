@@ -67,6 +67,7 @@
   x.limits = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -80,6 +81,7 @@
   y.expand = 0.25,
   y.trans = "identity",
   y.position = "left",
+  y.zoom = FALSE,
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -193,6 +195,7 @@
   x.limits = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -206,6 +209,7 @@
   y.expand = 0.25,
   y.trans = "identity",
   y.position = "left",
+  y.zoom = FALSE,
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -319,6 +323,7 @@
   x.limits = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -332,6 +337,7 @@
   y.expand = 0.25,
   y.trans = "identity",
   y.position = "left",
+  y.zoom = FALSE,
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -445,6 +451,7 @@
   x.limits = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -458,6 +465,7 @@
   y.expand = 0,
   y.trans = "identity",
   y.position = "left",
+  y.zoom = FALSE,
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -574,6 +582,7 @@
   x.limits = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -587,6 +596,7 @@
   y.expand = 0.25,
   y.trans = "identity",
   y.position = "left",
+  y.zoom = FALSE,
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -700,6 +710,7 @@
   x.limits = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -713,6 +724,7 @@
   y.expand = 0.25,
   y.trans = "identity",
   y.position = "left",
+  y.zoom = FALSE,
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -831,6 +843,7 @@
   x.limits = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -844,6 +857,7 @@
   y.expand = 0.25,
   y.trans = "identity",
   y.position = "left",
+  y.zoom = FALSE,
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -1017,6 +1031,8 @@
 
 \item{x.drop}{\link{logical} to indicate whether factor levels should be dropped}
 
+\item{x.zoom}{a \link{logical} to indicate if the x axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)}}
+
 \item{y.remove}{a \link{logical} to indicate whether the y labels and title should be removed}
 
 \item{y.24h}{a \link{logical} to indicate whether the y labels and breaks should be formatted as 24-hour sequences}
@@ -1041,7 +1057,9 @@
 
 \item{y.trans}{a transformation function to use for the y axis, e.g. \code{"log2"}}
 
-\item{y.position}{position of the x axis, defaults to \code{"left"}}
+\item{y.position}{position of the y axis, defaults to \code{"left"}}
+
+\item{y.zoom}{a \link{logical} to indicate if the y axis should be zoomed on the data, by setting \code{y.limits = c(NA, NA)}}
 
 \item{category.labels}{settings for the plotting direction \code{category}.}
 
@@ -1163,7 +1181,7 @@
 
 \item{legend.italic}{other settings for the legend}
 
-\item{zoom}{a \link{logical} to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0}
+\item{zoom}{a \link{logical} to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0. This will set \code{x.zoom = TRUE} and \code{y.zoom = TRUE}.}
 
 \item{sep}{separator character to use if multiple columns are given to either of the three directions: \code{x}, \code{category} and \code{facet}, e.g. \code{facet = c(column1, column2)}}
 

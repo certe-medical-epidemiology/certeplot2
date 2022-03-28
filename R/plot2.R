@@ -67,6 +67,7 @@
 #' @param x.limits limits to use for the x axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `x.limits = c(0, NA)` to have the scale start at zero.
 #' @param x.character a [logical] to indicate whether the values of the x axis should be forced to [character]. The default is `FALSE`, except for years (x values between 2000 and 2050)
 #' @param x.drop [logical] to indicate whether factor levels should be dropped
+#' @param x.zoom a [logical] to indicate if the x axis should be zoomed on the data, by setting `x.limits = c(NA, NA)`
 #' @param y.remove a [logical] to indicate whether the y labels and title should be removed
 #' @param y.24h a [logical] to indicate whether the y labels and breaks should be formatted as 24-hour sequences
 #' @param y.age a [logical] to indicate whether the y labels and breaks should be formatted as ages in years
@@ -79,7 +80,8 @@
 #' @param y.labels a labels function or character vector to use for the y axis
 #' @param y.expand expansion to use for the y axis, can be length 1 or 2
 #' @param y.trans a transformation function to use for the y axis, e.g. `"log2"`
-#' @param y.position position of the x axis, defaults to `"left"`
+#' @param y.position position of the y axis, defaults to `"left"`
+#' @param y.zoom a [logical] to indicate if the y axis should be zoomed on the data, by setting `y.limits = c(NA, NA)`
 #' @param category.labels,category.percent,category.breaks,category.expand,category.midpoint,category.trans settings for the plotting direction `category`.
 #' @param category.limits limits to use for a numeric category, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `category.limits = c(0, NA)` to have the scale start at zero.
 #' @param x.max_items,category.max_items,facet.max_items number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the `summarise_function` function. **Please note:** the sorting will be applied first, allowing to e.g. plot the top *n* most frequent values of the x axis by combining `x.sort = "freq-desc"` with `x.max_items =` *n*.
@@ -116,7 +118,7 @@
 #' @param legend.position position of the legend, must be `"top"`, `"right"`, `"bottom"`, `"left"` or `"none"` (of `NA` or `NULL`), can be abbreviated. Defaults to `"right"` for numeric `category` values and 'sf' plots, and `"top"` otherwise.
 #' @param legend.title title of the legend (if `category.title` is not set), defaults to `TRUE` if the legend items are numeric.
 #' @param legend.reverse,legend.barheight,legend.barwidth,legend.nbin,legend.italic other settings for the legend
-#' @param zoom a [logical] to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0
+#' @param zoom a [logical] to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0. This will set `x.zoom = TRUE` and `y.zoom = TRUE`.
 #' @param sep separator character to use if multiple columns are given to either of the three directions: `x`, `category` and `facet`, e.g. `facet = c(column1, column2)`
 #' @param print a [logical] to indicate if the result should be [printed][print()] instead of just returned
 #' @param text_factor text factor to use, which will apply to all texts shown in the plot
@@ -321,6 +323,7 @@ plot2 <- function(.data,
                   x.limits = NULL,
                   x.character = NULL,
                   x.drop = FALSE,
+                  x.zoom = FALSE,
                   y.remove = FALSE,
                   y.24h = FALSE,
                   y.age = FALSE,
@@ -334,6 +337,7 @@ plot2 <- function(.data,
                   y.expand = 0.25,
                   y.trans = "identity",
                   y.position = "left",
+                  y.zoom = FALSE,
                   category.labels = NULL,
                   category.percent = FALSE,
                   category.breaks = NULL,
@@ -393,7 +397,7 @@ plot2 <- function(.data,
   # no observations, return empty plot immediately
   if (tryCatch(NROW(.data) == 0, error = function(e) stop(e$message, call. = FALSE))) {
     # check if markdown is required
-    markdown <- validate_markdown(markdown, x.title, y.title, title, subtitle, tag, caption)
+    markdown <- validate_markdown(markdown, x.title, y.title, c(category.title, legend.title), title, subtitle, tag, caption)
     plot2_warning("No observations, returning an empty plot")
     p <- ggplot() +
       validate_theme(theme = theme,
@@ -499,6 +503,7 @@ plot2_exec <- function(.data,
                        x.limits,
                        x.character,
                        x.drop,
+                       x.zoom,
                        y.remove,
                        y.24h,
                        y.age,
@@ -512,6 +517,7 @@ plot2_exec <- function(.data,
                        y.expand,
                        y.trans,
                        y.position,
+                       y.zoom,
                        category.labels,
                        category.percent,
                        category.breaks,
@@ -590,7 +596,7 @@ plot2_exec <- function(.data,
   misses_subtitle <- isTRUE(dots$`_misses.subtitle`)
   misses_tag <- isTRUE(dots$`_misses.tag`)
   misses_caption <- isTRUE(dots$`_misses.caption`)
-  misses_zoom <- isTRUE(dots$`_misses.zoom`)
+  misses_x.zoom <- isTRUE(dots$`_misses.x.zoom`)
   misses_y.percent <- isTRUE(dots$`_misses.y.percent`)
   misses_y.percent_break <- isTRUE(dots$`_misses.y.percent_break`)
  
@@ -692,9 +698,6 @@ plot2_exec <- function(.data,
                   na.replace = na.replace,
                   ...)
   
-  # check if markdown is required
-  markdown <- validate_markdown(markdown, x.title, y.title, title, subtitle, tag, caption, df)
-  
   # apply taxonomic italics ----
   if (isTRUE(taxonomy_italic) && (isTRUE(markdown) || is.null(markdown))) {
     if ("AMR" %in% rownames(utils::installed.packages())) {
@@ -749,6 +752,18 @@ plot2_exec <- function(.data,
   }
   
   # various cleaning steps ----
+  
+  if (isTRUE(zoom)) {
+    x.zoom <- TRUE
+    y.zoom <- TRUE
+  }
+  
+  # category.title and legend.title both exist for convenience
+  legend.title <- if (is.null(category.title)) legend.title else category.title
+  
+  # check if markdown is required
+  markdown <- validate_markdown(markdown, x.title, y.title, legend.title, title, subtitle, tag, caption, df)
+  
   # remove datalabels in continuous geoms
   if (has_datalabels(df) && isTRUE(misses_datalabels) && (geom_is_continuous(type) | type %like% "path|line") && type != "geom_sf") {
     df <- df %>% select(-`_var_datalabels`)
@@ -757,6 +772,7 @@ plot2_exec <- function(.data,
     plot2_message("Ignoring ", font_blue("y"), " for plot type ", font_blue(gsub("geom_", "", type)))
     df$`_var_y` <- df$`_var_x`
   }
+  
   # remove x from sf geom
   if (type == "geom_sf") {
     df <- df %>% select(-`_var_x`)
@@ -767,9 +783,7 @@ plot2_exec <- function(.data,
     plot2_warning("Ignoring ", font_blue("stacked = TRUE"), ", since ", font_blue("stackedpercent = TRUE"))
     stacked <- FALSE
   }
-  # category.title and legend.title both exist for convenience
-  legend.title <- if (is.null(category.title)) legend.title else category.title
-  
+   
   # set default size and width ----
   size <- validate_size(size = size, type = type)
   width <- validate_width(width = width, type = type)
@@ -808,8 +822,9 @@ plot2_exec <- function(.data,
     mapping <- aes(y = `_var_y`, group = 1)
   } else {
     mapping <- aes()
-    if (misses_zoom) {
-      zoom <- TRUE
+    if (misses_x.zoom) {
+      # this also sets x.limits to c(NA, NA) for histograms in validate_x_scale()
+      x.zoom <- TRUE
     }
   }
   if (has_x(df)) {
@@ -817,14 +832,12 @@ plot2_exec <- function(.data,
                                               group = `_var_x`))
   }
   if (has_category(df)) {
+    mapping <- utils::modifyList(mapping, aes(fill = `_var_category`,
+                                              colour = `_var_category`,
+                                              group = `_var_category`))
     if (type == "geom_sf") {
       # no colour in sf's
-      mapping <- utils::modifyList(mapping, aes(fill = `_var_category`,
-                                                group = `_var_category`))
-    } else {
-      mapping <- utils::modifyList(mapping, aes(fill = `_var_category`,
-                                                colour = `_var_category`,
-                                                group = `_var_category`))
+      mapping <- utils::modifyList(mapping, aes(colour = NULL))
     }
   }
   if (geom_is_continuous(type) && !geom_is_line(type) && has_category(df)) {
@@ -970,10 +983,10 @@ plot2_exec <- function(.data,
                          x.position = x.position,
                          x.trans = x.trans,
                          x.drop = x.drop,
+                         x.zoom = x.zoom,
                          decimal.mark = decimal.mark,
                          big.mark = big.mark,
-                         horizontal = horizontal,
-                         zoom = zoom)
+                         horizontal = horizontal)
     } else {
       # no x
       p <- p +
@@ -995,11 +1008,11 @@ plot2_exec <- function(.data,
                          misses_y.percent_break = misses_y.percent_break,
                          y.position = y.position,
                          y.trans = y.trans,
+                         y.zoom = y.zoom,
                          stackedpercent = stackedpercent,
                          facet.fixed_y = facet.fixed_y,
                          decimal.mark = decimal.mark,
-                         big.mark = big.mark,
-                         zoom = zoom)
+                         big.mark = big.mark)
     }
   }
   
@@ -1034,7 +1047,7 @@ plot2_exec <- function(.data,
   if (!misses_caption) p <- p + labs(caption = validate_titles(caption, markdown = markdown))
   if (has_category(df)) {
     # legend
-    if (is.null(legend.title) && all(get_category(df) %like% "^[0-9.,]+$", na.rm = TRUE)) {
+    if (is.null(legend.title) && data_is_numeric(get_category(df))) {
       legend.title <- TRUE
     }
     if (isTRUE(legend.title)) {
@@ -1053,7 +1066,7 @@ plot2_exec <- function(.data,
   
   # set legend ----
   if (is.null(legend.position)) {
-    if (has_category(df) && all(get_category(df) %like% "^[0-9.,]+$", na.rm = TRUE)) {
+    if (has_category(df) && data_is_numeric(get_category(df))) {
       legend.position <- "right"
     } else {
       legend.position <- "top"
@@ -1072,7 +1085,7 @@ plot2_exec <- function(.data,
     if (isTRUE(horizontal)) {
       if (legend.position %in% c("top", "bottom") &&
           validate_sorting(category.sort, horizontal = horizontal) %unlike% "freq") {
-        # turn legend items when on top or bottom, but not when sorting is freq, freq-asc or freq-desc
+        # reverse legend items when on top or bottom, but not when sorting is freq, freq-asc or freq-desc
         p <- p +
           guides(fill = guide_legend(reverse = TRUE),
                  colour = guide_legend(reverse = TRUE))

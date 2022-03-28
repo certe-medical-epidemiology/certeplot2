@@ -451,7 +451,7 @@ validate_data <- function(df,
   df
 }
 
-#' @importFrom ggplot2 scale_x_discrete scale_x_date scale_x_datetime scale_x_discrete scale_x_continuous expansion waiver
+#' @importFrom ggplot2 scale_x_discrete scale_x_date scale_x_datetime scale_x_continuous expansion waiver
 #' @importFrom scales reverse_trans
 #' @importFrom cleaner format_datetime
 #' @importFrom certestyle format2
@@ -465,12 +465,12 @@ validate_x_scale <- function(values,
                              x.position,
                              x.trans,
                              x.drop,
+                             x.zoom,
                              decimal.mark,
                              big.mark,
-                             horizontal,
-                             zoom) {
+                             horizontal) {
   
-  if (isTRUE(zoom)) {
+  if (isTRUE(x.zoom) && is.null(x.limits)) {
     x.limits <- c(NA_real_, NA_real_)
   }
   if (is.null(x.trans)) {
@@ -540,16 +540,17 @@ validate_x_scale <- function(values,
         # some transformations, such as log, do not allow 0
         x.limits[x.limits == 0] <- NA_real_
       }
-      scale_x_continuous(labels = function(x, ...) format2(x,
-                                                           round = max(2, sigfigs(diff(range(x))) + 1),
-                                                           decimal.mark = decimal.mark,
-                                                           big.mark = big.mark),
-                         breaks = if (!is.null(x.breaks)) x.breaks else waiver(),
-                         n.breaks = x.n_breaks,
-                         trans = x.trans,
-                         position = x.position,
-                         limits = x.limits,
-                         expand = expansion(mult = c(0.05, 0.05)))
+      scale_x_continuous(labels = function(x, ...) {
+        format2(x,
+                round = max(2, sigfigs(diff(range(x, na.rm = TRUE))) + 1),
+                decimal.mark = decimal.mark,
+                big.mark = big.mark)},
+        breaks = if (!is.null(x.breaks)) x.breaks else waiver(),
+        n.breaks = x.n_breaks,
+        trans = x.trans,
+        position = x.position,
+        limits = x.limits,
+        expand = expansion(mult = c(0.05, 0.05)))
     }
   }
 }
@@ -573,15 +574,19 @@ validate_y_scale <- function(df,
                              misses_y.percent_break,
                              y.position,
                              y.trans,
+                             y.zoom,
                              stackedpercent,
                              facet.fixed_y,
                              decimal.mark,
-                             big.mark,
-                             zoom) {
-  values <- get_y(df)
+                             big.mark) {
+  if (isTRUE(y.zoom) && is.null(y.limits)) {
+    y.limits <- c(NA_real_, NA_real_)
+  }
   if (is.null(y.trans)) {
     y.trans <- "identity"
   }
+  
+  values <- get_y(df)
   if (mode(values) != "numeric") {
     stop("The y scale cannot be non-numeric (current class: ",
          paste0(class(values), collapse = "/"), ")",
@@ -596,7 +601,8 @@ validate_y_scale <- function(df,
     coeff_of_variation <- stats::sd(y_maxima$max) / mean(y_maxima$max)
     if (coeff_of_variation < 0.15) {
       plot2_message("Assuming ", font_blue("facet.fixed_y = TRUE"), 
-                    " since the ", nrow(y_maxima), " y scales are roughly equal")
+                    " since the ", digit_to_text(nrow(y_maxima)), " ",
+                    font_blue("y"), " scales are roughly equal")
       facet.fixed_y <- TRUE
     }
   }
@@ -736,9 +742,6 @@ validate_y_scale <- function(df,
     }
   }
   
-  if (isTRUE(zoom)) {
-    y.limits <- c(NA_real_, NA_real_)
-  }
   scale_y_continuous(
     breaks = breaks_fn(values = values,
                        waiver = waiver(),
@@ -1278,6 +1281,7 @@ validate_width <- function(width, type) {
 validate_markdown <- function(markdown,
                               x.title,
                               y.title,
+                              legend.title,
                               title,
                               subtitle,
                               tag,
@@ -1297,6 +1301,7 @@ validate_markdown <- function(markdown,
   }
   txt <- paste(c(tryCatch(as.character(x.title), error = function(e) ""),
                  tryCatch(as.character(y.title), error = function(e) ""),
+                 tryCatch(as.character(legend.title), error = function(e) ""),
                  tryCatch(as.character(title), error = function(e) ""),
                  tryCatch(as.character(subtitle), error = function(e) ""),
                  tryCatch(as.character(tag), error = function(e) ""),

@@ -440,6 +440,28 @@ geom_sf_richlabel <- function(mapping = aes(),
                          fun.geometry = fun.geometry, ...))
 }
 
-sigfigs <- function(x){
+sigfigs <- function(x) {
   nchar(gsub("[.](0+).*", "\\1", as.character(format(x, scientific = FALSE))))
+}
+
+data_is_numeric <- function(x) {
+  all(x %like% "^[0-9.,]+$", na.rm = TRUE)
+}
+
+digit_to_text <- function(x) {
+  out <- switch(x,
+                "one",
+                "two",
+                "three",
+                "four",
+                "five",
+                "six",
+                "seven",
+                "eight",
+                "nine",
+                "ten")
+  if (is.null(out)) {
+    out <- as.character(x)
+  }
+  out
 }

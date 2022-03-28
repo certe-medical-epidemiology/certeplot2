@@ -223,7 +223,7 @@ numeric_z %>%
 
 Settings to this scale can be set with arguments such as `category.labels`, `category.breaks`, `category.limits`, `category.expand` and `category.trans`.
 
-For continuous scales, `plot2()` has an additional argument: `category.midpoint`. When using a 3-point colour scale, this the value of `y` that should have the middle colour, it defaults to the median of `y`:
+For continuous scales, `plot2()` has an additional argument: `category.midpoint`. When using a 3-point colour scale, this is the value of `y` that should have the middle colour, it defaults to the centre of the current legend scale:
 
 ```{r}
 numeric_z %>%  
@@ -256,20 +256,21 @@ admitted_patients %>%
         caption = "All y axes on their own")
 ```
 
-You can omit repeated x labels as well:
+You can omit repeated x labels as well with `facet.repeat_lbls_x`, and let all y axes be the same with `facet.fixed_y`:
 
 ```{r}
 admitted_patients %>%
   plot2(x = age_group, y = n(), facet = hospital,
-        facet.repeat_lbls_x = FALSE)
+        facet.repeat_lbls_x = FALSE,
+        facet.fixed_y = TRUE)
 ```
 
-Or change the number of rows the facet should be in:
+Or change the number of rows the facet should be in, using `facet.nrow`:
 
-```{r}
+```{r, fig.height = 8}
 admitted_patients %>%
   plot2(x = age_group, y = n(), facet = hospital,
-        facet.nrow = 1)
+        facet.nrow = 4)
 ```
 
 No need to memorise how again the `scales`, `shrink` and `switch` arguments of the `facet_wrap()` function work!
@@ -408,7 +409,7 @@ And why is 2009 still so wide?? I'll give you this: if you know the solution, yo
 
 # Support for any font, including Google Fonts
 
-Any installed font and any Google Font is support in `plot2`, since it uses the  `showtext` package internally. Missing fontss will be downloaded automatically:
+Any installed font and any Google Font is supported in `plot2`, since it uses the  `showtext` package internally. Missing fonts will be downloaded automatically:
 
 ```{r}
 mtcars %>%

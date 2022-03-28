@@ -60,6 +60,7 @@ plot2(
   x.limits = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -73,6 +74,7 @@ plot2(
   y.expand = 0.25,
   y.trans = "identity",
   y.position = "left",
+  y.zoom = FALSE,
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -218,6 +220,8 @@ plot2(
 
 \item{x.drop}{\link{logical} to indicate whether factor levels should be dropped}
 
+\item{x.zoom}{a \link{logical} to indicate if the x axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)}}
+
 \item{y.remove}{a \link{logical} to indicate whether the y labels and title should be removed}
 
 \item{y.24h}{a \link{logical} to indicate whether the y labels and breaks should be formatted as 24-hour sequences}
@@ -242,7 +246,9 @@ plot2(
 
 \item{y.trans}{a transformation function to use for the y axis, e.g. \code{"log2"}}
 
-\item{y.position}{position of the x axis, defaults to \code{"left"}}
+\item{y.position}{position of the y axis, defaults to \code{"left"}}
+
+\item{y.zoom}{a \link{logical} to indicate if the y axis should be zoomed on the data, by setting \code{y.limits = c(NA, NA)}}
 
 \item{category.labels, category.percent, category.breaks, category.expand, category.midpoint, category.trans}{settings for the plotting direction \code{category}.}
 
@@ -304,7 +310,7 @@ plot2(
 
 \item{legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic}{other settings for the legend}
 
-\item{zoom}{a \link{logical} to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0}
+\item{zoom}{a \link{logical} to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0. This will set \code{x.zoom = TRUE} and \code{y.zoom = TRUE}.}
 
 \item{sep}{separator character to use if multiple columns are given to either of the three directions: \code{x}, \code{category} and \code{facet}, e.g. \code{facet = c(column1, column2)}}
 
@@ -354,7 +360,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 122 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 124 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)
