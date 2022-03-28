@@ -34,13 +34,13 @@
 #' * A shortcut. There is currently one supported shortcut: `"barpercent"`, which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
 #' 
 #' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* print a geom.
-#' @param x.title text to show on the x axis
-#' @param y.title text to show on the y axis
+#' @param x.title text to show on the x axis, supports calculations over `.data`
+#' @param y.title text to show on the y axis, supports calculations over `.data`
 #' @param category.title title of the legend (if `legend.title` is not set), defaults to `TRUE` if the legend items are numeric.
-#' @param title title to show
-#' @param subtitle subtitle to show
-#' @param caption caption to show
-#' @param tag tag to show
+#' @param title title to show, supports calculations over `.data`
+#' @param subtitle subtitle to show, supports calculations over `.data`
+#' @param caption caption to show, supports calculations over `.data`
+#' @param tag tag to show, supports calculations over `.data`
 #' @param title.linelength maximum number of characters per line in the title, before a linebreak occurs
 #' @param title.colour text colour of the title
 #' @param subtitle.linelength maximum number of characters per line in the subtitle, before a linebreak occurs
@@ -203,13 +203,24 @@
 #'
 #' admitted_patients %>%
 #'   plot2(x = hospital,
+#'         y = age,
 #'         category = gender,
-#'         colour = c("F" = "green4", "M" = "red4"),
-#'         colour_fill = "lightyellow",
+#'         colour = c("F" = "#3F681C", "M" = "#375E97"),
+#'         colour_fill = "#FFBB00AA",
+#'         size = 1.25,
 #'         y.age = TRUE)
-#'         
+#' 
 #' admitted_patients %>%
 #'   plot2(age, type = "hist")
+#' 
+#' # even titles support calculations, including support for {glue}
+#' admitted_patients %>%
+#'   plot2(age, type = "hist",
+#'         title = paste("Based on n =", n_distinct(patient_id), "patients"),
+#'         subtitle = paste("Total rows:", n()),
+#'         caption = glue::glue("From {n_distinct(hospital)} hospitals"),
+#'         tag = paste("Median:", median(age)),
+#'         x.title = paste("Age ranging from", paste(range(age), collapse = " to ")))
 #'  
 #' # the default type is column, datalabels are automatically
 #' # set in non-continuous types:
@@ -626,6 +637,26 @@ plot2_exec <- function(.data,
                 dots$`_label.facet`)
   on.exit(clean_plot2_env())
   
+  # get titles based on raw data ----
+  suppressWarnings(
+    tryCatch(titles <- .data %>%
+               # no tibbles, data.tables, sf, etc. objects:
+               as.data.frame(stringsAsFactors = FALSE) %>% 
+               mutate(title = {{ title }},
+                      subtitle = {{ subtitle }},
+                      caption = {{ caption }},
+                      tag = {{ tag }},
+                      x.title = {{ x.title }},
+                      y.title = {{ y.title }}),
+             error = function(e) stop(gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", e$message), call. = FALSE))
+  )
+  title <- unique(titles$title)[1L]
+  subtitle <- unique(titles$subtitle)[1L]
+  caption <- unique(titles$caption)[1L]
+  tag <- unique(titles$tag)[1L]
+  x.title <- unique(titles$x.title)[1L]
+  y.title <- unique(titles$y.title)[1L]
+  
   # prepare data ----
   # IMPORTANT: in this part, the data for mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
   # this is done for convenience - this is restored before returning the `ggplot` object in the end
@@ -645,27 +676,33 @@ plot2_exec <- function(.data,
                   sep = sep) %>% 
     # add y
     { function(.data) {
-      tryCatch(y_precalc <- .data %>%
-                 # no grouped tibbles, data.frames or sf objects:
-                 as.data.frame(stringsAsFactors = FALSE) %>% 
-                 summarise(val = {{ y }}),
-               error = function(e) stop(gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", e$message), call. = FALSE))
+      suppressWarnings(
+        tryCatch(y_precalc <- .data %>%
+                   # no tibbles, data.tables, sf, etc. objects:
+                   as.data.frame(stringsAsFactors = FALSE) %>% 
+                   summarise(val = {{ y }}),
+                 error = function(e) stop(gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", e$message), call. = FALSE))
+      )
       y_precalc <- y_precalc$val # will be NULL if y is missing
       if (length(y_precalc) == 1) {
         # outcome of y is a single calculated value (by using e.g. mean(...) or n_distinct(...)),
         # so calculate it over all groups that are available
         # this will support e.g. `data %>% plot2(y = n_distinct(id))`
-        tryCatch(.data %>% 
-                   group_by(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
-                                     matches("_var_(x|category|facet)")))) %>%
-                   summarise(`_var_y` = {{ y }},
-                             .groups = "drop"),
-                 error = function(e) stop(gsub("_var_y", "y", e$message), call. = FALSE))
+        suppressWarnings(
+          tryCatch(.data %>% 
+                     group_by(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
+                                       matches("_var_(x|category|facet)")))) %>%
+                     summarise(`_var_y` = {{ y }},
+                               .groups = "drop"),
+                   error = function(e) stop(gsub("_var_y", "y", e$message), call. = FALSE))
+        )
       } else {
         # don't recalculate, just add the calculated values to save time
-        tryCatch(.data %>% 
-                   mutate(`_var_y` = y_precalc),
-                 error = function(e) stop(gsub("_var_y", "y", e$message), call. = FALSE))
+        suppressWarnings(
+          tryCatch(.data %>% 
+                     mutate(`_var_y` = y_precalc),
+                   error = function(e) stop(gsub("_var_y", "y", e$message), call. = FALSE))
+        )
       }}}() %>% 
     mutate(`_var_datalabels` = {{ datalabels }}) %>% 
     # this part will transform the data as needed

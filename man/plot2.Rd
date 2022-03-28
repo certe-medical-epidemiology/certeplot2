@@ -150,19 +150,19 @@ plot2(
 \item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X axis or if the length of unique values per X axis item is at least 3, \code{"point"} if both the Y and X axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} print a geom.
 }}
 
-\item{x.title}{text to show on the x axis}
+\item{x.title}{text to show on the x axis, supports calculations over \code{.data}}
 
-\item{y.title}{text to show on the y axis}
+\item{y.title}{text to show on the y axis, supports calculations over \code{.data}}
 
 \item{category.title}{title of the legend (if \code{legend.title} is not set), defaults to \code{TRUE} if the legend items are numeric.}
 
-\item{title}{title to show}
+\item{title}{title to show, supports calculations over \code{.data}}
 
-\item{subtitle}{subtitle to show}
+\item{subtitle}{subtitle to show, supports calculations over \code{.data}}
 
-\item{caption}{caption to show}
+\item{caption}{caption to show, supports calculations over \code{.data}}
 
-\item{tag}{tag to show}
+\item{tag}{tag to show, supports calculations over \code{.data}}
 
 \item{title.linelength}{maximum number of characters per line in the title, before a linebreak occurs}
 
@@ -417,13 +417,24 @@ admitted_patients \%>\%
 
 admitted_patients \%>\%
   plot2(x = hospital,
+        y = age,
         category = gender,
-        colour = c("F" = "green4", "M" = "red4"),
-        colour_fill = "lightyellow",
+        colour = c("F" = "#3F681C", "M" = "#375E97"),
+        colour_fill = "#FFBB00AA",
+        size = 1.25,
         y.age = TRUE)
-        
+
 admitted_patients \%>\%
   plot2(age, type = "hist")
+
+# even titles support calculations, including support for {glue}
+admitted_patients \%>\%
+  plot2(age, type = "hist",
+        title = paste("Based on n =", n_distinct(patient_id), "patients"),
+        subtitle = paste("Total rows:", n()),
+        caption = glue::glue("From {n_distinct(hospital)} hospitals"),
+        tag = paste("Median:", median(age)),
+        x.title = paste("Age ranging from", paste(range(age), collapse = " to ")))
  
 # the default type is column, datalabels are automatically
 # set in non-continuous types:

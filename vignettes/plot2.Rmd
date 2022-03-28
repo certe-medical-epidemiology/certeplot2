@@ -355,6 +355,24 @@ admitted_patients %>%
           x.max_txt = "%n other hospitals (%p)")
 ```
 
+# Adding calculations to titles
+
+All titles support in-line calculations as well, which is very convenient for describing part of the data in plot titles:
+
+```{r}
+admitted_patients %>%
+  plot2(age, type = "hist")
+
+admitted_patients %>%
+  plot2(age, type = "hist",
+        title = paste("Based on n =", n_distinct(patient_id), "patients"),
+        subtitle = paste("Total rows:", n()),
+        # also supports the {glue} package:
+        caption = glue::glue("From {n_distinct(hospital)} hospitals"),
+        tag = paste("Median:", median(age)),
+        x.title = paste("Age ranging from", paste(range(age), collapse = " to ")))
+```
+
 # Setting the values of `y`
 
 In `ggplot2`, the values for `y` must be numeric. In `plot2()`, you can also use an in-place calculation of a (non-numeric) variable. The input will be evaluated while taking into account all plotting directions, such as `x` and `category`:

@@ -196,13 +196,13 @@ test_that("max items and sorting work", {
                        y = n(),
                        x.sort = "freq-desc") %>% 
                  get_range_x(),
-               c("B", "D", "C", "A"))
+               c("D", "B", "A", "C"))
   expect_equal(admitted_patients %>%
                  plot2(x = hospital,
                        y = n(),
                        x.sort = "freq-asc") %>% 
                  get_range_x(),
-               c("A", "C", "D", "B"))
+               c("A", "C", "B", "D"))
   expect_equal(admitted_patients %>%
                  plot2(x = hospital,
                        y = n(),
@@ -215,7 +215,7 @@ test_that("max items and sorting work", {
                        x.sort = "freq-desc",
                        x.max_items = 5) %>%
                  get_range_x(),
-               c("2008", "2004", "2009", "2015", "(rest, x 12)"))
+               c("2010", "2003", "2017", "2016", "(rest, x 12)"))
   
   expect_s3_class(admitted_patients %>%
                     plot2(x = format(date, "%Y"), y = n(), category = hospital, facet = age_group,

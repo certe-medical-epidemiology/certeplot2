@@ -18,16 +18,28 @@
 # ===================================================================== #
 
 library(dplyr)
-library(AMR)
-admitted_patients <- example_isolates %>%
+admitted_patients <- AMR::example_isolates %>%
   group_by(patient_id) %>%
-  filter(n() == 1) %>%
+  filter(n() < 3) %>%
   ungroup() %>%
   transmute(date,
+            patient_id,
             gender,
             age,
-            age_group = age_groups(age),
+            age_group = AMR::age_groups(age),
             hospital = hospital_id,
             ward = ifelse(ward_icu, "ICU", "Non-ICU")) %>%
-  slice_sample(n = 250) %>%
-  arrange(date)
+  slice_sample(n = 250)
+
+ind <- double(nrow(admitted_patients))
+j <- 1
+for (pat in unique(admitted_patients$patient_id)) {
+  ind[which(admitted_patients$patient_id == pat)] <- j
+  j <- j + 1
+}
+admitted_patients$patient_id <- ind
+admitted_patients <- admitted_patients %>% 
+  arrange(date, patient_id)
+
+usethis::use_data(admitted_patients, internal = FALSE, overwrite = TRUE, version = 2, compress = "xz")
+

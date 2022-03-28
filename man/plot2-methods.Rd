@@ -933,19 +933,19 @@
 \item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X axis or if the length of unique values per X axis item is at least 3, \code{"point"} if both the Y and X axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} print a geom.
 }}
 
-\item{x.title}{text to show on the x axis}
+\item{x.title}{text to show on the x axis, supports calculations over \code{.data}}
 
-\item{y.title}{text to show on the y axis}
+\item{y.title}{text to show on the y axis, supports calculations over \code{.data}}
 
 \item{category.title}{title of the legend (if \code{legend.title} is not set), defaults to \code{TRUE} if the legend items are numeric.}
 
-\item{title}{title to show}
+\item{title}{title to show, supports calculations over \code{.data}}
 
-\item{subtitle}{subtitle to show}
+\item{subtitle}{subtitle to show, supports calculations over \code{.data}}
 
-\item{caption}{caption to show}
+\item{caption}{caption to show, supports calculations over \code{.data}}
 
-\item{tag}{tag to show}
+\item{tag}{tag to show, supports calculations over \code{.data}}
 
 \item{title.linelength}{maximum number of characters per line in the title, before a linebreak occurs}
 

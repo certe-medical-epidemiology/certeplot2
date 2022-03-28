@@ -5,9 +5,10 @@
 \alias{admitted_patients}
 \title{Example Data Set with Admitted Patients}
 \format{
-A \link{tibble}/\link{data.frame} with 250 observations and 6 variables:
+A \link{tibble}/\link{data.frame} with 250 observations and 7 variables:
 \itemize{
 \item \code{date}\cr date of hospital admission
+\item \code{patient_id}\cr ID of the patient (fictitious)
 \item \code{gender}\cr gender of the patient
 \item \code{age}\cr age of the patient
 \item \code{age_group}\cr age group of the age of the patient, generated with \code{\link[AMR:age_groups]{AMR::age_groups()}}

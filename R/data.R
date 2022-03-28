@@ -22,6 +22,7 @@
 #' An auto-generated data set containing fictitious patients admitted to hospitals.
 #' @format A [tibble]/[data.frame] with `r format(nrow(admitted_patients), big.mark = ",")` observations and `r ncol(admitted_patients)` variables:
 #' - `date`\cr date of hospital admission
+#' - `patient_id`\cr ID of the patient (fictitious)
 #' - `gender`\cr gender of the patient
 #' - `age`\cr age of the patient
 #' - `age_group`\cr age group of the age of the patient, generated with [AMR::age_groups()]
