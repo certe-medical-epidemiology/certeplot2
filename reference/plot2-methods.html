@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.13</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.0</span>
       </span>
     </div>
 
@@ -1013,19 +1013,19 @@
 <li><p>Left blank. In this case, the type will be determined automatically: <code>"boxplot"</code> if there is no X axis or if the length of unique values per X axis item is at least 3, <code>"point"</code> if both the Y and X axes are numeric, and the <a href="https://rdrr.io/r/base/options.html" class="external-link">option</a> <code>"plot2.default_type"</code> otherwise (which defaults to <code>"col"</code>). Use <code>type = "blank"</code> or <code>type = "geom_blank"</code> to <em>not</em> print a geom.</p></li>
 </ul></dd>
 <dt>x.title</dt>
-<dd><p>text to show on the x axis</p></dd>
+<dd><p>text to show on the x axis, supports calculations over <code>.data</code></p></dd>
 <dt>y.title</dt>
-<dd><p>text to show on the y axis</p></dd>
+<dd><p>text to show on the y axis, supports calculations over <code>.data</code></p></dd>
 <dt>category.title</dt>
 <dd><p>title of the legend (if <code>legend.title</code> is not set), defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
 <dt>title</dt>
-<dd><p>title to show</p></dd>
+<dd><p>title to show, supports calculations over <code>.data</code></p></dd>
 <dt>subtitle</dt>
-<dd><p>subtitle to show</p></dd>
+<dd><p>subtitle to show, supports calculations over <code>.data</code></p></dd>
 <dt>caption</dt>
-<dd><p>caption to show</p></dd>
+<dd><p>caption to show, supports calculations over <code>.data</code></p></dd>
 <dt>tag</dt>
-<dd><p>tag to show</p></dd>
+<dd><p>tag to show, supports calculations over <code>.data</code></p></dd>
 <dt>title.linelength</dt>
 <dd><p>maximum number of characters per line in the title, before a linebreak occurs</p></dd>
 <dt>title.colour</dt>
