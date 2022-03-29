@@ -18,7 +18,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1</span>
       </span>
     </div>
 
@@ -139,6 +139,7 @@ See plot2-methods for all implemented methods for different object classes."><me
   x.trans <span class="op">=</span> <span class="st">"identity"</span>,
   x.expand <span class="op">=</span> <span class="fl">0.5</span>,
   x.limits <span class="op">=</span> <span class="cn">NULL</span>,
+  x.labels <span class="op">=</span> <span class="cn">NULL</span>,
   x.character <span class="op">=</span> <span class="cn">NULL</span>,
   x.drop <span class="op">=</span> <span class="cn">FALSE</span>,
   x.zoom <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -236,7 +237,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dt>y.title</dt>
 <dd><p>text to show on the y axis, supports calculations over <code>.data</code></p></dd>
 <dt>category.title</dt>
-<dd><p>title of the legend (if <code>legend.title</code> is not set), defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
+<dd><p>title of the legend (if <code>legend.title</code> is not set), supports calculations over <code>.data</code> and defaults to <code>TRUE</code> if the legend items are numeric</p></dd>
 <dt>title</dt>
 <dd><p>title to show, supports calculations over <code>.data</code></p></dd>
 <dt>subtitle</dt>
@@ -279,32 +280,32 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>alignment for the x axis between <code>0</code> (left aligned) and <code>1</code> (right aligned)</p></dd>
 <dt>x.lbl_italic</dt>
 <dd><p><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the x labels should in in <em>italics</em></p></dd>
-<dt>x.remove</dt>
-<dd><p><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the x labels and title should be removed</p></dd>
-<dt>x.position</dt>
-<dd><p>position of the x axis, defaults to <code>"bottom"</code></p></dd>
+<dt>x.remove, y.remove</dt>
+<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the axis labels and title should be removed</p></dd>
+<dt>x.position, y.position</dt>
+<dd><p>position of the axis</p></dd>
 <dt>x.max_items, category.max_items, facet.max_items</dt>
 <dd><p>number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the <code>summarise_function</code> function. <strong>Please note:</strong> the sorting will be applied first, allowing to e.g. plot the top <em>n</em> most frequent values of the x axis by combining <code>x.sort = "freq-desc"</code> with <code>x.max_items =</code> <em>n</em>.</p></dd>
 <dt>x.max_txt, category.max_txt, facet.max_txt</dt>
 <dd><p>the text to use of values not included number of <code>*.max_items</code>. The placeholder <code>%n</code> will be replaced with the outcome of the <code>summarise_function</code> function, the placeholder <code>%p</code> will be replaced with the percentage.</p></dd>
-<dt>x.breaks</dt>
-<dd><p>breaks function or numeric vector to use for the x axis</p></dd>
-<dt>x.n_breaks</dt>
-<dd><p>number of breaks to use for the x axis</p></dd>
-<dt>x.trans</dt>
-<dd><p>transformation function to use for the x axis, e.g. <code>"log2"</code></p></dd>
-<dt>x.expand</dt>
-<dd><p>expansion to use for the x axis, can be length 1 or 2</p></dd>
-<dt>x.limits</dt>
-<dd><p>limits to use for the x axis, can be length 1 or 2. Use <code>NA</code> for the highest or lowest value in the data, e.g. <code>x.limits = c(0, NA)</code> to have the scale start at zero.</p></dd>
+<dt>x.breaks, y.breaks</dt>
+<dd><p>a breaks function or numeric vector to use for the axis</p></dd>
+<dt>x.n_breaks, y.n_breaks</dt>
+<dd><p>number of breaks, only useful if <code>x.breaks</code> cq. <code>y.breaks</code> is <code>NULL</code></p></dd>
+<dt>x.trans, y.trans</dt>
+<dd><p>a transformation function to use for the axis, e.g. <code>"log2"</code></p></dd>
+<dt>x.expand, y.expand</dt>
+<dd><p>expansion to use for the axis, can be length 1 or 2</p></dd>
+<dt>x.limits, y.limits</dt>
+<dd><p>limits to use for the axis, can be length 1 or 2. Use <code>NA</code> for the highest or lowest value in the data, e.g. <code>y.limits = c(0, NA)</code> to have the y scale start at zero.</p></dd>
+<dt>x.labels, y.labels</dt>
+<dd><p>a labels function or character vector to use for the axis</p></dd>
 <dt>x.character</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the values of the x axis should be forced to <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>. The default is <code>FALSE</code>, except for years (x values between 2000 and 2050)</p></dd>
 <dt>x.drop</dt>
 <dd><p><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether factor levels should be dropped</p></dd>
-<dt>x.zoom</dt>
-<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate if the x axis should be zoomed on the data, by setting <code>x.limits = c(NA, NA)</code></p></dd>
-<dt>y.remove</dt>
-<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the y labels and title should be removed</p></dd>
+<dt>x.zoom, y.zoom</dt>
+<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate if the axis should be zoomed on the data, by setting <code>x.limits = c(NA, NA)</code> / <code>y.limits = c(NA, NA)</code></p></dd>
 <dt>y.24h</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the y labels and breaks should be formatted as 24-hour sequences</p></dd>
 <dt>y.age</dt>
@@ -315,22 +316,6 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the y labels should be formatted as percentages</p></dd>
 <dt>y.percent_break</dt>
 <dd><p>a value on which the y axis should have breaks</p></dd>
-<dt>y.breaks</dt>
-<dd><p>a breaks function or numeric vector to use for the y axis</p></dd>
-<dt>y.n_breaks</dt>
-<dd><p>number of breaks, only useful if <code>y.breaks</code> is <code>NULL</code></p></dd>
-<dt>y.limits</dt>
-<dd><p>limits to use for the y axis, can be length 1 or 2. Use <code>NA</code> for the highest or lowest value in the data, e.g. <code>y.limits = c(0, NA)</code> to have the scale start at zero.</p></dd>
-<dt>y.labels</dt>
-<dd><p>a labels function or character vector to use for the y axis</p></dd>
-<dt>y.expand</dt>
-<dd><p>expansion to use for the y axis, can be length 1 or 2</p></dd>
-<dt>y.trans</dt>
-<dd><p>a transformation function to use for the y axis, e.g. <code>"log2"</code></p></dd>
-<dt>y.position</dt>
-<dd><p>position of the y axis, defaults to <code>"left"</code></p></dd>
-<dt>y.zoom</dt>
-<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate if the y axis should be zoomed on the data, by setting <code>y.limits = c(NA, NA)</code></p></dd>
 <dt>category.labels, category.percent, category.breaks, category.expand, category.midpoint, category.trans</dt>
 <dd><p>settings for the plotting direction <code>category</code>.</p></dd>
 <dt>category.limits</dt>
@@ -384,9 +369,9 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dt>violin_scale</dt>
 <dd><p>scale to be set when using <code>type = "violin"</code>, can also be set to <code>"area"</code></p></dd>
 <dt>legend.position</dt>
-<dd><p>position of the legend, must be <code>"top"</code>, <code>"right"</code>, <code>"bottom"</code>, <code>"left"</code> or <code>"none"</code> (of <code>NA</code> or <code>NULL</code>), can be abbreviated. Defaults to <code>"right"</code> for numeric <code>category</code> values and 'sf' plots, and <code>"top"</code> otherwise.</p></dd>
+<dd><p>position of the legend, must be <code>"top"</code>, <code>"right"</code>, <code>"bottom"</code>, <code>"left"</code> or <code>"none"</code> (or <code>NA</code> or <code>NULL</code>), can be abbreviated. Defaults to <code>"right"</code> for numeric <code>category</code> values and 'sf' plots, and <code>"top"</code> otherwise.</p></dd>
 <dt>legend.title</dt>
-<dd><p>title of the legend (if <code>category.title</code> is not set), defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
+<dd><p>title of the legend (if <code>category.title</code> is not set), supports calculations over <code>.data</code> and defaults to <code>TRUE</code> if the legend items are numeric</p></dd>
 <dt>legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic</dt>
 <dd><p>other settings for the legend</p></dd>
 <dt>zoom</dt>
@@ -431,7 +416,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <li><p>Labels with data values can easily be printed and are automatically determined</p></li>
 </ul></li>
 <li><p>Support for any <code>ggplot2</code> extension based on <code><a href="https://ggplot2.tidyverse.org/reference/fortify.html" class="external-link">ggplot2::fortify()</a></code></p></li>
-</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 124 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
+</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 125 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
     </div>
 
     <div id="ref-examples">
@@ -568,7 +553,6 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in">        title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Based on n ="</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">patient_id</span><span class="op">)</span>, <span class="st">"patients"</span><span class="op">)</span>,</span>
 <span class="r-in">        subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Total rows:"</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
 <span class="r-in">        caption <span class="op">=</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"From {n_distinct(hospital)} hospitals"</span><span class="op">)</span>,</span>
-<span class="r-in">        tag <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Median:"</span>, <span class="fu"><a href="https://certe-medical-epidemiology.github.io/certestats/reference/math_functions.html" class="external-link">median</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span><span class="op">)</span>,</span>
 <span class="r-in">        x.title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Age ranging from"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://certe-medical-epidemiology.github.io/certestats/reference/math_functions.html" class="external-link">range</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" to "</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">binwidth = 6.4</span><span style="color: #080808;"> based on data</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #0000BB;">smooth = TRUE</span><span style="color: #080808;"> for </span><span style="color: #0000BB;">type = "histogram"</span></span>
