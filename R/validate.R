@@ -461,6 +461,7 @@ validate_x_scale <- function(values,
                              x.breaks,
                              x.n_breaks,
                              x.expand,
+                             x.labels,
                              x.limits,
                              x.position,
                              x.trans,
@@ -534,23 +535,27 @@ validate_x_scale <- function(values,
         x.trans <- reverse_trans()
       }
       if (is.null(x.limits)) {
-        x.limits <- c(ifelse(min(values) < 0, NA_real_, 0), NA)
+        x.limits <- c(ifelse(min(values) < 0, NA_real_, 0), NA_real_)
       }
       if (x.trans != "identity") {
         # some transformations, such as log, do not allow 0
         x.limits[x.limits == 0] <- NA_real_
       }
-      scale_x_continuous(labels = function(x, ...) {
-        format2(x,
-                round = max(2, sigfigs(diff(range(x, na.rm = TRUE))) + 1),
-                decimal.mark = decimal.mark,
-                big.mark = big.mark)},
-        breaks = if (!is.null(x.breaks)) x.breaks else waiver(),
-        n.breaks = x.n_breaks,
-        trans = x.trans,
-        position = x.position,
-        limits = x.limits,
-        expand = expansion(mult = c(0.05, 0.05)))
+      if (is.null(x.labels)) {
+        x.labels <- function(x, dec_mark = decimal.mark, big_mark = big.mark, ...) {
+          format2(x,
+                  round = max(2, sigfigs(diff(range(x, na.rm = TRUE))) + 1),
+                  decimal.mark = dec_mark,
+                  big.mark = big_mark)
+        }
+      }
+      scale_x_continuous(labels = x.labels,
+                         breaks = if (!is.null(x.breaks)) x.breaks else waiver(),
+                         n.breaks = x.n_breaks,
+                         trans = x.trans,
+                         position = x.position,
+                         limits = x.limits,
+                         expand = expansion(mult = c(0.05, 0.05)))
     }
   }
 }

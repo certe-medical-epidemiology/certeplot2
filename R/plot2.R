@@ -36,7 +36,7 @@
 #' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* print a geom.
 #' @param x.title text to show on the x axis, supports calculations over `.data`
 #' @param y.title text to show on the y axis, supports calculations over `.data`
-#' @param category.title title of the legend (if `legend.title` is not set), defaults to `TRUE` if the legend items are numeric.
+#' @param category.title title of the legend (if `legend.title` is not set), supports calculations over `.data` and defaults to `TRUE` if the legend items are numeric
 #' @param title title to show, supports calculations over `.data`
 #' @param subtitle subtitle to show, supports calculations over `.data`
 #' @param caption caption to show, supports calculations over `.data`
@@ -58,30 +58,22 @@
 #' @param x.lbl_angle angle to use for the x axis in a counter-clockwise direction (i.e., a value of `90` will orient the axis labels from bottom to top, a value of `270` will orient the axis labels from top to bottom)
 #' @param x.lbl_align alignment for the x axis between `0` (left aligned) and `1` (right aligned)
 #' @param x.lbl_italic [logical] to indicate whether the x labels should in in *italics*
-#' @param x.remove [logical] to indicate whether the x labels and title should be removed
-#' @param x.position position of the x axis, defaults to `"bottom"`
-#' @param x.breaks breaks function or numeric vector to use for the x axis
-#' @param x.n_breaks number of breaks to use for the x axis
-#' @param x.trans transformation function to use for the x axis, e.g. `"log2"`
-#' @param x.expand expansion to use for the x axis, can be length 1 or 2
-#' @param x.limits limits to use for the x axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `x.limits = c(0, NA)` to have the scale start at zero.
 #' @param x.character a [logical] to indicate whether the values of the x axis should be forced to [character]. The default is `FALSE`, except for years (x values between 2000 and 2050)
 #' @param x.drop [logical] to indicate whether factor levels should be dropped
-#' @param x.zoom a [logical] to indicate if the x axis should be zoomed on the data, by setting `x.limits = c(NA, NA)`
-#' @param y.remove a [logical] to indicate whether the y labels and title should be removed
+#' @param x.remove,y.remove a [logical] to indicate whether the axis labels and title should be removed
 #' @param y.24h a [logical] to indicate whether the y labels and breaks should be formatted as 24-hour sequences
 #' @param y.age a [logical] to indicate whether the y labels and breaks should be formatted as ages in years
 #' @param y.scientific a [logical] to indicate whether the y labels should be formatted in scientific notation, using [`format2_scientific()`][certestyle::format2_scientific()]. Defaults to `TRUE` only if the range of the y values spans more than `10e3`.
 #' @param y.percent a [logical] to indicate whether the y labels should be formatted as percentages
 #' @param y.percent_break a value on which the y axis should have breaks
-#' @param y.breaks a breaks function or numeric vector to use for the y axis
-#' @param y.n_breaks number of breaks, only useful if `y.breaks` is `NULL`
-#' @param y.limits limits to use for the y axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `y.limits = c(0, NA)` to have the scale start at zero.
-#' @param y.labels a labels function or character vector to use for the y axis
-#' @param y.expand expansion to use for the y axis, can be length 1 or 2
-#' @param y.trans a transformation function to use for the y axis, e.g. `"log2"`
-#' @param y.position position of the y axis, defaults to `"left"`
-#' @param y.zoom a [logical] to indicate if the y axis should be zoomed on the data, by setting `y.limits = c(NA, NA)`
+#' @param x.breaks,y.breaks a breaks function or numeric vector to use for the axis
+#' @param x.n_breaks,y.n_breaks number of breaks, only useful if `x.breaks` cq. `y.breaks` is `NULL`
+#' @param x.limits,y.limits limits to use for the axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `y.limits = c(0, NA)` to have the y scale start at zero.
+#' @param x.labels,y.labels a labels function or character vector to use for the axis
+#' @param x.expand,y.expand expansion to use for the axis, can be length 1 or 2
+#' @param x.trans,y.trans a transformation function to use for the axis, e.g. `"log2"`
+#' @param x.position,y.position position of the axis
+#' @param x.zoom,y.zoom a [logical] to indicate if the axis should be zoomed on the data, by setting `x.limits = c(NA, NA)` / `y.limits = c(NA, NA)`
 #' @param category.labels,category.percent,category.breaks,category.expand,category.midpoint,category.trans settings for the plotting direction `category`.
 #' @param category.limits limits to use for a numeric category, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `category.limits = c(0, NA)` to have the scale start at zero.
 #' @param x.max_items,category.max_items,facet.max_items number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the `summarise_function` function. **Please note:** the sorting will be applied first, allowing to e.g. plot the top *n* most frequent values of the x axis by combining `x.sort = "freq-desc"` with `x.max_items =` *n*.
@@ -115,8 +107,8 @@
 #' @param width width of the geom
 #' @param jitter_seed seed (randomisation factor) to be set when using `type = "jitter"`
 #' @param violin_scale scale to be set when using `type = "violin"`, can also be set to `"area"`
-#' @param legend.position position of the legend, must be `"top"`, `"right"`, `"bottom"`, `"left"` or `"none"` (of `NA` or `NULL`), can be abbreviated. Defaults to `"right"` for numeric `category` values and 'sf' plots, and `"top"` otherwise.
-#' @param legend.title title of the legend (if `category.title` is not set), defaults to `TRUE` if the legend items are numeric.
+#' @param legend.position position of the legend, must be `"top"`, `"right"`, `"bottom"`, `"left"` or `"none"` (or `NA` or `NULL`), can be abbreviated. Defaults to `"right"` for numeric `category` values and 'sf' plots, and `"top"` otherwise.
+#' @param legend.title title of the legend (if `category.title` is not set), supports calculations over `.data` and defaults to `TRUE` if the legend items are numeric
 #' @param legend.reverse,legend.barheight,legend.barwidth,legend.nbin,legend.italic other settings for the legend
 #' @param zoom a [logical] to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0. This will set `x.zoom = TRUE` and `y.zoom = TRUE`.
 #' @param sep separator character to use if multiple columns are given to either of the three directions: `x`, `category` and `facet`, e.g. `facet = c(column1, column2)`
@@ -219,7 +211,6 @@
 #'         title = paste("Based on n =", n_distinct(patient_id), "patients"),
 #'         subtitle = paste("Total rows:", n()),
 #'         caption = glue::glue("From {n_distinct(hospital)} hospitals"),
-#'         tag = paste("Median:", median(age)),
 #'         x.title = paste("Age ranging from", paste(range(age), collapse = " to ")))
 #'  
 #' # the default type is column, datalabels are automatically
@@ -332,6 +323,7 @@ plot2 <- function(.data,
                   x.trans = "identity",
                   x.expand = 0.5,
                   x.limits = NULL,
+                  x.labels = NULL,
                   x.character = NULL,
                   x.drop = FALSE,
                   x.zoom = FALSE,
@@ -512,6 +504,7 @@ plot2_exec <- function(.data,
                        x.trans,
                        x.expand,
                        x.limits,
+                       x.labels,
                        x.character,
                        x.drop,
                        x.zoom,
@@ -638,6 +631,7 @@ plot2_exec <- function(.data,
   on.exit(clean_plot2_env())
   
   # get titles based on raw data ----
+  # compute contents of title arguments
   suppressWarnings(
     tryCatch(titles <- .data %>%
                # no tibbles, data.tables, sf, etc. objects:
@@ -647,7 +641,9 @@ plot2_exec <- function(.data,
                       caption = {{ caption }},
                       tag = {{ tag }},
                       x.title = {{ x.title }},
-                      y.title = {{ y.title }}),
+                      y.title = {{ y.title }},
+                      legend.title = {{ legend.title }},
+                      category.title = {{ category.title }}),
              error = function(e) stop(gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", e$message), call. = FALSE))
   )
   title <- unique(titles$title)[1L]
@@ -656,6 +652,10 @@ plot2_exec <- function(.data,
   tag <- unique(titles$tag)[1L]
   x.title <- unique(titles$x.title)[1L]
   y.title <- unique(titles$y.title)[1L]
+  legend.title <- unique(titles$legend.title)[1L]
+  category.title <- unique(titles$category.title)[1L]
+  # category.title and legend.title both exist for convenience
+  legend.title <- if (is.null(category.title)) legend.title else category.title
   
   # prepare data ----
   # IMPORTANT: in this part, the data for mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
@@ -794,9 +794,6 @@ plot2_exec <- function(.data,
     x.zoom <- TRUE
     y.zoom <- TRUE
   }
-  
-  # category.title and legend.title both exist for convenience
-  legend.title <- if (is.null(category.title)) legend.title else category.title
   
   # check if markdown is required
   markdown <- validate_markdown(markdown, x.title, y.title, legend.title, title, subtitle, tag, caption, df)
@@ -1015,6 +1012,7 @@ plot2_exec <- function(.data,
                          x.date_labels = x.date_labels,
                          x.breaks = x.breaks,
                          x.expand = x.expand,
+                         x.labels = x.labels,
                          x.n_breaks = x.n_breaks,
                          x.limits = x.limits,
                          x.position = x.position,

@@ -65,6 +65,7 @@
   x.trans = "identity",
   x.expand = 0.5,
   x.limits = NULL,
+  x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
   x.zoom = FALSE,
@@ -193,6 +194,7 @@
   x.trans = "identity",
   x.expand = 0.5,
   x.limits = NULL,
+  x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
   x.zoom = FALSE,
@@ -321,6 +323,7 @@
   x.trans = "identity",
   x.expand = 0.5,
   x.limits = NULL,
+  x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
   x.zoom = FALSE,
@@ -449,6 +452,7 @@
   x.trans = "identity",
   x.expand = 0,
   x.limits = NULL,
+  x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
   x.zoom = FALSE,
@@ -580,6 +584,7 @@
   x.trans = "identity",
   x.expand = 0.5,
   x.limits = NULL,
+  x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
   x.zoom = FALSE,
@@ -708,6 +713,7 @@
   x.trans = "identity",
   x.expand = 0.5,
   x.limits = NULL,
+  x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
   x.zoom = FALSE,
@@ -841,6 +847,7 @@
   x.trans = "identity",
   x.expand = 0.5,
   x.limits = NULL,
+  x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
   x.zoom = FALSE,
@@ -937,7 +944,7 @@
 
 \item{y.title}{text to show on the y axis, supports calculations over \code{.data}}
 
-\item{category.title}{title of the legend (if \code{legend.title} is not set), defaults to \code{TRUE} if the legend items are numeric.}
+\item{category.title}{title of the legend (if \code{legend.title} is not set), supports calculations over \code{.data} and defaults to \code{TRUE} if the legend items are numeric}
 
 \item{title}{title to show, supports calculations over \code{.data}}
 
@@ -1001,9 +1008,9 @@
 
 \item{x.lbl_italic}{\link{logical} to indicate whether the x labels should in in \emph{italics}}
 
-\item{x.remove}{\link{logical} to indicate whether the x labels and title should be removed}
+\item{x.remove}{a \link{logical} to indicate whether the axis labels and title should be removed}
 
-\item{x.position}{position of the x axis, defaults to \code{"bottom"}}
+\item{x.position}{position of the axis}
 
 \item{x.max_items}{number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the \code{summarise_function} function. \strong{Please note:} the sorting will be applied first, allowing to e.g. plot the top \emph{n} most frequent values of the x axis by combining \code{x.sort = "freq-desc"} with \verb{x.max_items =} \emph{n}.}
 
@@ -1017,23 +1024,25 @@
 
 \item{facet.max_txt}{the text to use of values not included number of \verb{*.max_items}. The placeholder \verb{\%n} will be replaced with the outcome of the \code{summarise_function} function, the placeholder \verb{\%p} will be replaced with the percentage.}
 
-\item{x.breaks}{breaks function or numeric vector to use for the x axis}
+\item{x.breaks}{a breaks function or numeric vector to use for the axis}
 
-\item{x.n_breaks}{number of breaks to use for the x axis}
+\item{x.n_breaks}{number of breaks, only useful if \code{x.breaks} cq. \code{y.breaks} is \code{NULL}}
 
-\item{x.trans}{transformation function to use for the x axis, e.g. \code{"log2"}}
+\item{x.trans}{a transformation function to use for the axis, e.g. \code{"log2"}}
 
-\item{x.expand}{expansion to use for the x axis, can be length 1 or 2}
+\item{x.expand}{expansion to use for the axis, can be length 1 or 2}
 
-\item{x.limits}{limits to use for the x axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{x.limits = c(0, NA)} to have the scale start at zero.}
+\item{x.limits}{limits to use for the axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the y scale start at zero.}
+
+\item{x.labels}{a labels function or character vector to use for the axis}
 
 \item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (x values between 2000 and 2050)}
 
 \item{x.drop}{\link{logical} to indicate whether factor levels should be dropped}
 
-\item{x.zoom}{a \link{logical} to indicate if the x axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)}}
+\item{x.zoom}{a \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} / \code{y.limits = c(NA, NA)}}
 
-\item{y.remove}{a \link{logical} to indicate whether the y labels and title should be removed}
+\item{y.remove}{a \link{logical} to indicate whether the axis labels and title should be removed}
 
 \item{y.24h}{a \link{logical} to indicate whether the y labels and breaks should be formatted as 24-hour sequences}
 
@@ -1045,21 +1054,21 @@
 
 \item{y.percent_break}{a value on which the y axis should have breaks}
 
-\item{y.breaks}{a breaks function or numeric vector to use for the y axis}
+\item{y.breaks}{a breaks function or numeric vector to use for the axis}
 
-\item{y.n_breaks}{number of breaks, only useful if \code{y.breaks} is \code{NULL}}
+\item{y.n_breaks}{number of breaks, only useful if \code{x.breaks} cq. \code{y.breaks} is \code{NULL}}
 
-\item{y.limits}{limits to use for the y axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the scale start at zero.}
+\item{y.limits}{limits to use for the axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the y scale start at zero.}
 
-\item{y.labels}{a labels function or character vector to use for the y axis}
+\item{y.labels}{a labels function or character vector to use for the axis}
 
-\item{y.expand}{expansion to use for the y axis, can be length 1 or 2}
+\item{y.expand}{expansion to use for the axis, can be length 1 or 2}
 
-\item{y.trans}{a transformation function to use for the y axis, e.g. \code{"log2"}}
+\item{y.trans}{a transformation function to use for the axis, e.g. \code{"log2"}}
 
-\item{y.position}{position of the y axis, defaults to \code{"left"}}
+\item{y.position}{position of the axis}
 
-\item{y.zoom}{a \link{logical} to indicate if the y axis should be zoomed on the data, by setting \code{y.limits = c(NA, NA)}}
+\item{y.zoom}{a \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} / \code{y.limits = c(NA, NA)}}
 
 \item{category.labels}{settings for the plotting direction \code{category}.}
 
@@ -1167,9 +1176,9 @@
 
 \item{violin_scale}{scale to be set when using \code{type = "violin"}, can also be set to \code{"area"}}
 
-\item{legend.position}{position of the legend, must be \code{"top"}, \code{"right"}, \code{"bottom"}, \code{"left"} or \code{"none"} (of \code{NA} or \code{NULL}), can be abbreviated. Defaults to \code{"right"} for numeric \code{category} values and 'sf' plots, and \code{"top"} otherwise.}
+\item{legend.position}{position of the legend, must be \code{"top"}, \code{"right"}, \code{"bottom"}, \code{"left"} or \code{"none"} (or \code{NA} or \code{NULL}), can be abbreviated. Defaults to \code{"right"} for numeric \code{category} values and 'sf' plots, and \code{"top"} otherwise.}
 
-\item{legend.title}{title of the legend (if \code{category.title} is not set), defaults to \code{TRUE} if the legend items are numeric.}
+\item{legend.title}{title of the legend (if \code{category.title} is not set), supports calculations over \code{.data} and defaults to \code{TRUE} if the legend items are numeric}
 
 \item{legend.reverse}{other settings for the legend}
 
