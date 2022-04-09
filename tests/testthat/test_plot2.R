@@ -395,7 +395,7 @@ test_that("date labels work", {
                list(breaks = "3 months", labels = "mmm yyyy"))
   expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 1095 - 1)),
                list(breaks = "6 months", labels = "mmm yyyy"))
-  expect_equal(determine_date_breaks_labels(c( Sys.Date(), Sys.Date() + 2556 - 1)),
+  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 2556 - 1)),
                list(breaks = "1 year", labels = "mmm yyyy"))
 })
 
