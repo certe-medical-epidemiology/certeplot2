@@ -401,7 +401,19 @@ test_that("date labels work", {
 
 test_that("manual fonts work", {
   expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Rock Salt"), "gg")
-  expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Rock Salt"), "gg")
+  expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Rock Salt"), "gg") # already downloaded
   expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Courier"), "gg")
-  expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Courier"), "gg")
+  expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Courier"), "gg") # already downloaded
+})
+
+test_that("Plotly works", {
+  expect_error(as_plotly(mtcars))
+  expect_s3_class(mtcars %>% plot2(mpg, hp) %>% as_plotly(), "plotly")
+  expect_s3_class(mtcars %>%
+                    plot2(mpg, hp) %>% 
+                    as_plotly(dragmode = "pan") %>%
+                    plotly_style(marker.line.color = "red",
+                                 hoverinfo = "y"),
+                  "plotly")
+  expect_s3_class(mtcars %>% plot2(mpg, hp) %>% plotly_style(hoverinfo = "y"), "plotly")
 })

@@ -26,6 +26,7 @@
 #' 
 #' In case of [plotly_style()]: arguments to pass on to [`style()`][plotly::style()] to change the Plotly style object
 #' @importFrom ggplot2 is.ggplot
+#' @importFrom dplyr `%>%`
 #' @rdname plotly
 #' @export
 #' @examples 
@@ -38,6 +39,20 @@
 #'   as_plotly(dragmode = "pan") %>%
 #'   plotly_style(marker.line.color = "red",
 #'                hoverinfo = "y")
+#' 
+#' 
+#' \dontrun{
+#' # in the certetoolbox package, this:
+#' mtcars %>%
+#'   plot2(mpg, hp) %>% 
+#'   export_html("filename")
+#'   
+#' # is short for:
+#' mtcars %>%
+#'   plot2(mpg, hp) %>% 
+#'   as_plotly() %>% 
+#'   htmltools::save_html("filename.html")
+#' }
 as_plotly <- function(plot, ...) {
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
@@ -51,6 +66,7 @@ as_plotly <- function(plot, ...) {
 }
 
 #' @importFrom ggplot2 is.ggplot
+#' @importFrom dplyr `%>%`
 #' @rdname plotly
 #' @export
 plotly_style <- function(plot, ...) {
