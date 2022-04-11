@@ -45,7 +45,7 @@ jobs:
           - {os: ubuntu-20.04,   r: '4.1',     allowfail: false}
           - {os: macOS-latest,   r: '4.1',     allowfail: false}
           - {os: windows-latest, r: '4.1',     allowfail: false}
-          - {os: windows-latest, r: '3.6',     allowfail: false}
+          # - {os: windows-latest, r: '3.6',     allowfail: false}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}

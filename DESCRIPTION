@@ -1,6 +1,6 @@
 Package: certeplot2
 Title: A Certe R Package for Convenient Plotting
-Version: 1.5.0
+Version: 1.5.1
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
          family = "Berends",
@@ -18,7 +18,7 @@ Description: A Certe R Package for fast and convenient plotting,
   This package is part of the 'certedata' universe.
 URL: https://certe-medical-epidemiology.github.io/certeplot2, https://github.com/certe-medical-epidemiology/certeplot2
 Depends: 
-  R (>= 3.6.0)
+  R (>= 4.1.0)
 Imports: 
   certestyle,
   cleaner (>= 1.5.1),
