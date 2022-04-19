@@ -601,6 +601,7 @@ plot2_exec <- function(.data,
   misses_tag <- isTRUE(dots$`_misses.tag`)
   misses_caption <- isTRUE(dots$`_misses.caption`)
   misses_x.zoom <- isTRUE(dots$`_misses.x.zoom`)
+  misses_x.max_items <- isTRUE(dots$`_misses.x.max_items`)
   misses_y.percent <- isTRUE(dots$`_misses.y.percent`)
   misses_y.percent_break <- isTRUE(dots$`_misses.y.percent_break`)
  
@@ -611,8 +612,8 @@ plot2_exec <- function(.data,
   type_backup <- type
   if (isTRUE(type[1L] %like% "^(barpercent|bp)$")) {
     type_backup <- "barpercent"
-    if (is.infinite(x.max_items)) {
-      x.max_items <- 10
+    if (misses_x.max_items) {
+      x.max_items <- 10 # instead of the default Inf
     }
     x.sort <- "freq-desc"
     datalabels.format <- "%n (%p)"
