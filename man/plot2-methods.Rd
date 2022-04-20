@@ -63,7 +63,7 @@
   x.breaks = NULL,
   x.n_breaks = NULL,
   x.trans = "identity",
-  x.expand = 0.5,
+  x.expand = NULL,
   x.limits = NULL,
   x.labels = NULL,
   x.character = NULL,
@@ -79,7 +79,7 @@
   y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
-  y.expand = 0.25,
+  y.expand = NULL,
   y.trans = "identity",
   y.position = "left",
   y.zoom = FALSE,
@@ -192,7 +192,7 @@
   x.breaks = NULL,
   x.n_breaks = NULL,
   x.trans = "identity",
-  x.expand = 0.5,
+  x.expand = NULL,
   x.limits = NULL,
   x.labels = NULL,
   x.character = NULL,
@@ -208,7 +208,7 @@
   y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
-  y.expand = 0.25,
+  y.expand = NULL,
   y.trans = "identity",
   y.position = "left",
   y.zoom = FALSE,
@@ -321,7 +321,7 @@
   x.breaks = NULL,
   x.n_breaks = NULL,
   x.trans = "identity",
-  x.expand = 0.5,
+  x.expand = NULL,
   x.limits = NULL,
   x.labels = NULL,
   x.character = NULL,
@@ -337,7 +337,7 @@
   y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
-  y.expand = 0.25,
+  y.expand = NULL,
   y.trans = "identity",
   y.position = "left",
   y.zoom = FALSE,
@@ -582,7 +582,7 @@
   x.breaks = NULL,
   x.n_breaks = NULL,
   x.trans = "identity",
-  x.expand = 0.5,
+  x.expand = NULL,
   x.limits = NULL,
   x.labels = NULL,
   x.character = NULL,
@@ -598,7 +598,7 @@
   y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
-  y.expand = 0.25,
+  y.expand = NULL,
   y.trans = "identity",
   y.position = "left",
   y.zoom = FALSE,
@@ -711,7 +711,7 @@
   x.breaks = NULL,
   x.n_breaks = NULL,
   x.trans = "identity",
-  x.expand = 0.5,
+  x.expand = NULL,
   x.limits = NULL,
   x.labels = NULL,
   x.character = NULL,
@@ -727,7 +727,7 @@
   y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
-  y.expand = 0.25,
+  y.expand = NULL,
   y.trans = "identity",
   y.position = "left",
   y.zoom = FALSE,
@@ -845,7 +845,7 @@
   x.breaks = NULL,
   x.n_breaks = NULL,
   x.trans = "identity",
-  x.expand = 0.5,
+  x.expand = NULL,
   x.limits = NULL,
   x.labels = NULL,
   x.character = NULL,
@@ -861,7 +861,7 @@
   y.n_breaks = NULL,
   y.limits = NULL,
   y.labels = NULL,
-  y.expand = 0.25,
+  y.expand = NULL,
   y.trans = "identity",
   y.position = "left",
   y.zoom = FALSE,
@@ -1030,7 +1030,7 @@
 
 \item{x.trans}{a transformation function to use for the axis, e.g. \code{"log2"}}
 
-\item{x.expand}{expansion to use for the axis, can be length 1 or 2}
+\item{x.expand}{\href{ggplot2::expansion()}{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to 0.25, except for sf objects (then both default to 0).}
 
 \item{x.limits}{limits to use for the axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the y scale start at zero.}
 
@@ -1062,7 +1062,7 @@
 
 \item{y.labels}{a labels function or character vector to use for the axis}
 
-\item{y.expand}{expansion to use for the axis, can be length 1 or 2}
+\item{y.expand}{\href{ggplot2::expansion()}{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to 0.25, except for sf objects (then both default to 0).}
 
 \item{y.trans}{a transformation function to use for the axis, e.g. \code{"log2"}}
 

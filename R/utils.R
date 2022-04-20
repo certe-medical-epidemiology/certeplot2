@@ -316,7 +316,7 @@ group_sizes <- function(df) {
     nrow(df)
   } else {
     df %>% 
-      group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df))),
+      group_by(across(c(get_x_name(.), get_category_name(.), get_facet_name(.))),
                .drop = FALSE) %>%
       group_size()
   }

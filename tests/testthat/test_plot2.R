@@ -237,6 +237,7 @@ test_that("x scale works", {
   expect_s3_class(mtcars %>% plot2(mpg, hp, x.lbl_angle = 40), "gg")
   expect_s3_class(mtcars %>% plot2(mpg, hp, x.lbl_angle = 200), "gg")
   expect_s3_class(runif(n = 100, min = 2.0004, max = 2.0006) %>% plot2(type = "h"), "gg")
+  expect_s3_class(suppressWarnings(mtcars %>% plot2(mpg, hp, x.limits = c(10, 20))), "gg")
   
   p <- plotdata %>%
     plot2(x = x_date,
@@ -257,6 +258,7 @@ test_that("y scale works", {
   expect_s3_class(data.frame(a = letters[1:10], b = 10 ^ c(1:10)) %>% plot2(y.trans = "log10", y.n_breaks = 10), "gg")
   expect_s3_class(data.frame(a = letters[1:10], y = 1) %>% plot2(y.percent = TRUE, y.percent_break = 500), "gg")
   expect_s3_class(data.frame(a = letters[1:10], y = 1) %>% plot2(y.percent = TRUE), "gg")
+  expect_s3_class(suppressWarnings(mtcars %>% plot2(mpg, hp, y.limits = c(100, 200))), "gg")
 })
 
 test_that("category scale works", {
@@ -289,7 +291,6 @@ test_that("category scale works", {
                                                      category.trans = "log10",
                                                      category.limits = c(NA, 10e3)),
                   "gg")
-  
 })
 
 test_that("facet scale works", {
@@ -308,6 +309,12 @@ test_that("facet scale works", {
                                  Species,
                                  facet.repeat_lbls_x = FALSE,
                                  facet.repeat_lbls_y = TRUE), "gg")
+  expect_s3_class(admitted_patients %>% plot2(hospital,
+                                              n(),
+                                              ward,
+                                              gender,
+                                              stacked = TRUE,
+                                              facet.fixed_y = TRUE), "gg")
 })
 
 test_that("blank plot works", {

@@ -43,7 +43,11 @@ validate_type <- function(type, df = NULL) {
       if (all(group_sizes(df) >= 3)) {
         type <- "geom_boxplot"
         plot2_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL),
-                      font_black(" since all groups have size >= 3"))
+                      " since all groups in ",
+                      paste0(font_blue(c(get_x_name(df), get_category_name(df), get_facet_name(df)),
+                                       collapse = NULL),
+                             collapse = font_black(" and ")), 
+                      " contain at least three values")
       } else {
         # otherwise: the default
         type <- getOption("plot2.default_type", "geom_col")
@@ -84,7 +88,7 @@ validate_type <- function(type, df = NULL) {
     if (any(valid_geoms %like% type)) {
       type <- valid_geoms[valid_geoms %like% type][1L]
     } else {
-      stop("plot type \"", type.bak, "\" is invalid, since ggplot2::", type, "() does not exist", call. = FALSE)
+      stop("plot type \"", type.bak, "\" is invalid since ggplot2::", type, "() does not exist", call. = FALSE)
     }
   }
   type
@@ -184,7 +188,7 @@ validate_data <- function(df,
             df <- df %>% 
               mutate(`_var_y` = df %>% pull(`_var_x`))
           } else {
-            stop("No variable found for y, since the x variable (", get_x_name(df),
+            stop("No variable found for y since the x variable (", get_x_name(df),
                  ") is the only numeric variable in the data set.\nDid you mean type = \"histogram\"?", call. = FALSE)
           }
         } else {
@@ -474,9 +478,21 @@ validate_x_scale <- function(values,
   if (isTRUE(x.zoom) && is.null(x.limits)) {
     x.limits <- c(NA_real_, NA_real_)
   }
+  
+  if (is.null(x.expand)) {
+    if (is.null(x.limits)) {
+      # set default value to 0.5
+      x.expand <- 0.5
+    } else {
+      plot2_message("Assuming ", font_blue("x.expand = 0"), " since ", font_blue("x.limits"), " is set")
+      x.expand <- 0
+    }
+  }
+  
   if (is.null(x.trans)) {
     x.trans <- "identity"
   }
+  
   if (!is.null(x.limits)) {
     if (length(x.limits) != 2) {
       stop("`x.limits` must be of length 2", call. = FALSE)
@@ -580,6 +596,7 @@ validate_y_scale <- function(df,
                              y.position,
                              y.trans,
                              y.zoom,
+                             stacked,
                              stackedpercent,
                              facet.fixed_y,
                              decimal.mark,
@@ -590,6 +607,15 @@ validate_y_scale <- function(df,
   if (is.null(y.trans)) {
     y.trans <- "identity"
   }
+  if (is.null(y.expand)) {
+    if (is.null(y.limits)) {
+      # set default value to 0.25
+      y.expand <- 0.25
+    } else {
+      plot2_message("Assuming ", font_blue("y.expand = 0"), " since ", font_blue("y.limits"), " is set")
+      y.expand <- 0
+    }
+  }
   
   values <- get_y(df)
   if (mode(values) != "numeric") {
@@ -598,7 +624,7 @@ validate_y_scale <- function(df,
          call. = FALSE)
   }
   
-  if (is.null(facet.fixed_y) && has_facet(df) && !isTRUE(stackedpercent)) {
+  if (is.null(facet.fixed_y) && is.null(y.limits) && has_facet(df) && !isTRUE(stackedpercent)) {
     # determine if scales should be fixed - if CV_ymax < 15% then fix them:
     y_maxima <- df %>%
       group_by(across(get_facet_name(.))) %>% 
@@ -716,7 +742,8 @@ validate_y_scale <- function(df,
   }
   
   limits_fn <- function(values, y.limits,
-                        y.expand, facet.fixed_y, y.age, y.trans) {
+                        y.expand, facet.fixed_y, y.age, y.trans,
+                        df) {
     min_value <- min(0, min(values, na.rm = TRUE))
     if (y.trans != "identity") {
       # in certain transformations, such as log, 0 is not allowed
@@ -728,9 +755,18 @@ validate_y_scale <- function(df,
     } else if (isTRUE(y.age)) {
       # so no function, but force a vector (y.expand is needed since it won't expand)
       c(min_value, max(values, na.rm = TRUE) * (1 + y.expand))
-    } else if (isTRUE(facet.fixed_y)) {
-      # so no function, but force a vector
-      c(min_value, max(values, na.rm = TRUE))
+    } else if (has_facet(df) && isTRUE(facet.fixed_y)) {
+      if (isTRUE(stacked)) {
+        # max has to be determined based per sum on the category level, so calculate sum of y over x and facet
+        max_y <- df %>% 
+          group_by(across(c(get_x_name(.), get_facet_name(.))),
+                   .drop = FALSE) %>%
+          summarise(maximum = sum(`_var_y`, na.rm = TRUE))
+        c(min_value, max(max_y$maximum))
+      } else {
+        # otherwise, return max per y
+        c(min_value, max(values, na.rm = TRUE))
+      }
     } else {
       function(x, y_expand = y.expand, min_val = min_value, ...) c(min(min_val, x, na.rm = TRUE), max(x, na.rm = TRUE))
     }
@@ -776,7 +812,8 @@ validate_y_scale <- function(df,
                        y.expand = y.expand,
                        facet.fixed_y = facet.fixed_y,
                        y.age = y.age,
-                       y.trans = y.trans),
+                       y.trans = y.trans,
+                       df),
     expand = expand_fn(values = values,
                        y.expand = y.expand,
                        y.age = y.age,
