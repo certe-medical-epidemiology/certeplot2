@@ -3,7 +3,6 @@
 \docType{import}
 \name{reexports}
 \alias{reexports}
-\alias{\%>\%}
 \alias{n}
 \alias{n_distinct}
 \title{Objects exported from other packages}
@@ -13,6 +12,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{dplyr}{\code{\link[dplyr:reexports]{\%>\%}}, \code{\link[dplyr:context]{n}}, \code{\link[dplyr]{n_distinct}}}
+  \item{dplyr}{\code{\link[dplyr:context]{n}}, \code{\link[dplyr]{n_distinct}}}
 }}
 

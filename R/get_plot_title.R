@@ -46,21 +46,17 @@ get_plot_title <- function(plot,
   if (is.null(title)) {
     title <- default
   } else {
-    title <- title %>%
-      as.character() %>%
-      gsub("\"", "***", .) %>%
-      strsplit("***", fixed = TRUE) %>%
+    title <- gsub("\"", "***", as.character(title)) |>
+      strsplit("***", fixed = TRUE) |>
       unlist()
     title <- title[which(title != "" & title != "paste(" & 
                            title != ", italic(" & title != ")" & title != "), ")]
-    title <- title %>% 
-      concat() %>%
-      gsub("_+", " ", .) %>% 
+    title <- gsub("_+", " ", concat(title)) |> 
       trimws()
     if (valid_filename == TRUE) {
-      title <- title %>% 
-        gsub("[?!|<>|:/\\*]", "", .) %>% 
-        gsub("[ .]+", "_", .) %>% 
+      title <- 
+        gsub("[ .]+", "_", 
+             gsub("[?!|<>|:/\\*]", "", title)) |> 
         tolower()
     }
     if (title == "") {

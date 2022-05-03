@@ -1030,7 +1030,7 @@
 
 \item{x.trans}{a transformation function to use for the axis, e.g. \code{"log2"}}
 
-\item{x.expand}{\href{ggplot2::expansion()}{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to 0.25, except for sf objects (then both default to 0).}
+\item{x.expand}{\href{ggplot2::expansion()}{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to \code{0.25}, except for sf objects (then both default to 0).}
 
 \item{x.limits}{limits to use for the axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the y scale start at zero.}
 
@@ -1040,7 +1040,7 @@
 
 \item{x.drop}{\link{logical} to indicate whether factor levels should be dropped}
 
-\item{x.zoom}{a \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} / \code{y.limits = c(NA, NA)}}
+\item{x.zoom}{a \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} and \code{x.expand = 0} for the x axis, or \code{y.limits = c(NA, NA)} and \code{y.expand = 0} for the y axis}
 
 \item{y.remove}{a \link{logical} to indicate whether the axis labels and title should be removed}
 
@@ -1062,13 +1062,13 @@
 
 \item{y.labels}{a labels function or character vector to use for the axis}
 
-\item{y.expand}{\href{ggplot2::expansion()}{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to 0.25, except for sf objects (then both default to 0).}
+\item{y.expand}{\href{ggplot2::expansion()}{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to \code{0.25}, except for sf objects (then both default to 0).}
 
 \item{y.trans}{a transformation function to use for the axis, e.g. \code{"log2"}}
 
 \item{y.position}{position of the axis}
 
-\item{y.zoom}{a \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} / \code{y.limits = c(NA, NA)}}
+\item{y.zoom}{a \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} and \code{x.expand = 0} for the x axis, or \code{y.limits = c(NA, NA)} and \code{y.expand = 0} for the y axis}
 
 \item{category.labels}{settings for the plotting direction \code{category}.}
 

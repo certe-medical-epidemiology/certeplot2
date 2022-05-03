@@ -1476,7 +1476,7 @@ plot2.data.frame <- function(.data,
 }
 
 #' @rdname plot2-methods
-#' @importFrom dplyr `%>%` filter mutate select
+#' @importFrom dplyr filter mutate select
 #' @details For antimicrobial resistance (AMR) data analysis, use the [`bug_drug_combinations()`][AMR::bug_drug_combinations()] function from the `AMR` package on a data set with antibiograms. The result can be used as input for [plot2()].
 #' @param minimum minimum number of results, defaults to `30`
 #' @param remove_intrinsic_resistant a [logical] to indicate that rows with 100% resistance must be removed from the data set before plotting
@@ -1617,13 +1617,13 @@ plot2.bug_drug_combinations <- function(.data,
   
   df <- .data
   if (isTRUE(remove_intrinsic_resistant)) {
-    df <- df %>% 
+    df <- df |> 
       filter(total != R)
   }
-  df <- df %>% 
-    filter(total >= minimum) %>% 
-    select(-total) %>%
-    mutate(ab = ab_name(ab, language = language)) %>% 
+  df <- df |> 
+    filter(total >= minimum) |> 
+    select(-total) |>
+    mutate(ab = ab_name(ab, language = language)) |> 
     pivot_longer(-c(mo, ab))
   df$name <- factor(df$name, levels = c("S", "I", "R"), ordered = TRUE)
   

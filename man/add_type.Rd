@@ -79,26 +79,26 @@ add_sf(
 \item{nudge_y}{is \code{datalabels} is not \code{NULL}, the amount of vertical adjustment of the datalabels}
 }
 \description{
-Quickly add a new 'geom' to an existing \code{plot2}/\code{ggplot} model. Like \code{\link[=plot2]{plot2()}}, they support tidy evaluation, meaning that variables can be unquoted. They can be added using the pipe (\verb{\%>\%}).
+Quickly add a new 'geom' to an existing \code{plot2}/\code{ggplot} model. Like \code{\link[=plot2]{plot2()}}, they support tidy evaluation, meaning that variables can be unquoted. They can be added using the pipe (new base \R \verb{|>} or tidyverse \verb{\%>\%}).
 }
 \examples{
 df <- data.frame(var_1 = c(1:100),
                  var_2 = rnorm(100, 100, 25))
-df \%>\%
-  plot2() \%>\% 
+df |>
+  plot2() |> 
   add_line(mean(var_2))
   
-df \%>\%
-  plot2() \%>\% 
+df |>
+  plot2() |> 
   add_line(y = mean(var_2), 
-           size = 2) \%>\%
+           size = 2) |>
   add_col(y = var_2 / 5,
           width = 0.25,
           colour = "certeroze")
    
 if (require("certestats", warn.conflicts = FALSE)) {
-   df \%>\%
-     plot2(caption = "EWMA in pink :)") \%>\% 
+   df |>
+     plot2(caption = "EWMA in pink :)") |> 
      add_line(y = ewma(var_2, 0.75),
               colour = "certeroze",
               linetype = 3,
@@ -110,9 +110,9 @@ if (require("certegis")) {
                          "Medisch Centrum Leeuwarden",
                          "Tjongerschans Heerenveen",
                          "Treant Emmen"))
-  geo_gemeenten \%>\%
-    crop_certe() \%>\%
-    plot2(datalabels = FALSE) \%>\%
+  geo_gemeenten |>
+    crop_certe() |>
+    plot2(datalabels = FALSE) |>
     add_sf(hospitals, colour = "certeroze", datalabels = place)
 }
 }

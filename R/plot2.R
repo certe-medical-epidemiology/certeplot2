@@ -70,10 +70,10 @@
 #' @param x.n_breaks,y.n_breaks number of breaks, only useful if `x.breaks` cq. `y.breaks` is `NULL`
 #' @param x.limits,y.limits limits to use for the axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `y.limits = c(0, NA)` to have the y scale start at zero.
 #' @param x.labels,y.labels a labels function or character vector to use for the axis
-#' @param x.expand,y.expand [expansion](ggplot2::expansion()) to use for the axis, can be length 1 or 2. `x.expand` defaults to 0.5 and `y.expand` defaults to 0.25, except for sf objects (then both default to 0).
+#' @param x.expand,y.expand [expansion](ggplot2::expansion()) to use for the axis, can be length 1 or 2. `x.expand` defaults to 0.5 and `y.expand` defaults to `0.25`, except for sf objects (then both default to 0).
 #' @param x.trans,y.trans a transformation function to use for the axis, e.g. `"log2"`
 #' @param x.position,y.position position of the axis
-#' @param x.zoom,y.zoom a [logical] to indicate if the axis should be zoomed on the data, by setting `x.limits = c(NA, NA)` / `y.limits = c(NA, NA)`
+#' @param x.zoom,y.zoom a [logical] to indicate if the axis should be zoomed on the data, by setting `x.limits = c(NA, NA)` and `x.expand = 0` for the x axis, or `y.limits = c(NA, NA)` and `y.expand = 0` for the y axis
 #' @param category.labels,category.percent,category.breaks,category.expand,category.midpoint,category.trans settings for the plotting direction `category`.
 #' @param category.limits limits to use for a numeric category, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `category.limits = c(0, NA)` to have the scale start at zero.
 #' @param x.max_items,category.max_items,facet.max_items number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the `summarise_function` function. **Please note:** the sorting will be applied first, allowing to e.g. plot the top *n* most frequent values of the x axis by combining `x.sort = "freq-desc"` with `x.max_items =` *n*.
@@ -145,31 +145,31 @@
 #' 
 #' # no variables determined, so plot2() will try for itself -
 #' # the type will be points since the first two variables are numeric
-#' iris %>%
+#' iris |>
 #'   plot2()
 #' 
 #' # ggplot2 defaults (more or less):
-#' iris %>% 
+#' iris |> 
 #'   plot2(theme = NULL,
 #'         zoom = TRUE,
 #'         legend.title = TRUE,
 #'         legend.position = "right")
 #' 
 #' # if x and y are set, no additional mapping will be set:
-#' iris %>% 
+#' iris |> 
 #'   plot2(Sepal.Width, Sepal.Length)
-#' iris %>% 
+#' iris |> 
 #'   plot2(Species, Sepal.Length)
 #' 
 #' # the arguments are in this order: x, y, category, facet
-#' iris %>% 
+#' iris |> 
 #'   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species)
 #' 
-#' iris %>% 
+#' iris |> 
 #'   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
 #'         colour = "viridis") # set the viridis colours
 #'       
-#' iris %>% 
+#' iris |> 
 #'   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
 #'         colour = c("white", "red", "black"), # set own colours
 #'         background = NA,
@@ -178,22 +178,22 @@
 #' admitted_patients
 #' 
 #' # the arguments are in this order: x, y, category, facet
-#' admitted_patients %>%
+#' admitted_patients |>
 #'   plot2(hospital, age)
 #' 
-#' admitted_patients %>%
+#' admitted_patients |>
 #'   plot2(hospital, age, gender)
 #'   
-#' admitted_patients %>%
+#' admitted_patients |>
 #'   plot2(hospital, age, gender, ward)
 #'   
 #' # or use any function for y
-#' admitted_patients %>%
+#' admitted_patients |>
 #'   plot2(hospital, median(age), gender, ward)
-#' admitted_patients %>%
+#' admitted_patients |>
 #'   plot2(hospital, n(), gender, ward)
 #'
-#' admitted_patients %>%
+#' admitted_patients |>
 #'   plot2(x = hospital,
 #'         y = age,
 #'         category = gender,
@@ -202,11 +202,11 @@
 #'         size = 1.25,
 #'         y.age = TRUE)
 #' 
-#' admitted_patients %>%
+#' admitted_patients |>
 #'   plot2(age, type = "hist")
 #' 
 #' # even titles support calculations, including support for {glue}
-#' admitted_patients %>%
+#' admitted_patients |>
 #'   plot2(age, type = "hist",
 #'         title = paste("Based on n =", n_distinct(patient_id), "patients"),
 #'         subtitle = paste("Total rows:", n()),
@@ -215,27 +215,26 @@
 #'  
 #' # the default type is column, datalabels are automatically
 #' # set in non-continuous types:
-#' admitted_patients %>% 
+#' admitted_patients |> 
 #'   plot2(hospital, n(), gender)
 #'   
-#' admitted_patients %>% 
+#' admitted_patients |> 
 #'   plot2(hospital, n(), gender,
 #'         stacked = TRUE)
 #'         
-#' admitted_patients %>% 
+#' admitted_patients |> 
 #'   plot2(hospital, n(), gender,
 #'         stackedpercent = TRUE)
 #'  
 #' # sort on any direction:       
-#' admitted_patients %>% 
+#' admitted_patients |> 
 #'   plot2(hospital, n(), gender,
 #'         x.sort = "freq-asc",
 #'         stacked = TRUE)
 #' 
 #' # plot2() supports all S3 extensions available through
 #' # ggplot2::fortify(), such as regression models:
-#' mtcars %>% 
-#'   lm(mpg ~ hp, data = .) %>% 
+#' lm(mpg ~ hp, data = mtcars) |> 
 #'   plot2(x = mpg ^ -3,
 #'         y = hp ^ 2,
 #'         smooth = TRUE,
@@ -248,15 +247,15 @@
 #' 
 #' # QC plots, according to e.g. Nelson's Quality Control Rules
 #' if (require("certestats", warn.conflicts = FALSE)) {
-#'   rnorm(250) %>% 
-#'     qc_test() %>% 
+#'   rnorm(250) |> 
+#'     qc_test() |> 
 #'     plot2()
 #' }
 #'         
 #' # sf objects (geographic plots, 'simple features') are also supported
 #' if (require("sf")) {
-#' # sf datalabels even support markdown:
-#'   netherlands %>% 
+#' # even sf datalabels support markdown:
+#'   netherlands |> 
 #'     plot2(datalabels = paste0(province, "\n", round(area_km2), " km^2"))
 #' }
 #' 
@@ -264,9 +263,8 @@
 #' if (require("AMR")) {
 #'   options(AMR_locale = "nl")
 #'   
-#'   example_isolates %>% 
-#'     .[, c("mo", penicillins())] %>% 
-#'     bug_drug_combinations(FUN = mo_gramstain) %>%
+#'   example_isolates[, c("mo", penicillins())] |> 
+#'     bug_drug_combinations(FUN = mo_gramstain) |>
 #'     plot2(y.percent_break = 0.25)
 #' }
 #' @importFrom ggplot2 ggplot labs
@@ -447,7 +445,7 @@ plot2 <- function(.data,
   }
 }
 
-#' @importFrom dplyr `%>%` mutate vars group_by across summarise select matches
+#' @importFrom dplyr mutate vars group_by across summarise select matches
 #' @importFrom forcats fct_relabel
 #' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete
 #' @importFrom certestyle format2 font_red font_black font_blue
@@ -634,9 +632,9 @@ plot2_exec <- function(.data,
   # get titles based on raw data ----
   # compute contents of title arguments
   suppressWarnings(
-    tryCatch(titles <- .data %>%
+    tryCatch(titles <- .data |>
                # no tibbles, data.tables, sf, etc. objects:
-               as.data.frame(stringsAsFactors = FALSE) %>% 
+               as.data.frame(stringsAsFactors = FALSE) |> 
                mutate(title = {{ title }},
                       subtitle = {{ subtitle }},
                       caption = {{ caption }},
@@ -661,26 +659,26 @@ plot2_exec <- function(.data,
   # prepare data ----
   # IMPORTANT: in this part, the data for mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
   # this is done for convenience - this is restored before returning the `ggplot` object in the end
-  df <- .data %>%
+  df <- .data |>
     # add the three directions, these functions also support tidyverse selections: `facet = where(is.character)`
     add_direction(direction = {{ x }},
                   var_name = "x",
                   var_label = dots$`_label.x`,
-                  sep = sep) %>% 
+                  sep = sep) |> 
     add_direction(direction = {{ category }}, 
                   var_name = "category",
                   var_label = dots$`_label.category`,
-                  sep = sep) %>% 
+                  sep = sep) |> 
     add_direction(direction = {{ facet }}, 
                   var_name = "facet",
                   var_label = dots$`_label.facet`,
-                  sep = sep) %>% 
+                  sep = sep) |> 
     # add y
     { function(.data) {
       suppressWarnings(
-        tryCatch(y_precalc <- .data %>%
+        tryCatch(y_precalc <- .data |>
                    # no tibbles, data.tables, sf, etc. objects:
-                   as.data.frame(stringsAsFactors = FALSE) %>% 
+                   as.data.frame(stringsAsFactors = FALSE) |> 
                    summarise(val = {{ y }}),
                  error = function(e) stop(gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", e$message), call. = FALSE))
       )
@@ -688,11 +686,11 @@ plot2_exec <- function(.data,
       if (length(y_precalc) == 1) {
         # outcome of y is a single calculated value (by using e.g. mean(...) or n_distinct(...)),
         # so calculate it over all groups that are available
-        # this will support e.g. `data %>% plot2(y = n_distinct(id))`
+        # this will support e.g. `data |> plot2(y = n_distinct(id))`
         suppressWarnings(
-          tryCatch(.data %>% 
-                     group_by(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
-                                       matches("_var_(x|category|facet)")))) %>%
+          tryCatch(.data |> 
+                     group_by(across(c(get_x_name(.data), get_category_name(.data), get_facet_name(.data),
+                                       matches("_var_(x|category|facet)")))) |>
                      summarise(`_var_y` = {{ y }},
                                .groups = "drop"),
                    error = function(e) stop(gsub("_var_y", "y", e$message), call. = FALSE))
@@ -700,12 +698,12 @@ plot2_exec <- function(.data,
       } else {
         # don't recalculate, just add the calculated values to save time
         suppressWarnings(
-          tryCatch(.data %>% 
+          tryCatch(.data |> 
                      mutate(`_var_y` = y_precalc),
                    error = function(e) stop(gsub("_var_y", "y", e$message), call. = FALSE))
         )
-      }}}() %>% 
-    mutate(`_var_datalabels` = {{ datalabels }}) %>% 
+      }}}() |> 
+    mutate(`_var_datalabels` = {{ datalabels }}) |> 
     # this part will transform the data as needed
     validate_data(misses_x = misses_x,
                   misses_category = misses_category,
@@ -764,7 +762,7 @@ plot2_exec <- function(.data,
                },
                USE.NAMES = FALSE)
       }
-      df <- df %>%
+      df <- df |>
         mutate(across(where(is.character), make_taxonomy_italic),
                across(where(is.factor), ~fct_relabel(.x, make_taxonomy_italic)))
       if (!misses_x.title) x.title <- make_taxonomy_italic(validate_titles(x.title, markdown = markdown))
@@ -795,13 +793,19 @@ plot2_exec <- function(.data,
     x.zoom <- TRUE
     y.zoom <- TRUE
   }
+  if (isTRUE(x.zoom)) {
+    x.expand <- 0
+  }
+  if (isTRUE(y.zoom)) {
+    y.expand <- 0
+  }
   
   # check if markdown is required
   markdown <- validate_markdown(markdown, x.title, y.title, legend.title, title, subtitle, tag, caption, df)
   
   # remove datalabels in continuous geoms
   if (has_datalabels(df) && isTRUE(misses_datalabels) && (geom_is_continuous(type) | type %like% "path|line") && type != "geom_sf") {
-    df <- df %>% select(-`_var_datalabels`)
+    df <- df |> select(-`_var_datalabels`)
   }
   if (!isTRUE(misses_y) && geom_is_continuous_x(type)) {
     plot2_message("Ignoring ", font_blue("y"), " for plot type ", font_blue(gsub("geom_", "", type)))
@@ -810,7 +814,7 @@ plot2_exec <- function(.data,
   
   # remove x from sf geom
   if (type == "geom_sf") {
-    df <- df %>% select(-`_var_x`)
+    df <- df |> select(-`_var_x`)
   }
   
   # keep only one of `stacked` and `stackedpercent`
@@ -837,7 +841,7 @@ plot2_exec <- function(.data,
       }
       cols <- rep(as.character(colourpicker("grey85")), length(category_unique))
       nms <- as.character(category_unique)
-      cols[nms == category.focus] <- colourpicker(colour[1L])
+      cols[which(nms == category.focus)] <- colourpicker(colour[1L])
       colour <- stats::setNames(cols, nms)
     }
   }
@@ -860,6 +864,7 @@ plot2_exec <- function(.data,
     if (misses_x.zoom) {
       # this also sets x.limits to c(NA, NA) for histograms in validate_x_scale()
       x.zoom <- TRUE
+      x.expand <- 0
     }
   }
   if (has_x(df)) {

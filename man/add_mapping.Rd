@@ -15,8 +15,8 @@ add_mapping(plot, ...)
 This function can be used to adjust the mapping of a plot.
 }
 \examples{
-p <- iris \%>\% plot2(Sepal.Length, Sepal.Width)
+p <- iris |> plot2(Sepal.Length, Sepal.Width)
 p
 
-p \%>\% add_mapping(shape = Species)
+p |> add_mapping(shape = Species)
 }

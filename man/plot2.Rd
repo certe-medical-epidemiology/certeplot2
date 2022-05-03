@@ -213,7 +213,7 @@ plot2(
 
 \item{x.trans, y.trans}{a transformation function to use for the axis, e.g. \code{"log2"}}
 
-\item{x.expand, y.expand}{\href{ggplot2::expansion()}{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to 0.25, except for sf objects (then both default to 0).}
+\item{x.expand, y.expand}{\href{ggplot2::expansion()}{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to \code{0.25}, except for sf objects (then both default to 0).}
 
 \item{x.limits, y.limits}{limits to use for the axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the y scale start at zero.}
 
@@ -223,7 +223,7 @@ plot2(
 
 \item{x.drop}{\link{logical} to indicate whether factor levels should be dropped}
 
-\item{x.zoom, y.zoom}{a \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} / \code{y.limits = c(NA, NA)}}
+\item{x.zoom, y.zoom}{a \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} and \code{x.expand = 0} for the x axis, or \code{y.limits = c(NA, NA)} and \code{y.expand = 0} for the y axis}
 
 \item{y.24h}{a \link{logical} to indicate whether the y labels and breaks should be formatted as 24-hour sequences}
 
@@ -352,31 +352,31 @@ head(iris)
 
 # no variables determined, so plot2() will try for itself -
 # the type will be points since the first two variables are numeric
-iris \%>\%
+iris |>
   plot2()
 
 # ggplot2 defaults (more or less):
-iris \%>\% 
+iris |> 
   plot2(theme = NULL,
         zoom = TRUE,
         legend.title = TRUE,
         legend.position = "right")
 
 # if x and y are set, no additional mapping will be set:
-iris \%>\% 
+iris |> 
   plot2(Sepal.Width, Sepal.Length)
-iris \%>\% 
+iris |> 
   plot2(Species, Sepal.Length)
 
 # the arguments are in this order: x, y, category, facet
-iris \%>\% 
+iris |> 
   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species)
 
-iris \%>\% 
+iris |> 
   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
         colour = "viridis") # set the viridis colours
       
-iris \%>\% 
+iris |> 
   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
         colour = c("white", "red", "black"), # set own colours
         background = NA,
@@ -385,22 +385,22 @@ iris \%>\%
 admitted_patients
 
 # the arguments are in this order: x, y, category, facet
-admitted_patients \%>\%
+admitted_patients |>
   plot2(hospital, age)
 
-admitted_patients \%>\%
+admitted_patients |>
   plot2(hospital, age, gender)
   
-admitted_patients \%>\%
+admitted_patients |>
   plot2(hospital, age, gender, ward)
   
 # or use any function for y
-admitted_patients \%>\%
+admitted_patients |>
   plot2(hospital, median(age), gender, ward)
-admitted_patients \%>\%
+admitted_patients |>
   plot2(hospital, n(), gender, ward)
 
-admitted_patients \%>\%
+admitted_patients |>
   plot2(x = hospital,
         y = age,
         category = gender,
@@ -409,11 +409,11 @@ admitted_patients \%>\%
         size = 1.25,
         y.age = TRUE)
 
-admitted_patients \%>\%
+admitted_patients |>
   plot2(age, type = "hist")
 
 # even titles support calculations, including support for {glue}
-admitted_patients \%>\%
+admitted_patients |>
   plot2(age, type = "hist",
         title = paste("Based on n =", n_distinct(patient_id), "patients"),
         subtitle = paste("Total rows:", n()),
@@ -422,27 +422,26 @@ admitted_patients \%>\%
  
 # the default type is column, datalabels are automatically
 # set in non-continuous types:
-admitted_patients \%>\% 
+admitted_patients |> 
   plot2(hospital, n(), gender)
   
-admitted_patients \%>\% 
+admitted_patients |> 
   plot2(hospital, n(), gender,
         stacked = TRUE)
         
-admitted_patients \%>\% 
+admitted_patients |> 
   plot2(hospital, n(), gender,
         stackedpercent = TRUE)
  
 # sort on any direction:       
-admitted_patients \%>\% 
+admitted_patients |> 
   plot2(hospital, n(), gender,
         x.sort = "freq-asc",
         stacked = TRUE)
 
 # plot2() supports all S3 extensions available through
 # ggplot2::fortify(), such as regression models:
-mtcars \%>\% 
-  lm(mpg ~ hp, data = .) \%>\% 
+lm(mpg ~ hp, data = mtcars) |> 
   plot2(x = mpg ^ -3,
         y = hp ^ 2,
         smooth = TRUE,
@@ -455,15 +454,15 @@ mtcars \%>\%
 
 # QC plots, according to e.g. Nelson's Quality Control Rules
 if (require("certestats", warn.conflicts = FALSE)) {
-  rnorm(250) \%>\% 
-    qc_test() \%>\% 
+  rnorm(250) |> 
+    qc_test() |> 
     plot2()
 }
         
 # sf objects (geographic plots, 'simple features') are also supported
 if (require("sf")) {
-# sf datalabels even support markdown:
-  netherlands \%>\% 
+# even sf datalabels support markdown:
+  netherlands |> 
     plot2(datalabels = paste0(province, "\n", round(area_km2), " km^2"))
 }
 
@@ -471,9 +470,8 @@ if (require("sf")) {
 if (require("AMR")) {
   options(AMR_locale = "nl")
   
-  example_isolates \%>\% 
-    .[, c("mo", penicillins())] \%>\% 
-    bug_drug_combinations(FUN = mo_gramstain) \%>\%
+  example_isolates[, c("mo", penicillins())] |> 
+    bug_drug_combinations(FUN = mo_gramstain) |>
     plot2(y.percent_break = 0.25)
 }
 }

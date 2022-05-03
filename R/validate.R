@@ -110,7 +110,7 @@ validate_legend.position <- function(legend.position) {
   legend.position
 }
 
-#' @importFrom dplyr `%>%` select pull mutate arrange across if_any
+#' @importFrom dplyr select pull mutate arrange across if_any
 #' @importFrom certestyle font_bold font_blue font_red
 validate_data <- function(df,
                           misses_x,
@@ -129,8 +129,8 @@ validate_data <- function(df,
   if (!has_y(df) && "n" %in% numeric_cols && mode(df$n) == "numeric") {
     # give preference to "n" for the y axis
     plot2_message("Using ", font_blue("y = n"))
-    df <- df %>% 
-      mutate(`_var_y` = df %>% pull(n))
+    df <- df |> 
+      mutate(`_var_y` = df |> pull(n))
   }
   
   if (!has_y(df)) {
@@ -147,37 +147,37 @@ validate_data <- function(df,
           # don't show when type for density geoms - y will not be used
           plot2_message("Using ", font_blue("y = ", numeric_cols[2L], collapse = NULL))
         }
-        df <- df %>% 
-          mutate(`_var_x` = df %>% pull(numeric_cols[1L]),
-                 `_var_y` = df %>% pull(numeric_cols[2L]))
+        df <- df |> 
+          mutate(`_var_x` = df |> pull(numeric_cols[1L]),
+                 `_var_y` = df |> pull(numeric_cols[2L]))
       } else {
         if (!geom_is_continuous_x(type)) {
           # don't show when type for density geoms - y will not be used
           plot2_message("Using ", font_blue("y = ", numeric_cols[1L], collapse = NULL))
         }
-        df <- df %>% 
-          mutate(`_var_y` = df %>% pull(numeric_cols[1L]))
+        df <- df |> 
+          mutate(`_var_y` = df |> pull(numeric_cols[1L]))
       }
     } else {
       # only one numeric column
       if (geom_is_continuous_x(type)) {
         if (!has_x(df)) {
           plot2_message("Using ", font_blue("x = ", numeric_cols, collapse = NULL))
-          df <- df %>% 
-            mutate(`_var_x` = df %>% pull(numeric_cols))
+          df <- df |> 
+            mutate(`_var_x` = df |> pull(numeric_cols))
         }
         # don't show when type for density geoms - y will not be used
-        df <- df %>% 
-          mutate(`_var_y` = df %>% pull(`_var_x`))
+        df <- df |> 
+          mutate(`_var_y` = df |> pull(`_var_x`))
       } else if (!has_x(df) && type == "" && length(non_numeric_cols) == 0) {
         # has no x and no y, make it a histogram
         plot2_message("Using ", font_blue("x = ", numeric_cols, collapse = NULL))
         plot2_message("Assuming ", font_blue("type = \"histogram\""),
                       " since the data has only one numeric variable and no other variables")
         type <- "geom_histogram"
-        df <- df %>% 
-          mutate(`_var_x` = df %>% pull(numeric_cols),
-                 `_var_y` = df %>% pull(numeric_cols))
+        df <- df |> 
+          mutate(`_var_x` = df |> pull(numeric_cols),
+                 `_var_y` = df |> pull(numeric_cols))
       } else {
         if (has_x(df) && get_x_name(df) == numeric_cols) {
           if (type == "") {
@@ -185,16 +185,16 @@ validate_data <- function(df,
                           " since the ", font_blue("x"),
                           " variable (", font_blue(get_x_name(df)), ") is the only numeric variable")
             type <- "geom_histogram"
-            df <- df %>% 
-              mutate(`_var_y` = df %>% pull(`_var_x`))
+            df <- df |> 
+              mutate(`_var_y` = df |> pull(`_var_x`))
           } else {
             stop("No variable found for y since the x variable (", get_x_name(df),
                  ") is the only numeric variable in the data set.\nDid you mean type = \"histogram\"?", call. = FALSE)
           }
         } else {
           plot2_message("Using ", font_blue("y = ", numeric_cols, collapse = NULL))
-          df <- df %>% 
-            mutate(`_var_y` = df %>% pull(numeric_cols))
+          df <- df |> 
+            mutate(`_var_y` = df |> pull(numeric_cols))
         }
       }
     }
@@ -203,11 +203,11 @@ validate_data <- function(df,
   # this is required to plot e.g. difftime
   # integers and doubles both return TRUE for is.numeric() 
   if (has_y(df) && requires_numeric_coercion(get_y(df))) {
-    df <- df %>% 
+    df <- df |> 
       mutate(`_var_y` = as.double(`_var_y`))
   }
   if (has_x(df) && requires_numeric_coercion(get_x(df))) {
-    df <- df %>% 
+    df <- df |> 
       mutate(`_var_x` = as.double(`_var_x`))
   }
   
@@ -219,8 +219,8 @@ validate_data <- function(df,
       x_col <- colnames(df)[1L]
     }
     plot2_message("Using ", font_blue("x = ", x_col, collapse = NULL))
-    df <- df %>% 
-      mutate(`_var_x` = df %>% pull(x_col))
+    df <- df |> 
+      mutate(`_var_x` = df |> pull(x_col))
   }
   
   if (misses_x && misses_category && !has_category(df) && ncol(df) > 2 && type != "geom_sf") {
@@ -238,30 +238,30 @@ validate_data <- function(df,
     }
     if (length(cols) > 0) {
       plot2_message("Using ", font_blue("category = ", cols[1L], collapse = NULL))
-      df <- df %>% 
-        mutate(`_var_category` = df %>% pull(cols[1L]))
+      df <- df |> 
+        mutate(`_var_category` = df |> pull(cols[1L]))
     }
   }
   if (type == "geom_sf" && misses_category && !has_category(df) && !is.na(numeric_cols[1L])) {
     # try to take the first numeric column for 'sf' plots
     plot2_message("Using ", font_blue("category = ", numeric_cols[1L], collapse = NULL))
-    df <- df %>% 
-      mutate(`_var_category` = df %>% pull(numeric_cols[1L]))
+    df <- df |> 
+      mutate(`_var_category` = df |> pull(numeric_cols[1L]))
   }
   
   # if given FALSE for a direction (e.g., category = FALSE), remove these columns
   if (has_category(df) && all(get_category(df) == FALSE)) {
-    df <- df %>% select(-`_var_category`)
+    df <- df |> select(-`_var_category`)
   }
   if (has_facet(df) && all(get_facet(df) == FALSE)) {
-    df <- df %>% select(-`_var_facet`)
+    df <- df |> select(-`_var_facet`)
   }
   if (has_datalabels(df) && 
       (all(get_datalabels(df) == FALSE) ||
        (!is.null(dots$type) && dots$type != "sf" &&
         geom_is_continuous(suppressMessages(validate_type(dots$type, df)))))) {
     # remove datalabels if `datalabels = FALSE`, or if the type now seems to be continuous
-    df <- df %>% select(-`_var_datalabels`)
+    df <- df |> select(-`_var_datalabels`)
   }
   
   # add surrogate columns to df
@@ -289,23 +289,23 @@ validate_data <- function(df,
         # take values from first character column in case of sf plots
         if (!is.na(character_cols[1L])) {
           plot2_message("Using ", font_blue("datalabels = ", character_cols[1L], collapse = NULL))
-          df <- df %>% mutate(`_var_datalabels` = df %>% pull(character_cols[1L]))
+          df <- df |> mutate(`_var_datalabels` = df |> pull(character_cols[1L]))
         } else {
           plot2_warning("No suitable column found for ", font_blue("datalabels = TRUE"))
-          df <- df %>% select(-`_var_datalabels`)
+          df <- df |> select(-`_var_datalabels`)
         }
       } else {
         # otherwise take values from the y column
-        df <- df %>% mutate(`_var_datalabels` = `_var_y`)
+        df <- df |> mutate(`_var_datalabels` = `_var_y`)
       }
     }
     # format datalabels
     if (requires_numeric_coercion(get_datalabels(df))) {
       # force double for e.g. difftime
-      df <- df %>% 
+      df <- df |> 
         mutate(`_var_datalabels` = as.double(`_var_datalabels`))
     }
-    df <- df %>%
+    df <- df |>
       mutate(`_var_datalabels` = format_datalabels(`_var_datalabels`, 
                                                    datalabels.round = dots$datalabels.round,
                                                    datalabels.format = dots$datalabels.format,
@@ -331,7 +331,7 @@ validate_data <- function(df,
     dots$x.character <- TRUE
   }
   if (isTRUE(dots$x.character)) {
-    df <- df %>%
+    df <- df |>
       mutate(`_var_x` = as.character(`_var_x`))
   }
   
@@ -339,8 +339,8 @@ validate_data <- function(df,
   is_numeric <- function(x) {
     mode(x) == "numeric" || is.numeric(x) || inherits(x, c("Date", "POSIXt"))
   }
-  df_noNA <- df %>%
-    filter(if_any(c(get_x_name(.), get_category_name(.), get_facet_name(.),
+  df_noNA <- df |>
+    filter(if_any(c(get_x_name(df), get_category_name(df), get_facet_name(df),
                     matches("_var_(x|category|facet)")),
                   function(x) {
                     if (is_numeric(x) & !is.factor(x)) {
@@ -357,8 +357,8 @@ validate_data <- function(df,
     } else {
       # replace NAs
       plot2_env$na_replaced <- 0
-      df <- df %>%
-        mutate(across(c(get_x_name(.), get_category_name(.), get_facet_name(.),
+      df <- df |>
+        mutate(across(c(get_x_name(df), get_category_name(df), get_facet_name(df),
                         matches("_var_(x|category|facet)")),
                       function(x) {
                         if (is.factor(x)) {
@@ -385,7 +385,7 @@ validate_data <- function(df,
       dots$x.sort <- TRUE
     }
     
-    df <- df %>% 
+    df <- df |> 
       mutate(`_var_x` = sort_data(values = get_x(df),
                                   original_values = get_x(df.bak),
                                   sort_method = dots$x.sort,
@@ -394,12 +394,12 @@ validate_data <- function(df,
                                   summarise_fn_name = dots$summarise_fn_name,
                                   horizontal = dots$horizontal,
                                   drop = dots$x.drop,
-                                  argument = "x.sort")) %>%
+                                  argument = "x.sort")) |>
       arrange(across(`_var_x`))
     df[, get_x_name(df)] <- df$`_var_x` # required to keep sorting after summarising
   }
   if (has_category(df)) {
-    df <- df %>% 
+    df <- df |> 
       mutate(`_var_category` = sort_data(values = get_category(df),
                                          original_values = get_category(df.bak),
                                          sort_method = dots$category.sort,
@@ -412,7 +412,7 @@ validate_data <- function(df,
     df[, get_category_name(df)] <- df$`_var_category` # required to keep sorting after summarising
   }
   if (has_facet(df)) {
-    df <- df %>% 
+    df <- df |> 
       mutate(`_var_facet` = sort_data(values = get_facet(df),
                                       original_values = get_facet(df.bak),
                                       sort_method = dots$facet.sort,
@@ -446,7 +446,7 @@ validate_data <- function(df,
                         datalabels.format = dots$datalabels.format)
     # sort on x, important when piping plot2()'s after plot2()'s
     if (has_x(df)) {
-      df <- df %>% 
+      df <- df |> 
         arrange(across(`_var_x`))
     }
   }
@@ -576,7 +576,7 @@ validate_x_scale <- function(values,
   }
 }
 
-#' @importFrom dplyr `%>%` group_by across summarise
+#' @importFrom dplyr group_by across summarise
 #' @importFrom ggplot2 waiver expansion scale_y_continuous
 #' @importFrom cleaner as.percentage
 #' @importFrom scales pretty_breaks
@@ -626,8 +626,8 @@ validate_y_scale <- function(df,
   
   if (is.null(facet.fixed_y) && is.null(y.limits) && has_facet(df) && !isTRUE(stackedpercent)) {
     # determine if scales should be fixed - if CV_ymax < 15% then fix them:
-    y_maxima <- df %>%
-      group_by(across(get_facet_name(.))) %>% 
+    y_maxima <- df |>
+      group_by(across(get_facet_name(df))) |> 
       summarise(max = max(`_var_y`, na.rm = TRUE))
     coeff_of_variation <- stats::sd(y_maxima$max) / mean(y_maxima$max)
     if (coeff_of_variation < 0.15) {
@@ -758,9 +758,9 @@ validate_y_scale <- function(df,
     } else if (has_facet(df) && isTRUE(facet.fixed_y)) {
       if (isTRUE(stacked)) {
         # max has to be determined based per sum on the category level, so calculate sum of y over x and facet
-        max_y <- df %>% 
-          group_by(across(c(get_x_name(.), get_facet_name(.))),
-                   .drop = FALSE) %>%
+        max_y <- df |> 
+          group_by(across(c(get_x_name(df), get_facet_name(df))),
+                   .drop = FALSE) |>
           summarise(maximum = sum(`_var_y`, na.rm = TRUE))
         c(min_value, max(max_y$maximum))
       } else {
@@ -1959,7 +1959,7 @@ sort_data <- function(values,
 }
 
 #' @importFrom forcats fct_relevel
-#' @importFrom dplyr `%>%` group_by across group_size mutate summarise
+#' @importFrom dplyr group_by across group_size mutate summarise
 #' @importFrom certestyle font_blue font_red format2
 set_max_items <- function(df,
                           y,
@@ -2067,9 +2067,9 @@ summarise_data <- function(df,
   category <- get_category_name(df)
   facet <- get_facet_name(df)
   has_datalbls <- has_datalabels(df)
-  df <- df %>%
-    mutate(n = get_y(df)) %>%
-    group_by(across(c(x, category, facet))) %>%
+  df <- df |>
+    mutate(n = get_y(df)) |>
+    group_by(across(c(x, category, facet))) |>
     summarise(n = summarise_function(n, na.rm = TRUE),
               .groups = "drop")
   colnames(df)[colnames(df) == "n"] <- y
@@ -2078,7 +2078,7 @@ summarise_data <- function(df,
   if (!is.null(category)) df$`_var_category` <- df[, category, drop = TRUE]
   if (!is.null(facet)) df$`_var_facet` <- df[, facet, drop = TRUE]
   if (isTRUE(has_datalbls)) {
-    df <- df %>%
+    df <- df |>
       mutate(`_var_datalabels` = format_datalabels(`_var_y`,
                                                    datalabels.round = datalabels.round,
                                                    datalabels.format = datalabels.format,

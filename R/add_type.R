@@ -19,7 +19,7 @@
 
 #' Add Plot Element
 #' 
-#' Quickly add a new 'geom' to an existing `plot2`/`ggplot` model. Like [plot2()], they support tidy evaluation, meaning that variables can be unquoted. They can be added using the pipe (`%>%`).
+#' Quickly add a new 'geom' to an existing `plot2`/`ggplot` model. Like [plot2()], they support tidy evaluation, meaning that variables can be unquoted. They can be added using the pipe (new base \R `|>` or tidyverse `%>%`).
 #' @param plot a `ggplot2` plot
 #' @param type a `ggplot2` geom name, all geoms are supported. Full function names can be used (e.g., `"geom_line"`), but they can also be abbreviated (e.g., `"l"`, `"line"`). These geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), violin (`"v"`).
 #' @param mapping a mapping created with [ggplot2::aes()] to pass on to the geom
@@ -30,21 +30,21 @@
 #' @examples 
 #' df <- data.frame(var_1 = c(1:100),
 #'                  var_2 = rnorm(100, 100, 25))
-#' df %>%
-#'   plot2() %>% 
+#' df |>
+#'   plot2() |> 
 #'   add_line(mean(var_2))
 #'   
-#' df %>%
-#'   plot2() %>% 
+#' df |>
+#'   plot2() |> 
 #'   add_line(y = mean(var_2), 
-#'            size = 2) %>%
+#'            size = 2) |>
 #'   add_col(y = var_2 / 5,
 #'           width = 0.25,
 #'           colour = "certeroze")
 #'    
 #' if (require("certestats", warn.conflicts = FALSE)) {
-#'    df %>%
-#'      plot2(caption = "EWMA in pink :)") %>% 
+#'    df |>
+#'      plot2(caption = "EWMA in pink :)") |> 
 #'      add_line(y = ewma(var_2, 0.75),
 #'               colour = "certeroze",
 #'               linetype = 3,
@@ -56,9 +56,9 @@
 #'                          "Medisch Centrum Leeuwarden",
 #'                          "Tjongerschans Heerenveen",
 #'                          "Treant Emmen"))
-#'   geo_gemeenten %>%
-#'     crop_certe() %>%
-#'     plot2(datalabels = FALSE) %>%
+#'   geo_gemeenten |>
+#'     crop_certe() |>
+#'     plot2(datalabels = FALSE) |>
 #'     add_sf(hospitals, colour = "certeroze", datalabels = place)
 #' }
 add_type <- function(plot, type = NULL, mapping = aes(), ...) {
@@ -83,7 +83,7 @@ add_type <- function(plot, type = NULL, mapping = aes(), ...) {
 #' @param x,y aesthetic arguments
 #' @param colour,colour_fill colour of the line or column, will be evaluated with [certestyle::colourpicker()]. If `colour_fill` is missing but `colour` is given, `colour_fill` will inherit the colour set with `colour`.
 #' @param inherit.aes a [logical] to indicate whether the default aesthetics should be inherited, rather than combining with them
-#' @importFrom dplyr `%>%` mutate
+#' @importFrom dplyr mutate
 #' @importFrom ggplot2 aes_string
 #' @importFrom certestyle colourpicker
 #' @export
@@ -94,7 +94,7 @@ add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw",
   label_line_y <- deparse(substitute(y))
   label_line_x <- deparse(substitute(x))
   
-  df <- plot$data %>% 
+  df <- plot$data |> 
     mutate(`_var_line_y` = {{ y }},
            `_var_line_x` = {{ x }})
   colnames(df)[colnames(df) == "_var_line_y"] <- label_line_y
@@ -147,7 +147,7 @@ add_point <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw"
   label_line_y <- deparse(substitute(y))
   label_line_x <- deparse(substitute(x))
   
-  df <- plot$data %>% 
+  df <- plot$data |> 
     mutate(`_var_line_y` = {{ y }},
            `_var_line_x` = {{ x }})
   colnames(df)[colnames(df) == "_var_line_y"] <- label_line_y
@@ -192,7 +192,7 @@ add_point <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw"
 }
 
 #' @rdname add_type
-#' @importFrom dplyr `%>%` mutate
+#' @importFrom dplyr mutate
 #' @importFrom ggplot2 aes_string
 #' @importFrom certestyle colourpicker
 #' @export
@@ -203,7 +203,7 @@ add_col <- function(plot, y = NULL, x = NULL, colour = "certeblauw", colour_fill
   label_col_y <- deparse(substitute(y))
   label_col_x <- deparse(substitute(x))
   
-  df <- plot$data %>% 
+  df <- plot$data |> 
     mutate(`_var_line_y` = {{ y }},
            `_var_line_x` = {{ x }})
   colnames(df)[colnames(df) == "_var_line_y"] <- label_col_y
@@ -247,7 +247,7 @@ add_col <- function(plot, y = NULL, x = NULL, colour = "certeblauw", colour_fill
 #' @param sf_data an 'sf' [data.frame], such as the outcome of [certegis::geocode()]
 #' @param datalabels a column of `sf_data` to add as label below the points
 #' @param nudge_y is `datalabels` is not `NULL`, the amount of vertical adjustment of the datalabels
-#' @importFrom dplyr `%>%` mutate
+#' @importFrom dplyr mutate
 #' @importFrom ggplot2 geom_sf geom_sf_text aes is.ggplot
 #' @importFrom certestyle colourpicker
 #' @export
@@ -273,7 +273,7 @@ add_sf <- function(plot,
             ...)
   
   if (tryCatch(!is.null(datalabels), error = function(e) TRUE)) {
-    sf_data <- sf_data %>% 
+    sf_data <- sf_data |> 
       mutate(`_var_datalabels` = {{ datalabels }})
     # these functions from the 'sf' package fix invalid geometries
     st_is_valid <- getExportedValue(name = "st_is_valid", ns = asNamespace("sf"))

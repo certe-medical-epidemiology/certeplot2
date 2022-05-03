@@ -25,7 +25,7 @@ plotdata <- data.frame(x = seq_len(10) + 10,
 
 `%or%` <- function(a, b) if (is.null(a)) b else a
 
-get_mapping <- function(plot) plot$mapping %>% sapply(deparse) %>% gsub("~", "", .)
+get_mapping <- function(plot) gsub("~", "", sapply(plot$mapping, deparse))
 get_layers <- function(plot) plot$layers
 get_labels <- function(plot) unlist(plot$labels)
 get_data <- function(plot) plot$data
@@ -43,21 +43,21 @@ test_that("general types work", {
   expect_s3_class(plot2(rnorm(10, 10), type = "l"), "gg")
   expect_s3_class(plot2(mtcars, mpg^2, hp^2), "gg")
   expect_s3_class(plot2(mtcars, mpg^2, hp^2, smooth = TRUE), "gg")
-  expect_s3_class(iris %>% plot2(Species), "gg")
-  expect_s3_class(iris %>% plot2(Species, type = "violin"), "gg")
-  expect_s3_class(iris %>% plot2(Species, type = "violin"), "gg")
-  expect_s3_class(iris %>% plot2(Species, type = "blank"), "gg")
-  expect_s3_class(iris %>% plot2(Species, type = "area"), "gg")
-  expect_warning(iris %>% plot2(Species, type = "dotplot"))
+  expect_s3_class(iris |> plot2(Species), "gg")
+  expect_s3_class(iris |> plot2(Species, type = "violin"), "gg")
+  expect_s3_class(iris |> plot2(Species, type = "violin"), "gg")
+  expect_s3_class(iris |> plot2(Species, type = "blank"), "gg")
+  expect_s3_class(iris |> plot2(Species, type = "area"), "gg")
+  expect_warning(iris |> plot2(Species, type = "dotplot"))
   # difftime coercion to double:
   expect_s3_class(data.frame(x = letters[1:10],
-                             y = difftime(Sys.time(), Sys.time() - seq_len(10))) %>%
+                             y = difftime(Sys.time(), Sys.time() - seq_len(10))) |>
                     plot2(),
                   "gg")
-  expect_s3_class(admitted_patients %>% plot2(hospital, n(), where(is.character)), "gg")
-  expect_s3_class(admitted_patients %>% plot2(hospital, n(), c(gender, ward)), "gg")
+  expect_s3_class(admitted_patients |> plot2(hospital, n(), where(is.character)), "gg")
+  expect_s3_class(admitted_patients |> plot2(hospital, n(), c(gender, ward)), "gg")
   
-  expect_s3_class(plotdata %>% plot2(y.trans = "log2"), "gg")
+  expect_s3_class(plotdata |> plot2(y.trans = "log2"), "gg")
 })
 
 test_that("na.rm works", {
@@ -65,99 +65,99 @@ test_that("na.rm works", {
   df <- data.frame(hp = mtcars$hp,
                    letters = letters[seq_len(nrow(mtcars))],
                    stringsAsFactors = FALSE)
-  expect_lt(df %>% plot2(na.rm = TRUE) %>% get_data() %>% nrow(), nrow(df))
-  expect_lt(df %>% plot2(na.rm = FALSE) %>% get_data() %>% nrow(), nrow(df))
+  expect_lt(df |> plot2(na.rm = TRUE) |> get_data() |> nrow(), nrow(df))
+  expect_lt(df |> plot2(na.rm = FALSE) |> get_data() |> nrow(), nrow(df))
   # as factors
   df <- data.frame(hp = mtcars$hp,
                    letters = letters[seq_len(nrow(mtcars))],
                    stringsAsFactors = TRUE)
-  expect_lt(df %>% plot2(na.rm = TRUE) %>% get_data() %>% nrow(), nrow(df))
-  expect_lt(df %>% plot2(na.rm = FALSE) %>% get_data() %>% nrow(), nrow(df))
+  expect_lt(df |> plot2(na.rm = TRUE) |> get_data() |> nrow(), nrow(df))
+  expect_lt(df |> plot2(na.rm = FALSE) |> get_data() |> nrow(), nrow(df))
 })
 
 test_that("S3 implementations work", {
   # lm
-  expect_s3_class(lm(mpg ~ hp, mtcars) %>% plot2(), "gg")
+  expect_s3_class(lm(mpg ~ hp, mtcars) |> plot2(), "gg")
   # freq
-  expect_s3_class(cleaner::freq(admitted_patients$hospital) %>% plot2(), "gg")
+  expect_s3_class(cleaner::freq(admitted_patients$hospital) |> plot2(), "gg")
   # sf
-  expect_s3_class(netherlands %>% plot2(), "gg")
+  expect_s3_class(netherlands |> plot2(), "gg")
   # bug_drug_combinations
-  expect_s3_class(AMR::example_isolates %>%
-                    select(mo, CIP, AMC) %>%
-                    AMR::bug_drug_combinations(FUN = AMR::mo_gramstain) %>%
+  expect_s3_class(AMR::example_isolates |>
+                    select(mo, CIP, AMC) |>
+                    AMR::bug_drug_combinations(FUN = AMR::mo_gramstain) |>
                     plot2(),
                   "gg")
   # qc_test
-  expect_s3_class(certestats::qc_test(rnorm(1000)) %>% plot2(), "gg")
+  expect_s3_class(certestats::qc_test(rnorm(1000)) |> plot2(), "gg")
   # type should become boxplot here
-  expect_s3_class(admitted_patients %>% plot2(x = hospital, y = certestats::z_score(age)), "gg")
+  expect_s3_class(admitted_patients |> plot2(x = hospital, y = certestats::z_score(age)), "gg")
   # this uses the certestyle::format2_scientific function for the y axis
-  expect_s3_class(admitted_patients %>%
+  expect_s3_class(admitted_patients |>
                     plot2(format(date, "%Y"),
                           certestats::z_score(age),
                           hospital,
                           y.scientific = TRUE),
                   "gg")
-  expect_s3_class(certegis::geo_provincies %>% plot2(markdown = TRUE), "gg")
-  expect_s3_class(certegis::geo_provincies %>% plot2(markdown = TRUE), "gg")
+  expect_s3_class(certegis::geo_provincies |> plot2(markdown = TRUE), "gg")
+  expect_s3_class(certegis::geo_provincies |> plot2(markdown = TRUE), "gg")
 })
 
 test_that("general mapping works", {
-  expect_equal(plotdata %>% plot2() %>% get_mapping() %>% names(),
+  expect_equal(plotdata |> plot2() |> get_mapping() |> names(),
                c("y", "x", "fill", "colour"))
   # remove x axis
-  expect_s3_class(admitted_patients %>% plot2(x = NULL, y = age), "gg")
-  expect_s3_class(admitted_patients %>% plot2(x = c(1:250), y = age), "gg")
+  expect_s3_class(admitted_patients |> plot2(x = NULL, y = age), "gg")
+  expect_s3_class(admitted_patients |> plot2(x = c(1:250), y = age), "gg")
 })
 
 test_that("adding mapping works", {
-  p <- iris %>% plot2(Sepal.Length, Sepal.Width)
+  p <- iris |> plot2(Sepal.Length, Sepal.Width)
   expect_length(p$mapping, 3)
-  p2 <- p %>% add_mapping(shape = Species)
+  p2 <- p |> add_mapping(shape = Species)
   expect_length(p2$mapping, 4)
   expect_s3_class(p2, "gg")
 })
 
 test_that("adding types works", {
   
-  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% get_layers(), 1)
-  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% add_line() %>% get_layers(), 2)
-  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% add_point(shape = 4, size = 5) %>% get_layers(), 2)
-  expect_length(mtcars %>% plot2(mpg, hp, cyl) %>% add_col() %>% get_layers(), 2)
-  expect_error(mtcars %>% plot2(mpg, hp, cyl) %>% add_type(type = NULL))
+  expect_length(mtcars |> plot2(mpg, hp, cyl) |> get_layers(), 1)
+  expect_length(mtcars |> plot2(mpg, hp, cyl) |> add_line() |> get_layers(), 2)
+  expect_length(mtcars |> plot2(mpg, hp, cyl) |> add_point(shape = 4, size = 5) |> get_layers(), 2)
+  expect_length(mtcars |> plot2(mpg, hp, cyl) |> add_col() |> get_layers(), 2)
+  expect_error(mtcars |> plot2(mpg, hp, cyl) |> add_type(type = NULL))
   
   p <- data.frame(x = c(1:100),
-                  y = rnorm(100, 100, 25)) %>% 
+                  y = rnorm(100, 100, 25)) |> 
     plot2()
-  expect_length(p %>% get_layers(), 1)
-  expect_length(p %>% 
-                  add_line(mean(y)) %>%
+  expect_length(p |> get_layers(), 1)
+  expect_length(p |> 
+                  add_line(mean(y)) |>
                   get_layers(), 2)
-  expect_length(p %>%
-                  add_line(mean(y)) %>%
+  expect_length(p |>
+                  add_line(mean(y)) |>
                   add_col(y / 5,
                           colour = "black",
                           colour_fill = "yellow",
-                          width = 0.25) %>%
+                          width = 0.25) |>
                   get_layers(), 3)
   
-  expect_length(p %>%
+  expect_length(p |>
                   add_line(certestats::rr_ewma(y, 0.75),
                            colour = "certeroze",
                            size = 2,
                            linetype = 2,
-                           alpha = 0.5) %>%
+                           alpha = 0.5) |>
                   get_layers(), 2)
   
-  expect_length(plot2(certegis::geo_provincies, datalabels = FALSE) %>%
+  expect_length(plot2(certegis::geo_provincies, datalabels = FALSE) |>
                   add_sf(certegis::geocode("Martini Ziekenhuis"),
-                         colour = "certeroze") %>%
+                         colour = "certeroze") |>
                   get_layers(), 2)
-  expect_length(plot2(certegis::geo_provincies, datalabels = FALSE) %>%
+  expect_length(plot2(certegis::geo_provincies, datalabels = FALSE) |>
                   add_sf(certegis::geocode("Martini Ziekenhuis"),
                          colour = "certeroze",
-                         datalabels = place) %>%
+                         datalabels = place) |>
                   get_layers(), 3)
 })
 
@@ -168,56 +168,56 @@ test_that("titles work", {
                     title = "title",
                     y = "y.title",
                     x = "x.title")
-                  %in% (mtcars %>%
+                  %in% (mtcars |>
                     plot2(caption = "caption",
                           tag = "tag",
                           subtitle = "subtitle",
                           title = "title",
                           y.title = "y.title",
-                          x.title = "x.title") %>%
+                          x.title = "x.title") |>
                     get_labels())))
 })
 
 test_that("max items and sorting work", {
-  expect_equal(admitted_patients %>%
+  expect_equal(admitted_patients |>
                  plot2(x = hospital,
                        y = n(),
-                       x.sort = "asc") %>% 
+                       x.sort = "asc") |> 
                  get_range_x(),
                c("A", "B", "C", "D"))
-  expect_equal(admitted_patients %>%
+  expect_equal(admitted_patients |>
                  plot2(x = hospital,
                        y = n(),
-                       x.sort = "desc") %>% 
+                       x.sort = "desc") |> 
                  get_range_x(),
                c("D", "C", "B", "A"))
-  expect_equal(admitted_patients %>%
+  expect_equal(admitted_patients |>
                  plot2(x = hospital,
                        y = n(),
-                       x.sort = "freq-desc") %>% 
+                       x.sort = "freq-desc") |> 
                  get_range_x(),
                c("D", "B", "A", "C"))
-  expect_equal(admitted_patients %>%
+  expect_equal(admitted_patients |>
                  plot2(x = hospital,
                        y = n(),
-                       x.sort = "freq-asc") %>% 
+                       x.sort = "freq-asc") |> 
                  get_range_x(),
                c("A", "C", "B", "D"))
-  expect_equal(admitted_patients %>%
+  expect_equal(admitted_patients |>
                  plot2(x = hospital,
                        y = n(),
-                       x.sort = "asc") %>% 
+                       x.sort = "asc") |> 
                  get_range_x(),
                c("A", "B", "C", "D"))
-  expect_equal(admitted_patients %>%
+  expect_equal(admitted_patients |>
                  plot2(x = format(date, "%Y"),
                        y = n(),
                        x.sort = "freq-desc",
-                       x.max_items = 5) %>%
+                       x.max_items = 5) |>
                  get_range_x(),
                c("2010", "2003", "2017", "2016", "(rest, x 12)"))
   
-  expect_s3_class(admitted_patients %>%
+  expect_s3_class(admitted_patients |>
                     plot2(x = format(date, "%Y"), y = n(), category = hospital, facet = age_group,
                           x.max_items = 2, category.max_items = 2, facet.max_items = 2),
                   "gg")
@@ -225,91 +225,91 @@ test_that("max items and sorting work", {
 })
 
 test_that("x scale works", {
-  expect_s3_class(plotdata %>% plot2(x = x_date), "gg")
-  plotdata %>% plot2(x = x_date, x.limits = c(Sys.Date() - 13, Sys.Date() + 2))
-  expect_s3_class(plotdata %>% plot2(x = x_char), "gg")
-  expect_s3_class(plotdata %>% plot2(n, type = "hist"), "gg")
-  expect_s3_class(plotdata %>% plot2(n, type = "density"), "gg")
-  expect_s3_class(plotdata %>% plot2(n, type = "jitter"), "gg")
-  expect_s3_class(plotdata %>% plot2(type = "line"), "gg")
-  expect_s3_class(plotdata %>% plot2(type = "barpercent"), "gg")
-  expect_s3_class(plotdata %>% plot2(x.trans = "log2"), "gg")
-  expect_s3_class(mtcars %>% plot2(mpg, hp, x.lbl_angle = 40), "gg")
-  expect_s3_class(mtcars %>% plot2(mpg, hp, x.lbl_angle = 200), "gg")
-  expect_s3_class(runif(n = 100, min = 2.0004, max = 2.0006) %>% plot2(type = "h"), "gg")
-  expect_s3_class(suppressWarnings(mtcars %>% plot2(mpg, hp, x.limits = c(10, 20))), "gg")
+  expect_s3_class(plotdata |> plot2(x = x_date), "gg")
+  plotdata |> plot2(x = x_date, x.limits = c(Sys.Date() - 13, Sys.Date() + 2))
+  expect_s3_class(plotdata |> plot2(x = x_char), "gg")
+  expect_s3_class(plotdata |> plot2(n, type = "hist"), "gg")
+  expect_s3_class(plotdata |> plot2(n, type = "density"), "gg")
+  expect_s3_class(plotdata |> plot2(n, type = "jitter"), "gg")
+  expect_s3_class(plotdata |> plot2(type = "line"), "gg")
+  expect_s3_class(plotdata |> plot2(type = "barpercent"), "gg")
+  expect_s3_class(plotdata |> plot2(x.trans = "log2"), "gg")
+  expect_s3_class(mtcars |> plot2(mpg, hp, x.lbl_angle = 40), "gg")
+  expect_s3_class(mtcars |> plot2(mpg, hp, x.lbl_angle = 200), "gg")
+  expect_s3_class(runif(n = 100, min = 2.0004, max = 2.0006) |> plot2(type = "h"), "gg")
+  expect_s3_class(suppressWarnings(mtcars |> plot2(mpg, hp, x.limits = c(10, 20))), "gg")
   
-  p <- plotdata %>%
+  p <- plotdata |>
     plot2(x = x_date,
           x.limits = c(Sys.Date() - 13,
                        Sys.Date() + 2))
-  expect_equal(p %>% get_range_x() %>% as.Date(origin = "1970-01-01"),
+  expect_equal(p |> get_range_x() |> as.Date(origin = "1970-01-01"),
                c(Sys.Date() - 13 - 1, Sys.Date() + 2 + 1))
 })
 
 test_that("y scale works", {
-  expect_error(data.frame(a = c(1:10), b = letters[10]) %>% plot2(x = a, y = b))
-  expect_s3_class(plotdata %>% plot2(y = n * 24, y.24h = TRUE), "gg")
-  expect_s3_class(plotdata %>% plot2(y = n * 12, y.age = TRUE), "gg")
-  expect_s3_class(plotdata %>% plot2(y = n * 10, y.scientific = TRUE), "gg")
-  expect_s3_class(plotdata %>% plot2(y.percent = TRUE), "gg")
-  expect_s3_class(data.frame(a = letters[1:10], y = 10 ^ c(1:10)) %>% plot2(), "gg")
-  expect_s3_class(data.frame(a = letters[1:10], b = 10 ^ c(1:10)) %>% plot2(y.trans = "log10", y.n_breaks = 10), "gg")
-  expect_s3_class(data.frame(a = letters[1:10], b = 10 ^ c(1:10)) %>% plot2(y.trans = "log10", y.n_breaks = 10), "gg")
-  expect_s3_class(data.frame(a = letters[1:10], y = 1) %>% plot2(y.percent = TRUE, y.percent_break = 500), "gg")
-  expect_s3_class(data.frame(a = letters[1:10], y = 1) %>% plot2(y.percent = TRUE), "gg")
-  expect_s3_class(suppressWarnings(mtcars %>% plot2(mpg, hp, y.limits = c(100, 200))), "gg")
+  expect_error(data.frame(a = c(1:10), b = letters[10]) |> plot2(x = a, y = b))
+  expect_s3_class(plotdata |> plot2(y = n * 24, y.24h = TRUE), "gg")
+  expect_s3_class(plotdata |> plot2(y = n * 12, y.age = TRUE), "gg")
+  expect_s3_class(plotdata |> plot2(y = n * 10, y.scientific = TRUE), "gg")
+  expect_s3_class(plotdata |> plot2(y.percent = TRUE), "gg")
+  expect_s3_class(data.frame(a = letters[1:10], y = 10 ^ c(1:10)) |> plot2(), "gg")
+  expect_s3_class(data.frame(a = letters[1:10], b = 10 ^ c(1:10)) |> plot2(y.trans = "log10", y.n_breaks = 10), "gg")
+  expect_s3_class(data.frame(a = letters[1:10], b = 10 ^ c(1:10)) |> plot2(y.trans = "log10", y.n_breaks = 10), "gg")
+  expect_s3_class(data.frame(a = letters[1:10], y = 1) |> plot2(y.percent = TRUE, y.percent_break = 500), "gg")
+  expect_s3_class(data.frame(a = letters[1:10], y = 1) |> plot2(y.percent = TRUE), "gg")
+  expect_s3_class(suppressWarnings(mtcars |> plot2(mpg, hp, y.limits = c(100, 200))), "gg")
 })
 
 test_that("category scale works", {
   # set as numeric
-  expect_s3_class(plotdata %>% .[1:4, ] %>% plot2(x = x_char, y = 1, category = n), "gg")
+  expect_s3_class(plotdata[1:4, ] |> plot2(x = x_char, y = 1, category = n), "gg")
   # 2-colour scale
   expect_true(all(c(fill = "Petal.Length", colour = "Petal.Length") %in%
                     (plot2(iris, Sepal.Length, Sepal.Width, Petal.Length,
-                           colour = c("red", "blue")) %>%
+                           colour = c("red", "blue")) |>
                        get_mapping())))
   # 3-colour scale
   expect_true(all(c(fill = "Petal.Length", colour = "Petal.Length") %in%
                     (plot2(iris, Sepal.Length, Sepal.Width, Petal.Length,
-                           colour = c("red", "blue", "green")) %>%
+                           colour = c("red", "blue", "green")) |>
                        get_mapping())))
   # multi-colour scale
   expect_true(all(c(fill = "Petal.Length", colour = "Petal.Length") %in%
                     (plot2(iris, Sepal.Length, Sepal.Width, Petal.Length,
-                           colour = c("red", "blue", "green", "yellow")) %>%
+                           colour = c("red", "blue", "green", "yellow")) |>
                        get_mapping())))
   expect_true(all(c(fill = "Petal.Length", colour = "Petal.Length") %in%
                     (plot2(iris, Sepal.Length, Sepal.Width, Petal.Length,
-                           colour = "certe") %>%
+                           colour = "certe") |>
                        get_mapping())))
-  expect_s3_class(mtcars %>% plot2(mpg, hp, as.character(cyl), category.focus = 2), "gg")
-  expect_s3_class(mtcars %>% plot2(mpg, hp, as.character(cyl), category.focus = "4"), "gg")
+  expect_s3_class(mtcars |> plot2(mpg, hp, as.character(cyl), category.focus = 2), "gg")
+  expect_s3_class(mtcars |> plot2(mpg, hp, as.character(cyl), category.focus = "4"), "gg")
   # adding white to geoplot if only one colour set
-  expect_s3_class(certegis::geo_provincies %>% plot2(colour_fill = "red"), "gg")
-  expect_s3_class(certegis::geo_provincies %>% plot2(colour_fill = "red", 
+  expect_s3_class(certegis::geo_provincies |> plot2(colour_fill = "red"), "gg")
+  expect_s3_class(certegis::geo_provincies |> plot2(colour_fill = "red", 
                                                      category.trans = "log10",
                                                      category.limits = c(NA, 10e3)),
                   "gg")
 })
 
 test_that("facet scale works", {
-  expect_s3_class(iris %>% plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
+  expect_s3_class(iris |> plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
                                  Species), "gg")
-  expect_s3_class(iris %>% plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
+  expect_s3_class(iris |> plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
                                  Species, facet.relative = TRUE), "gg")
-  expect_s3_class(iris %>% plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
+  expect_s3_class(iris |> plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
                                  Species, facet.relative = TRUE, facet.nrow = 2), "gg")
-  expect_s3_class(iris %>% plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
+  expect_s3_class(iris |> plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
                                  Species,
                                  facet.repeat_lbls_x = TRUE,
                                  facet.repeat_lbls_y = FALSE), "gg")
   
-  expect_s3_class(iris %>% plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
+  expect_s3_class(iris |> plot2(as.integer(Sepal.Length), Sepal.Width, Petal.Length,
                                  Species,
                                  facet.repeat_lbls_x = FALSE,
                                  facet.repeat_lbls_y = TRUE), "gg")
-  expect_s3_class(admitted_patients %>% plot2(hospital,
+  expect_s3_class(admitted_patients |> plot2(hospital,
                                               n(),
                                               ward,
                                               gender,
@@ -318,8 +318,8 @@ test_that("facet scale works", {
 })
 
 test_that("blank plot works", {
-  expect_s3_class(plotdata %>% subset(n < 0) %>% plot2(), "gg")
-  expect_s3_class(data.frame() %>% plot2(type = "blank",
+  expect_s3_class(plotdata |> subset(n < 0) |> plot2(), "gg")
+  expect_s3_class(data.frame() |> plot2(type = "blank",
                                          x.title = "test",
                                          y.title = "test",
                                          title = "test",
@@ -329,7 +329,7 @@ test_that("blank plot works", {
 })
 
 test_that("misc elements works", {
-  expect_s3_class(plotdata %>% plot2(x_char, taxonomy_italic = TRUE), "gg")
+  expect_s3_class(plotdata |> plot2(x_char, taxonomy_italic = TRUE), "gg")
 })
 
 test_that("get title works", {
@@ -349,7 +349,7 @@ test_that("type validation works", {
                `_var_y` = y,
                `_var_category` = z)
   expect_equal(validate_type(NULL, df), "geom_col")
-  expect_equal(validate_type(NULL, df %>% select(-x, -`_var_x`)), "geom_boxplot")
+  expect_equal(validate_type(NULL, df |> select(-x, -`_var_x`)), "geom_boxplot")
   expect_equal(validate_type("a", df), "geom_area")
   expect_equal(validate_type("b", df), "geom_boxplot")
   expect_equal(validate_type("c", df), "geom_col")
@@ -363,24 +363,24 @@ test_that("type validation works", {
 
 test_that("adding scales works", {
   library(ggplot2)
-  expect_message(mtcars %>%
+  expect_message(mtcars |>
                    plot2(mpg, hp, cyl, colour = "viridis") + 
                    scale_color_certe_c())
-  expect_message(mtcars %>%
+  expect_message(mtcars |>
                    plot2(mpg, hp, cyl, colour = "viridis") + 
                    scale_fill_certe_c())
-  expect_message(mtcars %>%
-                   plot2(mpg, hp, rownames(.), colour = "viridis") +
+  expect_message(mtcars |>
+                   plot2(mpg, hp, rownames(mtcars), colour = "viridis") +
                    scale_color_certe_d())
-  expect_message(mtcars %>%
-                   plot2(mpg, hp, rownames(.), colour = "viridis") +
+  expect_message(mtcars |>
+                   plot2(mpg, hp, rownames(mtcars), colour = "viridis") +
                    scale_fill_certe_d())
 })
 
 test_that("moving layer works", {
-  expect_s3_class((mtcars %>%
+  expect_s3_class((mtcars |>
                      plot2(mpg, hp, cyl) +
-                     geom_line(colour = "grey75")) %>%
+                     geom_line(colour = "grey75")) |>
                     move_layer(-1), "gg")
 })
 
@@ -407,20 +407,20 @@ test_that("date labels work", {
 })
 
 test_that("manual fonts work", {
-  expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Rock Salt"), "gg")
-  expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Rock Salt"), "gg") # already downloaded
-  expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Courier"), "gg")
-  expect_s3_class(mtcars %>% plot2(mpg, hp, font = "Courier"), "gg") # already downloaded
+  expect_s3_class(mtcars |> plot2(mpg, hp, font = "Rock Salt"), "gg")
+  expect_s3_class(mtcars |> plot2(mpg, hp, font = "Rock Salt"), "gg") # already downloaded
+  expect_s3_class(mtcars |> plot2(mpg, hp, font = "Courier"), "gg")
+  expect_s3_class(mtcars |> plot2(mpg, hp, font = "Courier"), "gg") # already downloaded
 })
 
 test_that("Plotly works", {
   expect_error(as_plotly(mtcars))
-  expect_s3_class(mtcars %>% plot2(mpg, hp) %>% as_plotly(), "plotly")
-  expect_s3_class(mtcars %>%
-                    plot2(mpg, hp) %>% 
-                    as_plotly(dragmode = "pan") %>%
+  expect_s3_class(mtcars |> plot2(mpg, hp) |> as_plotly(), "plotly")
+  expect_s3_class(mtcars |>
+                    plot2(mpg, hp) |> 
+                    as_plotly(dragmode = "pan") |>
                     plotly_style(marker.line.color = "red",
                                  hoverinfo = "y"),
                   "plotly")
-  expect_s3_class(mtcars %>% plot2(mpg, hp) %>% plotly_style(hoverinfo = "y"), "plotly")
+  expect_s3_class(mtcars |> plot2(mpg, hp) |> plotly_style(hoverinfo = "y"), "plotly")
 })

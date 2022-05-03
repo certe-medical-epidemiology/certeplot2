@@ -26,31 +26,30 @@
 #' 
 #' In case of [plotly_style()]: arguments to pass on to [`style()`][plotly::style()] to change the Plotly style object
 #' @importFrom ggplot2 is.ggplot
-#' @importFrom dplyr `%>%`
 #' @rdname plotly
 #' @export
 #' @examples 
-#' mtcars %>%
-#'   plot2(mpg, hp) %>% 
+#' mtcars |>
+#'   plot2(mpg, hp) |> 
 #'   as_plotly()
 #'   
-#' mtcars %>%
-#'   plot2(mpg, hp) %>% 
-#'   as_plotly(dragmode = "pan") %>%
+#' mtcars |>
+#'   plot2(mpg, hp) |> 
+#'   as_plotly(dragmode = "pan") |>
 #'   plotly_style(marker.line.color = "red",
 #'                hoverinfo = "y")
 #' 
 #' 
 #' \dontrun{
 #' # in the certetoolbox package, this:
-#' mtcars %>%
-#'   plot2(mpg, hp) %>% 
+#' mtcars |>
+#'   plot2(mpg, hp) |> 
 #'   export_html("filename")
 #'   
 #' # is short for:
-#' mtcars %>%
-#'   plot2(mpg, hp) %>% 
-#'   as_plotly() %>% 
+#' mtcars |>
+#'   plot2(mpg, hp) |> 
+#'   as_plotly() |> 
 #'   htmltools::save_html("filename.html")
 #' }
 as_plotly <- function(plot, ...) {
@@ -61,18 +60,17 @@ as_plotly <- function(plot, ...) {
     stop("This function requires the 'plotly' package - install it with install.packages(\"plotly\")", call. = FALSE)
   }
   
-  plotly::ggplotly(plot) %>%
+  plotly::ggplotly(plot) |>
     plotly::layout(...)
 }
 
 #' @importFrom ggplot2 is.ggplot
-#' @importFrom dplyr `%>%`
 #' @rdname plotly
 #' @export
 plotly_style <- function(plot, ...) {
   if (is.ggplot(plot)) {
     plot <- as_plotly(plot)
   }
-  plot %>% 
+  plot |> 
     plotly::style(...)
 }

@@ -60,7 +60,7 @@ To start, load the package:
 library(certeplot2)
 ```
 
-The `ggplot2` package must (of course) be installed, but it does not need to be loaded using `library()`. The same goes for other tidyverse packages, such as `dplyr`, `forcats` and `stringr`. They are only used internally and not required to load before using the `plot2()` function. The pipe function (`%>%`) is also being exported by this package, so it can be used by only loading this package.
+The `ggplot2` package must (of course) be installed, but it does not need to be loaded using `library()`. The same goes for other tidyverse packages, such as `dplyr`, `forcats` and `stringr`. They are only used internally and not required to load before using the `plot2()` function.
 
 # Setting plot type / geom
 
@@ -70,7 +70,7 @@ To start with, the plot **type** will be determined automatically if left blank.
 
 ```{r}
 data.frame(x = c(1:10),
-           y = c(11:20)) %>% 
+           y = c(11:20)) |> 
   plot2()
 ```
 
@@ -78,7 +78,7 @@ If the x axis is of class `factor` or `character`, the type will be column:
 
 ```{r}
 data.frame(x = letters[1:10],
-           y = c(11:20)) %>% 
+           y = c(11:20)) |> 
   plot2()
 ```
 
@@ -88,7 +88,7 @@ If the y axis is absent and the x axis is numeric, the default will be a histogr
 
 ```{r}
 # rnorm() here generates a thousand random values according to a normal distribution
-data.frame(x = rnorm(1000, mean = 10)) %>% 
+data.frame(x = rnorm(1000, mean = 10)) |> 
   plot2()
 ```
 
@@ -98,7 +98,7 @@ If there are multiple y values for each x, the default will be a boxplot:
 data.frame(x = c("a", "a", "a", "a",
                  "b", "b", "b", "b",
                  "c", "c", "c", "c"),
-           y = rnorm(12, mean = 10)) %>% 
+           y = rnorm(12, mean = 10)) |> 
   plot2()
 ```
 
@@ -108,13 +108,13 @@ The `type` arguments accepts any (abbreviation of) `ggplot2` geoms:
 data.frame(x = c("a", "a", "a", "a",
                  "b", "b", "b", "b",
                  "c", "c", "c", "c"),
-           y = rnorm(12, mean = 10)) %>% 
+           y = rnorm(12, mean = 10)) |> 
   plot2(type = "violin") # can also be "v" or "geom_violin"
 
 data.frame(x = c("a", "a", "a", "a",
                  "b", "b", "b", "b",
                  "c", "c", "c", "c"),
-           y = rnorm(12, mean = 10)) %>% 
+           y = rnorm(12, mean = 10)) |> 
   plot2(type = "j") # abbreviation of "jitter"
 ```
 
@@ -131,14 +131,14 @@ All plotting directions in `plot2()` support tidy evaluation. This means that pr
 ```{r}
 #                |------> this is x
 #                |    |-> this is y
-mtcars %>% plot2(mpg, hp)
+mtcars |> plot2(mpg, hp)
 ```
 
 Tidy evaluation allows for in-place transformations as well:
 
 ```{r}
 my_y_values <- mtcars$hp ^ 3
-mtcars %>%
+mtcars |>
   plot2(x = mpg ^ 2,
         y = my_y_values)
 ```
@@ -154,13 +154,13 @@ Many of these arguments are determined based on the input data. For example, `x.
 ```{r}
 library(cleaner) # 'cleaner' has a rdate() function for random dates
 data.frame(x = rdate(100, min = "2016-01-01", max = "2021-12-31"),
-           y = rnorm(100, mean = 10)) %>% 
+           y = rnorm(100, mean = 10)) |> 
   plot2(type = "p")
 data.frame(x = rdate(100, min = "2021-06-01", max = "2021-12-31"),
-           y = rnorm(100, mean = 10)) %>% 
+           y = rnorm(100, mean = 10)) |> 
   plot2(type = "p")
 data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
-           y = rnorm(100, mean = 10)) %>% 
+           y = rnorm(100, mean = 10)) |> 
   plot2(type = "p")
 ```
 
@@ -168,13 +168,13 @@ If you have crowded x labels, it's easy to turn them:
 
 ```{r}
 data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
-           y = rnorm(100, mean = 10)) %>% 
+           y = rnorm(100, mean = 10)) |> 
   plot2(x.date_breaks = "1 day",
         x.date_labels = "ddd d mmm yyyy",
         type = "p",
         title = "Change this...")
 data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
-           y = rnorm(100, mean = 10)) %>% 
+           y = rnorm(100, mean = 10)) |> 
   plot2(x.date_breaks = "1 day",
         x.date_labels = "ddd d mmm yyyy",
         x.lbl_angle = 90, # <- only requires this argument
@@ -213,10 +213,10 @@ numeric_z <- data.frame(x = rep(letters[1:5], 10),
                         stringsAsFactors = FALSE)
 head(numeric_z)
 
-character_z %>% 
+character_z |> 
     plot2(x, y, z, type = "jitter",
           caption = "*category* is non-numeric based on inputdata.")
-numeric_z %>%  
+numeric_z |>  
     plot2(x, y, z, type = "jitter",
           caption = "*category* is numeric based on inputdata.")
 ```
@@ -226,17 +226,47 @@ Settings to this scale can be set with arguments such as `category.labels`, `cat
 For continuous scales, `plot2()` has an additional argument: `category.midpoint`. When using a 3-point colour scale, this is the value of `y` that should have the middle colour, it defaults to the centre of the current legend scale:
 
 ```{r}
-numeric_z %>%  
+numeric_z |>  
     plot2(x, y, z,
           type = "jitter",
           colour = c("red", "green", "blue"))
-numeric_z %>%  
+numeric_z |>  
     plot2(x, y, z,
           type = "jitter",
           colour = c("red", "green", "blue"),
           category.midpoint = 2.5,
           category.title = "*New* midpoint!")
 ```
+
+### Focus on one category
+
+Using `category.focus`, you can focus on one specific category in the data:
+
+```{r}
+numeric_z |>
+  plot2(x = y,
+        y = mean(z), 
+        category = x,
+        type = "l",
+        zoom = TRUE)
+numeric_z |>
+  plot2(x = y,
+        y = mean(z), 
+        category = x,
+        type = "l",
+        zoom = TRUE,
+        category.focus = "b")
+numeric_z |>
+  plot2(x = y,
+        y = mean(z), 
+        category = x,
+        type = "l",
+        zoom = TRUE,
+        category.focus = "b",
+        colour = "red")
+```
+
+This input for `category.focus` can be the name of the value (in this case `"b"`) or the index number (in this case `2`).
 
 ## The `facet` direction
 
@@ -247,10 +277,10 @@ For controlling the `y` axis, `facet.repeat_lbls_y` (defaults to `FALSE`) makes 
 ```{r}
 admitted_patients
 
-admitted_patients %>%
+admitted_patients |>
   plot2(x = age_group, y = n(), facet = hospital,
         caption = "Same y axes")
-admitted_patients %>%
+admitted_patients |>
   plot2(x = age_group, y = n(), facet = hospital,
         facet.repeat_lbls_y = TRUE,
         caption = "All y axes on their own")
@@ -259,7 +289,7 @@ admitted_patients %>%
 You can omit repeated x labels as well with `facet.repeat_lbls_x`, and let all y axes be the same with `facet.fixed_y`:
 
 ```{r}
-admitted_patients %>%
+admitted_patients |>
   plot2(x = age_group, y = n(), facet = hospital,
         facet.repeat_lbls_x = FALSE,
         facet.fixed_y = TRUE)
@@ -268,7 +298,7 @@ admitted_patients %>%
 Or change the number of rows the facet should be in, using `facet.nrow`:
 
 ```{r, fig.height = 8}
-admitted_patients %>%
+admitted_patients |>
   plot2(x = age_group, y = n(), facet = hospital,
         facet.nrow = 4)
 ```
@@ -280,7 +310,7 @@ No need to memorise how again the `scales`, `shrink` and `switch` arguments of t
 For all plotting directions (`x`, `category` and `facet`), you can use multiple variables as input, for example using `c()`:
 
 ```{r}
-admitted_patients %>%
+admitted_patients |>
   plot2(x = age_group,
         y = n(),
         facet = c(gender, ward))
@@ -290,7 +320,7 @@ You can even use [Tidyverse selectors](https://tidyselect.r-lib.org/reference/la
 
 ```{r}
 library(dplyr)
-admitted_patients %>%
+admitted_patients |>
   plot2(x = age_group,
         y = n(),
         facet = where(is.character),
@@ -315,12 +345,12 @@ Applying one of the sorting methods will transform the values to an ordered `fac
 The default for all plotting directions is `TRUE`, except for continuous values on the `x` axis (such as dates and numbers).
 
 ```{r}
-admitted_patients %>%
+admitted_patients |>
   plot2(hospital, y = n(), age_group,
         y.title = "count",
         stacked = TRUE,
         caption = "No sorting")
-admitted_patients %>%
+admitted_patients |>
   plot2(hospital, y = n(), age_group,
         y.title = "count",
         stacked = TRUE,
@@ -338,9 +368,9 @@ The sorting can be used in combination with setting a maximum number of items to
 `plot2()` has a an option to limit data values for all three plotting directions: `x.max_items`, `category.max_items` and `facet.max_items`. They take a numeric values as input:
 
 ```{r}
-admitted_patients %>%
+admitted_patients |>
     plot2(hospital, y = n())
-admitted_patients %>%
+admitted_patients |>
     plot2(hospital, y = n(),
           x.max_items = 3)
 ```
@@ -348,7 +378,7 @@ admitted_patients %>%
 This can be combined with sorting:
 
 ```{r}
-admitted_patients %>%
+admitted_patients |>
     plot2(hospital, y = n(),
           x.sort = "freq-desc",
           x.max_items = 3,
@@ -360,10 +390,10 @@ admitted_patients %>%
 All titles support in-line calculations as well, which is very convenient for describing part of the data in plot titles:
 
 ```{r}
-admitted_patients %>%
+admitted_patients |>
   plot2(age, type = "hist")
 
-admitted_patients %>%
+admitted_patients |>
   plot2(age, type = "hist",
         title = paste("Based on n =", n_distinct(patient_id), "patients"),
         subtitle = paste("Total rows:", n()),
@@ -380,7 +410,7 @@ In `ggplot2`, the values for `y` must be numeric. In `plot2()`, you can also use
 ```{r}
 admitted_patients 
 
-admitted_patients %>%
+admitted_patients |>
     plot2(x = hospital,
           y = n_distinct(age_group),
           category = ward,
@@ -390,7 +420,7 @@ admitted_patients %>%
 Since the plotting directions allow for in-place transformations as well, you can plot your data without the need to use `group_by()`, `count()` or `summarise()` yourself:
 
 ```{r, fig.width = 8}
-admitted_patients %>%
+admitted_patients |>
   plot2(x = format(date, "%Y"),
         y = median(age),
         y.age = TRUE,
@@ -398,14 +428,15 @@ admitted_patients %>%
         datalabels = FALSE)
 ```
 
-Including all transformations, we used in total 3 functions (`plot2()`, `format()`, `median()`) - the very least. Compare that to the required `dplyr` + `ggplot2` code:
+Including all transformations, we used in total 3 functions (`plot2()`, `format()`, `median()`) - the very least - written in 6 lines of code using a common code style. Compare that to the required `dplyr` + `ggplot2` code:
 
 ```{r, fig.width = 8}
 library(ggplot2)
 
-admitted_patients %>%
-  group_by(format(date, "%Y"), ward) %>%
-  summarise(median(age)) %>%
+admitted_patients |>
+  group_by(format(date, "%Y"),
+           ward) |>
+  summarise(median(age)) |>
   ggplot(aes(x = `format(date, "%Y")`,
              y = `median(age)`,
              fill = ward)) +
@@ -421,37 +452,35 @@ admitted_patients %>%
   theme_minimal2(legend.position = "top")
 ```
 
-Now, we had to use 7 functions to get the desired functional part of the plot while defining all variables twice. The styling part took another 6 functions. Aside from being it a lot of redundant code, using all of these functions requires users to know them *and* their arguments. How many users would know `expansion()`, or that colours can be named in `scale_fill_manual()`? The obligations on the user side are quite insane.
+Now, we had to use 14 functions to get the plot - while defining all variables twice - written in 17 lines of code using the same common code style as above. Even the bare functional part (until `geom_col()`) took 7 functions. Aside from it being a lot of redundant code, using all of these functions requires users to know them *and* their arguments. How many users would know `expansion()`, or that colours can be named in `scale_fill_manual()`? The obligations on the user side are quite insane.
 
-And why is 2009 still so wide?? I'll give you this: if you know the solution, you're way deeper into `ggplot2` than should ever be necessary for an R package. 
+And why is 2014 still so wide?? I'll give you this: if you know the solution, you're way deeper into `ggplot2` than should ever be necessary for an R package. 
 
-# Support for any font, including Google Fonts
+# Support for any font, including all Google Fonts
 
-Any installed font and any Google Font is supported in `plot2`, since it uses the  `showtext` package internally. Missing fonts will be downloaded automatically:
+Any installed font and any of the [over 1400 Google Fonts](https://fonts.google.com) is supported in `plot2`. Missing fonts will be downloaded automatically and the required DPI will be set automatically as well, even in R Markdown such as this page:
 
 ```{r}
-mtcars %>%
-  plot2(mpg, hp, font = "Rock Salt")
+mtcars |>
+  plot2(mpg, hp, font = "Rock Salt",
+        title = "This plot uses a Google Font")
 ```
 
 # Plotting geometries (`sf` objects)
 
-Objects of class `sf` (*simple feature*) are treated specially by the `ggplot2` package, although `plot2()` handles these objects like any other data set. Instead it returns a `ggplot` object created with `geom_sf()` internally, but most arguments are usable and even the `theme_minimal2()` theme has good use for `sf` plots.
+Objects of class `sf` (*simple feature*) are treated specially by the `ggplot2` package, although `plot2()` handles these objects like any other data set. 
 
-The `netherlands` data set is such an `sf` object:
+The included `netherlands` data set is such an `sf` object:
 
 ```{r}
 library(sf)
 print(netherlands)
 ```
 
-These objects can be given to `plot2()`, and its built-in `theme_minimal2()` makes sure you get a clean map:
+These objects can be used with `plot2()` in the same way as any other data set - `plot2()` applies spatial functions such as `geom_sf()` and `geom_sf_text()` automatically wherever needed. The built-in `theme_minimal2()` theme makes sure you get a clean map, by removing the unnecessarily verbose axes and background colour:
 
 ```{r}
 plot2(netherlands)
-plot2(netherlands,
-      colour_fill = "certe",
-      datalabels = FALSE)
 plot2(netherlands,
       colour_fill = "viridis",
       # datalabels support tidy evaluation too:

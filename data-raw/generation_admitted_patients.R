@@ -18,17 +18,17 @@
 # ===================================================================== #
 
 library(dplyr)
-admitted_patients <- AMR::example_isolates %>%
-  group_by(patient_id) %>%
-  filter(n() < 3) %>%
-  ungroup() %>%
+admitted_patients <- AMR::example_isolates |>
+  group_by(patient_id) |>
+  filter(n() < 3) |>
+  ungroup() |>
   transmute(date,
             patient_id,
             gender,
             age,
             age_group = AMR::age_groups(age),
             hospital = hospital_id,
-            ward = ifelse(ward_icu, "ICU", "Non-ICU")) %>%
+            ward = ifelse(ward_icu, "ICU", "Non-ICU")) |>
   slice_sample(n = 250)
 
 ind <- double(nrow(admitted_patients))
@@ -38,8 +38,11 @@ for (pat in unique(admitted_patients$patient_id)) {
   j <- j + 1
 }
 admitted_patients$patient_id <- ind
-admitted_patients <- admitted_patients %>% 
+admitted_patients <- admitted_patients |> 
   arrange(date, patient_id)
 
-usethis::use_data(admitted_patients, internal = FALSE, overwrite = TRUE, version = 2, compress = "xz")
+# for the vignette, make 2014 wide in ggplot2 syntax
+admitted_patients[which(format(admitted_patients$date, "%Y") == "2014" &
+                          admitted_patients$ward == "ICU"), "data"] <- as.Date("2013-02-25")
 
+usethis::use_data(admitted_patients, internal = FALSE, overwrite = TRUE, version = 2, compress = "xz")

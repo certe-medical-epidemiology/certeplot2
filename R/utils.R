@@ -19,8 +19,7 @@
 
 plot2_env <- new.env(hash = FALSE)
 
-globalVariables(c(".",
-                  "..count..",
+globalVariables(c("..count..",
                   "ab",
                   "geom",
                   "mo",
@@ -35,10 +34,6 @@ globalVariables(c(".",
                   "_var_facet",
                   "_var_x",
                   "_var_y"))
-
-#' @importFrom dplyr `%>%`
-#' @export
-dplyr::`%>%`
 
 #' @importFrom dplyr n
 #' @export
@@ -96,13 +91,13 @@ summarise_variable <- function(df, var, sep) {
   df
 }
 
-#' @importFrom dplyr `%>%` select mutate across
+#' @importFrom dplyr select mutate across
 add_direction <- function(df, direction, var_name, var_label, sep) {
   tryCatch({
     # this for using Tidyverse selectors, such as `facet = where(is.character)`
-    selected_cols <- df %>%
-      as.data.frame(stringsAsFactors = FALSE) %>% # for sf data
-      select({{ direction }}) %>% 
+    selected_cols <- df |>
+      as.data.frame(stringsAsFactors = FALSE) |> # for sf data
+      select({{ direction }}) |> 
       colnames()
     selected_cols <- selected_cols[selected_cols %unlike% "^_var_"]
     if (length(selected_cols) > 1 && is.character(selected_cols) && !all(var_label %like% selected_cols)) {
@@ -111,14 +106,14 @@ add_direction <- function(df, direction, var_name, var_label, sep) {
   }, error = function(e) invisible())
   
   df <- tryCatch({
-    out <- df %>% 
+    out <- df |> 
       mutate(`_var_` = {{ direction }})
     colnames(out)[colnames(out) == "_var_"] <- paste0("_var_", var_name)
     out
   }, error = function(e) {
     # multiple columns selected
-    df %>% 
-      mutate(across({{ direction }}, .names = paste0("_var_", var_name, "_{col}"))) %>% 
+    df |> 
+      mutate(across({{ direction }}, .names = paste0("_var_", var_name, "_{col}"))) |> 
       summarise_variable(paste0("_var_", var_name), sep = sep)
   })
   
@@ -131,17 +126,17 @@ add_direction <- function(df, direction, var_name, var_label, sep) {
   df
 }
 
-#' @importFrom dplyr `%>%` pull
+#' @importFrom dplyr pull
 get_column_name <- function(df, column_var) {
   out <- vapply(FUN.VALUE = logical(1), df, function(col) {
     identical(col,
-              df %>% pull({{column_var}}))
+              df |> pull({{column_var}}))
   })
   if (all(out[names(out) %unlike% "^_var_"] == FALSE)) {
     # no column found, probably due to sorting (i.e., factors), try again with character comparison
     out <- vapply(FUN.VALUE = logical(1), df, function(col) {
-      identical(col %>% as.character(),
-                df %>% pull({{column_var}}) %>% as.character())
+      identical(col |> as.character(),
+                df |> pull({{column_var}}) |> as.character())
     })
   }
   out <- names(out)[out & names(out) %unlike% "^_var_"][1L]
@@ -310,14 +305,14 @@ geom_has_only_colour <- function(geom) {
               "geom_path", "geom_qq_line", "geom_linerange", "geom_pointrange")
 }
 
-#' @importFrom dplyr `%>%` group_by across group_size
+#' @importFrom dplyr group_by across group_size
 group_sizes <- function(df) {
   if (inherits(df, "sf")) {
     nrow(df)
   } else {
-    df %>% 
-      group_by(across(c(get_x_name(.), get_category_name(.), get_facet_name(.))),
-               .drop = FALSE) %>%
+    df |> 
+      group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df))),
+               .drop = FALSE) |>
       group_size()
   }
 }

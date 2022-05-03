@@ -25,10 +25,10 @@
 #' @importFrom ggplot2 aes
 #' @export
 #' @examples 
-#' p <- iris %>% plot2(Sepal.Length, Sepal.Width)
+#' p <- iris |> plot2(Sepal.Length, Sepal.Width)
 #' p
 #' 
-#' p %>% add_mapping(shape = Species)
+#' p |> add_mapping(shape = Species)
 add_mapping <- function(plot, ...) {
   plot$mapping <- utils::modifyList(plot$mapping, aes(...))
   plot
