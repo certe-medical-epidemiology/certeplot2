@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.6.0</span>
       </span>
     </div>
 
@@ -1110,7 +1110,7 @@
 <dt>x.trans</dt>
 <dd><p>a transformation function to use for the axis, e.g. <code>"log2"</code></p></dd>
 <dt>x.expand</dt>
-<dd><p><a href="ggplot2::expansion()">expansion</a> to use for the axis, can be length 1 or 2. <code>x.expand</code> defaults to 0.5 and <code>y.expand</code> defaults to 0.25, except for sf objects (then both default to 0).</p></dd>
+<dd><p><a href="ggplot2::expansion()">expansion</a> to use for the axis, can be length 1 or 2. <code>x.expand</code> defaults to 0.5 and <code>y.expand</code> defaults to <code>0.25</code>, except for sf objects (then both default to 0).</p></dd>
 <dt>x.limits</dt>
 <dd><p>limits to use for the axis, can be length 1 or 2. Use <code>NA</code> for the highest or lowest value in the data, e.g. <code>y.limits = c(0, NA)</code> to have the y scale start at zero.</p></dd>
 <dt>x.labels</dt>
@@ -1120,7 +1120,7 @@
 <dt>x.drop</dt>
 <dd><p><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether factor levels should be dropped</p></dd>
 <dt>x.zoom</dt>
-<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate if the axis should be zoomed on the data, by setting <code>x.limits = c(NA, NA)</code> / <code>y.limits = c(NA, NA)</code></p></dd>
+<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate if the axis should be zoomed on the data, by setting <code>x.limits = c(NA, NA)</code> and <code>x.expand = 0</code> for the x axis, or <code>y.limits = c(NA, NA)</code> and <code>y.expand = 0</code> for the y axis</p></dd>
 <dt>y.remove</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the axis labels and title should be removed</p></dd>
 <dt>y.24h</dt>
@@ -1142,13 +1142,13 @@
 <dt>y.labels</dt>
 <dd><p>a labels function or character vector to use for the axis</p></dd>
 <dt>y.expand</dt>
-<dd><p><a href="ggplot2::expansion()">expansion</a> to use for the axis, can be length 1 or 2. <code>x.expand</code> defaults to 0.5 and <code>y.expand</code> defaults to 0.25, except for sf objects (then both default to 0).</p></dd>
+<dd><p><a href="ggplot2::expansion()">expansion</a> to use for the axis, can be length 1 or 2. <code>x.expand</code> defaults to 0.5 and <code>y.expand</code> defaults to <code>0.25</code>, except for sf objects (then both default to 0).</p></dd>
 <dt>y.trans</dt>
 <dd><p>a transformation function to use for the axis, e.g. <code>"log2"</code></p></dd>
 <dt>y.position</dt>
 <dd><p>position of the axis</p></dd>
 <dt>y.zoom</dt>
-<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate if the axis should be zoomed on the data, by setting <code>x.limits = c(NA, NA)</code> / <code>y.limits = c(NA, NA)</code></p></dd>
+<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate if the axis should be zoomed on the data, by setting <code>x.limits = c(NA, NA)</code> and <code>x.expand = 0</code> for the x axis, or <code>y.limits = c(NA, NA)</code> and <code>y.expand = 0</code> for the y axis</p></dd>
 <dt>category.labels</dt>
 <dd><p>settings for the plotting direction <code>category</code>.</p></dd>
 <dt>category.percent</dt>

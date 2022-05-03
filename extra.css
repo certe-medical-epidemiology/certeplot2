@@ -12,6 +12,7 @@ body {
 }
 pre code {
   font-family: 'Fira Code', monospace !important;
+  font-feature-settings: "ss02", "ss06";
   /* don't wrap syntax on small devices: */
   word-wrap: normal !important;
   white-space: pre !important;
@@ -35,7 +36,7 @@ a, a code {
   border-color: #01617E;
 }
 .navbar-brand .navbar-link {
-  background-image: url("../logo.svg");
+  background-image: url("/certeplot2/logo.svg");
   background-position: left;
   background-repeat: no-repeat;
   background-size: 36px;
@@ -72,6 +73,10 @@ a, a code {
 }
 .fl {
   /* numbers */
+  color: #E04883;
+}
+.sc {
+  /* $ operator */
   color: #E04883;
 }
 .st {
