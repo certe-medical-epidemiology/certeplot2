@@ -1,16 +1,28 @@
+/* 
+Certe colours, check with certestyle::colourpicker("certe", 3)
+#01617E - certeblauw
+#8B9934 - certegroen
+#E04883 - certeroze
+*/
+
+/* import fonts from Google */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Fira+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+body {
+  font-family: 'Fira Sans', sans-serif !important;
+}
 pre code {
+  font-family: 'Fira Code', monospace !important;
+  /* don't wrap syntax on small devices: */
   word-wrap: normal !important;
   white-space: pre !important;
 }
+
 .r-msg, .r-msg span {
-  color: #aaaaaa !important;
+  color: #AAAAAA !important;
   font-style: italic;
 }
 th {
   text-align: inherit;
-}
-.fu {
-  font-weight: bold
 }
 h1, h1 code,
 h2, h2 code,
@@ -22,6 +34,15 @@ a, a code {
   background-color: white;
   border-color: #01617E;
 }
+.navbar-brand .navbar-link {
+  background-image: url("../logo.svg");
+  background-position: left;
+  background-repeat: no-repeat;
+  background-size: 36px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  padding-left: 44px;
+}
 .label-default {
   background-color: #01617E !important;
 }
@@ -29,4 +50,31 @@ a, a code {
 .navbar-default .navbar-nav>.active>a:focus,
 .navbar-default .navbar-nav>.active>a:hover {
   background-color: #F0F8FB !important;
+}
+.navbar-default .navbar-nav>li:hover {
+  background: #EEEEEE !important;
+}
+.btn-primary {
+  background-color: #E04883 !important;
+  border-color: #E04883 !important;
+}
+
+/* syntax colours: */
+
+.fu {
+  /* function names */
+  font-weight: bold;
+}
+.cn {
+  /* values such as TRUE and NULL */
+  color: #E04883;
+  font-style: italic;
+}
+.fl {
+  /* numbers */
+  color: #E04883;
+}
+.st {
+  /* text strings */
+  color: #8B9934;
 }
