@@ -186,7 +186,7 @@
   <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">x = x</span></span>
 <span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #0000BB;">type = "histogram"</span><span style="color: #080808;"> since the data has only one numeric variable and no other variables</span></span>
-<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">binwidth = 0.302</span><span style="color: #080808;"> based on data</span></span>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">binwidth = 0.303</span><span style="color: #080808;"> based on data</span></span>
 <span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #0000BB;">smooth = TRUE</span><span style="color: #080808;"> for </span><span style="color: #0000BB;">type = "histogram"</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-5-1.png" width="576"></p>
 <p>If there are multiple y values for each x, the default will be a boxplot:</p>
@@ -328,12 +328,12 @@
                           stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">character_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y z</span>
-<span class="co">#&gt; 1 a 5.446429 f</span>
-<span class="co">#&gt; 2 b 4.572688 g</span>
-<span class="co">#&gt; 3 c 5.209645 h</span>
-<span class="co">#&gt; 4 d 4.293164 i</span>
-<span class="co">#&gt; 5 e 4.917517 j</span>
-<span class="co">#&gt; 6 a 5.115570 f</span>
+<span class="co">#&gt; 1 a 4.111105 f</span>
+<span class="co">#&gt; 2 b 5.674650 g</span>
+<span class="co">#&gt; 3 c 3.740544 h</span>
+<span class="co">#&gt; 4 d 3.914689 i</span>
+<span class="co">#&gt; 5 e 5.565969 j</span>
+<span class="co">#&gt; 6 a 6.341132 f</span>
 
 <span class="va">numeric_z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span>,
                         y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">5</span><span class="op">)</span>,
@@ -342,12 +342,12 @@
                         stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">numeric_z</span><span class="op">)</span>
 <span class="co">#&gt;   x        y        z</span>
-<span class="co">#&gt; 1 a 5.569892 4.398149</span>
-<span class="co">#&gt; 2 b 6.001622 5.356832</span>
-<span class="co">#&gt; 3 c 4.172758 4.461654</span>
-<span class="co">#&gt; 4 d 4.408370 4.552327</span>
-<span class="co">#&gt; 5 e 5.597603 3.896121</span>
-<span class="co">#&gt; 6 a 5.646233 5.067484</span>
+<span class="co">#&gt; 1 a 6.823997 5.470906</span>
+<span class="co">#&gt; 2 b 4.596305 5.530696</span>
+<span class="co">#&gt; 3 c 6.452005 4.171465</span>
+<span class="co">#&gt; 4 d 4.017350 3.637768</span>
+<span class="co">#&gt; 5 e 6.781738 7.037071</span>
+<span class="co">#&gt; 6 a 3.920366 5.949176</span>
 
 <span class="va">character_z</span> |&gt; 
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>, type <span class="op">=</span> <span class="st">"jitter"</span>,
@@ -367,7 +367,7 @@
     <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>,
           type <span class="op">=</span> <span class="st">"jitter"</span>,
           colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category.midpoint = 4.34</span><span style="color: #080808;"> (the current </span><span style="color: #0000BB;">category</span><span style="color: #080808;"> scale centre)</span></span></code></pre></div>
+<span class="co">#&gt; <span style="color: #0000BB;">i</span> <span style="color: #080808;">Using </span><span style="color: #0000BB;">category.midpoint = 4.96</span><span style="color: #080808;"> (the current </span><span style="color: #0000BB;">category</span><span style="color: #080808;"> scale centre)</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-14-1.png" width="576"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">numeric_z</span> |&gt;  
@@ -398,10 +398,7 @@
         category <span class="op">=</span> <span class="va">x</span>,
         type <span class="op">=</span> <span class="st">"l"</span>,
         zoom <span class="op">=</span> <span class="cn">TRUE</span>,
-        category.focus <span class="op">=</span> <span class="st">"b"</span><span class="op">)</span>
-<span class="co">#&gt; Warning: Invalid colours, replacing with grey: 2a5d7</span>
-<span class="co">#&gt; Warning in x[invalid] &lt;- sapply(seq_len(length(invalid)), function(i) {: number</span>
-<span class="co">#&gt; of items to replace is not a multiple of replacement length</span></code></pre></div>
+        category.focus <span class="op">=</span> <span class="st">"b"</span><span class="op">)</span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-15-2.png" width="576"></p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">numeric_z</span> |&gt;
