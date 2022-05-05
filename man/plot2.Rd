@@ -11,8 +11,8 @@ plot2(
   category = NULL,
   facet = NULL,
   type = NULL,
-  x.title = NULL,
-  y.title = NULL,
+  x.title = TRUE,
+  y.title = TRUE,
   category.title = NULL,
   title = NULL,
   subtitle = NULL,
@@ -128,7 +128,7 @@ plot2(
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
-  markdown = NULL,
+  markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
 )
@@ -151,19 +151,14 @@ plot2(
 \item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X axis or if the length of unique values per X axis item is at least 3, \code{"point"} if both the Y and X axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} print a geom.
 }}
 
-\item{x.title}{text to show on the x axis, supports calculations over \code{.data}}
+\item{title, subtitle, caption, tag, x.title, y.title, category.title, legend.title}{a title to use. This can be:
+\itemize{
+\item An \link{expression}
+\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
+}
 
-\item{y.title}{text to show on the y axis, supports calculations over \code{.data}}
-
-\item{category.title}{title of the legend (if \code{legend.title} is not set), supports calculations over \code{.data} and defaults to \code{TRUE} if the legend items are numeric}
-
-\item{title}{title to show, supports calculations over \code{.data}}
-
-\item{subtitle}{subtitle to show, supports calculations over \code{.data}}
-
-\item{caption}{caption to show, supports calculations over \code{.data}}
-
-\item{tag}{tag to show, supports calculations over \code{.data}}
+The category title defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{title.linelength}{maximum number of characters per line in the title, before a linebreak occurs}
 
@@ -291,8 +286,6 @@ plot2(
 
 \item{legend.position}{position of the legend, must be \code{"top"}, \code{"right"}, \code{"bottom"}, \code{"left"} or \code{"none"} (or \code{NA} or \code{NULL}), can be abbreviated. Defaults to \code{"right"} for numeric \code{category} values and 'sf' plots, and \code{"top"} otherwise.}
 
-\item{legend.title}{title of the legend (if \code{category.title} is not set), supports calculations over \code{.data} and defaults to \code{TRUE} if the legend items are numeric}
-
 \item{legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic}{other settings for the legend}
 
 \item{zoom}{a \link{logical} to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0. This will set \code{x.zoom = TRUE} and \code{y.zoom = TRUE}.}
@@ -309,7 +302,7 @@ plot2(
 
 \item{background}{the background colour of the entire plot, can also be \code{NA} to remove it. Only applies when \code{theme} is not empty.}
 
-\item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{\link[ggtext:element_markdown]{"element_markdown"}}, a feature of the \code{ggtext} package. Defaults to \code{TRUE} only if any of the titles/labels contains markdown characters.}
+\item{markdown}{a \link{logical} to turn all labels and titles into \link{plotmath} expressions, by converting common markdown language using the \code{\link[=md_to_expression]{md_to_expression()}} function (defaults to \code{TRUE})}
 
 \item{taxonomy_italic}{a \link{logical} to transform all labels and titles into italics that are in the \code{microorganisms} data set of the \code{AMR} package}
 
@@ -329,10 +322,10 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Writing as few lines of codes as possible
 \item Easy plotting in three 'directions': \code{x} (the regular x axis), \code{category} (replaces 'fill' and 'colour') and \code{facet}
 \item Automatic setting of these 'directions' based on the input data
-\item Setting in-place calculations for all plotting direction and even \code{y}
+\item Setting in-place calculations for all plotting directions and even \code{y}
 \item Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': \code{x.sort}, \code{category.sort} and \code{facet.sort}
 \item Easy limiting values, e.g. by setting \code{x.max_items = 5} or \code{category.max_items = 5}
-\item Markdown support for any label, with any theme
+\item Markdown support for any title text, with any theme
 \item Integrated support for any Google Font and any installed system font
 \item An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: \code{theme_minimal2()}
 \item Some conveniences from Microsoft Excel:
@@ -448,22 +441,21 @@ lm(mpg ~ hp, data = mtcars) |>
         smooth.method = "lm",
         smooth.formula = "y ~ log(x)",
         title = "Titles/captions *support* **markdown**",
-        subtitle = "Axis titles contain the square notation: ^2")
+        subtitle = "Axis titles contain the square notation: x^2")
 
 # plot2() also has various other S3 implementations:
 
 # QC plots, according to e.g. Nelson's Quality Control Rules
 if (require("certestats", warn.conflicts = FALSE)) {
-  rnorm(250) |> 
+  rnorm(250, mean = 10, sd = 1) |> 
     qc_test() |> 
     plot2()
 }
         
 # sf objects (geographic plots, 'simple features') are also supported
 if (require("sf")) {
-# even sf datalabels support markdown:
   netherlands |> 
-    plot2(datalabels = paste0(province, "\n", round(area_km2), " km^2"))
+    plot2(datalabels = paste0(province, "\n", round(area_km2)))
 }
 
 # Antimicrobial resistance (AMR) data analysis

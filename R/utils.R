@@ -384,57 +384,6 @@ clean_plot2_env <- function() {
   plot2_env$mapping_facet <- NULL
 }
 
-#' @importFrom ggplot2 aes layer_sf unit
-#' @source https://github.com/wilkelab/ggtext/issues/76#issuecomment-1011166509
-geom_sf_richtext <- function(mapping = aes(),
-                             data = NULL,
-                             stat = "sf_coordinates", 
-                             position = "identity",
-                             ...,
-                             parse = FALSE,
-                             nudge_x = 0, 
-                             nudge_y = 0,
-                             label.padding = unit(0.25, "lines"),
-                             label.r = unit(0.15, "lines"),
-                             label.size = 0.25,
-                             na.rm = FALSE,
-                             show.legend = NA, 
-                             inherit.aes = TRUE,
-                             fun.geometry = NULL) {
-  
-  layer_sf(data = data, mapping = mapping, stat = stat, geom = ggtext::GeomRichText,
-           position = position, show.legend = show.legend, inherit.aes = inherit.aes, 
-           params = list(label.padding = label.padding, 
-                         label.r = label.r,
-                         # I added these two:
-                         label.colour = NA, fill = NA,
-                         label.size = label.size, na.rm = na.rm, 
-                         fun.geometry = fun.geometry, ...))
-}
-#' @importFrom ggplot2 aes layer_sf unit
-geom_sf_richlabel <- function(mapping = aes(),
-                             data = NULL,
-                             stat = "sf_coordinates", 
-                             position = "identity",
-                             ...,
-                             parse = FALSE,
-                             nudge_x = 0, 
-                             nudge_y = 0,
-                             label.padding = unit(0.25, "lines"),
-                             label.r = unit(0.15, "lines"),
-                             label.size = 0.25,
-                             na.rm = FALSE,
-                             show.legend = NA, 
-                             inherit.aes = TRUE,
-                             fun.geometry = NULL) {
-  layer_sf(data = data, mapping = mapping, stat = stat, geom = ggtext::GeomRichText,
-           position = position, show.legend = show.legend, inherit.aes = inherit.aes, 
-           params = list(label.padding = label.padding, 
-                         label.r = label.r,
-                         label.size = label.size, na.rm = na.rm, 
-                         fun.geometry = fun.geometry, ...))
-}
-
 sigfigs <- function(x) {
   nchar(gsub("[.](0+).*", "\\1", as.character(format(x, scientific = FALSE))))
 }

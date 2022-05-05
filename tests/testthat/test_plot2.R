@@ -424,3 +424,18 @@ test_that("Plotly works", {
                   "plotly")
   expect_s3_class(mtcars |> plot2(mpg, hp) |> plotly_style(hoverinfo = "y"), "plotly")
 })
+
+test_that("md to expression works", {
+  expr1 <- md_to_expression("test1 *test2* **test3** ***test4*** _test5_ test6 **_test7_** _**test8**_ test_9 test<sub>10</sub> test^11 test<sup>12</sup>")
+  expect_true(is.expression(expr1))
+  expect_identical(as.character(expr1),
+                   as.character(parse(text = "paste('test1 ', italic('test2'), ' ', bold('test3'), ' ', bolditalic('test4'), ' ', italic('test5'), ' test6 ', bolditalic('test7'), ' ', bolditalic('test8'), ' ', test['9'], ' ', test['10'], ' ', test^'11', ' ', test^'12')")))
+  
+  expr2 <- md_to_expression("test $alpha$")
+  expect_true(is.expression(expr2))
+  
+  expr3 <- md_to_expression("$f[X](x)==frac(1, sigma*sqrt(2*pi))*plain(e)^{frac(-(x-mu)^2, 2*sigma^2)}$")
+  expect_true(is.expression(expr3))
+  
+  expect_error(md_to_expression("test $**$"))
+})
