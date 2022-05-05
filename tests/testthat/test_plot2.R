@@ -335,7 +335,7 @@ test_that("misc elements works", {
 test_that("get title works", {
  p <- plot2(mtcars, title = "Plotting **mpg** vs. **cyl**!")
   expect_equal(get_plot_title(p), "plotting_mpg_vs_cyl")
-  expect_equal(get_plot_title(p, valid_filename = FALSE), "Plotting **mpg** vs. **cyl**!")
+  expect_equal(get_plot_title(p, valid_filename = FALSE), "Plotting mpg vs. cyl!")
   expect_equal(get_plot_title(plot2(mtcars)), NA_character_)
   expect_equal(get_plot_title(plot2(mtcars), default = "test"), "test")
 })

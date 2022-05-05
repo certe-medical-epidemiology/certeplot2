@@ -50,7 +50,8 @@ get_plot_title <- function(plot,
       strsplit("***", fixed = TRUE) |>
       unlist()
     title <- title[which(title != "" & title != "paste(" & 
-                           title != ", italic(" & title != ")" & title != "), ")]
+                           title != ", italic(" & title != ", bold(" & title != ", bolditalic(" &
+                           title != ")" & title != "), ")]
     title <- gsub("_+", " ", concat(title)) |> 
       trimws()
     if (valid_filename == TRUE) {
