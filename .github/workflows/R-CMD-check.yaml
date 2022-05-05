@@ -42,10 +42,9 @@ jobs:
       matrix:
         config:
           - {os: ubuntu-20.04,   r: 'devel',   allowfail: true}
-          - {os: ubuntu-20.04,   r: '4.1',     allowfail: false}
-          - {os: macOS-latest,   r: '4.1',     allowfail: false}
-          - {os: windows-latest, r: '4.1',     allowfail: false}
-          # - {os: windows-latest, r: '3.6',     allowfail: false}
+          - {os: ubuntu-20.04,   r: '4.2',     allowfail: false}
+          - {os: macOS-latest,   r: '4.2',     allowfail: false}
+          - {os: windows-latest, r: '4.2',     allowfail: false}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}

@@ -477,6 +477,9 @@ validate_x_scale <- function(values,
   
   if (isTRUE(x.zoom) && is.null(x.limits)) {
     x.limits <- c(NA_real_, NA_real_)
+    if (is.null(x.expand)) {
+      x.expand <- 0.25
+    }
   }
   
   if (is.null(x.expand)) {
@@ -603,6 +606,9 @@ validate_y_scale <- function(df,
                              big.mark) {
   if (isTRUE(y.zoom) && is.null(y.limits)) {
     y.limits <- c(NA_real_, NA_real_)
+    if (is.null(y.expand)) {
+      y.expand <- 0.25
+    }
   }
   if (is.null(y.trans)) {
     y.trans <- "identity"
@@ -772,16 +778,32 @@ validate_y_scale <- function(df,
     }
   }
   
-  expand_fn <- function(values, y.expand, y.age, stackedpercent) {
+  expand_fn <- function(values, y.expand, y.age, stackedpercent, limits) {
     if (is.function(y.expand)) {
       y.expand
     } else if (isTRUE(y.age) | isTRUE(stackedpercent)) {
       expansion(mult = c(0, 0))
     } else {
-      expansion(mult = c(ifelse(any(values < 0), y.expand, 0),
-                         ifelse(any(values > 0), y.expand, 0)))
+      if (length(y.expand) == 1) {
+        y.expand <- rep(y.expand, 2)
+      }
+      if (is.numeric(limits) && length(limits) == 2) {
+        expansion(mult = c(ifelse(any(values < 0) | is.na(limits[1L]), y.expand[1], 0),
+                           ifelse(any(values > 0) | is.na(limits[2L]), y.expand[2], 0)))
+      } else {
+        expansion(mult = c(ifelse(any(values < 0), y.expand[1], 0),
+                           ifelse(any(values > 0), y.expand[2], 0)))
+      }
     }
   }
+  
+  limits <- limits_fn(values = values,
+                      y.limits,
+                      y.expand = y.expand,
+                      facet.fixed_y = facet.fixed_y,
+                      y.age = y.age,
+                      y.trans = y.trans,
+                      df)
   
   scale_y_continuous(
     breaks = breaks_fn(values = values,
@@ -807,17 +829,12 @@ validate_y_scale <- function(df,
                        stackedpercent = stackedpercent,
                        decimal.mark = decimal.mark,
                        big.mark = big.mark),
-    limits = limits_fn(values = values,
-                       y.limits,
-                       y.expand = y.expand,
-                       facet.fixed_y = facet.fixed_y,
-                       y.age = y.age,
-                       y.trans = y.trans,
-                       df),
+    limits = limits,
     expand = expand_fn(values = values,
                        y.expand = y.expand,
                        y.age = y.age,
-                       stackedpercent = stackedpercent),
+                       stackedpercent = stackedpercent,
+                       limits = limits),
     trans = y.trans,
     position = y.position
   )
@@ -1357,34 +1374,68 @@ validate_markdown <- function(markdown,
   out
 }
 
-validate_titles <- function(text, markdown, max_length = NULL) {
-  if (is_empty(text)) {
-    return(NULL)
+#' @importFrom dplyr mutate
+validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
+  if (isTRUE(try(is_empty(x), silent = TRUE))) {
+    x <- NULL
+  }
+  suppressWarnings(
+    if (isTRUE(try(is.expression(x), silent = TRUE)) ||
+        isTRUE(try(is.null(x), silent = TRUE)) ||
+        isTRUE(try(isTRUE(x), silent = TRUE))) {
+      return(x)
+    }
+  )
+  
+  # support for calculations, e.g. `title = paste("Total number =", n(), "rows")`
+  if (!is.null(df)) {
+    suppressWarnings(
+      tryCatch(
+        out <- df |> 
+          # no tibbles, data.tables, sf, etc. objects:
+          as.data.frame(stringsAsFactors = FALSE) |>
+          mutate(`_new_title` = {{ x }}),
+        error = function(e) {
+          warning("could not calculate title:\n\n",
+                  gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", e$message), call. = FALSE)
+          concat(as.character(x))
+        })
+    )
+    out <- unique(out$`_new_title`)[1L]
   } else {
-    if (is.expression(text)) {
-      return(text)
+    out <- concat(as.character(x))
+  }
+  
+  out_plain <- gsub("[^a-zA-Z0-9, .-]", "", out)
+  
+  # support for markdown
+  if (isTRUE(markdown) &&
+      (isTRUE(out %like% "(\\^|[_*].+[_*])") | isTRUE(out %like% "[$]"))) {
+    out <- md_to_expression(out)
+  }
+  
+  # support overly lengthy titles
+  if (!is.null(max_length) && isTRUE(nchar(out_plain) > as.double(max_length))) {
+    if (is.expression(out)) {
+      x_deparsed <- trimws(deparse(substitute(x)))
+      x_deparsed <- x_deparsed[!x_deparsed %in% c("{", "}")]
+      plot2_warning("Multiple lines in ", font_blue(x_deparsed), 
+                    " cannot be set since it is an expression (does it contain markdown characters?)")
     } else {
-      if (isTRUE(markdown)) {
-        text <- gsub("\n", "<br>", text, fixed = TRUE)
-        text <- gsub(" *\\^ *", "^", text, perl = TRUE)
-      }
-      if (is.null(max_length)) {
-        return(text)
-      } else {
-        return(paste(strwrap(x = text, width = max_length),
-                     collapse = ifelse(isTRUE(markdown), "<br>", "\n")))
-      }
+      out <- gsub("<br>", "\n", out, fixed = TRUE)
+      out <- paste(strwrap(x = out, width = max_length),
+                   collapse = "\n")
     }
   }
+  
+  out
 }
 
 #' @importFrom ggplot2 theme_grey element_blank margin
-#' @importFrom ggtext element_markdown
 #' @importFrom certestyle colourpicker
 validate_theme <- function(theme,
                            type,
                            background,
-                           markdown,
                            text_factor,
                            font,
                            horizontal,
@@ -1418,38 +1469,9 @@ validate_theme <- function(theme,
   
   orginally_empty <- is_empty(theme)
   if (isTRUE(orginally_empty)) {
-    # turn to default ggplot2 theme, so we can at least:
-    # - extend all element_text() classes with element_markdown()
-    # - add all theme options set as arguments, like x.lbl_angle
+    # turn to default ggplot2 theme, so we can at least
+    # add all theme options set as arguments, like x.lbl_angle
     theme <- theme_grey()
-  }
-  
-  if (isTRUE(markdown)) {
-    # add 'element_markdown' to all titles, which the ggtext pkg will use to print in markdown
-    # for this, the ggtext pkg has at least to be installed, but not loaded
-    add_markdown <- function(el) {
-      if (!is.null(el)) {
-        class(el) <- c("element_markdown", class(el))
-      }
-      el
-    }
-    theme$plot.title <- add_markdown(theme$plot.title)
-    theme$plot.subtitle <- add_markdown(theme$plot.subtitle)
-    theme$plot.caption <- add_markdown(theme$plot.caption)
-    theme$plot.tag <- add_markdown(theme$plot.tag)
-    theme$strip.text <- add_markdown(theme$strip.text)
-    theme$axis.title.x <- add_markdown(theme$axis.title.x)
-    theme$axis.title.y <- add_markdown(theme$axis.title.y)
-    theme$legend.title <- add_markdown(theme$legend.title)
-    if (type != "geom_sf") {
-      if (isTRUE(horizontal)) {
-        # values of the turned x axis
-        theme$axis.text.y <- add_markdown(theme$axis.text.y)
-      } else {
-        # values of the x axis
-        theme$axis.text.x <- add_markdown(theme$axis.text.x)
-      }
-    }
   }
   
   # set other properties to theme, that are set in plot2(...)
@@ -1680,22 +1702,14 @@ set_datalabels <- function(p,
   }
   
   original_values <- p$data$`_var_datalabels`
-  if (isTRUE(markdown)) {
-    p$data$`_var_datalabels` <- gsub("\n", "<br>", p$data$`_var_datalabels`, fixed = TRUE)
-    p$data$`_var_datalabels` <- gsub(" *\\^ *", "^", p$data$`_var_datalabels`, perl = TRUE)
-  }
  
   if (!isTRUE(is_sf)) {
     geom_label_fn <- geom_label
     geom_text_fn <- geom_text
     geometry_fix_fn <- NULL
   } else {
-    geom_label_fn <- ifelse(isTRUE(markdown),
-                            geom_sf_richlabel, # manual function in utils.R
-                            geom_sf_label)
-    geom_text_fn <- ifelse(isTRUE(markdown),
-                           geom_sf_richtext, # manual function in utils.R
-                           geom_sf_text)
+    geom_label_fn <- geom_sf_label
+    geom_text_fn <- geom_sf_text
     # these functions from the 'sf' package fix invalid geometries
     st_is_valid <- getExportedValue(name = "st_is_valid", ns = asNamespace("sf"))
     st_point <- getExportedValue(name = "st_point", ns = asNamespace("sf"))

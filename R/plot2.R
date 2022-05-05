@@ -34,13 +34,13 @@
 #' * A shortcut. There is currently one supported shortcut: `"barpercent"`, which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
 #' 
 #' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* print a geom.
-#' @param x.title text to show on the x axis, supports calculations over `.data`
-#' @param y.title text to show on the y axis, supports calculations over `.data`
-#' @param category.title title of the legend (if `legend.title` is not set), supports calculations over `.data` and defaults to `TRUE` if the legend items are numeric
-#' @param title title to show, supports calculations over `.data`
-#' @param subtitle subtitle to show, supports calculations over `.data`
-#' @param caption caption to show, supports calculations over `.data`
-#' @param tag tag to show, supports calculations over `.data`
+#' @param title,subtitle,caption,tag,x.title,y.title,category.title,legend.title a title to use. This can be:
+#' 
+#' * An [expression]
+#' * A [character], which supports markdown using [md_to_expression()] if `markdown = TRUE`
+#' * A vector of characters and functions, which allows calculations over `.data` (see *Examples*)
+#' 
+#' The category title defaults to `TRUE` if the legend items are numeric.
 #' @param title.linelength maximum number of characters per line in the title, before a linebreak occurs
 #' @param title.colour text colour of the title
 #' @param subtitle.linelength maximum number of characters per line in the subtitle, before a linebreak occurs
@@ -108,7 +108,6 @@
 #' @param jitter_seed seed (randomisation factor) to be set when using `type = "jitter"`
 #' @param violin_scale scale to be set when using `type = "violin"`, can also be set to `"area"`
 #' @param legend.position position of the legend, must be `"top"`, `"right"`, `"bottom"`, `"left"` or `"none"` (or `NA` or `NULL`), can be abbreviated. Defaults to `"right"` for numeric `category` values and 'sf' plots, and `"top"` otherwise.
-#' @param legend.title title of the legend (if `category.title` is not set), supports calculations over `.data` and defaults to `TRUE` if the legend items are numeric
 #' @param legend.reverse,legend.barheight,legend.barwidth,legend.nbin,legend.italic other settings for the legend
 #' @param zoom a [logical] to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0. This will set `x.zoom = TRUE` and `y.zoom = TRUE`.
 #' @param sep separator character to use if multiple columns are given to either of the three directions: `x`, `category` and `facet`, e.g. `facet = c(column1, column2)`
@@ -117,17 +116,17 @@
 #' @param font font (family) to use, can be set with `options(plot2.font = "...")`. Can be any installed system font or any of the > 1000 font names from [Google Fonts](https://fonts.google.com).
 #' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`). Can be set with `options(plot2.theme = "...")`.
 #' @param background the background colour of the entire plot, can also be `NA` to remove it. Only applies when `theme` is not empty.
-#' @param markdown a [logical] to turn all labels and titles into markdown-supported labels, by extending their S3 classes with [`"element_markdown"`][ggtext::element_markdown()], a feature of the `ggtext` package. Defaults to `TRUE` only if any of the titles/labels contains markdown characters.
+#' @param markdown a [logical] to turn all labels and titles into [plotmath] expressions, by converting common markdown language using the [md_to_expression()] function (defaults to `TRUE`)
 #' @param taxonomy_italic a [logical] to transform all labels and titles into italics that are in the `microorganisms` data set of the `AMR` package
 #' @param ... arguments passed on to methods
 #' @details The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions such as [`ggplot()`][ggplot2::ggplot()], [`aes()`][ggplot2::aes()], [`geom_col()`][ggplot2::geom_col()], [`facet_wrap()`][ggplot2::facet_wrap()], [`labs()`][ggplot2::labs()], etc., and provides:
 #'   * Writing as few lines of codes as possible
 #'   * Easy plotting in three 'directions': `x` (the regular x axis), `category` (replaces 'fill' and 'colour') and `facet`
 #'   * Automatic setting of these 'directions' based on the input data
-#'   * Setting in-place calculations for all plotting direction and even `y`
+#'   * Setting in-place calculations for all plotting directions and even `y`
 #'   * Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': `x.sort`, `category.sort` and `facet.sort`
 #'   * Easy limiting values, e.g. by setting `x.max_items = 5` or `category.max_items = 5`
-#'   * Markdown support for any label, with any theme
+#'   * Markdown support for any title text, with any theme
 #'   * Integrated support for any Google Font and any installed system font
 #'   * An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: `theme_minimal2()`
 #'   * Some conveniences from Microsoft Excel:
@@ -241,22 +240,21 @@
 #'         smooth.method = "lm",
 #'         smooth.formula = "y ~ log(x)",
 #'         title = "Titles/captions *support* **markdown**",
-#'         subtitle = "Axis titles contain the square notation: ^2")
+#'         subtitle = "Axis titles contain the square notation: x^2")
 #' 
 #' # plot2() also has various other S3 implementations:
 #' 
 #' # QC plots, according to e.g. Nelson's Quality Control Rules
 #' if (require("certestats", warn.conflicts = FALSE)) {
-#'   rnorm(250) |> 
+#'   rnorm(250, mean = 10, sd = 1) |> 
 #'     qc_test() |> 
 #'     plot2()
 #' }
 #'         
 #' # sf objects (geographic plots, 'simple features') are also supported
 #' if (require("sf")) {
-#' # even sf datalabels support markdown:
 #'   netherlands |> 
-#'     plot2(datalabels = paste0(province, "\n", round(area_km2), " km^2"))
+#'     plot2(datalabels = paste0(province, "\n", round(area_km2)))
 #' }
 #' 
 #' # Antimicrobial resistance (AMR) data analysis
@@ -274,8 +272,8 @@ plot2 <- function(.data,
                   category = NULL,
                   facet = NULL,
                   type = NULL,
-                  x.title = NULL,
-                  y.title = NULL,
+                  x.title = TRUE,
+                  y.title = TRUE,
                   category.title = NULL,
                   title = NULL,
                   subtitle = NULL,
@@ -391,7 +389,7 @@ plot2 <- function(.data,
                   font = getOption("plot2.font"),
                   theme = getOption("plot2.theme", "theme_minimal2"),
                   background = "white",
-                  markdown = NULL,
+                  markdown = TRUE,
                   taxonomy_italic = FALSE,
                   ...) {
   
@@ -404,7 +402,6 @@ plot2 <- function(.data,
       validate_theme(theme = theme,
                      type = "",
                      background = background,
-                     markdown = markdown,
                      text_factor = text_factor,
                      font = font,
                      horizontal = horizontal,
@@ -420,12 +417,12 @@ plot2 <- function(.data,
                      legend.italic = legend.italic,
                      title.colour = title.colour,
                      subtitle.colour = subtitle.colour)
-    if (!missing(x.title)) p <- p + labs(x = validate_titles(x.title, markdown = markdown))
-    if (!missing(y.title)) p <- p + labs(y = validate_titles(y.title, markdown = markdown))
-    if (!missing(title)) p <- p + labs(title = validate_titles(title, markdown = markdown, max_length = title.linelength))
-    if (!missing(subtitle)) p <- p + labs(subtitle = validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
-    if (!missing(tag)) p <- p + labs(tag = validate_titles(tag, markdown = markdown))
-    if (!missing(caption)) p <- p + labs(caption = validate_titles(caption, markdown = markdown))
+    if (!missing(x.title)) p <- p + labs(x = validate_title(x.title, markdown = markdown))
+    if (!missing(y.title)) p <- p + labs(y = validate_title(y.title, markdown = markdown))
+    if (!missing(title)) p <- p + labs(title = validate_title(title, markdown = markdown, max_length = title.linelength))
+    if (!missing(subtitle)) p <- p + labs(subtitle = validate_title(subtitle, markdown = markdown, max_length = subtitle.linelength))
+    if (!missing(tag)) p <- p + labs(tag = validate_title(tag, markdown = markdown))
+    if (!missing(caption)) p <- p + labs(caption = validate_title(caption, markdown = markdown))
     if (isTRUE(print)) {
       print(p)
       return(invisible())
@@ -631,28 +628,14 @@ plot2_exec <- function(.data,
   
   # get titles based on raw data ----
   # compute contents of title arguments
-  suppressWarnings(
-    tryCatch(titles <- .data |>
-               # no tibbles, data.tables, sf, etc. objects:
-               as.data.frame(stringsAsFactors = FALSE) |> 
-               mutate(title = {{ title }},
-                      subtitle = {{ subtitle }},
-                      caption = {{ caption }},
-                      tag = {{ tag }},
-                      x.title = {{ x.title }},
-                      y.title = {{ y.title }},
-                      legend.title = {{ legend.title }},
-                      category.title = {{ category.title }}),
-             error = function(e) stop(gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", e$message), call. = FALSE))
-  )
-  title <- unique(titles$title)[1L]
-  subtitle <- unique(titles$subtitle)[1L]
-  caption <- unique(titles$caption)[1L]
-  tag <- unique(titles$tag)[1L]
-  x.title <- unique(titles$x.title)[1L]
-  y.title <- unique(titles$y.title)[1L]
-  legend.title <- unique(titles$legend.title)[1L]
-  category.title <- unique(titles$category.title)[1L]
+  title <- validate_title({{ title }}, markdown = isTRUE(markdown), df = .data, max_length = title.linelength)
+  subtitle <- validate_title({{ subtitle }}, markdown = isTRUE(markdown), df = .data, max_length = subtitle.linelength)
+  caption <- validate_title({{ caption }}, markdown = isTRUE(markdown), df = .data)
+  tag <- validate_title({{ tag }}, markdown = isTRUE(markdown), df = .data)
+  x.title <- validate_title({{ x.title }}, markdown = isTRUE(markdown), df = .data)
+  y.title <- validate_title({{ y.title }}, markdown = isTRUE(markdown), df = .data)
+  legend.title <- validate_title({{ legend.title }}, markdown = isTRUE(markdown), df = .data)
+  category.title <- validate_title({{ category.title }}, markdown = isTRUE(markdown), df = .data)
   # category.title and legend.title both exist for convenience
   legend.title <- if (is.null(category.title)) legend.title else category.title
   
@@ -765,12 +748,12 @@ plot2_exec <- function(.data,
       df <- df |>
         mutate(across(where(is.character), make_taxonomy_italic),
                across(where(is.factor), ~fct_relabel(.x, make_taxonomy_italic)))
-      if (!misses_x.title) x.title <- make_taxonomy_italic(validate_titles(x.title, markdown = markdown))
-      if (!misses_y.title) y.title <- make_taxonomy_italic(validate_titles(y.title, markdown = markdown))
-      if (!misses_title) title <- make_taxonomy_italic(validate_titles(title, markdown = markdown, max_length = title.linelength))
-      if (!misses_subtitle) subtitle <- make_taxonomy_italic(validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
-      if (!misses_tag) tag <- make_taxonomy_italic(validate_titles(tag, markdown = markdown))
-      if (!misses_caption) caption <- make_taxonomy_italic(validate_titles(caption, markdown = markdown))
+      if (!misses_x.title) x.title <- make_taxonomy_italic(validate_title(x.title, markdown = markdown))
+      if (!misses_y.title) y.title <- make_taxonomy_italic(validate_title(y.title, markdown = markdown))
+      if (!misses_title) title <- make_taxonomy_italic(validate_title(title, markdown = markdown, max_length = title.linelength))
+      if (!misses_subtitle) subtitle <- make_taxonomy_italic(validate_title(subtitle, markdown = markdown, max_length = subtitle.linelength))
+      if (!misses_tag) tag <- make_taxonomy_italic(validate_title(tag, markdown = markdown))
+      if (!misses_caption) caption <- make_taxonomy_italic(validate_title(caption, markdown = markdown))
     }
   }
   
@@ -792,12 +775,6 @@ plot2_exec <- function(.data,
   if (isTRUE(zoom)) {
     x.zoom <- TRUE
     y.zoom <- TRUE
-  }
-  if (isTRUE(x.zoom)) {
-    x.expand <- 0
-  }
-  if (isTRUE(y.zoom)) {
-    y.expand <- 0
   }
   
   # check if markdown is required
@@ -1063,7 +1040,6 @@ plot2_exec <- function(.data,
     validate_theme(theme = theme,
                    type = type,
                    background = background,
-                   markdown = markdown,
                    text_factor = text_factor,
                    font = font,
                    horizontal = horizontal,
@@ -1081,28 +1057,37 @@ plot2_exec <- function(.data,
                    subtitle.colour = subtitle.colour)
   
   # add titles ----
-  if (!misses_x.title) p <- p + labs(x = validate_titles(x.title, markdown = markdown)) # this will overwrite the var name
-  if (!misses_y.title) p <- p + labs(y = validate_titles(y.title, markdown = markdown)) # this will overwrite the var name
-  if (!misses_title) p <- p + labs(title = validate_titles(title, markdown = markdown, max_length = title.linelength))
-  if (!misses_subtitle) p <- p + labs(subtitle = validate_titles(subtitle, markdown = markdown, max_length = subtitle.linelength))
-  if (!misses_tag) p <- p + labs(tag = validate_titles(tag, markdown = markdown))
-  if (!misses_caption) p <- p + labs(caption = validate_titles(caption, markdown = markdown))
+  if (!misses_title) p <- p + labs(title = title)
+  if (!misses_subtitle) p <- p + labs(subtitle = subtitle)
+  if (!misses_tag) p <- p + labs(tag = tag)
+  if (!misses_caption) p <- p + labs(caption = caption)
+  
+  if (isTRUE(x.title)) {
+    x.title <- validate_title(get_x_name(df), markdown = isTRUE(markdown), df = df)
+  }
+  p <- p + labs(x = x.title)
+  
+  if (isTRUE(y.title)) {
+    y.title <- validate_title(get_y_name(df), markdown = isTRUE(markdown), df = df)
+  }
+  p <- p + labs(y = y.title)
+  
   if (has_category(df)) {
     # legend
     if (is.null(legend.title) && data_is_numeric(get_category(df))) {
       legend.title <- TRUE
     }
     if (isTRUE(legend.title)) {
-      legend.title <- get_category_name(df)
+      legend.title <- validate_title(get_category_name(df), markdown = isTRUE(markdown), df = df)
     }
     if ("colour" %in% names(mapping)) {
-      p <- p + labs(colour = validate_titles(legend.title, markdown = markdown))
+      p <- p + labs(colour = legend.title)
     }
     if ("fill" %in% names(mapping)) {
-      p <- p + labs(fill = validate_titles(legend.title, markdown = markdown))
+      p <- p + labs(fill = legend.title)
     }
     if ("group" %in% names(mapping)) {
-      p <- p + labs(group = validate_titles(legend.title, markdown = markdown))
+      p <- p + labs(group = legend.title)
     }
   }
   

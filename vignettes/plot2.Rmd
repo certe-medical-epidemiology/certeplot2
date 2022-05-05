@@ -35,10 +35,10 @@ The `plot2()` function is a convenient wrapper around many `ggplot2` functions s
   * Writing as few lines of codes as possible
   * Easy plotting in three 'directions': `x` (the regular x axis), `category` (replaces 'fill' and 'colour') and `facet`
   * Automatic setting of these 'directions' based on the input data
-  * Setting in-place calculations for all plotting direction and even `y`
+  * Setting in-place calculations for all plotting directions and even `y`
   * Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': `x.sort`, `category.sort` and `facet.sort`
   * Easy limiting values, e.g. by setting `x.max_items = 5` or `category.max_items = 5`
-  * Markdown support for any label, with any theme
+  * Markdown support for any title text, with any theme
   * Integrated support for any Google Font and any installed system font
   * An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: `theme_minimal2()`
   * Some conveniences from Microsoft Excel:
@@ -50,7 +50,7 @@ The `plot2()` function is a convenient wrapper around many `ggplot2` functions s
   
 The `ggplot2` package in conjunction with the `dplyr`, `forcats` and `cleaner` packages can provide above functionalities, but *the goal of the `plot2()` function is to generalise this into one function*. The default `plot2()` function currently has `r length(args)` arguments, all with a default value. Every `plot2` is just a `ggplot` object, and thus extendible and editable with any other `ggplot2` function, using `+` (per the `ggplot2` convention`).
 
-Adding layers atop of other layers using functions (i.e., how `ggplot2` works) is conceptually pure brilliance. But the costs are at the user's side: it lacks convenience as it requires a lot of recurrent code. Who wants to type `ggplot()`, `aes()` and `geom_whatever()` and their arguments over and over again, and then add another bunch of functions to get the desired style? The `plot2()` function is arguably what `ggplot2::qplot()` could have been. 
+Adding layers atop of other layers using functions (i.e., how `ggplot2` works) is conceptually pure brilliance. But the costs are at the user's side: it lacks convenience as it requires a lot of recurrent code. Who wants to type `ggplot()`, `aes()` and `geom_whatever()` and their arguments over and over again, and then add another bunch of functions to get the desired scales and style? The `plot2()` function is arguably what `ggplot2::qplot()` could have been. 
 
 ### Initialisation
 
@@ -272,7 +272,7 @@ This input for `category.focus` can be the name of the value (in this case `"b"`
 
 The `facet` plotting direction splits the plot into multiple plots. Several settings are available: `r paste0("'", sort(facet_settings), "'", collapse = ", ")`.
 
-For controlling the `y` axis, `facet.repeat_lbls_y` (defaults to `FALSE`) makes sure that all plots have the same y axis (also notice that the `y` argument is set to the number of rows with `n()`):
+For controlling the `y` axis, `facet.repeat_lbls_y` (defaults to `TRUE`) makes sure that all plots have their own y axis (also notice that the `y` argument is set to the number of rows with `n()`):
 
 ```{r}
 admitted_patients
@@ -282,7 +282,7 @@ admitted_patients |>
         caption = "Same y axes")
 admitted_patients |>
   plot2(x = age_group, y = n(), facet = hospital,
-        facet.repeat_lbls_y = TRUE,
+        facet.repeat_lbls_y = FALSE,
         caption = "All y axes on their own")
 ```
 
@@ -454,7 +454,7 @@ admitted_patients |>
 
 Now, we had to use 14 functions to get the plot - while defining all variables twice - written in 17 lines of code using the same common code style as above. Even the bare functional part (until `geom_col()`) took 7 functions. Aside from it being a lot of redundant code, using all of these functions requires users to know them *and* their arguments. How many users would know `expansion()`, or that colours can be named in `scale_fill_manual()`? The obligations on the user side are quite insane.
 
-And why is 2014 still so wide?? I'll give you this: if you know the solution, you're way deeper into `ggplot2` than should ever be necessary for an R package. 
+And why is 2014 still so wide?? Look at it like this: if you know the solution, you're way deeper into `ggplot2` than should ever be necessary for an R package. 
 
 # Support for any font, including all Google Fonts
 
@@ -464,6 +464,29 @@ Any installed font and any of the [over 1400 Google Fonts](https://fonts.google.
 mtcars |>
   plot2(mpg, hp, font = "Rock Salt",
         title = "This plot uses a Google Font")
+```
+
+# Markdown and plotmath expressions
+
+`plot2()` provides support for markdown and advanced plotmath expressions, by running all title texts through the helper function `md_to_expression()`:
+
+```{r}
+md_to_expression("This is *italic*, **bold** and ***bold-italic*** text")
+
+mtcars |>
+  plot2(mpg ^ 2, hp ^ 2,
+        title = "This is *italic*, **bold** and ***bold-italic*** text",
+        subtitle = "And these are the **Greek** lower $omega$ and upper $Omega$",
+        caption = "Notice the x and y axis titles?")
+```
+
+Combined markdown, in-line calculations and plotmath is also supported:
+
+```{r}
+mtcars |>
+  plot2(mpg, hp,
+        title = paste("This is about **n =", n(), "cars** in total"),
+        subtitle = paste("$sum(x[i], i==1, n)$ =", n()))
 ```
 
 # Plotting geometries (`sf` objects)

@@ -18,8 +18,8 @@
   category = NULL,
   facet = NULL,
   type = NULL,
-  x.title = NULL,
-  y.title = NULL,
+  x.title = TRUE,
+  y.title = TRUE,
   category.title = NULL,
   title = NULL,
   subtitle = NULL,
@@ -135,7 +135,7 @@
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
-  markdown = NULL,
+  markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
 )
@@ -147,8 +147,8 @@
   category = NULL,
   facet = NULL,
   type = NULL,
-  x.title = NULL,
-  y.title = NULL,
+  x.title = TRUE,
+  y.title = TRUE,
   category.title = NULL,
   title = NULL,
   subtitle = NULL,
@@ -264,7 +264,7 @@
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
-  markdown = NULL,
+  markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
 )
@@ -278,7 +278,7 @@
   type = NULL,
   x.title = "Item",
   y.title = "Count",
-  category.title = NULL,
+  category.title = TRUE,
   title = NULL,
   subtitle = NULL,
   caption = NULL,
@@ -393,7 +393,7 @@
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
-  markdown = NULL,
+  markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
 )
@@ -405,8 +405,8 @@
   category = NULL,
   facet = NULL,
   type = NULL,
-  x.title = NULL,
-  y.title = NULL,
+  x.title = FALSE,
+  y.title = FALSE,
   category.title = NULL,
   title = NULL,
   subtitle = NULL,
@@ -525,7 +525,7 @@
     5), units = "pt"), axis.title = element_blank(), axis.text = element_blank(),
     axis.line = element_blank(), axis.ticks = element_blank()),
   background = "white",
-  markdown = NULL,
+  markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
 )
@@ -537,8 +537,8 @@
   category = NULL,
   facet = NULL,
   type = NULL,
-  x.title = NULL,
-  y.title = NULL,
+  x.title = TRUE,
+  y.title = TRUE,
   category.title = NULL,
   title = NULL,
   subtitle = NULL,
@@ -654,7 +654,7 @@
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
-  markdown = NULL,
+  markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
 )
@@ -666,8 +666,8 @@
   category = name,
   facet = mo,
   type = "column",
-  x.title = "",
-  y.title = "",
+  x.title = FALSE,
+  y.title = FALSE,
   category.title = NULL,
   title = NULL,
   subtitle = NULL,
@@ -783,7 +783,7 @@
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
-  markdown = NULL,
+  markdown = TRUE,
   taxonomy_italic = TRUE,
   minimum = 30,
   remove_intrinsic_resistant = TRUE,
@@ -798,8 +798,8 @@
   category = rule,
   facet = NULL,
   type = "point",
-  x.title = FALSE,
-  y.title = FALSE,
+  x.title = "Index",
+  y.title = "Value",
   category.title = NULL,
   title = paste0("QC Chart (", attributes(.data)$guideline, ")"),
   subtitle = NULL,
@@ -850,7 +850,7 @@
   x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
-  x.zoom = FALSE,
+  x.zoom = TRUE,
   y.remove = FALSE,
   y.24h = FALSE,
   y.age = FALSE,
@@ -864,7 +864,7 @@
   y.expand = NULL,
   y.trans = "identity",
   y.position = "left",
-  y.zoom = FALSE,
+  y.zoom = TRUE,
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -917,7 +917,7 @@
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
-  markdown = NULL,
+  markdown = TRUE,
   taxonomy_italic = FALSE,
   ...
 )
@@ -940,19 +940,68 @@
 \item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X axis or if the length of unique values per X axis item is at least 3, \code{"point"} if both the Y and X axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} print a geom.
 }}
 
-\item{x.title}{text to show on the x axis, supports calculations over \code{.data}}
+\item{x.title}{a title to use. This can be:
+\itemize{
+\item An \link{expression}
+\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
+}
 
-\item{y.title}{text to show on the y axis, supports calculations over \code{.data}}
+The category title defaults to \code{TRUE} if the legend items are numeric.}
 
-\item{category.title}{title of the legend (if \code{legend.title} is not set), supports calculations over \code{.data} and defaults to \code{TRUE} if the legend items are numeric}
+\item{y.title}{a title to use. This can be:
+\itemize{
+\item An \link{expression}
+\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
+}
 
-\item{title}{title to show, supports calculations over \code{.data}}
+The category title defaults to \code{TRUE} if the legend items are numeric.}
 
-\item{subtitle}{subtitle to show, supports calculations over \code{.data}}
+\item{category.title}{a title to use. This can be:
+\itemize{
+\item An \link{expression}
+\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
+}
 
-\item{caption}{caption to show, supports calculations over \code{.data}}
+The category title defaults to \code{TRUE} if the legend items are numeric.}
 
-\item{tag}{tag to show, supports calculations over \code{.data}}
+\item{title}{a title to use. This can be:
+\itemize{
+\item An \link{expression}
+\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
+}
+
+The category title defaults to \code{TRUE} if the legend items are numeric.}
+
+\item{subtitle}{a title to use. This can be:
+\itemize{
+\item An \link{expression}
+\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
+}
+
+The category title defaults to \code{TRUE} if the legend items are numeric.}
+
+\item{caption}{a title to use. This can be:
+\itemize{
+\item An \link{expression}
+\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
+}
+
+The category title defaults to \code{TRUE} if the legend items are numeric.}
+
+\item{tag}{a title to use. This can be:
+\itemize{
+\item An \link{expression}
+\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
+}
+
+The category title defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{title.linelength}{maximum number of characters per line in the title, before a linebreak occurs}
 
@@ -1178,7 +1227,14 @@
 
 \item{legend.position}{position of the legend, must be \code{"top"}, \code{"right"}, \code{"bottom"}, \code{"left"} or \code{"none"} (or \code{NA} or \code{NULL}), can be abbreviated. Defaults to \code{"right"} for numeric \code{category} values and 'sf' plots, and \code{"top"} otherwise.}
 
-\item{legend.title}{title of the legend (if \code{category.title} is not set), supports calculations over \code{.data} and defaults to \code{TRUE} if the legend items are numeric}
+\item{legend.title}{a title to use. This can be:
+\itemize{
+\item An \link{expression}
+\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
+}
+
+The category title defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{legend.reverse}{other settings for the legend}
 
@@ -1204,7 +1260,7 @@
 
 \item{background}{the background colour of the entire plot, can also be \code{NA} to remove it. Only applies when \code{theme} is not empty.}
 
-\item{markdown}{a \link{logical} to turn all labels and titles into markdown-supported labels, by extending their S3 classes with \code{\link[ggtext:element_markdown]{"element_markdown"}}, a feature of the \code{ggtext} package. Defaults to \code{TRUE} only if any of the titles/labels contains markdown characters.}
+\item{markdown}{a \link{logical} to turn all labels and titles into \link{plotmath} expressions, by converting common markdown language using the \code{\link[=md_to_expression]{md_to_expression()}} function (defaults to \code{TRUE})}
 
 \item{taxonomy_italic}{a \link{logical} to transform all labels and titles into italics that are in the \code{microorganisms} data set of the \code{AMR} package}
 

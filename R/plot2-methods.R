@@ -31,8 +31,8 @@ plot2.default <- function(.data,
                           category = NULL,
                           facet = NULL,
                           type = NULL,
-                          x.title = NULL,
-                          y.title = NULL,
+                          x.title = TRUE,
+                          y.title = TRUE,
                           category.title = NULL,
                           title = NULL,
                           subtitle = NULL,
@@ -148,7 +148,7 @@ plot2.default <- function(.data,
                           font = getOption("plot2.font"),
                           theme = getOption("plot2.theme", "theme_minimal2"),
                           background = "white",
-                          markdown = NULL,
+                          markdown = TRUE,
                           taxonomy_italic = FALSE,
                           ...) {
   
@@ -315,8 +315,8 @@ plot2.numeric <- function(.data,
                           category = NULL,
                           facet = NULL,
                           type = NULL,
-                          x.title = NULL,
-                          y.title = NULL,
+                          x.title = TRUE,
+                          y.title = TRUE,
                           category.title = NULL,
                           title = NULL,
                           subtitle = NULL,
@@ -432,7 +432,7 @@ plot2.numeric <- function(.data,
                           font = getOption("plot2.font"),
                           theme = getOption("plot2.theme", "theme_minimal2"),
                           background = "white",
-                          markdown = NULL,
+                          markdown = TRUE,
                           taxonomy_italic = FALSE,
                           ...) {
   y_deparse <- deparse(substitute(.data))
@@ -617,7 +617,7 @@ plot2.freq <- function(.data,
                        type = NULL,
                        x.title = "Item",
                        y.title = "Count",
-                       category.title = NULL,
+                       category.title = TRUE,
                        title = NULL,
                        subtitle = NULL,
                        caption = NULL,
@@ -732,7 +732,7 @@ plot2.freq <- function(.data,
                        font = getOption("plot2.font"),
                        theme = getOption("plot2.theme", "theme_minimal2"),
                        background = "white",
-                       markdown = NULL,
+                       markdown = TRUE,
                        taxonomy_italic = FALSE,
                        ...) {
   plot2_exec(as.data.frame(.data, stringsAsFactors = FALSE)[, 1:2, drop = FALSE],
@@ -893,8 +893,8 @@ plot2.sf <- function(.data,
                      category = NULL,
                      facet = NULL,
                      type = NULL,
-                     x.title = NULL,
-                     y.title = NULL,
+                     x.title = FALSE,
+                     y.title = FALSE,
                      category.title = NULL,
                      title = NULL,
                      subtitle = NULL,
@@ -1017,7 +1017,7 @@ plot2.sf <- function(.data,
                                             axis.line = element_blank(),
                                             axis.ticks = element_blank()),
                      background = "white",
-                     markdown = NULL,
+                     markdown = TRUE,
                      taxonomy_italic = FALSE,
                      ...) {
   if (!"sf" %in% rownames(utils::installed.packages())) {
@@ -1201,8 +1201,8 @@ plot2.data.frame <- function(.data,
                              category = NULL,
                              facet = NULL,
                              type = NULL,
-                             x.title = NULL,
-                             y.title = NULL,
+                             x.title = TRUE,
+                             y.title = TRUE,
                              category.title = NULL,
                              title = NULL,
                              subtitle = NULL,
@@ -1318,7 +1318,7 @@ plot2.data.frame <- function(.data,
                              font = getOption("plot2.font"),
                              theme = getOption("plot2.theme", "theme_minimal2"),
                              background = "white",
-                             markdown = NULL,
+                             markdown = TRUE,
                              taxonomy_italic = FALSE,
                              ...) {
   
@@ -1488,8 +1488,8 @@ plot2.bug_drug_combinations <- function(.data,
                                         category = name,
                                         facet = mo,
                                         type = "column",
-                                        x.title = "",
-                                        y.title = "",
+                                        x.title = FALSE,
+                                        y.title = FALSE,
                                         category.title = NULL,
                                         title = NULL,
                                         subtitle = NULL,
@@ -1605,7 +1605,7 @@ plot2.bug_drug_combinations <- function(.data,
                                         font = getOption("plot2.font"),
                                         theme = getOption("plot2.theme", "theme_minimal2"),
                                         background = "white",
-                                        markdown = NULL,
+                                        markdown = TRUE,
                                         taxonomy_italic = TRUE,
                                         minimum = 30,
                                         remove_intrinsic_resistant = TRUE,
@@ -1778,7 +1778,6 @@ plot2.bug_drug_combinations <- function(.data,
 
 #' @rdname plot2-methods
 #' @importFrom ggplot2 geom_hline geom_point geom_line element_text
-#' @importFrom ggtext element_markdown
 #' @importFrom certestyle colourpicker
 #' @details The QC-test can be acquired with [certestats::qc_test()]. It applies the Nelson QC rules for a vector of values.
 #' @export
@@ -1788,8 +1787,8 @@ plot2.qc_test <- function(.data,
                           category = rule,
                           facet = NULL,
                           type = "point",
-                          x.title = FALSE,
-                          y.title = FALSE,
+                          x.title = "Index",
+                          y.title = "Value",
                           category.title = NULL,
                           title = paste0("QC Chart (", attributes(.data)$guideline, ")"),
                           subtitle = NULL,
@@ -1846,7 +1845,7 @@ plot2.qc_test <- function(.data,
                           x.labels = NULL,
                           x.character = NULL,
                           x.drop = FALSE,
-                          x.zoom = FALSE,
+                          x.zoom = TRUE,
                           y.remove = FALSE,
                           y.24h = FALSE,
                           y.age = FALSE,
@@ -1860,7 +1859,7 @@ plot2.qc_test <- function(.data,
                           y.expand = NULL,
                           y.trans = "identity",
                           y.position = "left",
-                          y.zoom = FALSE,
+                          y.zoom = TRUE,
                           category.labels = NULL,
                           category.percent = FALSE,
                           category.breaks = NULL,
@@ -1913,12 +1912,9 @@ plot2.qc_test <- function(.data,
                           font = getOption("plot2.font"),
                           theme = getOption("plot2.theme", "theme_minimal2"),
                           background = "white",
-                          markdown = NULL,
+                          markdown = TRUE,
                           taxonomy_italic = FALSE,
                           ...) {
-  
-  # check if markdown is required
-  markdown <- validate_markdown(markdown, x.title, y.title, c(category.title, legend.title), title, subtitle, tag, caption)
   
   att <- attributes(.data)
   df <- data.frame(x = seq_len(length(att$values)),
@@ -1950,11 +1946,7 @@ plot2.qc_test <- function(.data,
     threshold <- att$threshold[rules]
     caption <- "\n"
     for (i in seq_len(length(rules))) {
-      if (isTRUE(markdown)) {
-        rule <- paste0("**Rule ", rules[i], ":**")
-      } else {
-        rule <- paste0("Rule ", rules[i], ":")
-      }
+      rule <- paste0("Rule ", rules[i], ":")
       caption <- c(caption, 
                    paste(rule, qc_rule_text(rules[i], threshold[i])))
     }
@@ -2110,11 +2102,7 @@ plot2.qc_test <- function(.data,
                   ...)
   
   # left align the rule texts
-  if (isTRUE(markdown)) {
-    p <- p + theme(plot.caption = element_markdown(hjust = 0))
-  } else {
-    p <- p + theme(plot.caption = element_text(hjust = 0))
-  }
+  p <- p + theme(plot.caption = element_text(hjust = 0))
   
   # add reference lines
   p <- p +
