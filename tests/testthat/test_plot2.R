@@ -215,7 +215,7 @@ test_that("max items and sorting work", {
                        x.sort = "freq-desc",
                        x.max_items = 5) |>
                  get_range_x(),
-               c("2010", "2003", "2017", "2016", "(rest, x 12)"))
+               c("2010", "2003", "2017", "2016", "(rest, x12)"))
   
   expect_s3_class(admitted_patients |>
                     plot2(x = format(date, "%Y"), y = n(), category = hospital, facet = age_group,
@@ -329,7 +329,10 @@ test_that("blank plot works", {
 })
 
 test_that("misc elements works", {
-  expect_s3_class(plotdata |> plot2(x_char, taxonomy_italic = TRUE), "gg")
+  expect_s3_class(plotdata |> plot2(x_char, x.lbl_taxonomy = TRUE), "gg")
+  expect_s3_class(AMR::example_isolates |>
+                    cleaner::freq(AMR::mo_name(mo, "nl")) |>
+                    plot2(type = "barpercent", x.lbl_taxonomy = TRUE), "gg")
 })
 
 test_that("get title works", {

@@ -114,14 +114,17 @@ md_to_expression <- function(x) {
   }
   
   # clean up
-  out <- gsub("^', '?", "", out)
+  out <- gsub("^', '?'?", "", out)
   out <- gsub("^'', ", "", out)
   out <- gsub(", ''$", "", out)
   out <- gsub(", '$", "", out)
-  out <- gsub("''", "'", out)
+  out <- gsub("''", "'", out, fixed = TRUE)
+  out <- gsub("), ', '^", ")^", out, fixed = TRUE)
+  out <- gsub(", '^", "^", out, fixed = TRUE)
+  out <- gsub("^, ", "", out)
   
   tryCatch(parse(text = paste0("paste(", out, ")")),
-           error = function(e) stop("This markdown cannot be parsed: ", e$message,
-                                    "\nFor more complex expressions, start and end with '$' to write in plotmath.",
+           error = function(e) stop("This cannot be parsed by md_to_expression(): \"", out,
+                                    "\"\n\nFor more complex expressions, start and end with '$' to write in plotmath, or use parse(text = \"...\").",
                                     call. = FALSE))
 }
