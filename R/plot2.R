@@ -36,8 +36,8 @@
 #' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* print a geom.
 #' @param title,subtitle,caption,tag,x.title,y.title,category.title,legend.title a title to use. This can be:
 #' 
-#' * An [expression]
-#' * A [character], which supports markdown using [md_to_expression()] if `markdown = TRUE`
+#' * An [expression], e.g. using `parse(text = "...")`
+#' * A [character], which supports markdown by using [md_to_expression()] internally if `markdown = TRUE`
 #' * A vector of characters and functions, which allows calculations over `.data` (see *Examples*)
 #' 
 #' The category title defaults to `TRUE` if the legend items are numeric.
@@ -58,6 +58,7 @@
 #' @param x.lbl_angle angle to use for the x axis in a counter-clockwise direction (i.e., a value of `90` will orient the axis labels from bottom to top, a value of `270` will orient the axis labels from top to bottom)
 #' @param x.lbl_align alignment for the x axis between `0` (left aligned) and `1` (right aligned)
 #' @param x.lbl_italic [logical] to indicate whether the x labels should in in *italics*
+#' @param x.lbl_taxonomy a [logical] to transform all words of the `x` labels into italics that are in the [microorganisms][AMR::microorganisms] data set of the `AMR` package. This uses [md_to_expression()] internally and will set `x.labels` to parse expressions.
 #' @param x.character a [logical] to indicate whether the values of the x axis should be forced to [character]. The default is `FALSE`, except for years (x values between 2000 and 2050)
 #' @param x.drop [logical] to indicate whether factor levels should be dropped
 #' @param x.remove,y.remove a [logical] to indicate whether the axis labels and title should be removed
@@ -117,7 +118,6 @@
 #' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`). Can be set with `options(plot2.theme = "...")`.
 #' @param background the background colour of the entire plot, can also be `NA` to remove it. Only applies when `theme` is not empty.
 #' @param markdown a [logical] to turn all labels and titles into [plotmath] expressions, by converting common markdown language using the [md_to_expression()] function (defaults to `TRUE`)
-#' @param taxonomy_italic a [logical] to transform all labels and titles into italics that are in the `microorganisms` data set of the `AMR` package
 #' @param ... arguments passed on to methods
 #' @details The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions such as [`ggplot()`][ggplot2::ggplot()], [`aes()`][ggplot2::aes()], [`geom_col()`][ggplot2::geom_col()], [`facet_wrap()`][ggplot2::facet_wrap()], [`labs()`][ggplot2::labs()], etc., and provides:
 #'   * Writing as few lines of codes as possible
@@ -306,14 +306,15 @@ plot2 <- function(.data,
                   x.lbl_angle = 0,
                   x.lbl_align = NULL,
                   x.lbl_italic = FALSE,
+                  x.lbl_taxonomy = FALSE,
                   x.remove = FALSE,
                   x.position = "bottom",
                   x.max_items = Inf,
-                  x.max_txt = "(rest, x %n)",
+                  x.max_txt = "(rest, x%n)",
                   category.max_items = Inf,
-                  category.max_txt = "(rest, x %n)",
+                  category.max_txt = "(rest, x%n)",
                   facet.max_items = Inf,
-                  facet.max_txt = "(rest, x %n)",
+                  facet.max_txt = "(rest, x%n)",
                   x.breaks = NULL,
                   x.n_breaks = NULL,
                   x.trans = "identity",
@@ -390,7 +391,6 @@ plot2 <- function(.data,
                   theme = getOption("plot2.theme", "theme_minimal2"),
                   background = "white",
                   markdown = TRUE,
-                  taxonomy_italic = FALSE,
                   ...) {
   
   # no observations, return empty plot immediately
@@ -431,10 +431,11 @@ plot2 <- function(.data,
     }
   }
   
-  if (!inherits(.data, "sf") &&
-      ((isTRUE("geometry" %in% colnames(.data)) && suppressWarnings(inherits(.data$geometry, "sfc")))
-       || isTRUE(attributes(.data)$sf_column %in% colnames(.data))) &&
-      "sf" %in% rownames(utils::installed.packages())) {
+  if (tryCatch(!inherits(.data, "sf") &&
+               ((isTRUE("geometry" %in% colnames(.data)) && suppressWarnings(inherits(.data$geometry, "sfc")))
+                || isTRUE(attributes(.data)$sf_column %in% colnames(.data))) &&
+               "sf" %in% rownames(utils::installed.packages()),
+               error = function(e) FALSE)) {
     # force calling plot2.sf() and its arguments, data will be transformed in that function:
     UseMethod("plot2", object = structure(data.frame(), class = "sf"))
   } else {
@@ -444,7 +445,7 @@ plot2 <- function(.data,
 
 #' @importFrom dplyr mutate vars group_by across summarise select matches
 #' @importFrom forcats fct_relabel
-#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete
+#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver
 #' @importFrom certestyle format2 font_red font_black font_blue
 plot2_exec <- function(.data,
                        x,
@@ -486,6 +487,7 @@ plot2_exec <- function(.data,
                        x.lbl_angle,
                        x.lbl_align,
                        x.lbl_italic,
+                       x.lbl_taxonomy,
                        x.remove,
                        x.position,
                        x.max_items,
@@ -570,7 +572,6 @@ plot2_exec <- function(.data,
                        theme,
                        background,
                        markdown,
-                       taxonomy_italic,
                        ...) {
   
   dots <- list(...)
@@ -620,7 +621,7 @@ plot2_exec <- function(.data,
     horizontal <- TRUE
   }
   
-  set_plot2_env(dots$`_label.x`, 
+  set_plot2_env(dots$`_label.x`,
                 dots$`_label.y`,
                 dots$`_label.category`,
                 dots$`_label.facet`)
@@ -718,42 +719,14 @@ plot2_exec <- function(.data,
                   ...)
   
   # apply taxonomic italics ----
-  if (isTRUE(taxonomy_italic) && (isTRUE(markdown) || is.null(markdown))) {
-    if ("AMR" %in% rownames(utils::installed.packages())) {
-      suppressWarnings(requireNamespace("AMR", quietly = TRUE))
-      taxonomic_nms <- unique(c(AMR::microorganisms$family,
-                                AMR::microorganisms$genus,
-                                AMR::microorganisms$species,
-                                AMR::microorganisms$subspecies,
-                                AMR::microorganisms.old$fullname))
-      make_taxonomy_italic <- function(x, nms = taxonomic_nms) {
-        if (is.null(x)) {
-          return(NULL)
-        }
-        vapply(FUN.VALUE = character(1),
-               X = strsplit(x, " "),
-               FUN = function(nm) {
-                 if (!all(is.na(nm))) {
-                   nm[nm %in% nms] <- paste0("*", nm[nm %in% nms], "*")
-                   nm <- paste0(nm, collapse = " ")
-                   nm <- gsub("(.*)([A-Z][.]) [*]([a-z]+)[*](.*)", "\\1*\\2 \\3*\\4", nm, perl = TRUE)
-                 } else if (length(nm) == 0) {
-                   # this is because of `strsplit("", " ")`
-                   nm <- ""
-                 }
-                 nm
-               },
-               USE.NAMES = FALSE)
+  if (isTRUE(x.lbl_taxonomy) && isTRUE(markdown) && isTRUE("AMR" %in% rownames(utils::installed.packages()))) {
+    df <- validate_taxonomy(df)
+    if (all(get_x(df) %like% "^paste\\(")) {
+      # so x has taxonomic values
+      if (!is.null(x.labels)) {
+        plot2_warning("Ignoring ", font_blue("x.labels"), " since ", font_blue("x.lbl_taxonomy = TRUE"))
       }
-      df <- df |>
-        mutate(across(where(is.character), make_taxonomy_italic),
-               across(where(is.factor), ~fct_relabel(.x, make_taxonomy_italic)))
-      if (!misses_x.title) x.title <- make_taxonomy_italic(validate_title(x.title, markdown = markdown))
-      if (!misses_y.title) y.title <- make_taxonomy_italic(validate_title(y.title, markdown = markdown))
-      if (!misses_title) title <- make_taxonomy_italic(validate_title(title, markdown = markdown, max_length = title.linelength))
-      if (!misses_subtitle) subtitle <- make_taxonomy_italic(validate_title(subtitle, markdown = markdown, max_length = subtitle.linelength))
-      if (!misses_tag) tag <- make_taxonomy_italic(validate_title(tag, markdown = markdown))
-      if (!misses_caption) caption <- make_taxonomy_italic(validate_title(caption, markdown = markdown))
+      x.labels <- function(l) parse(text = l)
     }
   }
   
@@ -762,7 +735,7 @@ plot2_exec <- function(.data,
   # transform data if not a continuous geom but group sizes are > 1
   if (any(group_sizes(df) > 1) && !geom_is_continuous(type)) {
     if (identical(type_backup, "barpercent")) {
-      plot2_message("Duplicate observations in discrete plot type (", font_blue(type), "), applying ",
+      plot2_message("Summarising values for ", font_blue("type = \"barpercent\""), " using ",
                     font_blue(paste0("summarise_function = ", dots$`_summarise_fn_name`)))
     }
     df <- summarise_data(df = df, summarise_function = summarise_function,
@@ -973,13 +946,15 @@ plot2_exec <- function(.data,
   } else if (type != "geom_sf") {
     p <- p +
       scale_colour_manual(values = cols$colour,
+                          labels = if (is.null(category.labels)) waiver() else category.labels,
                           limits = if (is.null(names(cols$colour))) {
                             NULL
                           } else {
                             # remove unneeded labels
                             base::force
-                          }) + 
+                          }) +
       scale_fill_manual(values = cols$colour_fill,
+                        labels = if (is.null(category.labels)) waiver() else category.labels,
                         limits = if (is.null(names(cols$colour))) {
                           NULL
                         } else {

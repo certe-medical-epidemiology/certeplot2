@@ -318,7 +318,6 @@ group_sizes <- function(df) {
 }
 
 restore_mapping <- function(p, df) {
-  
   # help function
   new_mapping <- function(mapping, df) {
     if (is.null(mapping)) {
@@ -326,7 +325,7 @@ restore_mapping <- function(p, df) {
     }
     att <- attributes(mapping)
     new_mapping <- lapply(mapping,
-                          function(map) 
+                          function(map)
                             if (any(deparse(map) %like% "_var_x")) {
                               aes_string(as.name(get_x_name(df)))[[1]] 
                             } else if (any(deparse(map) %like% "_var_y")) {
@@ -371,11 +370,23 @@ restore_mapping <- function(p, df) {
   p
 }
 
-set_plot2_env <- function(x, y, category, facet) {
-  plot2_env$mapping_x <- paste0(x, collapse = " ")
-  plot2_env$mapping_y <- paste0(y, collapse = " ")
-  plot2_env$mapping_category <- paste0(category, collapse = " ")
-  plot2_env$mapping_facet <- paste0(facet, collapse = " ")
+set_plot2_env <- function(x = NULL, y = NULL, category = NULL, facet = NULL) {
+  x <- paste0(x, collapse = " ")
+  y <- paste0(y, collapse = " ")
+  category <- paste0(category, collapse = " ")
+  facet <- paste0(facet, collapse = " ")
+  if (!x %in% c("NULL", "") && is.null(plot2_env$mapping_x)) {
+    plot2_env$mapping_x <- x
+  }
+  if (!y %in% c("NULL", "") && is.null(plot2_env$mapping_y)) {
+    plot2_env$mapping_y <- y
+  }
+  if (!category %in% c("NULL", "") && is.null(plot2_env$mapping_category)) {
+    plot2_env$mapping_category <- category
+  }
+  if (!facet %in% c("NULL", "") && is.null(plot2_env$mapping_facet)) {
+    plot2_env$mapping_facet <- facet
+  }
 }
 clean_plot2_env <- function() {
   plot2_env$mapping_x <- NULL

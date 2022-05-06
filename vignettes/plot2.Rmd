@@ -48,7 +48,7 @@ The `plot2()` function is a convenient wrapper around many `ggplot2` functions s
     * Labels with data values can easily be printed and are automatically determined
   * Support for any `ggplot2` extension based on `ggplot2::fortify()`
   
-The `ggplot2` package in conjunction with the `dplyr`, `forcats` and `cleaner` packages can provide above functionalities, but *the goal of the `plot2()` function is to generalise this into one function*. The default `plot2()` function currently has `r length(args)` arguments, all with a default value. Every `plot2` is just a `ggplot` object, and thus extendible and editable with any other `ggplot2` function, using `+` (per the `ggplot2` convention`).
+The `ggplot2` package in conjunction with the `dplyr`, `forcats` and `cleaner` packages can provide above functionalities, but *the goal of the `plot2()` function is to generalise this into one function*. The default `plot2()` function currently has `r length(args)` arguments, all with a default value. Every `plot2` object is just a `ggplot` object, and thus extendible and editable with any other `ggplot2` function, using `+` (per the `ggplot2` convention`).
 
 Adding layers atop of other layers using functions (i.e., how `ggplot2` works) is conceptually pure brilliance. But the costs are at the user's side: it lacks convenience as it requires a lot of recurrent code. Who wants to type `ggplot()`, `aes()` and `geom_whatever()` and their arguments over and over again, and then add another bunch of functions to get the desired scales and style? The `plot2()` function is arguably what `ggplot2::qplot()` could have been. 
 
@@ -190,6 +190,26 @@ knitr::include_graphics("x_elements.png")
 
 This means that users no longer need to memorise many `ggplot2` functions *and* their arguments to actually make one tiny adjustment. So, this 'library' with all settings and options is constantly available for all who code, lowering the bar for beginners as well.
 
+### Microbiological taxonomy
+
+Aside from the argument `x.lbl_italic` (which transforms all x labels to italics), `plot2()` also provides a wrapper around the `AMR` package for antimicrobial resistance (AMR) data analysis. If taxonomic names appear on the x axis, they can be transformed to italics using the scientific convention:
+
+```{r}
+library(AMR)
+
+example_isolates$mo |> 
+  mo_name() |> 
+  table() |>
+  plot2(type = "barpercent")
+
+example_isolates$mo |> 
+  mo_name() |> 
+  table() |>
+  plot2(type = "barpercent",
+        x.lbl_taxonomy = TRUE,
+        x.title = "Microorganism")
+```
+
 ## The `category` direction
 
 The `category` plotting direction replaces *colour* and *fill*, which were in our opinion very poorly worded (isn't fill in the plot a colour as well?). `plot2()` automatically determines the colour and fill based on the input data.
@@ -279,11 +299,11 @@ admitted_patients
 
 admitted_patients |>
   plot2(x = age_group, y = n(), facet = hospital,
-        caption = "Same y axes")
+        caption = "All y axes on their own")
 admitted_patients |>
   plot2(x = age_group, y = n(), facet = hospital,
         facet.repeat_lbls_y = FALSE,
-        caption = "All y axes on their own")
+        caption = "Same y axes")
 ```
 
 You can omit repeated x labels as well with `facet.repeat_lbls_x`, and let all y axes be the same with `facet.fixed_y`:
@@ -458,7 +478,7 @@ And why is 2014 still so wide?? Look at it like this: if you know the solution, 
 
 # Support for any font, including all Google Fonts
 
-Any installed font and any of the [over 1400 Google Fonts](https://fonts.google.com) is supported in `plot2`. Missing fonts will be downloaded automatically and the required DPI will be set automatically as well, even in R Markdown such as this page:
+Any installed font and any of the [over 1400 Google Fonts](https://fonts.google.com) is supported in `plot2()`. Missing fonts will be downloaded automatically and the required DPI will be set automatically as well, even in R Markdown such as this page:
 
 ```{r}
 mtcars |>

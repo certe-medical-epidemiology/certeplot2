@@ -52,14 +52,15 @@
   x.lbl_angle = 0,
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
+  x.lbl_taxonomy = FALSE,
   x.remove = FALSE,
   x.position = "bottom",
   x.max_items = Inf,
-  x.max_txt = "(rest, x \%n)",
+  x.max_txt = "(rest, x\%n)",
   category.max_items = Inf,
-  category.max_txt = "(rest, x \%n)",
+  category.max_txt = "(rest, x\%n)",
   facet.max_items = Inf,
-  facet.max_txt = "(rest, x \%n)",
+  facet.max_txt = "(rest, x\%n)",
   x.breaks = NULL,
   x.n_breaks = NULL,
   x.trans = "identity",
@@ -136,7 +137,6 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
   markdown = TRUE,
-  taxonomy_italic = FALSE,
   ...
 )
 
@@ -181,14 +181,15 @@
   x.lbl_angle = 0,
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
+  x.lbl_taxonomy = FALSE,
   x.remove = FALSE,
   x.position = "bottom",
   x.max_items = Inf,
-  x.max_txt = "(rest, x \%n)",
+  x.max_txt = "(rest, x\%n)",
   category.max_items = Inf,
-  category.max_txt = "(rest, x \%n)",
+  category.max_txt = "(rest, x\%n)",
   facet.max_items = Inf,
-  facet.max_txt = "(rest, x \%n)",
+  facet.max_txt = "(rest, x\%n)",
   x.breaks = NULL,
   x.n_breaks = NULL,
   x.trans = "identity",
@@ -265,7 +266,6 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
   markdown = TRUE,
-  taxonomy_italic = FALSE,
   ...
 )
 
@@ -310,14 +310,15 @@
   x.lbl_angle = 0,
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
+  x.lbl_taxonomy = FALSE,
   x.remove = FALSE,
   x.position = "bottom",
   x.max_items = Inf,
-  x.max_txt = "(rest, x \%n)",
+  x.max_txt = "(rest, x\%n)",
   category.max_items = Inf,
-  category.max_txt = "(rest, x \%n)",
+  category.max_txt = "(rest, x\%n)",
   facet.max_items = Inf,
-  facet.max_txt = "(rest, x \%n)",
+  facet.max_txt = "(rest, x\%n)",
   x.breaks = NULL,
   x.n_breaks = NULL,
   x.trans = "identity",
@@ -394,7 +395,6 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
   markdown = TRUE,
-  taxonomy_italic = FALSE,
   ...
 )
 
@@ -439,14 +439,15 @@
   x.lbl_angle = 0,
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
+  x.lbl_taxonomy = FALSE,
   x.remove = FALSE,
   x.position = "bottom",
   x.max_items = Inf,
-  x.max_txt = "(rest, x \%n)",
+  x.max_txt = "(rest, x\%n)",
   category.max_items = Inf,
-  category.max_txt = "(rest, x \%n)",
+  category.max_txt = "(rest, x\%n)",
   facet.max_items = Inf,
-  facet.max_txt = "(rest, x \%n)",
+  facet.max_txt = "(rest, x\%n)",
   x.breaks = NULL,
   x.n_breaks = NULL,
   x.trans = "identity",
@@ -526,7 +527,6 @@
     axis.line = element_blank(), axis.ticks = element_blank()),
   background = "white",
   markdown = TRUE,
-  taxonomy_italic = FALSE,
   ...
 )
 
@@ -571,14 +571,15 @@
   x.lbl_angle = 0,
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
+  x.lbl_taxonomy = FALSE,
   x.remove = FALSE,
   x.position = "bottom",
   x.max_items = Inf,
-  x.max_txt = "(rest, x \%n)",
+  x.max_txt = "(rest, x\%n)",
   category.max_items = Inf,
-  category.max_txt = "(rest, x \%n)",
+  category.max_txt = "(rest, x\%n)",
   facet.max_items = Inf,
-  facet.max_txt = "(rest, x \%n)",
+  facet.max_txt = "(rest, x\%n)",
   x.breaks = NULL,
   x.n_breaks = NULL,
   x.trans = "identity",
@@ -655,7 +656,6 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
   markdown = TRUE,
-  taxonomy_italic = FALSE,
   ...
 )
 
@@ -700,14 +700,15 @@
   x.lbl_angle = ifelse(horizontal, 0, 90),
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
+  x.lbl_taxonomy = TRUE,
   x.remove = FALSE,
   x.position = "bottom",
   x.max_items = Inf,
-  x.max_txt = "(rest, x \%n)",
+  x.max_txt = "(rest, x\%n)",
   category.max_items = Inf,
-  category.max_txt = "(rest, x \%n)",
+  category.max_txt = "(rest, x\%n)",
   facet.max_items = Inf,
-  facet.max_txt = "(rest, x \%n)",
+  facet.max_txt = "(rest, x\%n)",
   x.breaks = NULL,
   x.n_breaks = NULL,
   x.trans = "identity",
@@ -784,7 +785,6 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
   markdown = TRUE,
-  taxonomy_italic = TRUE,
   minimum = 30,
   remove_intrinsic_resistant = TRUE,
   language = "nl",
@@ -834,14 +834,15 @@
   x.lbl_angle = 0,
   x.lbl_align = NULL,
   x.lbl_italic = FALSE,
+  x.lbl_taxonomy = FALSE,
   x.remove = FALSE,
   x.position = "bottom",
   x.max_items = Inf,
-  x.max_txt = "(rest, x \%n)",
+  x.max_txt = "(rest, x\%n)",
   category.max_items = Inf,
-  category.max_txt = "(rest, x \%n)",
+  category.max_txt = "(rest, x\%n)",
   facet.max_items = Inf,
-  facet.max_txt = "(rest, x \%n)",
+  facet.max_txt = "(rest, x\%n)",
   x.breaks = NULL,
   x.n_breaks = NULL,
   x.trans = "identity",
@@ -918,7 +919,6 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = "white",
   markdown = TRUE,
-  taxonomy_italic = FALSE,
   ...
 )
 }
@@ -942,8 +942,8 @@
 
 \item{x.title}{a title to use. This can be:
 \itemize{
-\item An \link{expression}
-\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item An \link{expression}, e.g. using \code{parse(text = "...")}
+\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
@@ -951,8 +951,8 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{y.title}{a title to use. This can be:
 \itemize{
-\item An \link{expression}
-\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item An \link{expression}, e.g. using \code{parse(text = "...")}
+\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
@@ -960,8 +960,8 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{category.title}{a title to use. This can be:
 \itemize{
-\item An \link{expression}
-\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item An \link{expression}, e.g. using \code{parse(text = "...")}
+\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
@@ -969,8 +969,8 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{title}{a title to use. This can be:
 \itemize{
-\item An \link{expression}
-\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item An \link{expression}, e.g. using \code{parse(text = "...")}
+\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
@@ -978,8 +978,8 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{subtitle}{a title to use. This can be:
 \itemize{
-\item An \link{expression}
-\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item An \link{expression}, e.g. using \code{parse(text = "...")}
+\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
@@ -987,8 +987,8 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{caption}{a title to use. This can be:
 \itemize{
-\item An \link{expression}
-\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item An \link{expression}, e.g. using \code{parse(text = "...")}
+\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
@@ -996,8 +996,8 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{tag}{a title to use. This can be:
 \itemize{
-\item An \link{expression}
-\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item An \link{expression}, e.g. using \code{parse(text = "...")}
+\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
@@ -1056,6 +1056,8 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 \item{x.lbl_align}{alignment for the x axis between \code{0} (left aligned) and \code{1} (right aligned)}
 
 \item{x.lbl_italic}{\link{logical} to indicate whether the x labels should in in \emph{italics}}
+
+\item{x.lbl_taxonomy}{a \link{logical} to transform all words of the \code{x} labels into italics that are in the \link[AMR:microorganisms]{microorganisms} data set of the \code{AMR} package. This uses \code{\link[=md_to_expression]{md_to_expression()}} internally and will set \code{x.labels} to parse expressions.}
 
 \item{x.remove}{a \link{logical} to indicate whether the axis labels and title should be removed}
 
@@ -1229,8 +1231,8 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{legend.title}{a title to use. This can be:
 \itemize{
-\item An \link{expression}
-\item A \link{character}, which supports markdown using \code{\link[=md_to_expression]{md_to_expression()}} if \code{markdown = TRUE}
+\item An \link{expression}, e.g. using \code{parse(text = "...")}
+\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
@@ -1261,8 +1263,6 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 \item{background}{the background colour of the entire plot, can also be \code{NA} to remove it. Only applies when \code{theme} is not empty.}
 
 \item{markdown}{a \link{logical} to turn all labels and titles into \link{plotmath} expressions, by converting common markdown language using the \code{\link[=md_to_expression]{md_to_expression()}} function (defaults to \code{TRUE})}
-
-\item{taxonomy_italic}{a \link{logical} to transform all labels and titles into italics that are in the \code{microorganisms} data set of the \code{AMR} package}
 
 \item{...}{arguments passed on to methods}
 

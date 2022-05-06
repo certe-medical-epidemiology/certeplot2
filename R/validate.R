@@ -131,6 +131,7 @@ validate_data <- function(df,
     plot2_message("Using ", font_blue("y = n"))
     df <- df |> 
       mutate(`_var_y` = df |> pull(n))
+    set_plot2_env(y = "n")
   }
   
   if (!has_y(df)) {
@@ -150,6 +151,7 @@ validate_data <- function(df,
         df <- df |> 
           mutate(`_var_x` = df |> pull(numeric_cols[1L]),
                  `_var_y` = df |> pull(numeric_cols[2L]))
+        set_plot2_env(x = numeric_cols[1L], y = numeric_cols[2L])
       } else {
         if (!geom_is_continuous_x(type)) {
           # don't show when type for density geoms - y will not be used
@@ -157,6 +159,7 @@ validate_data <- function(df,
         }
         df <- df |> 
           mutate(`_var_y` = df |> pull(numeric_cols[1L]))
+        set_plot2_env(y = numeric_cols[1L])
       }
     } else {
       # only one numeric column
@@ -165,6 +168,7 @@ validate_data <- function(df,
           plot2_message("Using ", font_blue("x = ", numeric_cols, collapse = NULL))
           df <- df |> 
             mutate(`_var_x` = df |> pull(numeric_cols))
+          set_plot2_env(x = numeric_cols)
         }
         # don't show when type for density geoms - y will not be used
         df <- df |> 
@@ -178,6 +182,7 @@ validate_data <- function(df,
         df <- df |> 
           mutate(`_var_x` = df |> pull(numeric_cols),
                  `_var_y` = df |> pull(numeric_cols))
+        set_plot2_env(x = numeric_cols, y = numeric_cols)
       } else {
         if (has_x(df) && get_x_name(df) == numeric_cols) {
           if (type == "") {
@@ -195,6 +200,7 @@ validate_data <- function(df,
           plot2_message("Using ", font_blue("y = ", numeric_cols, collapse = NULL))
           df <- df |> 
             mutate(`_var_y` = df |> pull(numeric_cols))
+          set_plot2_env(y = numeric_cols)
         }
       }
     }
@@ -221,6 +227,7 @@ validate_data <- function(df,
     plot2_message("Using ", font_blue("x = ", x_col, collapse = NULL))
     df <- df |> 
       mutate(`_var_x` = df |> pull(x_col))
+    set_plot2_env(x = x_col)
   }
   
   if (misses_x && misses_category && !has_category(df) && ncol(df) > 2 && type != "geom_sf") {
@@ -240,6 +247,7 @@ validate_data <- function(df,
       plot2_message("Using ", font_blue("category = ", cols[1L], collapse = NULL))
       df <- df |> 
         mutate(`_var_category` = df |> pull(cols[1L]))
+      set_plot2_env(category = cols[1L])
     }
   }
   if (type == "geom_sf" && misses_category && !has_category(df) && !is.na(numeric_cols[1L])) {
@@ -247,14 +255,17 @@ validate_data <- function(df,
     plot2_message("Using ", font_blue("category = ", numeric_cols[1L], collapse = NULL))
     df <- df |> 
       mutate(`_var_category` = df |> pull(numeric_cols[1L]))
+    set_plot2_env(category = numeric_cols[1L])
   }
   
   # if given FALSE for a direction (e.g., category = FALSE), remove these columns
   if (has_category(df) && all(get_category(df) == FALSE)) {
     df <- df |> select(-`_var_category`)
+    plot2_env$mapping_category <- NULL
   }
   if (has_facet(df) && all(get_facet(df) == FALSE)) {
     df <- df |> select(-`_var_facet`)
+    plot2_env$mapping_facet <- NULL
   }
   if (has_datalabels(df) && 
       (all(get_datalabels(df) == FALSE) ||
@@ -455,7 +466,65 @@ validate_data <- function(df,
   df
 }
 
-#' @importFrom ggplot2 scale_x_discrete scale_x_date scale_x_datetime scale_x_continuous expansion waiver
+#' @importFrom dplyr mutate across
+validate_taxonomy <- function(df) {
+  if (!has_x(df)) {
+    return(df)
+  }
+  suppressWarnings(requireNamespace("AMR", quietly = TRUE))
+  taxonomic_nms <- unique(c(AMR::microorganisms$family,
+                            AMR::microorganisms$genus,
+                            AMR::microorganisms$species,
+                            AMR::microorganisms$subspecies,
+                            AMR::microorganisms.old$fullname))
+  make_taxonomy <- function(x, nms = taxonomic_nms) {
+    if (is.null(x)) {
+      return(NULL)
+    }
+    out <- vapply(FUN.VALUE = character(1),
+           X = strsplit(x, " "),
+           FUN = function(nm) {
+             if (!all(is.na(nm))) {
+               nm[nm %in% nms] <- paste0("*", nm[nm %in% nms], "*")
+               nm <- paste0(nm, collapse = " ")
+               nm <- gsub("(.*)([A-Z][.]) [*]([a-z]+)[*](.*)", "\\1*\\2 \\3*\\4", nm, perl = TRUE)
+             } else if (length(nm) == 0) {
+               # this is because of `strsplit("", " ")`
+               nm <- ""
+             }
+             nm
+           },
+           USE.NAMES = FALSE)
+    out <- gsub("* *", " ", out, fixed = TRUE)
+    out
+  }
+  taxonomy_to_chr_expression <- function(x) {
+    with_taxonomy <- make_taxonomy(as.character(x))
+    if (any(with_taxonomy %like% "[*].+[*]", na.rm = TRUE)) {
+      out <- vapply(with_taxonomy,
+                    FUN.VALUE = character(1),
+                    function(y) {
+                      as.character(md_to_expression(y))
+                    },
+                    USE.NAMES = FALSE)
+      if (is.factor(x)) {
+        # take order of levels from original sorting, since e.g. `x.sort = "freq-desc"` may have been applied
+        factor(out, levels = out[match(levels(x), x)], ordered = is.ordered(x))
+      } else {
+        out
+      }
+    } else {
+      # no taxonomic values found
+      x
+    }
+  }
+  df <- df |>
+    mutate(across(get_x_name(df), taxonomy_to_chr_expression))
+  df$`_var_x` <- df[, get_x_name(df), drop = TRUE]
+  df
+}
+
+  #' @importFrom ggplot2 scale_x_discrete scale_x_date scale_x_datetime scale_x_continuous expansion waiver
 #' @importFrom scales reverse_trans
 #' @importFrom cleaner format_datetime
 #' @importFrom certestyle format2
@@ -478,7 +547,8 @@ validate_x_scale <- function(values,
   if (isTRUE(x.zoom) && is.null(x.limits)) {
     x.limits <- c(NA_real_, NA_real_)
     if (is.null(x.expand)) {
-      x.expand <- 0.25
+      # set default value to 0.5
+      x.expand <- 0.5
     }
   }
   
@@ -539,16 +609,20 @@ validate_x_scale <- function(values,
                  date_breaks = x.date_breaks,
                  date_labels = format_datetime(x.date_labels),
                  expand = x.expand,
-                 limits = x.limits)
+                 limits = x.limits, 
+                 labels = if (is.null(x.labels)) waiver() else x.labels)
   } else if (inherits(values, "POSIXt")) {
     scale_x_datetime(position = x.position,
                      date_breaks = x.date_breaks,
                      date_labels = format_datetime(x.date_labels),
                      expand = x.expand,
-                     limits = x.limits)
+                     limits = x.limits, 
+                     labels = if (is.null(x.labels)) waiver() else x.labels)
   } else {
     if (!is.numeric(values)) {
-      scale_x_discrete(position = x.position, drop = x.drop)
+      scale_x_discrete(position = x.position,
+                       drop = x.drop, 
+                       labels = if (is.null(x.labels)) waiver() else x.labels)
     } else {
       if (x.trans == "identity" && isTRUE(horizontal)) {
         x.trans <- reverse_trans()
