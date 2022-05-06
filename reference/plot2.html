@@ -18,7 +18,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
       </span>
     </div>
 
@@ -126,14 +126,15 @@ See plot2-methods for all implemented methods for different object classes."><me
   x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,
   x.lbl_align <span class="op">=</span> <span class="cn">NULL</span>,
   x.lbl_italic <span class="op">=</span> <span class="cn">FALSE</span>,
+  x.lbl_taxonomy <span class="op">=</span> <span class="cn">FALSE</span>,
   x.remove <span class="op">=</span> <span class="cn">FALSE</span>,
   x.position <span class="op">=</span> <span class="st">"bottom"</span>,
   x.max_items <span class="op">=</span> <span class="cn">Inf</span>,
-  x.max_txt <span class="op">=</span> <span class="st">"(rest, x %n)"</span>,
+  x.max_txt <span class="op">=</span> <span class="st">"(rest, x%n)"</span>,
   category.max_items <span class="op">=</span> <span class="cn">Inf</span>,
-  category.max_txt <span class="op">=</span> <span class="st">"(rest, x %n)"</span>,
+  category.max_txt <span class="op">=</span> <span class="st">"(rest, x%n)"</span>,
   facet.max_items <span class="op">=</span> <span class="cn">Inf</span>,
-  facet.max_txt <span class="op">=</span> <span class="st">"(rest, x %n)"</span>,
+  facet.max_txt <span class="op">=</span> <span class="st">"(rest, x%n)"</span>,
   x.breaks <span class="op">=</span> <span class="cn">NULL</span>,
   x.n_breaks <span class="op">=</span> <span class="cn">NULL</span>,
   x.trans <span class="op">=</span> <span class="st">"identity"</span>,
@@ -210,7 +211,6 @@ See plot2-methods for all implemented methods for different object classes."><me
   theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.theme"</span>, <span class="st">"theme_minimal2"</span><span class="op">)</span>,
   background <span class="op">=</span> <span class="st">"white"</span>,
   markdown <span class="op">=</span> <span class="cn">TRUE</span>,
-  taxonomy_italic <span class="op">=</span> <span class="cn">FALSE</span>,
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -233,8 +233,8 @@ See plot2-methods for all implemented methods for different object classes."><me
 <li><p>Left blank. In this case, the type will be determined automatically: <code>"boxplot"</code> if there is no X axis or if the length of unique values per X axis item is at least 3, <code>"point"</code> if both the Y and X axes are numeric, and the <a href="https://rdrr.io/r/base/options.html" class="external-link">option</a> <code>"plot2.default_type"</code> otherwise (which defaults to <code>"col"</code>). Use <code>type = "blank"</code> or <code>type = "geom_blank"</code> to <em>not</em> print a geom.</p></li>
 </ul></dd>
 <dt>title, subtitle, caption, tag, x.title, y.title, category.title, legend.title</dt>
-<dd><p>a title to use. This can be:</p><ul><li><p>An <a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></p></li>
-<li><p>A <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>, which supports markdown using <code><a href="md_to_expression.html">md_to_expression()</a></code> if <code>markdown = TRUE</code></p></li>
+<dd><p>a title to use. This can be:</p><ul><li><p>An <a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a>, e.g. using <code>parse(text = "...")</code></p></li>
+<li><p>A <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>, which supports markdown by using <code><a href="md_to_expression.html">md_to_expression()</a></code> internally if <code>markdown = TRUE</code></p></li>
 <li><p>A vector of characters and functions, which allows calculations over <code>.data</code> (see <em>Examples</em>)</p></li>
 </ul><p>The category title defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
 <dt>title.linelength</dt>
@@ -271,6 +271,8 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>alignment for the x axis between <code>0</code> (left aligned) and <code>1</code> (right aligned)</p></dd>
 <dt>x.lbl_italic</dt>
 <dd><p><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the x labels should in in <em>italics</em></p></dd>
+<dt>x.lbl_taxonomy</dt>
+<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to transform all words of the <code>x</code> labels into italics that are in the <a href="https://msberends.github.io/AMR/reference/microorganisms.html" class="external-link">microorganisms</a> data set of the <code>AMR</code> package. This uses <code><a href="md_to_expression.html">md_to_expression()</a></code> internally and will set <code>x.labels</code> to parse expressions.</p></dd>
 <dt>x.remove, y.remove</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the axis labels and title should be removed</p></dd>
 <dt>x.position, y.position</dt>
@@ -379,8 +381,6 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>the background colour of the entire plot, can also be <code>NA</code> to remove it. Only applies when <code>theme</code> is not empty.</p></dd>
 <dt>markdown</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to turn all labels and titles into <a href="https://rdrr.io/r/grDevices/plotmath.html" class="external-link">plotmath</a> expressions, by converting common markdown language using the <code><a href="md_to_expression.html">md_to_expression()</a></code> function (defaults to <code>TRUE</code>)</p></dd>
-<dt>taxonomy_italic</dt>
-<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to transform all labels and titles into italics that are in the <code>microorganisms</code> data set of the <code>AMR</code> package</p></dd>
 <dt>...</dt>
 <dd><p>arguments passed on to methods</p></dd>
 </dl></div>
