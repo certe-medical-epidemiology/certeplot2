@@ -283,7 +283,7 @@ plot2 <- function(.data,
                   title.colour = "black",
                   subtitle.linelength = 60,
                   subtitle.colour = "grey35",
-                  na.replace = "(??)",
+                  na.replace = "",
                   na.rm = FALSE,
                   facet.position = "top",
                   facet.fill = NULL,
@@ -697,6 +697,7 @@ plot2_exec <- function(.data,
                   label_facet = dots$`_label.facet`,
                   decimal.mark = decimal.mark,
                   big.mark = big.mark,
+                  y.percent = y.percent,
                   type = type,
                   datalabels.round = datalabels.round,
                   datalabels.format = datalabels.format,
@@ -738,9 +739,13 @@ plot2_exec <- function(.data,
       plot2_message("Summarising values for ", font_blue("type = \"barpercent\""), " using ",
                     font_blue(paste0("summarise_function = ", dots$`_summarise_fn_name`)))
     }
-    df <- summarise_data(df = df, summarise_function = summarise_function,
-                         decimal.mark = decimal.mark, big.mark = big.mark,
-                         datalabels.round = datalabels.round, datalabels.format = datalabels.format)
+    df <- summarise_data(df = df,
+                         summarise_function = summarise_function,
+                         decimal.mark = decimal.mark,
+                         big.mark = big.mark,
+                         datalabels.round = datalabels.round,
+                         datalabels.format = datalabels.format,
+                         y.percent = y.percent)
   }
   
   # various cleaning steps ----
@@ -1139,6 +1144,11 @@ plot2_exec <- function(.data,
   # this will replace e.g. `_var_x` and `_var_category` in the mapping and remove them from the data
   p <- restore_mapping(p = p,
                        df = df)
+  
+  # add plot title if missing
+  if (isTRUE(misses_title) && is.null(title)) {
+    p <- p + labs(title = get_plot_title(p, valid_filename = FALSE))  
+  }
   
   # return plot ----
   if (isTRUE(print)) {

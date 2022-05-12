@@ -97,6 +97,8 @@ add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw",
   df <- plot$data |> 
     mutate(`_var_line_y` = {{ y }},
            `_var_line_x` = {{ x }})
+  suppressWarnings(values_y <- df$`_var_line_y`)
+  suppressWarnings(values_x <- df$`_var_line_x`)
   colnames(df)[colnames(df) == "_var_line_y"] <- label_line_y
   colnames(df)[colnames(df) == "_var_line_x"] <- label_line_x
   
@@ -131,11 +133,29 @@ add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw",
     params <- c(params, list(...))
   }
   
-  # add the geom
-  add_type(plot = plot,
-           type = "line",
-           mapping = mapping,
-           params)
+  
+  if (is.null(values_x) && length(unique(values_y)) == 1) {
+    # check if y are all 1 value, then make it hline
+    plot2_message("Adding type ", font_blue("hline"))
+    add_type(plot = plot,
+             type = "hline",
+             mapping = utils::modifyList(mapping, aes_string(y = NULL, yintercept = mapping$y)),
+             utils::modifyList(params, list(inherit.aes = NULL)))
+    
+  } else if (is.null(values_y) && length(unique(values_x)) == 1) {
+    # check if x are all 1 value, then make it vline
+    plot2_message("Adding type ", font_blue("vline"))
+    add_type(plot = plot,
+             type = "vline",
+             mapping = utils::modifyList(mapping, aes_string(y = NULL, xintercept = mapping$x)),
+             utils::modifyList(params, list(inherit.aes = NULL)))
+  } else {
+    # add the geom
+    add_type(plot = plot,
+             type = "line",
+             mapping = mapping,
+             params)
+  }
 }
 
 #' @rdname add_type

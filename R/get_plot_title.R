@@ -32,19 +32,44 @@
 #' get_plot_title(p, valid_filename = FALSE)
 #' 
 #' p <- plot2(mtcars)
-#' # default is NA:
+#' # default is a guess:
 #' get_plot_title(p)
+#' 
+#' # unless default is set:
+#' get_plot_title(p, default = NA)
+#' get_plot_title(p, default = "title")
 get_plot_title <- function(plot,
                            valid_filename = TRUE,
-                           default = NA_character_) {
+                           default = NULL) {
   
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
   }
   
+  get_default_title <- function(plot, default) {
+    if (!is.null(default)) {
+      return(default)
+    }
+    get_mapping <- function(plot) gsub("~", "", sapply(plot$mapping, deparse))
+    mapp <- get_mapping(plot)
+    val <- mapp[names(mapp) == "y"]
+    if (length(val) > 0) {
+      val <- paste(val, "per ")
+      substr(val, 1, 1) <- toupper(substr(val, 1, 1))
+    } else {
+      val <- ""
+    }
+    mapp <- mapp[names(mapp) %in% c("x", "category", "facet")]
+    if (length(mapp) >= 1 && length(val) > 0 && val != "") {
+      return(paste0(val, paste(mapp, collapse = ", ")))
+    } else {
+      return(default)
+    }
+  }
+  
   title <- plot$labels$title
   if (is.null(title)) {
-    title <- default
+    title <- get_default_title(plot = plot, default = default)
   } else {
     title <- gsub("\"", "***", as.character(title)) |>
       strsplit("***", fixed = TRUE) |>
@@ -54,16 +79,17 @@ get_plot_title <- function(plot,
                            title != ")" & title != "), ")]
     title <- gsub("_+", " ", concat(title)) |> 
       trimws()
-    if (valid_filename == TRUE) {
-      title <- 
-        gsub("[ .]+", "_", 
-             gsub("[?!|<>|:/\\*]", "", title)) |> 
-        tolower()
-    }
     if (title == "") {
-      title <- default
+      title <- get_default_title(plot = plot, default = default)
     }
   }
+  
+  if (!is.null(title) && !is.na(title) && isTRUE(valid_filename)) {
+    title <- gsub("[ .]+", "_", 
+                  gsub("[?!|<>|:/\\*]", "", title)) |> 
+      tolower()
+  }
+  
   caption <- plot$labels$caption
   if (!is.null(caption) && caption %like% "^[0-9a-f]+$") {
     if (is.na(title)) {
@@ -71,5 +97,6 @@ get_plot_title <- function(plot,
     }
     title <- trimws(paste(title, "-", caption))
   }
+  
   title
 }
