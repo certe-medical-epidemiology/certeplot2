@@ -563,10 +563,10 @@ validate_x_scale <- function(values,
       x.expand <- 0.5
     } else {
       if (!inherits(values, c("Date", "POSIXt"))) {
-        plot2_message("Assuming ", font_blue("x.expand = 0"), " since ", font_blue("x.limits"), " is set while ", font_blue("x"), " are not dates")
+        plot2_message("Assuming ", font_blue("x.expand = 0"), " since ", font_blue("x.limits"), " is set")
         x.expand <- 0
       } else {
-        # no need mention that x.expand is set to 0.5 - it's already the default
+        # dates - no need mention that x.expand is set to 0.5 - it's already the default
         x.expand <- 0.5
       }
     }
