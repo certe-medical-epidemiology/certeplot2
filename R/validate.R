@@ -321,7 +321,8 @@ validate_data <- function(df,
                                                    datalabels.round = dots$datalabels.round,
                                                    datalabels.format = dots$datalabels.format,
                                                    decimal.mark = dots$decimal.mark,
-                                                   big.mark = dots$big.mark))
+                                                   big.mark = dots$big.mark,
+                                                   y.percent = dots$y.percent))
   }
   
   if (is.null(dots$x.character) &&
@@ -331,6 +332,14 @@ validate_data <- function(df,
       all(get_x(df, na.rm = TRUE) <= 2050)) {
     plot2_message("Assuming ", font_blue("x.character = TRUE"),
                   " since the ", font_blue("x"), " labels seem to be years")
+    dots$x.character <- TRUE
+  } else if (is.null(dots$x.character) &&
+             has_x(df) &&
+             is.numeric(get_x(df)) &&
+             (identical(sort(unique(get_x(df))), seq_len(12)) ||
+             identical(sort(unique(get_x(df))), as.double(seq_len(12))))) {
+    plot2_message("Assuming ", font_blue("x.character = TRUE"),
+                  " since the ", font_blue("x"), " labels seem to be months")
     dots$x.character <- TRUE
   } else if (has_x(df) && 
              is.numeric(get_x(df)) &&
@@ -351,14 +360,9 @@ validate_data <- function(df,
     mode(x) == "numeric" || is.numeric(x) || inherits(x, c("Date", "POSIXt"))
   }
   df_noNA <- df |>
-    filter(if_any(c(get_x_name(df), get_category_name(df), get_facet_name(df),
+    filter(if_all(c(get_x_name(df), get_category_name(df), get_facet_name(df),
                     matches("_var_(x|category|facet)")),
-                  function(x) {
-                    if (is_numeric(x) & !is.factor(x)) {
-                      TRUE
-                    } else {
-                      !is.na(x)
-                    }}))
+                  ~all(!is.na(.) & (!is_numeric(.) | is.factor(.)))))
   if (nrow(df_noNA) < nrow(df)) {
     # so some are NAs
     if (isTRUE(dots$na.rm)) {
@@ -372,11 +376,11 @@ validate_data <- function(df,
         mutate(across(c(get_x_name(df), get_category_name(df), get_facet_name(df),
                         matches("_var_(x|category|facet)")),
                       function(x) {
-                        if (is.factor(x)) {
+                        if (is.factor(x) & any(is.na(x))) {
                           # add as last factor level
                           levels(x) <- c(levels(x), dots$na.replace)
                         }
-                        if (!is_numeric(x) | is.factor(x)) {
+                        if ((!is_numeric(x) | is.factor(x)) & any(is.na(x))) {
                           plot2_env$na_replaced <- plot2_env$na_replaced + sum(is.na(x))
                           x[is.na(x)] <- dots$na.replace
                         }
@@ -454,7 +458,8 @@ validate_data <- function(df,
                         decimal.mark = dots$decimal.mark,
                         big.mark = dots$big.mark,
                         datalabels.round = dots$datalabels.round,
-                        datalabels.format = dots$datalabels.format)
+                        datalabels.format = dots$datalabels.format,
+                        y.percent = dots$y.percent)
     # sort on x, important when piping plot2()'s after plot2()'s
     if (has_x(df)) {
       df <- df |> 
@@ -557,8 +562,13 @@ validate_x_scale <- function(values,
       # set default value to 0.5
       x.expand <- 0.5
     } else {
-      plot2_message("Assuming ", font_blue("x.expand = 0"), " since ", font_blue("x.limits"), " is set")
-      x.expand <- 0
+      if (!inherits(values, c("Date", "POSIXt"))) {
+        plot2_message("Assuming ", font_blue("x.expand = 0"), " since ", font_blue("x.limits"), " is set while ", font_blue("x"), " are not dates")
+        x.expand <- 0
+      } else {
+        # no need mention that x.expand is set to 0.5 - it's already the default
+        x.expand <- 0.5
+      }
     }
   }
   
@@ -762,7 +772,8 @@ validate_y_scale <- function(df,
       }
       if (isTRUE(misses_y.percent_break) && as.integer(labels_n) > 10) {
         y.percent_break <- round((max(y.limits, na.rm = TRUE) - min(y.limits, na.rm = TRUE)) / 10, 2)
-        plot2_message("Using ", font_blue("y.percent_break =", y.percent_break), " to keep a maximum of ~10 labels")
+        plot2_message("Using ", font_blue("y.percent_break =", y.percent_break),
+                      " (", y.percent_break * 100, "%) to keep a maximum of ~10 labels")
       }
       if (!all(is.na(y.limits)) && y.percent_break >= max(y.limits, na.rm = TRUE)) {
         y.percent_break.bak <- y.percent_break
@@ -1480,8 +1491,9 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
     out <- concat(as.character(x))
   }
   
+  out <- gsub("<br>", "\n", out, fixed = TRUE)
   out_plain <- gsub("[^a-zA-Z0-9, .-]", "", out)
-  
+
   # support for markdown
   if (isTRUE(markdown) &&
       (isTRUE(out %like% "(\\^|[_*].+[_*])") | isTRUE(out %like% "[$]"))) {
@@ -2065,7 +2077,8 @@ set_max_items <- function(df,
                           decimal.mark,
                           big.mark,
                           datalabels.round,
-                          datalabels.format) {
+                          datalabels.format,
+                          y.percent) {
   if (is.infinite(x.max_items) && is.infinite(category.max_items) && is.infinite(facet.max_items)) {
     return(df)
   }
@@ -2138,7 +2151,8 @@ set_max_items <- function(df,
                          decimal.mark = decimal.mark,
                          big.mark = big.mark,
                          datalabels.round = datalabels.round,
-                         datalabels.format = datalabels.format)
+                         datalabels.format = datalabels.format,
+                         y.percent = y.percent)
   }
   df
   
@@ -2149,7 +2163,8 @@ summarise_data <- function(df,
                            decimal.mark,
                            big.mark,
                            datalabels.round,
-                           datalabels.format) {
+                           datalabels.format,
+                           y.percent) {
   x <- get_x_name(df)
   y <- get_y_name(df)
   category <- get_category_name(df)
@@ -2171,22 +2186,34 @@ summarise_data <- function(df,
                                                    datalabels.round = datalabels.round,
                                                    datalabels.format = datalabels.format,
                                                    decimal.mark = decimal.mark,
-                                                   big.mark = big.mark))
+                                                   big.mark = big.mark,
+                                                   y.percent = y.percent))
   }
   df
 }
 
-#' @importFrom certestyle format2
+#' @importFrom certestyle format2 font_blue
 format_datalabels <- function(datalabels,
                               datalabels.round,
                               datalabels.format,
                               decimal.mark,
-                              big.mark) {
+                              big.mark,
+                              y.percent) {
   datalabels[as.character(datalabels) %in% c("", "0")] <- NA
   datalabels_out <- datalabels
-  if (!is.null(datalabels.format) &&
-      mode(datalabels) == "numeric" &&
-      !inherits(datalabels, c("factor", "Date", "POSIXt"))) {
+  if (isTRUE(y.percent)) {
+    if (!is.null(datalabels.format)) {
+      datalabels_out <- trimws(format2(datalabels,
+                                   round = datalabels.round,
+                                   decimal.mark = decimal.mark,
+                                   big.mark = big.mark,
+                                   percent = TRUE))
+      plot2_message("Ignoring ", font_blue("datalabels.format = \"", datalabels.format, "\"", collapse = NULL),
+                    " since ",  font_blue("y.percent = TRUE"))
+    }
+  } else if (!is.null(datalabels.format) &&
+             mode(datalabels) == "numeric" &&
+             !inherits(datalabels, c("factor", "Date", "POSIXt"))) {
     datalabels <- as.double(datalabels)
     datalabels_out <- rep(datalabels.format, length(datalabels_out))
     if (datalabels.format %like% "%p") {

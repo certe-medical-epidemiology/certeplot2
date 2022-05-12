@@ -22,7 +22,7 @@ plot2(
   title.colour = "black",
   subtitle.linelength = 60,
   subtitle.colour = "grey35",
-  na.replace = "(??)",
+  na.replace = "",
   na.rm = FALSE,
   facet.position = "top",
   facet.fill = NULL,
