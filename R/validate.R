@@ -362,7 +362,7 @@ validate_data <- function(df,
   df_noNA <- df |>
     filter(if_all(c(get_x_name(df), get_category_name(df), get_facet_name(df),
                     matches("_var_(x|category|facet)")),
-                  ~all(!is.na(.) & (!is_numeric(.) | is.factor(.)))))
+                  ~(!is.na(.) & (!is_numeric(.) | is.factor(.)))))
   if (nrow(df_noNA) < nrow(df)) {
     # so some are NAs
     if (isTRUE(dots$na.rm)) {

@@ -53,14 +53,18 @@ get_plot_title <- function(plot,
     get_mapping <- function(plot) gsub("~", "", sapply(plot$mapping, deparse))
     mapp <- get_mapping(plot)
     val <- mapp[names(mapp) == "y"]
-    if (!is.na(val)) {
+    if (length(val) > 0) {
       val <- paste(val, "per ")
       substr(val, 1, 1) <- toupper(substr(val, 1, 1))
     } else {
       val <- ""
     }
     mapp <- mapp[names(mapp) %in% c("x", "category", "facet")]
-    paste0(val, paste(mapp, collapse = ", "))
+    if (length(mapp) >= 1 && length(val) > 0 && val != "") {
+      return(paste0(val, paste(mapp, collapse = ", ")))
+    } else {
+      return(default)
+    }
   }
   
   title <- plot$labels$title
@@ -80,7 +84,7 @@ get_plot_title <- function(plot,
     }
   }
   
-  if (!is.na(title) && isTRUE(valid_filename)) {
+  if (!is.null(title) && !is.na(title) && isTRUE(valid_filename)) {
     title <- gsub("[ .]+", "_", 
                   gsub("[?!|<>|:/\\*]", "", title)) |> 
       tolower()

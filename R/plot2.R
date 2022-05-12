@@ -697,7 +697,7 @@ plot2_exec <- function(.data,
                   label_facet = dots$`_label.facet`,
                   decimal.mark = decimal.mark,
                   big.mark = big.mark,
-                  y.percent = isTRUE(y.percent),
+                  y.percent = y.percent,
                   type = type,
                   datalabels.round = datalabels.round,
                   datalabels.format = datalabels.format,
@@ -739,9 +739,13 @@ plot2_exec <- function(.data,
       plot2_message("Summarising values for ", font_blue("type = \"barpercent\""), " using ",
                     font_blue(paste0("summarise_function = ", dots$`_summarise_fn_name`)))
     }
-    df <- summarise_data(df = df, summarise_function = summarise_function,
-                         decimal.mark = decimal.mark, big.mark = big.mark,
-                         datalabels.round = datalabels.round, datalabels.format = datalabels.format)
+    df <- summarise_data(df = df,
+                         summarise_function = summarise_function,
+                         decimal.mark = decimal.mark,
+                         big.mark = big.mark,
+                         datalabels.round = datalabels.round,
+                         datalabels.format = datalabels.format,
+                         y.percent = y.percent)
   }
   
   # various cleaning steps ----
