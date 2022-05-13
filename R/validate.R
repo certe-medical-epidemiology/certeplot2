@@ -1503,7 +1503,7 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
   if (isTRUE(markdown) &&
       (isTRUE(out %like% "[*]+.+[*]+")
        | isTRUE(out %like% "[a-z0-9]_[a-zA-Z0-9]")
-       | isTRUE(out %like% "[a-z0-9] ?^ ?[a-zA-Z0-9]")
+       | isTRUE(out %like% "[a-z0-9] ?\\^ ?[a-zA-Z0-9]")
        | isTRUE(out %like% "<sup>.+</sup>")
        | isTRUE(out %like% "<sub>.+</sub>")
        | isTRUE(out %like% "[$]"))) {

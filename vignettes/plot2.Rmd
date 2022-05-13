@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
   fig.height = 4,
   collapse = TRUE,
   comment = "#>"
-)
+) 
 library(certeplot2)
 # load this as well, so function names will get tidyverse links on the website
 library(ggplot2) 
@@ -156,7 +156,7 @@ library(cleaner) # 'cleaner' has a rdate() function for random dates
 data.frame(x = rdate(100, min = "2016-01-01", max = "2021-12-31"),
            y = rnorm(100, mean = 10)) |> 
   plot2(type = "p")
-data.frame(x = rdate(100, min = "2021-06-01", max = "2021-12-31"),
+data.frame(x = rdate(100, min = "2021-01-01", max = "2021-05-31"),
            y = rnorm(100, mean = 10)) |> 
   plot2(type = "p")
 data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
