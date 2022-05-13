@@ -110,7 +110,7 @@ validate_legend.position <- function(legend.position) {
   legend.position
 }
 
-#' @importFrom dplyr select pull mutate arrange across if_any
+#' @importFrom dplyr select pull mutate arrange across if_all cur_column
 #' @importFrom certestyle font_bold font_blue font_red
 validate_data <- function(df,
                           misses_x,
@@ -372,6 +372,7 @@ validate_data <- function(df,
     } else {
       # replace NAs
       plot2_env$na_replaced <- 0
+      plot2_env$na_replaced_vars <- character(0)
       df <- df |>
         mutate(across(c(get_x_name(df), get_category_name(df), get_facet_name(df),
                         matches("_var_(x|category|facet)")),
@@ -381,14 +382,18 @@ validate_data <- function(df,
                           levels(x) <- c(levels(x), dots$na.replace)
                         }
                         if ((!is_numeric(x) | is.factor(x)) & any(is.na(x))) {
+                          plot2_env$na_replaced_vars <- c(plot2_env$na_replaced_vars, cur_column())
                           plot2_env$na_replaced <- plot2_env$na_replaced + sum(is.na(x))
                           x[is.na(x)] <- dots$na.replace
                         }
                         x
                       }))
       if (plot2_env$na_replaced > 0) {
-        plot2_message("Replacing ", font_red("NA"), " using ",
-                      font_blue(paste0("na.replace = \"", dots$na.replace, "\"")))
+        plot2_env$na_replaced_vars <- plot2_env$na_replaced_vars[plot2_env$na_replaced_vars %unlike% "^_var_"]
+        plot2_message("Replacing ", font_red("NA"),
+                      " in column", ifelse(length(plot2_env$na_replaced_vars) > 1, "s ", " "),
+                      paste(font_blue(plot2_env$na_replaced_vars, collapse = NULL), collapse = " and "),
+                      " using ", font_blue(paste0("na.replace = \"", dots$na.replace, "\"")))
       }
     }
   }
@@ -817,7 +822,7 @@ validate_y_scale <- function(df,
     } else {
       function(x, dec = decimal.mark, big = big.mark, ...) {
         is_scientific <- any(format(x) %like% "^(-?[0-9.]+e-?[0-9.]+)$", na.rm = TRUE) ||
-          diff(range(values, na.rm = TRUE)) > 10e3
+          diff(range(values, na.rm = TRUE)) > 10e5
         non_unique <- length(unique(format2(x[!is.na(x)]))) < length(format2(x[!is.na(x)]))
         if (isTRUE(non_unique) || (isTRUE(is_scientific) && is.null(y.scientific))) {
           if (isTRUE(is_scientific)) {
@@ -1496,7 +1501,12 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
 
   # support for markdown
   if (isTRUE(markdown) &&
-      (isTRUE(out %like% "(\\^|[_*].+[_*])") | isTRUE(out %like% "[$]"))) {
+      (isTRUE(out %like% "[*]+.+[*]+")
+       | isTRUE(out %like% "[a-z0-9]_[a-zA-Z0-9]")
+       | isTRUE(out %like% "[a-z0-9] ?^ ?[a-zA-Z0-9]")
+       | isTRUE(out %like% "<sup>.+</sup>")
+       | isTRUE(out %like% "<sub>.+</sub>")
+       | isTRUE(out %like% "[$]"))) {
     out <- md_to_expression(out)
   }
   

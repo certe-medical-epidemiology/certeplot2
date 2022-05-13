@@ -21,7 +21,8 @@ This function only supports common markdown (italic, bold, bold-italic, subscrip
 \emph{Rationale}: we tried to use the \code{ggtext} package instead to support markdown using their \code{element_markdown()} function for \code{ggplot2} \link[ggplot2:theme]{themes}, but it appeared to be incompatible with the \code{showtext} package to support different fonts. We subsequently developed this function to transform markdown into \link[grDevices:plotmath]{plotmath}.
 }
 \examples{
-md_to_expression("this is *italic* text, this is also _italic_ text")
+# use '*' for italics, not '_', to prevent conflicts with variable naming
+md_to_expression("this is *italic* text, this is _not italic_ text")
 
 md_to_expression("this is **bold** text")
 

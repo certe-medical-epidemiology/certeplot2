@@ -40,7 +40,9 @@
 #' * A [character], which supports markdown by using [md_to_expression()] internally if `markdown = TRUE`
 #' * A vector of characters and functions, which allows calculations over `.data` (see *Examples*)
 #' 
-#' The category title defaults to `TRUE` if the legend items are numeric.
+#' `title` will be guessed with [get_plot_title()] when left blank.
+#' 
+#' `category.title` defaults to `TRUE` if the legend items are numeric.
 #' @param title.linelength maximum number of characters per line in the title, before a linebreak occurs
 #' @param title.colour text colour of the title
 #' @param subtitle.linelength maximum number of characters per line in the subtitle, before a linebreak occurs
@@ -64,7 +66,7 @@
 #' @param x.remove,y.remove a [logical] to indicate whether the axis labels and title should be removed
 #' @param y.24h a [logical] to indicate whether the y labels and breaks should be formatted as 24-hour sequences
 #' @param y.age a [logical] to indicate whether the y labels and breaks should be formatted as ages in years
-#' @param y.scientific a [logical] to indicate whether the y labels should be formatted in scientific notation, using [`format2_scientific()`][certestyle::format2_scientific()]. Defaults to `TRUE` only if the range of the y values spans more than `10e3`.
+#' @param y.scientific a [logical] to indicate whether the y labels should be formatted in scientific notation, using [`format2_scientific()`][certestyle::format2_scientific()]. Defaults to `TRUE` only if the range of the y values spans more than `10e5`.
 #' @param y.percent a [logical] to indicate whether the y labels should be formatted as percentages
 #' @param y.percent_break a value on which the y axis should have breaks
 #' @param x.breaks,y.breaks a breaks function or numeric vector to use for the axis
@@ -1147,7 +1149,8 @@ plot2_exec <- function(.data,
   
   # add plot title if missing
   if (isTRUE(misses_title) && is.null(title)) {
-    p <- p + labs(title = get_plot_title(p, valid_filename = FALSE))  
+    p <- p + labs(title = validate_title(get_plot_title(p, valid_filename = FALSE),
+                                         markdown = isTRUE(markdown), df = df))
   }
   
   # return plot ----

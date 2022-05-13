@@ -27,7 +27,8 @@
 #' @export
 #' @return An [expression]
 #' @examples
-#' md_to_expression("this is *italic* text, this is also _italic_ text")
+#' # use '*' for italics, not '_', to prevent conflicts with variable naming
+#' md_to_expression("this is *italic* text, this is _not italic_ text")
 #' 
 #' md_to_expression("this is **bold** text")
 #' 
@@ -62,16 +63,6 @@ md_to_expression <- function(x) {
     out <- gsub("[*]{3}(.+?)[*]{3}", "', bolditalic('\\1'), '", out, perl = TRUE)
   }
   
-  # **_bold-italic_**
-  while (out %like% "[*]{2}_.+_[*]{2}") {
-    out <- gsub("[*]{2}_(.+?)_[*]{2}", "', bolditalic('\\1'), '", out, perl = TRUE)
-  }
-  
-  # _**bold-italic**_
-  while (out %like% "_[*]{2}.+[*]{2}_") {
-    out <- gsub("_[*]{2}(.+?)[*]{2}_", "', bolditalic('\\1'), '", out, perl = TRUE)
-  }
-  
   # **bold**
   while (out %like% "[*]{2}.+[*]{2}") {
     out <- gsub("[*]{2}(.+?)[*]{2}", "', bold('\\1'), '", out, perl = TRUE)
@@ -80,11 +71,6 @@ md_to_expression <- function(x) {
   # *italic*
   while (out %like% "[*].+[*]") {
     out <- gsub("[*](.+?)[*]", "', italic('\\1'), '", out, perl = TRUE)
-  }
-  
-  # _italic_
-  while (out %like% "_.+_") {
-    out <- gsub("_(.+?)_", "', italic('\\1'), '", out, perl = TRUE)
   }
   
   # sub<sub>script</sub>
@@ -98,14 +84,13 @@ md_to_expression <- function(x) {
   }
   
   # sub_script
-  while (grepl("\\S+_\\S+", out, ignore.case = FALSE)) {
-    out <- gsub("(\\S+?)_(\\S+)", "', \\1['\\2'], '", out, perl = TRUE)
+  while (out %like% "(^'| )[a-z0-9]+_[a-z0-9]+( |'$)") {
+    out <- gsub("( ?)([a-z0-9]+?)_([a-z0-9]+)( ?)", "\\1', \\2['\\3'], '\\4", out, perl = TRUE, ignore.case = TRUE)
   }
   
   # super^script
-  while (grepl("\\S+ ?\\^ ?[a-zA-Z0-9-]+", out, ignore.case = FALSE)) {
-    # do not rely on second \S here, since the ^ will be replaced with a ^ again, leading to an infinite loop
-    out <- gsub("(\\S+?) ?\\^ ?([a-zA-Z0-9-]+)", "', \\1^'\\2', '", out, perl = TRUE)
+  while (out %like% "(^'| )[a-z0-9]+ ?\\^ ?[a-z0-9]+( |'$)") {
+    out <- gsub("( ?)([a-z0-9]+?) ?\\^ ?([a-z0-9]+)( ?)", "\\1', \\2^'\\3', '\\4", out, perl = TRUE, ignore.case = TRUE)
   }
   
   # $plotmath$, such as $omega$

@@ -4,7 +4,7 @@
 \alias{get_plot_title}
 \title{Get Plot Title}
 \usage{
-get_plot_title(plot, valid_filename = TRUE, default = NA_character_)
+get_plot_title(plot, valid_filename = TRUE, default = NULL)
 }
 \arguments{
 \item{plot}{a \code{ggplot2} plot}
@@ -14,15 +14,25 @@ get_plot_title(plot, valid_filename = TRUE, default = NA_character_)
 \item{default}{the default value, if a plot title is absent}
 }
 \description{
-Get the title of the plot, or a default value.
+Get the title of the plot, or a default value. If the title is not set in a plot, this function tries to generate one from the plot mapping.
 }
 \examples{
+# plot2() uses get_plot_title() for the main title if the title is not set manually:
+iris |>
+  plot2()
+admitted_patients |>
+  plot2(age_group, n_distinct(patient_id), ward, gender)
+
 p <- plot2(mtcars, title = "Plotting **mpg** vs. **cyl**!")
 get_plot_title(p)
 
 get_plot_title(p, valid_filename = FALSE)
 
 p <- plot2(mtcars)
-# default is NA:
+# default is a guess:
 get_plot_title(p)
+
+# unless 'default' is set:
+get_plot_title(p, default = NA)
+get_plot_title(p, default = "title")
 }

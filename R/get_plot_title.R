@@ -19,13 +19,19 @@
 
 #' Get Plot Title
 #' 
-#' Get the title of the plot, or a default value.
+#' Get the title of the plot, or a default value. If the title is not set in a plot, this function tries to generate one from the plot mapping.
 #' @param plot a `ggplot2` plot
 #' @param valid_filename a [logical] to indicate whether the returned value should be a valid filename, defaults to `TRUE`
 #' @param default the default value, if a plot title is absent
 #' @importFrom ggplot2 is.ggplot
 #' @export
-#' @examples 
+#' @examples
+#' # plot2() uses get_plot_title() for the main title if the title is not set manually:
+#' iris |>
+#'   plot2()
+#' admitted_patients |>
+#'   plot2(age_group, n_distinct(patient_id), ward, gender)
+#' 
 #' p <- plot2(mtcars, title = "Plotting **mpg** vs. **cyl**!")
 #' get_plot_title(p)
 #' 
@@ -35,7 +41,7 @@
 #' # default is a guess:
 #' get_plot_title(p)
 #' 
-#' # unless default is set:
+#' # unless 'default' is set:
 #' get_plot_title(p, default = NA)
 #' get_plot_title(p, default = "title")
 get_plot_title <- function(plot,
@@ -44,27 +50,6 @@ get_plot_title <- function(plot,
   
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
-  }
-  
-  get_default_title <- function(plot, default) {
-    if (!is.null(default)) {
-      return(default)
-    }
-    get_mapping <- function(plot) gsub("~", "", sapply(plot$mapping, deparse))
-    mapp <- get_mapping(plot)
-    val <- mapp[names(mapp) == "y"]
-    if (length(val) > 0) {
-      val <- paste(val, "per ")
-      substr(val, 1, 1) <- toupper(substr(val, 1, 1))
-    } else {
-      val <- ""
-    }
-    mapp <- mapp[names(mapp) %in% c("x", "category", "facet")]
-    if (length(mapp) >= 1 && length(val) > 0 && val != "") {
-      return(paste0(val, paste(mapp, collapse = ", ")))
-    } else {
-      return(default)
-    }
   }
   
   title <- plot$labels$title
@@ -99,4 +84,52 @@ get_plot_title <- function(plot,
   }
   
   title
+}
+
+get_default_title <- function(plot, default) {
+  if (!is.null(default)) {
+    return(default)
+  }
+  
+  get_mapping <- function(plot) {
+    c(gsub("~", "", sapply(plot$mapping, deparse)),
+      gsub("~", "", sapply(plot$facet$params$facets, deparse)))
+  }
+  
+  is_dutch <- Sys.getlocale() %like% "nl|dutch|nederlands"
+  txt_per <- ifelse(is_dutch, "per", "per")
+  txt_sep <- ifelse(is_dutch, "en", "and")
+  txt_count <- ifelse(is_dutch, "aantal", "count")
+  txt_unique <- ifelse(is_dutch, "unieke", "unique")
+  
+  mapp <- get_mapping(plot)
+  # no nonsense argument names
+  mapp <- mapp[!mapp %in% c("x", "y")]
+  
+  # generate txt of y axis
+  val <- unname(mapp[names(mapp) == "y"])
+  val[val == "`n()`"] <- txt_count
+  val <- gsub("^`(n_distinct|length\\(unique)\\(+(.*?)\\)+`$", paste(txt_unique, "\\2"), val)
+  val <- gsub("[_.]", " ", val)
+  
+  if (length(val) > 0) {
+    val <- tolower(paste0(val, " ", txt_per, " "))
+    substr(val, 1, 1) <- toupper(substr(val, 1, 1))
+  } else {
+    val <- ""
+  }
+  
+  mapp <- tolower(unique(unname(mapp[!names(mapp) %in% c("y", "group")])))
+  mapp <- gsub("(^`|`$)", "", mapp)
+  mapp <- gsub("[_.]", " ", mapp)
+  if (length(mapp) >= 1 && length(val) > 0 && val != "") {
+    # transform to form: "x, y and z"
+    if (length(mapp) > 1) {
+      mapp <- paste(paste(mapp[seq_len(length(mapp) - 1)], collapse = ", "),
+                    txt_sep, mapp[length(mapp)])
+    }
+    paste0(val, mapp)
+  } else {
+    default
+  }
 }

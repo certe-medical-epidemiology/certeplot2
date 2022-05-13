@@ -947,7 +947,9 @@
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
-The category title defaults to \code{TRUE} if the legend items are numeric.}
+\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
+
+\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{y.title}{a title to use. This can be:
 \itemize{
@@ -956,7 +958,9 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
-The category title defaults to \code{TRUE} if the legend items are numeric.}
+\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
+
+\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{category.title}{a title to use. This can be:
 \itemize{
@@ -965,7 +969,9 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
-The category title defaults to \code{TRUE} if the legend items are numeric.}
+\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
+
+\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{title}{a title to use. This can be:
 \itemize{
@@ -974,7 +980,9 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
-The category title defaults to \code{TRUE} if the legend items are numeric.}
+\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
+
+\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{subtitle}{a title to use. This can be:
 \itemize{
@@ -983,7 +991,9 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
-The category title defaults to \code{TRUE} if the legend items are numeric.}
+\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
+
+\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{caption}{a title to use. This can be:
 \itemize{
@@ -992,7 +1002,9 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
-The category title defaults to \code{TRUE} if the legend items are numeric.}
+\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
+
+\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{tag}{a title to use. This can be:
 \itemize{
@@ -1001,7 +1013,9 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
-The category title defaults to \code{TRUE} if the legend items are numeric.}
+\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
+
+\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{title.linelength}{maximum number of characters per line in the title, before a linebreak occurs}
 
@@ -1099,7 +1113,7 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{y.age}{a \link{logical} to indicate whether the y labels and breaks should be formatted as ages in years}
 
-\item{y.scientific}{a \link{logical} to indicate whether the y labels should be formatted in scientific notation, using \code{\link[certestyle:format2]{format2_scientific()}}. Defaults to \code{TRUE} only if the range of the y values spans more than \code{10e3}.}
+\item{y.scientific}{a \link{logical} to indicate whether the y labels should be formatted in scientific notation, using \code{\link[certestyle:format2]{format2_scientific()}}. Defaults to \code{TRUE} only if the range of the y values spans more than \code{10e5}.}
 
 \item{y.percent}{a \link{logical} to indicate whether the y labels should be formatted as percentages}
 
@@ -1236,7 +1250,9 @@ The category title defaults to \code{TRUE} if the legend items are numeric.}
 \item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
-The category title defaults to \code{TRUE} if the legend items are numeric.}
+\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
+
+\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{legend.reverse}{other settings for the legend}
 
