@@ -84,13 +84,13 @@ md_to_expression <- function(x) {
   }
   
   # sub_script
-  while (out %like% "(^'| )[a-z0-9]+_[a-z0-9]+( |'$)") {
-    out <- gsub("( ?)([a-z0-9]+?)_([a-z0-9]+)( ?)", "\\1', \\2['\\3'], '\\4", out, perl = TRUE, ignore.case = TRUE)
+  while (out %like% "(^'| )[a-z0-9,.-]+_[a-z0-9,.-]+( |'$)") {
+    out <- gsub("( ?)([a-z0-9,.-]+?)_([a-z0-9,.-]+)( ?)", "\\1', \\2['\\3'], '\\4", out, perl = TRUE, ignore.case = TRUE)
   }
   
   # super^script
-  while (out %like% "(^'| )[a-z0-9]+ ?\\^ ?[a-z0-9]+( |'$)") {
-    out <- gsub("( ?)([a-z0-9]+?) ?\\^ ?([a-z0-9]+)( ?)", "\\1', \\2^'\\3', '\\4", out, perl = TRUE, ignore.case = TRUE)
+  while (out %like% "(^'| )[a-z0-9,.-]+ ?\\^ ?[a-z0-9,.-]+( |'$)") {
+    out <- gsub("( ?)([a-z0-9,.-]+?) ?\\^ ?([a-z0-9,.-]+)( ?)", "\\1', \\2^'\\3', '\\4", out, perl = TRUE, ignore.case = TRUE)
   }
   
   # $plotmath$, such as $omega$
