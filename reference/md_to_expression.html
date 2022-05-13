@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
       </span>
     </div>
 
@@ -103,9 +103,9 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">md_to_expression</span><span class="op">(</span><span class="st">"this is *italic* text, this is also _italic_ text"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> expression(paste("this is ", italic("italic"), " text, this is also ", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     italic("italic"), " text"))</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># use '*' for italics, not '_', to prevent conflicts with variable naming</span></span>
+<span class="r-in"><span class="fu">md_to_expression</span><span class="op">(</span><span class="st">"this is *italic* text, this is _not italic_ text"</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> expression(paste("this is ", italic("italic"), " text, this is _not italic_ text"))</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu">md_to_expression</span><span class="op">(</span><span class="st">"this is **bold** text"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> expression(paste("this is ", bold("bold"), " text"))</span>
