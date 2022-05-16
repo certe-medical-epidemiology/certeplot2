@@ -18,7 +18,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.7</span>
       </span>
     </div>
 
@@ -114,6 +114,7 @@ See plot2-methods for all implemented methods for different object classes."><me
   facet.repeat_lbls_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.repeat_lbls_y <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.fixed_y <span class="op">=</span> <span class="cn">NULL</span>,
+  facet.fixed_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.drop <span class="op">=</span> <span class="cn">FALSE</span>,
   facet.nrow <span class="op">=</span> <span class="cn">NULL</span>,
   facet.relative <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -255,6 +256,8 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
 <dt>facet.fixed_y</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether all y scales should have the same limits. Defaults to <code>TRUE</code> only if the <a href="https://certe-medical-epidemiology.github.io/certestats/reference/distribution_metrics.html" class="external-link">coefficient of variation</a> (sd divided by mean) of the maximum values of y is less than 15%.</p></dd>
+<dt>facet.fixed_x</dt>
+<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether all x scales should have the same breaks. This acts like the inverse of <code>x.drop</code>.</p></dd>
 <dt>x.date_breaks</dt>
 <dd><p>breaks to use when the x axis contains dates, will be determined automatically if left blank</p></dd>
 <dt>x.date_labels</dt>
@@ -409,7 +412,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <li><p>Labels with data values can easily be printed and are automatically determined</p></li>
 </ul></li>
 <li><p>Support for any <code>ggplot2</code> extension based on <code><a href="https://ggplot2.tidyverse.org/reference/fortify.html" class="external-link">ggplot2::fortify()</a></code></p></li>
-</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 126 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
+</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 127 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
     </div>
 
     <div id="ref-examples">

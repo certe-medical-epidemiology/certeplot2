@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.7</span>
       </span>
     </div>
 
@@ -113,6 +113,7 @@
   facet.repeat_lbls_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.repeat_lbls_y <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.fixed_y <span class="op">=</span> <span class="cn">NULL</span>,
+  facet.fixed_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.drop <span class="op">=</span> <span class="cn">FALSE</span>,
   facet.nrow <span class="op">=</span> <span class="cn">NULL</span>,
   facet.relative <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -244,6 +245,7 @@
   facet.repeat_lbls_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.repeat_lbls_y <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.fixed_y <span class="op">=</span> <span class="cn">NULL</span>,
+  facet.fixed_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.drop <span class="op">=</span> <span class="cn">FALSE</span>,
   facet.nrow <span class="op">=</span> <span class="cn">NULL</span>,
   facet.relative <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -375,6 +377,7 @@
   facet.repeat_lbls_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.repeat_lbls_y <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.fixed_y <span class="op">=</span> <span class="cn">NULL</span>,
+  facet.fixed_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.drop <span class="op">=</span> <span class="cn">FALSE</span>,
   facet.nrow <span class="op">=</span> <span class="cn">NULL</span>,
   facet.relative <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -506,6 +509,7 @@
   facet.repeat_lbls_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.repeat_lbls_y <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.fixed_y <span class="op">=</span> <span class="cn">NULL</span>,
+  facet.fixed_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.drop <span class="op">=</span> <span class="cn">FALSE</span>,
   facet.nrow <span class="op">=</span> <span class="cn">NULL</span>,
   facet.relative <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -640,6 +644,7 @@
   facet.repeat_lbls_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.repeat_lbls_y <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.fixed_y <span class="op">=</span> <span class="cn">NULL</span>,
+  facet.fixed_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.drop <span class="op">=</span> <span class="cn">FALSE</span>,
   facet.nrow <span class="op">=</span> <span class="cn">NULL</span>,
   facet.relative <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -771,6 +776,7 @@
   facet.repeat_lbls_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.repeat_lbls_y <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.fixed_y <span class="op">=</span> <span class="cn">NULL</span>,
+  facet.fixed_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.drop <span class="op">=</span> <span class="cn">FALSE</span>,
   facet.nrow <span class="op">=</span> <span class="cn">NULL</span>,
   facet.relative <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -905,6 +911,7 @@
   facet.repeat_lbls_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.repeat_lbls_y <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.fixed_y <span class="op">=</span> <span class="cn">NULL</span>,
+  facet.fixed_x <span class="op">=</span> <span class="cn">TRUE</span>,
   facet.drop <span class="op">=</span> <span class="cn">FALSE</span>,
   facet.nrow <span class="op">=</span> <span class="cn">NULL</span>,
   facet.relative <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -1098,6 +1105,8 @@
 <dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
 <dt>facet.fixed_y</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether all y scales should have the same limits. Defaults to <code>TRUE</code> only if the <a href="https://certe-medical-epidemiology.github.io/certestats/reference/distribution_metrics.html" class="external-link">coefficient of variation</a> (sd divided by mean) of the maximum values of y is less than 15%.</p></dd>
+<dt>facet.fixed_x</dt>
+<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether all x scales should have the same breaks. This acts like the inverse of <code>x.drop</code>.</p></dd>
 <dt>facet.drop</dt>
 <dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
 <dt>facet.nrow</dt>
