@@ -33,6 +33,7 @@ plot2(
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
   facet.fixed_y = NULL,
+  facet.fixed_x = TRUE,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -178,6 +179,8 @@ plot2(
 \item{facet.position, facet.fill, facet.bold, facet.italic, facet.size, facet.margin, facet.repeat_lbls_x, facet.repeat_lbls_y, facet.drop, facet.nrow, facet.relative}{additional settings for the plotting direction \code{facet}}
 
 \item{facet.fixed_y}{a \link{logical} to indicate whether all y scales should have the same limits. Defaults to \code{TRUE} only if the \link[certestats:distribution_metrics]{coefficient of variation} (sd divided by mean) of the maximum values of y is less than 15\%.}
+
+\item{facet.fixed_x}{a \link{logical} to indicate whether all x scales should have the same breaks. This acts like the inverse of \code{x.drop}.}
 
 \item{x.date_breaks}{breaks to use when the x axis contains dates, will be determined automatically if left blank}
 
@@ -343,7 +346,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 126 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 127 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)

@@ -50,6 +50,7 @@
 #' @param na.replace character to put in place of `NA` values if `na.rm = FALSE`
 #' @param na.rm remove `NA` values from showing in the plot
 #' @param facet.fixed_y a [logical] to indicate whether all y scales should have the same limits. Defaults to `TRUE` only if the [coefficient of variation][certestats::cv()] (sd divided by mean) of the maximum values of y is less than 15%.
+#' @param facet.fixed_x a [logical] to indicate whether all x scales should have the same breaks. This acts like the inverse of `x.drop`.
 #' @param facet.position,facet.fill,facet.bold,facet.italic,facet.size,facet.margin,facet.repeat_lbls_x,facet.repeat_lbls_y,facet.drop,facet.nrow,facet.relative additional settings for the plotting direction `facet`
 #' @param x.date_breaks breaks to use when the x axis contains dates, will be determined automatically if left blank
 #' @param x.date_labels labels to use when the x axis contains dates, will be determined automatically if left blank
@@ -297,6 +298,7 @@ plot2 <- function(.data,
                   facet.repeat_lbls_x = TRUE,
                   facet.repeat_lbls_y = TRUE,
                   facet.fixed_y = NULL,
+                  facet.fixed_x = TRUE,
                   facet.drop = FALSE,
                   facet.nrow = NULL,
                   facet.relative = FALSE,
@@ -479,6 +481,7 @@ plot2_exec <- function(.data,
                        facet.repeat_lbls_x,
                        facet.repeat_lbls_y,
                        facet.fixed_y,
+                       facet.fixed_x,
                        facet.drop,
                        facet.nrow,
                        facet.relative,
@@ -605,7 +608,12 @@ plot2_exec <- function(.data,
   misses_x.max_items <- isTRUE(dots$`_misses.x.max_items`)
   misses_y.percent <- isTRUE(dots$`_misses.y.percent`)
   misses_y.percent_break <- isTRUE(dots$`_misses.y.percent_break`)
- 
+  misses_facet.fixed_x <- isTRUE(dots$`_misses.facet.fixed_x`)
+  
+  if (!misses_facet.fixed_x) {
+    x.drop <- !isTRUE(facet.fixed_x)
+  }
+  
   # prevalidate types for special types ----
   if (!is_empty(type) && !is.character(type)) {
     stop("'type' must be a character", call. = FALSE)

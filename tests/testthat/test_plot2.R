@@ -250,6 +250,12 @@ test_that("x scale works", {
                        Sys.Date() + 2))
   expect_equal(p |> get_range_x() |> as.Date(origin = "1970-01-01"),
                c(Sys.Date() - 13 - 1, Sys.Date() + 2 + 1))
+  
+  plotdata2 <- data.frame(x = factor(c(1:30)), y = rnorm(30, 30, 5), z = rep(letters[1:10], 3))
+  expect_identical(plotdata2 |> plot2(facet = z, facet.fixed_x = TRUE) |> get_range_x(),
+                   plotdata2 |> plot2(facet = z, x.drop = FALSE) |> get_range_x())
+  expect_identical(plotdata2 |> plot2(facet = z, facet.fixed_x = FALSE) |> get_range_x(),
+                   plotdata2 |> plot2(facet = z, x.drop = TRUE) |> get_range_x())
 })
 
 test_that("y scale works", {

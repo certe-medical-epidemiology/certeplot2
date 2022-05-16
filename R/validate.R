@@ -1515,7 +1515,7 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
   }
   
   out <- gsub("<br>", "\n", out, fixed = TRUE)
-  out_plain <- gsub("[^a-zA-Z0-9, .-]", "", out)
+  out_plain <- gsub("[^a-zA-Z0-9,. .-]", "", out)
 
   # support for markdown
   if (isTRUE(markdown) &&

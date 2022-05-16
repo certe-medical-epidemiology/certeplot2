@@ -40,6 +40,7 @@
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
   facet.fixed_y = NULL,
+  facet.fixed_x = TRUE,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -170,6 +171,7 @@
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
   facet.fixed_y = NULL,
+  facet.fixed_x = TRUE,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -300,6 +302,7 @@
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
   facet.fixed_y = NULL,
+  facet.fixed_x = TRUE,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -430,6 +433,7 @@
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
   facet.fixed_y = NULL,
+  facet.fixed_x = TRUE,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -563,6 +567,7 @@
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
   facet.fixed_y = NULL,
+  facet.fixed_x = TRUE,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -693,6 +698,7 @@
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
   facet.fixed_y = NULL,
+  facet.fixed_x = TRUE,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -826,6 +832,7 @@
   facet.repeat_lbls_x = TRUE,
   facet.repeat_lbls_y = TRUE,
   facet.fixed_y = NULL,
+  facet.fixed_x = TRUE,
   facet.drop = FALSE,
   facet.nrow = NULL,
   facet.relative = FALSE,
@@ -1053,6 +1060,8 @@
 \item{facet.repeat_lbls_y}{additional settings for the plotting direction \code{facet}}
 
 \item{facet.fixed_y}{a \link{logical} to indicate whether all y scales should have the same limits. Defaults to \code{TRUE} only if the \link[certestats:distribution_metrics]{coefficient of variation} (sd divided by mean) of the maximum values of y is less than 15\%.}
+
+\item{facet.fixed_x}{a \link{logical} to indicate whether all x scales should have the same breaks. This acts like the inverse of \code{x.drop}.}
 
 \item{facet.drop}{additional settings for the plotting direction \code{facet}}
 
