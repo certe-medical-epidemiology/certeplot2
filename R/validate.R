@@ -1647,7 +1647,7 @@ validate_theme <- function(theme,
     theme$strip.text$face <- "bold.italic"
   } else if (isTRUE(facet.bold)) {
     theme$strip.text$face <- "bold"
-  } else if (isTRUE(facet.bold)) {
+  } else if (isTRUE(facet.italic)) {
     theme$strip.text$face <- "italic"
   } else {
     theme$strip.text$face <- "plain"
