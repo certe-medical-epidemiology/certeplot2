@@ -63,6 +63,7 @@
 #' @param x.lbl_taxonomy a [logical] to transform all words of the `x` labels into italics that are in the [microorganisms][AMR::microorganisms] data set of the `AMR` package. This uses [md_to_expression()] internally and will set `x.labels` to parse expressions.
 #' @param x.character a [logical] to indicate whether the values of the x axis should be forced to [character]. The default is `FALSE`, except for years (x values between 2000 and 2050)
 #' @param x.drop [logical] to indicate whether factor levels should be dropped
+#' @param x.mic [logical] to indicate whether the x axis should be formatted as [MIC values][AMR::as.mic()], by dropping all factor levels and adding missing factors of 2
 #' @param x.remove,y.remove a [logical] to indicate whether the axis labels and title should be removed
 #' @param y.24h a [logical] to indicate whether the y labels and breaks should be formatted as 24-hour sequences
 #' @param y.age a [logical] to indicate whether the y labels and breaks should be formatted as ages in years
@@ -325,6 +326,7 @@ plot2 <- function(.data,
                   x.labels = NULL,
                   x.character = NULL,
                   x.drop = FALSE,
+                  x.mic = FALSE,
                   x.zoom = FALSE,
                   y.remove = FALSE,
                   y.24h = FALSE,
@@ -506,6 +508,7 @@ plot2_exec <- function(.data,
                        x.labels,
                        x.character,
                        x.drop,
+                       x.mic,
                        x.zoom,
                        y.remove,
                        y.24h,
@@ -713,6 +716,7 @@ plot2_exec <- function(.data,
                   x.max_txt = x.max_txt,
                   x.character = x.character,
                   x.drop = x.drop,
+                  x.mic = x.mic,
                   category.max_items = category.max_items,
                   category.max_txt = category.max_txt,
                   facet.max_items = facet.max_items,

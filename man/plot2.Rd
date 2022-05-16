@@ -62,6 +62,7 @@ plot2(
   x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.mic = FALSE,
   x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
@@ -222,6 +223,8 @@ plot2(
 
 \item{x.drop}{\link{logical} to indicate whether factor levels should be dropped}
 
+\item{x.mic}{\link{logical} to indicate whether the x axis should be formatted as \link[AMR:as.mic]{MIC values}, by dropping all factor levels and adding missing factors of 2}
+
 \item{x.zoom, y.zoom}{a \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} and \code{x.expand = 0} for the x axis, or \code{y.limits = c(NA, NA)} and \code{y.expand = 0} for the y axis}
 
 \item{y.24h}{a \link{logical} to indicate whether the y labels and breaks should be formatted as 24-hour sequences}
@@ -340,7 +343,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 125 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 126 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)

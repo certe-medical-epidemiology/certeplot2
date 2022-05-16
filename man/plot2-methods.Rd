@@ -69,6 +69,7 @@
   x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.mic = FALSE,
   x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
@@ -198,6 +199,7 @@
   x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.mic = FALSE,
   x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
@@ -327,6 +329,7 @@
   x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.mic = FALSE,
   x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
@@ -456,6 +459,7 @@
   x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.mic = FALSE,
   x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
@@ -588,6 +592,7 @@
   x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.mic = FALSE,
   x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
@@ -717,6 +722,7 @@
   x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.mic = FALSE,
   x.zoom = FALSE,
   y.remove = FALSE,
   y.24h = FALSE,
@@ -851,6 +857,7 @@
   x.labels = NULL,
   x.character = NULL,
   x.drop = FALSE,
+  x.mic = FALSE,
   x.zoom = TRUE,
   y.remove = FALSE,
   y.24h = FALSE,
@@ -1104,6 +1111,8 @@
 \item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (x values between 2000 and 2050)}
 
 \item{x.drop}{\link{logical} to indicate whether factor levels should be dropped}
+
+\item{x.mic}{\link{logical} to indicate whether the x axis should be formatted as \link[AMR:as.mic]{MIC values}, by dropping all factor levels and adding missing factors of 2}
 
 \item{x.zoom}{a \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} and \code{x.expand = 0} for the x axis, or \code{y.limits = c(NA, NA)} and \code{y.expand = 0} for the y axis}
 
