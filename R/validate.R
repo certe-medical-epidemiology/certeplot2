@@ -1911,7 +1911,7 @@ validate_font <- function(font) {
   # enable showtext
   showtext::showtext_auto(enable = TRUE)
   
-  if (!interactive() && "knitr" %in% rownames(utils::installed.packages())) {
+  if (isTRUE(getOption('knitr.in.progress'))) {
     # if in knitr (R Markdown) set the right DPI for this plot according to current chunk setting
     showtext::showtext_opts(dpi = knitr::opts_current$get("dpi"))
   }
