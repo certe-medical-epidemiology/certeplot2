@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.9</span>
       </span>
     </div>
 
@@ -1033,43 +1033,7 @@
 <li><p>A shortcut. There is currently one supported shortcut: <code>"barpercent"</code>, which will set <code>type = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc"</code> and <code>datalabels.format = "%n (%p)"</code>.</p></li>
 <li><p>Left blank. In this case, the type will be determined automatically: <code>"boxplot"</code> if there is no X axis or if the length of unique values per X axis item is at least 3, <code>"point"</code> if both the Y and X axes are numeric, and the <a href="https://rdrr.io/r/base/options.html" class="external-link">option</a> <code>"plot2.default_type"</code> otherwise (which defaults to <code>"col"</code>). Use <code>type = "blank"</code> or <code>type = "geom_blank"</code> to <em>not</em> print a geom.</p></li>
 </ul></dd>
-<dt>x.title</dt>
-<dd><p>a title to use. This can be:</p><ul><li><p>An <a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a>, e.g. using <code>parse(text = "...")</code></p></li>
-<li><p>A <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>, which supports markdown by using <code><a href="md_to_expression.html">md_to_expression()</a></code> internally if <code>markdown = TRUE</code></p></li>
-<li><p>A vector of characters and functions, which allows calculations over <code>.data</code> (see <em>Examples</em>)</p></li>
-</ul><p><code>title</code> will be guessed with <code><a href="get_plot_title.html">get_plot_title()</a></code> when left blank.</p>
-<p><code>category.title</code> defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
-<dt>y.title</dt>
-<dd><p>a title to use. This can be:</p><ul><li><p>An <a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a>, e.g. using <code>parse(text = "...")</code></p></li>
-<li><p>A <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>, which supports markdown by using <code><a href="md_to_expression.html">md_to_expression()</a></code> internally if <code>markdown = TRUE</code></p></li>
-<li><p>A vector of characters and functions, which allows calculations over <code>.data</code> (see <em>Examples</em>)</p></li>
-</ul><p><code>title</code> will be guessed with <code><a href="get_plot_title.html">get_plot_title()</a></code> when left blank.</p>
-<p><code>category.title</code> defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
-<dt>category.title</dt>
-<dd><p>a title to use. This can be:</p><ul><li><p>An <a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a>, e.g. using <code>parse(text = "...")</code></p></li>
-<li><p>A <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>, which supports markdown by using <code><a href="md_to_expression.html">md_to_expression()</a></code> internally if <code>markdown = TRUE</code></p></li>
-<li><p>A vector of characters and functions, which allows calculations over <code>.data</code> (see <em>Examples</em>)</p></li>
-</ul><p><code>title</code> will be guessed with <code><a href="get_plot_title.html">get_plot_title()</a></code> when left blank.</p>
-<p><code>category.title</code> defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
-<dt>title</dt>
-<dd><p>a title to use. This can be:</p><ul><li><p>An <a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a>, e.g. using <code>parse(text = "...")</code></p></li>
-<li><p>A <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>, which supports markdown by using <code><a href="md_to_expression.html">md_to_expression()</a></code> internally if <code>markdown = TRUE</code></p></li>
-<li><p>A vector of characters and functions, which allows calculations over <code>.data</code> (see <em>Examples</em>)</p></li>
-</ul><p><code>title</code> will be guessed with <code><a href="get_plot_title.html">get_plot_title()</a></code> when left blank.</p>
-<p><code>category.title</code> defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
-<dt>subtitle</dt>
-<dd><p>a title to use. This can be:</p><ul><li><p>An <a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a>, e.g. using <code>parse(text = "...")</code></p></li>
-<li><p>A <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>, which supports markdown by using <code><a href="md_to_expression.html">md_to_expression()</a></code> internally if <code>markdown = TRUE</code></p></li>
-<li><p>A vector of characters and functions, which allows calculations over <code>.data</code> (see <em>Examples</em>)</p></li>
-</ul><p><code>title</code> will be guessed with <code><a href="get_plot_title.html">get_plot_title()</a></code> when left blank.</p>
-<p><code>category.title</code> defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
-<dt>caption</dt>
-<dd><p>a title to use. This can be:</p><ul><li><p>An <a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a>, e.g. using <code>parse(text = "...")</code></p></li>
-<li><p>A <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>, which supports markdown by using <code><a href="md_to_expression.html">md_to_expression()</a></code> internally if <code>markdown = TRUE</code></p></li>
-<li><p>A vector of characters and functions, which allows calculations over <code>.data</code> (see <em>Examples</em>)</p></li>
-</ul><p><code>title</code> will be guessed with <code><a href="get_plot_title.html">get_plot_title()</a></code> when left blank.</p>
-<p><code>category.title</code> defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
-<dt>tag</dt>
+<dt>title, subtitle, caption, tag, x.title, y.title, category.title, legend.title</dt>
 <dd><p>a title to use. This can be:</p><ul><li><p>An <a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a>, e.g. using <code>parse(text = "...")</code></p></li>
 <li><p>A <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>, which supports markdown by using <code><a href="md_to_expression.html">md_to_expression()</a></code> internally if <code>markdown = TRUE</code></p></li>
 <li><p>A vector of characters and functions, which allows calculations over <code>.data</code> (see <em>Examples</em>)</p></li>
@@ -1087,32 +1051,12 @@
 <dd><p>character to put in place of <code>NA</code> values if <code>na.rm = FALSE</code></p></dd>
 <dt>na.rm</dt>
 <dd><p>remove <code>NA</code> values from showing in the plot</p></dd>
-<dt>facet.position</dt>
-<dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
-<dt>facet.fill</dt>
-<dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
-<dt>facet.bold</dt>
-<dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
-<dt>facet.italic</dt>
-<dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
-<dt>facet.size</dt>
-<dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
-<dt>facet.margin</dt>
-<dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
-<dt>facet.repeat_lbls_x</dt>
-<dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
-<dt>facet.repeat_lbls_y</dt>
+<dt>facet.position, facet.fill, facet.bold, facet.italic, facet.size, facet.margin, facet.repeat_lbls_x, facet.repeat_lbls_y, facet.drop, facet.nrow, facet.relative</dt>
 <dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
 <dt>facet.fixed_y</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether all y scales should have the same limits. Defaults to <code>TRUE</code> only if the <a href="https://certe-medical-epidemiology.github.io/certestats/reference/distribution_metrics.html" class="external-link">coefficient of variation</a> (sd divided by mean) of the maximum values of y is less than 15%.</p></dd>
 <dt>facet.fixed_x</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether all x scales should have the same breaks. This acts like the inverse of <code>x.drop</code>.</p></dd>
-<dt>facet.drop</dt>
-<dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
-<dt>facet.nrow</dt>
-<dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
-<dt>facet.relative</dt>
-<dd><p>additional settings for the plotting direction <code>facet</code></p></dd>
 <dt>x.date_breaks</dt>
 <dd><p>breaks to use when the x axis contains dates, will be determined automatically if left blank</p></dd>
 <dt>x.date_labels</dt>
@@ -1133,33 +1077,25 @@
 <dd><p><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the x labels should in in <em>italics</em></p></dd>
 <dt>x.lbl_taxonomy</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to transform all words of the <code>x</code> labels into italics that are in the <a href="https://msberends.github.io/AMR/reference/microorganisms.html" class="external-link">microorganisms</a> data set of the <code>AMR</code> package. This uses <code><a href="md_to_expression.html">md_to_expression()</a></code> internally and will set <code>x.labels</code> to parse expressions.</p></dd>
-<dt>x.remove</dt>
+<dt>x.remove, y.remove</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the axis labels and title should be removed</p></dd>
-<dt>x.position</dt>
+<dt>x.position, y.position</dt>
 <dd><p>position of the axis</p></dd>
-<dt>x.max_items</dt>
+<dt>x.max_items, category.max_items, facet.max_items</dt>
 <dd><p>number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the <code>summarise_function</code> function. <strong>Please note:</strong> the sorting will be applied first, allowing to e.g. plot the top <em>n</em> most frequent values of the x axis by combining <code>x.sort = "freq-desc"</code> with <code>x.max_items =</code> <em>n</em>.</p></dd>
-<dt>x.max_txt</dt>
+<dt>x.max_txt, category.max_txt, facet.max_txt</dt>
 <dd><p>the text to use of values not included number of <code>*.max_items</code>. The placeholder <code>%n</code> will be replaced with the outcome of the <code>summarise_function</code> function, the placeholder <code>%p</code> will be replaced with the percentage.</p></dd>
-<dt>category.max_items</dt>
-<dd><p>number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the <code>summarise_function</code> function. <strong>Please note:</strong> the sorting will be applied first, allowing to e.g. plot the top <em>n</em> most frequent values of the x axis by combining <code>x.sort = "freq-desc"</code> with <code>x.max_items =</code> <em>n</em>.</p></dd>
-<dt>category.max_txt</dt>
-<dd><p>the text to use of values not included number of <code>*.max_items</code>. The placeholder <code>%n</code> will be replaced with the outcome of the <code>summarise_function</code> function, the placeholder <code>%p</code> will be replaced with the percentage.</p></dd>
-<dt>facet.max_items</dt>
-<dd><p>number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the <code>summarise_function</code> function. <strong>Please note:</strong> the sorting will be applied first, allowing to e.g. plot the top <em>n</em> most frequent values of the x axis by combining <code>x.sort = "freq-desc"</code> with <code>x.max_items =</code> <em>n</em>.</p></dd>
-<dt>facet.max_txt</dt>
-<dd><p>the text to use of values not included number of <code>*.max_items</code>. The placeholder <code>%n</code> will be replaced with the outcome of the <code>summarise_function</code> function, the placeholder <code>%p</code> will be replaced with the percentage.</p></dd>
-<dt>x.breaks</dt>
+<dt>x.breaks, y.breaks</dt>
 <dd><p>a breaks function or numeric vector to use for the axis</p></dd>
-<dt>x.n_breaks</dt>
+<dt>x.n_breaks, y.n_breaks</dt>
 <dd><p>number of breaks, only useful if <code>x.breaks</code> cq. <code>y.breaks</code> is <code>NULL</code></p></dd>
-<dt>x.trans</dt>
+<dt>x.trans, y.trans</dt>
 <dd><p>a transformation function to use for the axis, e.g. <code>"log2"</code></p></dd>
-<dt>x.expand</dt>
+<dt>x.expand, y.expand</dt>
 <dd><p><a href="ggplot2::expansion()">expansion</a> to use for the axis, can be length 1 or 2. <code>x.expand</code> defaults to 0.5 and <code>y.expand</code> defaults to <code>0.25</code>, except for sf objects (then both default to 0).</p></dd>
-<dt>x.limits</dt>
+<dt>x.limits, y.limits</dt>
 <dd><p>limits to use for the axis, can be length 1 or 2. Use <code>NA</code> for the highest or lowest value in the data, e.g. <code>y.limits = c(0, NA)</code> to have the y scale start at zero.</p></dd>
-<dt>x.labels</dt>
+<dt>x.labels, y.labels</dt>
 <dd><p>a labels function or character vector to use for the axis</p></dd>
 <dt>x.character</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the values of the x axis should be forced to <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>. The default is <code>FALSE</code>, except for years (x values between 2000 and 2050)</p></dd>
@@ -1167,10 +1103,8 @@
 <dd><p><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether factor levels should be dropped</p></dd>
 <dt>x.mic</dt>
 <dd><p><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the x axis should be formatted as <a href="https://msberends.github.io/AMR/reference/as.mic.html" class="external-link">MIC values</a>, by dropping all factor levels and adding missing factors of 2</p></dd>
-<dt>x.zoom</dt>
+<dt>x.zoom, y.zoom</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate if the axis should be zoomed on the data, by setting <code>x.limits = c(NA, NA)</code> and <code>x.expand = 0</code> for the x axis, or <code>y.limits = c(NA, NA)</code> and <code>y.expand = 0</code> for the y axis</p></dd>
-<dt>y.remove</dt>
-<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the axis labels and title should be removed</p></dd>
 <dt>y.24h</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the y labels and breaks should be formatted as 24-hour sequences</p></dd>
 <dt>y.age</dt>
@@ -1181,57 +1115,11 @@
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the y labels should be formatted as percentages</p></dd>
 <dt>y.percent_break</dt>
 <dd><p>a value on which the y axis should have breaks</p></dd>
-<dt>y.breaks</dt>
-<dd><p>a breaks function or numeric vector to use for the axis</p></dd>
-<dt>y.n_breaks</dt>
-<dd><p>number of breaks, only useful if <code>x.breaks</code> cq. <code>y.breaks</code> is <code>NULL</code></p></dd>
-<dt>y.limits</dt>
-<dd><p>limits to use for the axis, can be length 1 or 2. Use <code>NA</code> for the highest or lowest value in the data, e.g. <code>y.limits = c(0, NA)</code> to have the y scale start at zero.</p></dd>
-<dt>y.labels</dt>
-<dd><p>a labels function or character vector to use for the axis</p></dd>
-<dt>y.expand</dt>
-<dd><p><a href="ggplot2::expansion()">expansion</a> to use for the axis, can be length 1 or 2. <code>x.expand</code> defaults to 0.5 and <code>y.expand</code> defaults to <code>0.25</code>, except for sf objects (then both default to 0).</p></dd>
-<dt>y.trans</dt>
-<dd><p>a transformation function to use for the axis, e.g. <code>"log2"</code></p></dd>
-<dt>y.position</dt>
-<dd><p>position of the axis</p></dd>
-<dt>y.zoom</dt>
-<dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate if the axis should be zoomed on the data, by setting <code>x.limits = c(NA, NA)</code> and <code>x.expand = 0</code> for the x axis, or <code>y.limits = c(NA, NA)</code> and <code>y.expand = 0</code> for the y axis</p></dd>
-<dt>category.labels</dt>
-<dd><p>settings for the plotting direction <code>category</code>.</p></dd>
-<dt>category.percent</dt>
-<dd><p>settings for the plotting direction <code>category</code>.</p></dd>
-<dt>category.breaks</dt>
+<dt>category.labels, category.percent, category.breaks, category.expand, category.midpoint, category.trans</dt>
 <dd><p>settings for the plotting direction <code>category</code>.</p></dd>
 <dt>category.limits</dt>
 <dd><p>limits to use for a numeric category, can be length 1 or 2. Use <code>NA</code> for the highest or lowest value in the data, e.g. <code>category.limits = c(0, NA)</code> to have the scale start at zero.</p></dd>
-<dt>category.expand</dt>
-<dd><p>settings for the plotting direction <code>category</code>.</p></dd>
-<dt>category.midpoint</dt>
-<dd><p>settings for the plotting direction <code>category</code>.</p></dd>
-<dt>category.trans</dt>
-<dd><p>settings for the plotting direction <code>category</code>.</p></dd>
-<dt>x.sort</dt>
-<dd><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul><li><p><code>TRUE</code>: sort <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
-<li><p><code>FALSE</code>: sort according to the order in the data</p></li>
-<li><p><code>NULL</code>: do not sort/transform at all</p></li>
-<li><p><code>"asc"</code> or <code>"alpha"</code>: sort as <code>TRUE</code></p></li>
-<li><p><code>"desc"</code>: sort <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>s on their <a href="https://rdrr.io/r/base/rev.html" class="external-link">reversed</a> levels, otherwise sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
-<li><p><code>"order"</code> or <code>"inorder"</code>: sort as <code>FALSE</code></p></li>
-<li><p><code>"freq"</code> or <code>"freq-desc"</code>: sort descending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (highest value first)</p></li>
-<li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (lowest value first)</p></li>
-</ul></dd>
-<dt>category.sort</dt>
-<dd><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul><li><p><code>TRUE</code>: sort <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
-<li><p><code>FALSE</code>: sort according to the order in the data</p></li>
-<li><p><code>NULL</code>: do not sort/transform at all</p></li>
-<li><p><code>"asc"</code> or <code>"alpha"</code>: sort as <code>TRUE</code></p></li>
-<li><p><code>"desc"</code>: sort <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>s on their <a href="https://rdrr.io/r/base/rev.html" class="external-link">reversed</a> levels, otherwise sort descending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
-<li><p><code>"order"</code> or <code>"inorder"</code>: sort as <code>FALSE</code></p></li>
-<li><p><code>"freq"</code> or <code>"freq-desc"</code>: sort descending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (highest value first)</p></li>
-<li><p><code>"freq-asc"</code>: sort ascending according to the frequencies of <code>y</code> computed by <code>summarise_function</code> (lowest value first)</p></li>
-</ul></dd>
-<dt>facet.sort</dt>
+<dt>x.sort, category.sort, facet.sort</dt>
 <dd><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul><li><p><code>TRUE</code>: sort <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
 <li><p><code>FALSE</code>: sort according to the order in the data</p></li>
 <li><p><code>NULL</code>: do not sort/transform at all</p></li>
@@ -1247,13 +1135,7 @@
 <dd><p>number of digits to round the datalabels, applies to both <code>"%n"</code> and <code>"%p"</code> for replacement (see <code>datalabels.format</code>)</p></dd>
 <dt>datalabels.format</dt>
 <dd><p>format to use for datalabels - <code>"%n"</code> will be replaced by the count number, <code>"%p"</code> will be replaced by the percentage of the total count. Use <code>datalabels.format = NULL</code> to not transform the datalabels.</p></dd>
-<dt>datalabels.colour</dt>
-<dd><p>settings for the datalabels</p></dd>
-<dt>datalabels.colour_fill</dt>
-<dd><p>settings for the datalabels</p></dd>
-<dt>datalabels.size</dt>
-<dd><p>settings for the datalabels</p></dd>
-<dt>datalabels.angle</dt>
+<dt>datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle</dt>
 <dd><p>settings for the datalabels</p></dd>
 <dt>decimal.mark</dt>
 <dd><p>decimal mark, defaults to Dutch use (a comma)</p></dd>
@@ -1271,19 +1153,7 @@
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to reverse the <em>values</em> of <code>category</code>. Use <code>legend.reverse</code> to reverse the <em>legend</em> of <code>category</code>.</p></dd>
 <dt>smooth</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to add a smooth. In histograms, this will add the density count as an overlaying line (default: <code>TRUE</code>). In all other cases, a smooth will be added using <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth()</a></code> (default: <code>FALSE</code>).</p></dd>
-<dt>smooth.method</dt>
-<dd><p>settings for <code>smooth</code></p></dd>
-<dt>smooth.formula</dt>
-<dd><p>settings for <code>smooth</code></p></dd>
-<dt>smooth.se</dt>
-<dd><p>settings for <code>smooth</code></p></dd>
-<dt>smooth.level</dt>
-<dd><p>settings for <code>smooth</code></p></dd>
-<dt>smooth.alpha</dt>
-<dd><p>settings for <code>smooth</code></p></dd>
-<dt>smooth.size</dt>
-<dd><p>settings for <code>smooth</code></p></dd>
-<dt>smooth.linetype</dt>
+<dt>smooth.method, smooth.formula, smooth.se, smooth.level, smooth.alpha, smooth.size, smooth.linetype</dt>
 <dd><p>settings for <code>smooth</code></p></dd>
 <dt>size</dt>
 <dd><p>size of the geom</p></dd>
@@ -1299,21 +1169,7 @@
 <dd><p>scale to be set when using <code>type = "violin"</code>, can also be set to <code>"area"</code></p></dd>
 <dt>legend.position</dt>
 <dd><p>position of the legend, must be <code>"top"</code>, <code>"right"</code>, <code>"bottom"</code>, <code>"left"</code> or <code>"none"</code> (or <code>NA</code> or <code>NULL</code>), can be abbreviated. Defaults to <code>"right"</code> for numeric <code>category</code> values and 'sf' plots, and <code>"top"</code> otherwise.</p></dd>
-<dt>legend.title</dt>
-<dd><p>a title to use. This can be:</p><ul><li><p>An <a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a>, e.g. using <code>parse(text = "...")</code></p></li>
-<li><p>A <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>, which supports markdown by using <code><a href="md_to_expression.html">md_to_expression()</a></code> internally if <code>markdown = TRUE</code></p></li>
-<li><p>A vector of characters and functions, which allows calculations over <code>.data</code> (see <em>Examples</em>)</p></li>
-</ul><p><code>title</code> will be guessed with <code><a href="get_plot_title.html">get_plot_title()</a></code> when left blank.</p>
-<p><code>category.title</code> defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
-<dt>legend.reverse</dt>
-<dd><p>other settings for the legend</p></dd>
-<dt>legend.barheight</dt>
-<dd><p>other settings for the legend</p></dd>
-<dt>legend.barwidth</dt>
-<dd><p>other settings for the legend</p></dd>
-<dt>legend.nbin</dt>
-<dd><p>other settings for the legend</p></dd>
-<dt>legend.italic</dt>
+<dt>legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic</dt>
 <dd><p>other settings for the legend</p></dd>
 <dt>zoom</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0. This will set <code>x.zoom = TRUE</code> and <code>y.zoom = TRUE</code>.</p></dd>

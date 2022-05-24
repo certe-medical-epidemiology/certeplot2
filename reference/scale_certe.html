@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.9</span>
       </span>
     </div>
 
@@ -185,8 +185,8 @@ If the purpose is to zoom, use the limit argument in the coordinate system
     <dt><code>rescaler</code></dt>
 <dd><p>A function used to scale the input values to the
 range [0, 1]. This is always <code><a href="https://scales.r-lib.org/reference/rescale.html" class="external-link">scales::rescale()</a></code>, except for
-diverging and n colour gradients (i.e., <code>scale_colour_gradient2()</code>,
-<code>scale_colour_gradientn()</code>). The <code>rescaler</code> is ignored by position
+diverging and n colour gradients (i.e., <code><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_colour_gradient2()</a></code>,
+<code><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_colour_gradientn()</a></code>). The <code>rescaler</code> is ignored by position
 scales, which always use <code><a href="https://scales.r-lib.org/reference/rescale.html" class="external-link">scales::rescale()</a></code>. Also accepts rlang
 <a href="https://rlang.r-lib.org/reference/as_function.html" class="external-link">lambda</a> function notation.</p></dd>
 
