@@ -1482,7 +1482,7 @@ validate_markdown <- function(markdown,
   out
 }
 
-#' @importFrom dplyr mutate
+#' @importFrom dplyr mutate pull first
 validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
   if (isTRUE(try(is_empty(x), silent = TRUE))) {
     x <- NULL
@@ -1497,19 +1497,25 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
   
   # support for calculations, e.g. `title = paste("Total number =", n(), "rows")`
   if (!is.null(df)) {
-    suppressWarnings(
-      tryCatch(
-        out <- df |> 
+    out <- tryCatch(
+      suppressWarnings(
+        df |> 
           # no tibbles, data.tables, sf, etc. objects:
           as.data.frame(stringsAsFactors = FALSE) |>
-          mutate(`_new_title` = {{ x }}),
-        error = function(e) {
-          warning("could not calculate title:\n\n",
-                  gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", e$message), call. = FALSE)
-          concat(as.character(x))
-        })
-    )
-    out <- unique(out$`_new_title`)[1L]
+          mutate(`_new_title` = {{ x }}) |> 
+          pull(`_new_title`) |> 
+          unique() |> 
+          first()
+      ), error = function(e) {
+        warning(format_error(e,
+                             replace = c("`_new_title = ", "`_new_title`"),
+                             by = c("`", "A title")),
+                call. = FALSE)
+        NULL
+      })
+    if (is.null(out)) {
+      out <- ""
+    }
   } else {
     out <- concat(as.character(x))
   }

@@ -954,73 +954,7 @@
 \item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X axis or if the length of unique values per X axis item is at least 3, \code{"point"} if both the Y and X axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} print a geom.
 }}
 
-\item{x.title}{a title to use. This can be:
-\itemize{
-\item An \link{expression}, e.g. using \code{parse(text = "...")}
-\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
-\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
-}
-
-\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
-
-\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
-
-\item{y.title}{a title to use. This can be:
-\itemize{
-\item An \link{expression}, e.g. using \code{parse(text = "...")}
-\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
-\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
-}
-
-\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
-
-\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
-
-\item{category.title}{a title to use. This can be:
-\itemize{
-\item An \link{expression}, e.g. using \code{parse(text = "...")}
-\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
-\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
-}
-
-\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
-
-\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
-
-\item{title}{a title to use. This can be:
-\itemize{
-\item An \link{expression}, e.g. using \code{parse(text = "...")}
-\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
-\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
-}
-
-\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
-
-\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
-
-\item{subtitle}{a title to use. This can be:
-\itemize{
-\item An \link{expression}, e.g. using \code{parse(text = "...")}
-\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
-\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
-}
-
-\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
-
-\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
-
-\item{caption}{a title to use. This can be:
-\itemize{
-\item An \link{expression}, e.g. using \code{parse(text = "...")}
-\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
-\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
-}
-
-\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
-
-\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
-
-\item{tag}{a title to use. This can be:
+\item{title, subtitle, caption, tag, x.title, y.title, category.title, legend.title}{a title to use. This can be:
 \itemize{
 \item An \link{expression}, e.g. using \code{parse(text = "...")}
 \item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
@@ -1043,31 +977,11 @@
 
 \item{na.rm}{remove \code{NA} values from showing in the plot}
 
-\item{facet.position}{additional settings for the plotting direction \code{facet}}
-
-\item{facet.fill}{additional settings for the plotting direction \code{facet}}
-
-\item{facet.bold}{additional settings for the plotting direction \code{facet}}
-
-\item{facet.italic}{additional settings for the plotting direction \code{facet}}
-
-\item{facet.size}{additional settings for the plotting direction \code{facet}}
-
-\item{facet.margin}{additional settings for the plotting direction \code{facet}}
-
-\item{facet.repeat_lbls_x}{additional settings for the plotting direction \code{facet}}
-
-\item{facet.repeat_lbls_y}{additional settings for the plotting direction \code{facet}}
+\item{facet.position, facet.fill, facet.bold, facet.italic, facet.size, facet.margin, facet.repeat_lbls_x, facet.repeat_lbls_y, facet.drop, facet.nrow, facet.relative}{additional settings for the plotting direction \code{facet}}
 
 \item{facet.fixed_y}{a \link{logical} to indicate whether all y scales should have the same limits. Defaults to \code{TRUE} only if the \link[certestats:distribution_metrics]{coefficient of variation} (sd divided by mean) of the maximum values of y is less than 15\%.}
 
 \item{facet.fixed_x}{a \link{logical} to indicate whether all x scales should have the same breaks. This acts like the inverse of \code{x.drop}.}
-
-\item{facet.drop}{additional settings for the plotting direction \code{facet}}
-
-\item{facet.nrow}{additional settings for the plotting direction \code{facet}}
-
-\item{facet.relative}{additional settings for the plotting direction \code{facet}}
 
 \item{x.date_breaks}{breaks to use when the x axis contains dates, will be determined automatically if left blank}
 
@@ -1089,33 +1003,25 @@
 
 \item{x.lbl_taxonomy}{a \link{logical} to transform all words of the \code{x} labels into italics that are in the \link[AMR:microorganisms]{microorganisms} data set of the \code{AMR} package. This uses \code{\link[=md_to_expression]{md_to_expression()}} internally and will set \code{x.labels} to parse expressions.}
 
-\item{x.remove}{a \link{logical} to indicate whether the axis labels and title should be removed}
+\item{x.remove, y.remove}{a \link{logical} to indicate whether the axis labels and title should be removed}
 
-\item{x.position}{position of the axis}
+\item{x.position, y.position}{position of the axis}
 
-\item{x.max_items}{number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the \code{summarise_function} function. \strong{Please note:} the sorting will be applied first, allowing to e.g. plot the top \emph{n} most frequent values of the x axis by combining \code{x.sort = "freq-desc"} with \verb{x.max_items =} \emph{n}.}
+\item{x.max_items, category.max_items, facet.max_items}{number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the \code{summarise_function} function. \strong{Please note:} the sorting will be applied first, allowing to e.g. plot the top \emph{n} most frequent values of the x axis by combining \code{x.sort = "freq-desc"} with \verb{x.max_items =} \emph{n}.}
 
-\item{x.max_txt}{the text to use of values not included number of \verb{*.max_items}. The placeholder \verb{\%n} will be replaced with the outcome of the \code{summarise_function} function, the placeholder \verb{\%p} will be replaced with the percentage.}
+\item{x.max_txt, category.max_txt, facet.max_txt}{the text to use of values not included number of \verb{*.max_items}. The placeholder \verb{\%n} will be replaced with the outcome of the \code{summarise_function} function, the placeholder \verb{\%p} will be replaced with the percentage.}
 
-\item{category.max_items}{number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the \code{summarise_function} function. \strong{Please note:} the sorting will be applied first, allowing to e.g. plot the top \emph{n} most frequent values of the x axis by combining \code{x.sort = "freq-desc"} with \verb{x.max_items =} \emph{n}.}
+\item{x.breaks, y.breaks}{a breaks function or numeric vector to use for the axis}
 
-\item{category.max_txt}{the text to use of values not included number of \verb{*.max_items}. The placeholder \verb{\%n} will be replaced with the outcome of the \code{summarise_function} function, the placeholder \verb{\%p} will be replaced with the percentage.}
+\item{x.n_breaks, y.n_breaks}{number of breaks, only useful if \code{x.breaks} cq. \code{y.breaks} is \code{NULL}}
 
-\item{facet.max_items}{number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the \code{summarise_function} function. \strong{Please note:} the sorting will be applied first, allowing to e.g. plot the top \emph{n} most frequent values of the x axis by combining \code{x.sort = "freq-desc"} with \verb{x.max_items =} \emph{n}.}
+\item{x.trans, y.trans}{a transformation function to use for the axis, e.g. \code{"log2"}}
 
-\item{facet.max_txt}{the text to use of values not included number of \verb{*.max_items}. The placeholder \verb{\%n} will be replaced with the outcome of the \code{summarise_function} function, the placeholder \verb{\%p} will be replaced with the percentage.}
+\item{x.expand, y.expand}{\href{ggplot2::expansion()}{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to \code{0.25}, except for sf objects (then both default to 0).}
 
-\item{x.breaks}{a breaks function or numeric vector to use for the axis}
+\item{x.limits, y.limits}{limits to use for the axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the y scale start at zero.}
 
-\item{x.n_breaks}{number of breaks, only useful if \code{x.breaks} cq. \code{y.breaks} is \code{NULL}}
-
-\item{x.trans}{a transformation function to use for the axis, e.g. \code{"log2"}}
-
-\item{x.expand}{\href{ggplot2::expansion()}{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to \code{0.25}, except for sf objects (then both default to 0).}
-
-\item{x.limits}{limits to use for the axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the y scale start at zero.}
-
-\item{x.labels}{a labels function or character vector to use for the axis}
+\item{x.labels, y.labels}{a labels function or character vector to use for the axis}
 
 \item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (x values between 2000 and 2050)}
 
@@ -1123,9 +1029,7 @@
 
 \item{x.mic}{\link{logical} to indicate whether the x axis should be formatted as \link[AMR:as.mic]{MIC values}, by dropping all factor levels and adding missing factors of 2}
 
-\item{x.zoom}{a \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} and \code{x.expand = 0} for the x axis, or \code{y.limits = c(NA, NA)} and \code{y.expand = 0} for the y axis}
-
-\item{y.remove}{a \link{logical} to indicate whether the axis labels and title should be removed}
+\item{x.zoom, y.zoom}{a \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} and \code{x.expand = 0} for the x axis, or \code{y.limits = c(NA, NA)} and \code{y.expand = 0} for the y axis}
 
 \item{y.24h}{a \link{logical} to indicate whether the y labels and breaks should be formatted as 24-hour sequences}
 
@@ -1137,61 +1041,11 @@
 
 \item{y.percent_break}{a value on which the y axis should have breaks}
 
-\item{y.breaks}{a breaks function or numeric vector to use for the axis}
-
-\item{y.n_breaks}{number of breaks, only useful if \code{x.breaks} cq. \code{y.breaks} is \code{NULL}}
-
-\item{y.limits}{limits to use for the axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the y scale start at zero.}
-
-\item{y.labels}{a labels function or character vector to use for the axis}
-
-\item{y.expand}{\href{ggplot2::expansion()}{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to \code{0.25}, except for sf objects (then both default to 0).}
-
-\item{y.trans}{a transformation function to use for the axis, e.g. \code{"log2"}}
-
-\item{y.position}{position of the axis}
-
-\item{y.zoom}{a \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} and \code{x.expand = 0} for the x axis, or \code{y.limits = c(NA, NA)} and \code{y.expand = 0} for the y axis}
-
-\item{category.labels}{settings for the plotting direction \code{category}.}
-
-\item{category.percent}{settings for the plotting direction \code{category}.}
-
-\item{category.breaks}{settings for the plotting direction \code{category}.}
+\item{category.labels, category.percent, category.breaks, category.expand, category.midpoint, category.trans}{settings for the plotting direction \code{category}.}
 
 \item{category.limits}{limits to use for a numeric category, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{category.limits = c(0, NA)} to have the scale start at zero.}
 
-\item{category.expand}{settings for the plotting direction \code{category}.}
-
-\item{category.midpoint}{settings for the plotting direction \code{category}.}
-
-\item{category.trans}{settings for the plotting direction \code{category}.}
-
-\item{x.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
-\itemize{
-\item \code{TRUE}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
-\item \code{FALSE}: sort according to the order in the data
-\item \code{NULL}: do not sort/transform at all
-\item \code{"asc"} or \code{"alpha"}: sort as \code{TRUE}
-\item \code{"desc"}: sort \link{factor}s on their \link[=rev]{reversed} levels, otherwise sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
-\item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
-\item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
-\item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (lowest value first)
-}}
-
-\item{category.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
-\itemize{
-\item \code{TRUE}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
-\item \code{FALSE}: sort according to the order in the data
-\item \code{NULL}: do not sort/transform at all
-\item \code{"asc"} or \code{"alpha"}: sort as \code{TRUE}
-\item \code{"desc"}: sort \link{factor}s on their \link[=rev]{reversed} levels, otherwise sort descending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
-\item \code{"order"} or \code{"inorder"}: sort as \code{FALSE}
-\item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
-\item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (lowest value first)
-}}
-
-\item{facet.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
+\item{x.sort, category.sort, facet.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
 \itemize{
 \item \code{TRUE}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{FALSE}: sort according to the order in the data
@@ -1209,13 +1063,7 @@
 
 \item{datalabels.format}{format to use for datalabels - \code{"\%n"} will be replaced by the count number, \code{"\%p"} will be replaced by the percentage of the total count. Use \code{datalabels.format = NULL} to not transform the datalabels.}
 
-\item{datalabels.colour}{settings for the datalabels}
-
-\item{datalabels.colour_fill}{settings for the datalabels}
-
-\item{datalabels.size}{settings for the datalabels}
-
-\item{datalabels.angle}{settings for the datalabels}
+\item{datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle}{settings for the datalabels}
 
 \item{decimal.mark}{decimal mark, defaults to Dutch use (a comma)}
 
@@ -1233,19 +1081,7 @@
 
 \item{smooth}{a \link{logical} to add a smooth. In histograms, this will add the density count as an overlaying line (default: \code{TRUE}). In all other cases, a smooth will be added using \code{\link[ggplot2:geom_smooth]{geom_smooth()}} (default: \code{FALSE}).}
 
-\item{smooth.method}{settings for \code{smooth}}
-
-\item{smooth.formula}{settings for \code{smooth}}
-
-\item{smooth.se}{settings for \code{smooth}}
-
-\item{smooth.level}{settings for \code{smooth}}
-
-\item{smooth.alpha}{settings for \code{smooth}}
-
-\item{smooth.size}{settings for \code{smooth}}
-
-\item{smooth.linetype}{settings for \code{smooth}}
+\item{smooth.method, smooth.formula, smooth.se, smooth.level, smooth.alpha, smooth.size, smooth.linetype}{settings for \code{smooth}}
 
 \item{size}{size of the geom}
 
@@ -1261,26 +1097,7 @@
 
 \item{legend.position}{position of the legend, must be \code{"top"}, \code{"right"}, \code{"bottom"}, \code{"left"} or \code{"none"} (or \code{NA} or \code{NULL}), can be abbreviated. Defaults to \code{"right"} for numeric \code{category} values and 'sf' plots, and \code{"top"} otherwise.}
 
-\item{legend.title}{a title to use. This can be:
-\itemize{
-\item An \link{expression}, e.g. using \code{parse(text = "...")}
-\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
-\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
-}
-
-\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
-
-\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
-
-\item{legend.reverse}{other settings for the legend}
-
-\item{legend.barheight}{other settings for the legend}
-
-\item{legend.barwidth}{other settings for the legend}
-
-\item{legend.nbin}{other settings for the legend}
-
-\item{legend.italic}{other settings for the legend}
+\item{legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic}{other settings for the legend}
 
 \item{zoom}{a \link{logical} to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0. This will set \code{x.zoom = TRUE} and \code{y.zoom = TRUE}.}
 

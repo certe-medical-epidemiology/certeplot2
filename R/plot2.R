@@ -400,7 +400,7 @@ plot2 <- function(.data,
                   ...) {
   
   # no observations, return empty plot immediately
-  if (tryCatch(NROW(.data) == 0, error = function(e) stop(e$message, call. = FALSE))) {
+  if (tryCatch(NROW(.data) == 0, error = function(e) stop(format_error(e), call. = FALSE))) {
     # check if markdown is required
     markdown <- validate_markdown(markdown, x.title, y.title, c(category.title, legend.title), title, subtitle, tag, caption)
     plot2_warning("No observations, returning an empty plot")
@@ -677,7 +677,7 @@ plot2_exec <- function(.data,
                    # no tibbles, data.tables, sf, etc. objects:
                    as.data.frame(stringsAsFactors = FALSE) |> 
                    summarise(val = {{ y }}),
-                 error = function(e) stop(gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", e$message), call. = FALSE))
+                 error = function(e) stop(format_error(e), call. = FALSE))
       )
       y_precalc <- y_precalc$val # will be NULL if y is missing
       if (length(y_precalc) == 1) {
@@ -690,14 +690,14 @@ plot2_exec <- function(.data,
                                        matches("_var_(x|category|facet)")))) |>
                      summarise(`_var_y` = {{ y }},
                                .groups = "drop"),
-                   error = function(e) stop(gsub("_var_y", "y", e$message), call. = FALSE))
+                   error = function(e) stop(format_error(e, replace = "_var_y", by = "y"), call. = FALSE))
         )
       } else {
         # don't recalculate, just add the calculated values to save time
         suppressWarnings(
           tryCatch(.data |> 
                      mutate(`_var_y` = y_precalc),
-                   error = function(e) stop(gsub("_var_y", "y", e$message), call. = FALSE))
+                   error = function(e) stop(format_error(e, replace = "_var_y", by = "y"), call. = FALSE))
         )
       }}}() |> 
     mutate(`_var_datalabels` = {{ datalabels }}) |> 

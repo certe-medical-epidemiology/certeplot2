@@ -43,7 +43,7 @@ dplyr::n
 #' @export
 dplyr::n_distinct
 
-#' @importFrom certestyle font_black font_blue font_red_bg font_white font_bold
+#' @importFrom certestyle font_black font_blue font_red font_white font_bold
 plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", type = "info") {
   # at default, only prints in interactive mode and for the website generation
   if (isTRUE(print)) {
@@ -417,6 +417,20 @@ digit_to_text <- function(x) {
                 "ten")
   if (is.null(out)) {
     out <- as.character(x)
+  }
+  out
+}
+
+format_error <- function(e, replace = character(0), by = character(0)) {
+  if (is.null(e$bullets)) {
+    txt <- c(e$message, e$parent$message)
+  } else {
+    txt <- e$bullets
+  }
+  txt <- txt[txt %unlike% "^Problem while"]
+  out <- gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", paste(txt, collapse = "\n"))
+  for (i in seq_len(length(replace))) {
+    out <- gsub(replace[i], by[i], out)
   }
   out
 }
