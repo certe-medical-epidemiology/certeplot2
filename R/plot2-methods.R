@@ -913,6 +913,7 @@ plot2.freq <- function(.data,
 
 #' @rdname plot2-methods
 #' @details For geographic information system (GIS) analysis, use the `sf` package with a data set containing geometries. The result can be used as input for [plot2()].
+#' @param crs the coordinate reference system (CRS) to use. If this is not left blank, [sf::st_transform()] will be used to transform the geometric data to the new CRS.
 #' @export
 plot2.sf <- function(.data,
                      x = NULL,
@@ -1041,13 +1042,14 @@ plot2.sf <- function(.data,
                      theme = theme_minimal2(panel.grid.major = element_blank(),
                                             panel.grid.minor = element_blank(),
                                             panel.border = element_blank(),
-                                            plot.margin = unit(c(-15, 5, -15, 5), units = "pt"),
+                                            plot.margin = unit(c(5, 5, -15, 5), units = "pt"),
                                             axis.title = element_blank(),
                                             axis.text = element_blank(),
                                             axis.line = element_blank(),
                                             axis.ticks = element_blank()),
                      background = "white",
                      markdown = TRUE,
+                     crs = NULL,
                      ...) {
   if (!"sf" %in% rownames(utils::installed.packages())) {
     stop("plotting 'sf' objects with plot2() requires the 'sf' package", call. = FALSE)
@@ -1058,6 +1060,9 @@ plot2.sf <- function(.data,
   if (!inherits(.data, "sf")) {
     plot2_warning("Transforming plot data to an sf model using ", font_blue("sf::st_as_sf()"))
     .data <- sf::st_as_sf(.data)
+  }
+  if (!is.null(crs)) {
+    .data <- sf::st_transform(.data, crs = crs)
   }
   
   if (!is.null(x)) {

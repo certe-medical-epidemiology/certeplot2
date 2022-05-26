@@ -791,7 +791,7 @@ plot2_exec <- function(.data,
     plot2_warning("Ignoring ", font_blue("stacked = TRUE"), ", since ", font_blue("stackedpercent = TRUE"))
     stacked <- FALSE
   }
-   
+  
   # set default size and width ----
   size <- validate_size(size = size, type = type)
   width <- validate_width(width = width, type = type)

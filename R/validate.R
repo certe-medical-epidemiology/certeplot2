@@ -337,7 +337,7 @@ validate_data <- function(df,
              has_x(df) &&
              is.numeric(get_x(df)) &&
              (identical(sort(unique(get_x(df))), seq_len(12)) ||
-             identical(sort(unique(get_x(df))), as.double(seq_len(12))))) {
+              identical(sort(unique(get_x(df))), as.double(seq_len(12))))) {
     plot2_message("Assuming ", font_blue("x.character = TRUE"),
                   " since the ", font_blue("x"), " labels seem to be months")
     dots$x.character <- TRUE
@@ -510,19 +510,19 @@ validate_taxonomy <- function(df) {
       return(NULL)
     }
     out <- vapply(FUN.VALUE = character(1),
-           X = strsplit(x, " "),
-           FUN = function(nm) {
-             if (!all(is.na(nm))) {
-               nm[nm %in% nms] <- paste0("*", nm[nm %in% nms], "*")
-               nm <- paste0(nm, collapse = " ")
-               nm <- gsub("(.*)([A-Z][.]) [*]([a-z]+)[*](.*)", "\\1*\\2 \\3*\\4", nm, perl = TRUE)
-             } else if (length(nm) == 0) {
-               # this is because of `strsplit("", " ")`
-               nm <- ""
-             }
-             nm
-           },
-           USE.NAMES = FALSE)
+                  X = strsplit(x, " "),
+                  FUN = function(nm) {
+                    if (!all(is.na(nm))) {
+                      nm[nm %in% nms] <- paste0("*", nm[nm %in% nms], "*")
+                      nm <- paste0(nm, collapse = " ")
+                      nm <- gsub("(.*)([A-Z][.]) [*]([a-z]+)[*](.*)", "\\1*\\2 \\3*\\4", nm, perl = TRUE)
+                    } else if (length(nm) == 0) {
+                      # this is because of `strsplit("", " ")`
+                      nm <- ""
+                    }
+                    nm
+                  },
+                  USE.NAMES = FALSE)
     out <- gsub("* *", " ", out, fixed = TRUE)
     out
   }
@@ -552,8 +552,8 @@ validate_taxonomy <- function(df) {
   df
 }
 
-  #' @importFrom ggplot2 scale_x_discrete scale_x_date scale_x_datetime scale_x_continuous expansion waiver
-#' @importFrom scales reverse_trans
+#' @importFrom ggplot2 scale_x_discrete scale_x_date scale_x_datetime scale_x_continuous expansion waiver
+#' @importFrom scales reverse_trans pretty_breaks
 #' @importFrom cleaner format_datetime
 #' @importFrom certestyle format2
 validate_x_scale <- function(values,
@@ -675,8 +675,21 @@ validate_x_scale <- function(values,
                   big.mark = big_mark)
         }
       }
+      breaks_fn <- function(values, x.breaks, x.n_breaks, waiver) {
+        if (!is.null(x.breaks)) {
+          x.breaks
+        } else if (all(values %% 1 == 0, na.rm = TRUE) && max(values, na.rm = TRUE) < 5) {
+          # whole numbers - only strip decimal numbers if total y range is low
+          function(x, ...) unique(floor(pretty(seq(0, (max(x, na.rm = TRUE) + 1) * 3))))
+        } else {
+          pretty_breaks(n = ifelse(is.null(x.n_breaks), 5, x.n_breaks))
+        }
+      }
       scale_x_continuous(labels = x.labels,
-                         breaks = if (!is.null(x.breaks)) x.breaks else waiver(),
+                         breaks = breaks_fn(values = values,
+                                            x.breaks = x.breaks,
+                                            x.n_breaks = x.n_breaks,
+                                            waiver = waiver()),
                          n.breaks = x.n_breaks,
                          trans = x.trans,
                          position = x.position,
@@ -992,7 +1005,7 @@ validate_category_scale <- function(values,
       function(x, dec = decimal.mark, big = big.mark, ...) format2(x, decimal.mark = dec, big.mark = big)
     }
   }
-  breaks_fn <- function(category.breaks, category.percent, category.trans, waiver) {
+  breaks_fn <- function(values, category.breaks, category.percent, category.trans, waiver) {
     if (category.trans != "identity") {
       if (!is.null(category.breaks)) {
         plot2_warning("Ignoring ", font_blue("category.breaks"), " since ",
@@ -1006,10 +1019,18 @@ validate_category_scale <- function(values,
         seq(0, 1, 0.25)
       } else {
         # print 5 labels nicely
-        pretty_breaks()(values, 5)
+        pretty_breaks(n = 5)
+      }
+    } else if (all(values %% 1 == 0, na.rm = TRUE) && max(values, na.rm = TRUE) < 5) {
+      # whole numbers - only strip decimal numbers if total y range is low
+      if (diff(range(values)) < 5 && 0 %in% values) {
+        sort(unique(values))
+      } else {
+        function(x, ...) unique(floor(pretty(seq(0, (max(x, na.rm = TRUE) + 1) * 3))))
       }
     } else {
-      pretty_breaks()
+      # print 5 labels nicely
+      pretty_breaks(n = 5)
     }
   }
   limits_fn <- function(category.limits, category.percent, category.trans, waiver) {
@@ -1074,7 +1095,8 @@ validate_category_scale <- function(values,
                                   stackedpercent = stackedpercent,
                                   decimal.mark = decimal.mark,
                                   big.mark = big.mark),
-               breaks = breaks_fn(category.breaks = category.breaks,
+               breaks = breaks_fn(values = values,
+                                  category.breaks = category.breaks,
                                   category.percent = category.percent,
                                   category.trans = category.trans,
                                   waiver = waiver()),
@@ -1324,7 +1346,7 @@ validate_colour <- function(df,
     } else {
       colour <- colourpicker(colour, opacity = colour_opacity)
     }
-
+    
     if (is.null(colour_fill) || identical(colour.bak, colour_fill)) {
       colour_fill <- colour
     } else {
@@ -1522,7 +1544,7 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
   
   out <- gsub("<br>", "\n", out, fixed = TRUE)
   out_plain <- gsub("[^a-zA-Z0-9,. .-]", "", out)
-
+  
   # support for markdown
   if (isTRUE(markdown) &&
       (isTRUE(out %like% "[*]+.+[*]+")
@@ -1547,7 +1569,6 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
                    collapse = "\n")
     }
   }
-  
   out
 }
 
@@ -1822,7 +1843,7 @@ set_datalabels <- function(p,
   }
   
   original_values <- p$data$`_var_datalabels`
- 
+  
   if (!isTRUE(is_sf)) {
     geom_label_fn <- geom_label
     geom_text_fn <- geom_text
@@ -2238,10 +2259,10 @@ format_datalabels <- function(datalabels,
   if (isTRUE(y.percent)) {
     if (!is.null(datalabels.format)) {
       datalabels_out <- trimws(format2(datalabels,
-                                   round = datalabels.round,
-                                   decimal.mark = decimal.mark,
-                                   big.mark = big.mark,
-                                   percent = TRUE))
+                                       round = datalabels.round,
+                                       decimal.mark = decimal.mark,
+                                       big.mark = big.mark,
+                                       percent = TRUE))
       plot2_message("Ignoring ", font_blue("datalabels.format = \"", datalabels.format, "\"", collapse = NULL),
                     " since ",  font_blue("y.percent = TRUE"))
     }

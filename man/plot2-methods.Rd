@@ -530,11 +530,12 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = theme_minimal2(panel.grid.major = element_blank(), panel.grid.minor =
-    element_blank(), panel.border = element_blank(), plot.margin = unit(c(-15, 5, -15,
-    5), units = "pt"), axis.title = element_blank(), axis.text = element_blank(),
-    axis.line = element_blank(), axis.ticks = element_blank()),
+    element_blank(), panel.border = element_blank(), plot.margin = unit(c(5, 5, -15, 5),
+    units = "pt"), axis.title = element_blank(), axis.text = element_blank(), axis.line =
+    element_blank(), axis.ticks = element_blank()),
   background = "white",
   markdown = TRUE,
+  crs = NULL,
   ...
 )
 
@@ -1116,6 +1117,8 @@
 \item{markdown}{a \link{logical} to turn all labels and titles into \link{plotmath} expressions, by converting common markdown language using the \code{\link[=md_to_expression]{md_to_expression()}} function (defaults to \code{TRUE})}
 
 \item{...}{arguments passed on to methods}
+
+\item{crs}{the coordinate reference system (CRS) to use. If this is not left blank, \code{\link[sf:st_transform]{sf::st_transform()}} will be used to transform the geometric data to the new CRS.}
 
 \item{minimum}{minimum number of results, defaults to \code{30}}
 

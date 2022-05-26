@@ -82,6 +82,7 @@ test_that("S3 implementations work", {
   expect_s3_class(cleaner::freq(admitted_patients$hospital) |> plot2(), "gg")
   # sf
   expect_s3_class(netherlands |> plot2(), "gg")
+  expect_s3_class(netherlands |> plot2(crs = 28992, theme = theme_minimal2()), "gg")
   # bug_drug_combinations
   expect_s3_class(AMR::example_isolates |>
                     select(mo, CIP, AMC) |>
