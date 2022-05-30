@@ -349,6 +349,12 @@ validate_data <- function(df,
                   " for discrete plot type (", font_blue(type), ")",
                   " since ", font_blue(get_x_name(df)), " is numeric")
     dots$x.character <- TRUE
+  } else if (has_x(df) && 
+             is.numeric(get_x(df)) &&
+             !is.null(dots$x.sort)) {
+    plot2_message("Assuming ", font_blue("x.character = TRUE"),
+                  " since ", font_blue("x.sort"), " is set")
+    dots$x.character <- TRUE
   }
   if (isTRUE(dots$x.character)) {
     df <- df |>
@@ -422,7 +428,6 @@ validate_data <- function(df,
     if (is.null(dots$x.sort) && inherits(get_x(df), c("character", "factor"))) {
       dots$x.sort <- TRUE
     }
-    
     df <- df |> 
       mutate(`_var_x` = sort_data(values = get_x(df),
                                   original_values = get_x(df.bak),
@@ -2089,15 +2094,19 @@ sort_data <- function(values,
     out <- factor(as.character(values),
                   levels = levels(fct_inorder(as.character(original_values))))
   } else if (sort_method %in% c("freq-asc", "infreq-asc")) {
-    plot2_message("Applying ", font_blue(paste0(argument, " = \"", sort_method, "\"")), " using ",
-                  font_blue(paste0("summarise_function = ", summarise_fn_name)))
+    if (n_distinct(values) < length(values)) {
+      plot2_message("Applying ", font_blue(paste0(argument, " = \"", sort_method, "\"")), " using ",
+                    font_blue(paste0("summarise_function = ", summarise_fn_name)))
+    }
     out <- fct_reorder(.f = as.character(values),
                        .x = datapoints,
                        .fun = summarise_function,
                        .desc = FALSE)
   } else if (sort_method %in% c("freq-desc", "infreq-desc")) {
-    plot2_message("Applying ", font_blue(paste0(argument, " = \"", sort_method, "\"")), " using ",
-                  font_blue(paste0("summarise_function = ", summarise_fn_name)))
+    if (n_distinct(values) < length(values)) {
+      plot2_message("Applying ", font_blue(paste0(argument, " = \"", sort_method, "\"")), " using ",
+                    font_blue(paste0("summarise_function = ", summarise_fn_name)))
+    }
     out <- fct_reorder(.f = as.character(values),
                        .x = datapoints,
                        .fun = summarise_function,
@@ -2263,8 +2272,10 @@ format_datalabels <- function(datalabels,
                                        decimal.mark = decimal.mark,
                                        big.mark = big.mark,
                                        percent = TRUE))
-      plot2_message("Ignoring ", font_blue("datalabels.format = \"", datalabels.format, "\"", collapse = NULL),
-                    " since ",  font_blue("y.percent = TRUE"))
+      if (datalabels.format != "%n") {
+        plot2_message("Ignoring ", font_blue("datalabels.format = \"", datalabels.format, "\"", collapse = NULL),
+                      " since ",  font_blue("y.percent = TRUE"))
+      }
     }
   } else if (!is.null(datalabels.format) &&
              mode(datalabels) == "numeric" &&
