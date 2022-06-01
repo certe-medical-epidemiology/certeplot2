@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.13</span>
       </span>
     </div>
 
@@ -140,7 +140,7 @@
 <dt>type</dt>
 <dd><p>a <code>ggplot2</code> geom name, all geoms are supported. Full function names can be used (e.g., <code>"geom_line"</code>), but they can also be abbreviated (e.g., <code>"l"</code>, <code>"line"</code>). These geoms can be abbreviated by their first character: area (<code>"a"</code>), boxplot (<code>"b"</code>), column (<code>"c"</code>), histogram (<code>"h"</code>), jitter (<code>"j"</code>), line (<code>"l"</code>), point (<code>"p"</code>), ribbon (<code>"r"</code>), violin (<code>"v"</code>).</p></dd>
 <dt>mapping</dt>
-<dd><p>a mapping created with <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">ggplot2::aes()</a></code> to pass on to the geom</p></dd>
+<dd><p>a mapping created with <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code> to pass on to the geom</p></dd>
 <dt>x, y</dt>
 <dd><p>aesthetic arguments</p></dd>
 <dt>group, linetype, shape, size, width, ...</dt>
@@ -156,6 +156,12 @@
 <dt>nudge_y</dt>
 <dd><p>is <code>datalabels</code> is not <code>NULL</code>, the amount of vertical adjustment of the datalabels</p></dd>
 </dl></div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>The function <code>add_line()</code> will add:</p><ul><li><p><code><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline()</a></code> if only <code>y</code> is provided and <code>y</code> contains one unique value;</p></li>
+<li><p><code><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline()</a></code> if only <code>x</code> is provided and <code>x</code> contains one unique value;</p></li>
+<li><p><code><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line()</a></code> in all other cases.</p></li>
+</ul></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
