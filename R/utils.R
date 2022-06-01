@@ -396,7 +396,16 @@ clean_plot2_env <- function() {
 }
 
 sigfigs <- function(x) {
-  nchar(gsub("[.](0+).*", "\\1", as.character(format(x, scientific = FALSE))))
+  vapply(FUN.VALUE = double(1), x, function(val) {
+    frm <- format(val, scientific = FALSE)
+    if (frm %unlike% "[.]" | frm %like% "[.]0+$") {
+      0
+    } else if (frm %like% "[.]0") {
+      nchar(gsub(".*[.](0+).*$", "\\1", frm)) + 1
+    } else {
+      nchar(gsub(".*[.]([0-9]+)$", "\\1", frm))
+    }
+  })
 }
 
 data_is_numeric <- function(x) {

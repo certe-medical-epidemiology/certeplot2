@@ -62,7 +62,7 @@ add_sf(
 
 \item{type}{a \code{ggplot2} geom name, all geoms are supported. Full function names can be used (e.g., \code{"geom_line"}), but they can also be abbreviated (e.g., \code{"l"}, \code{"line"}). These geoms can be abbreviated by their first character: area (\code{"a"}), boxplot (\code{"b"}), column (\code{"c"}), histogram (\code{"h"}), jitter (\code{"j"}), line (\code{"l"}), point (\code{"p"}), ribbon (\code{"r"}), violin (\code{"v"}).}
 
-\item{mapping}{a mapping created with \code{\link[ggplot2:aes]{ggplot2::aes()}} to pass on to the geom}
+\item{mapping}{a mapping created with \code{\link[ggplot2:aes]{aes()}} to pass on to the geom}
 
 \item{x, y}{aesthetic arguments}
 
@@ -80,6 +80,14 @@ add_sf(
 }
 \description{
 Quickly add a new 'geom' to an existing \code{plot2}/\code{ggplot} model. Like \code{\link[=plot2]{plot2()}}, they support tidy evaluation, meaning that variables can be unquoted. They can be added using the pipe (new base \R \verb{|>} or tidyverse \verb{\%>\%}).
+}
+\details{
+The function \code{\link[=add_line]{add_line()}} will add:
+\itemize{
+\item \code{\link[ggplot2:geom_abline]{geom_hline()}} if only \code{y} is provided and \code{y} contains one unique value;
+\item \code{\link[ggplot2:geom_abline]{geom_vline()}} if only \code{x} is provided and \code{x} contains one unique value;
+\item \code{\link[ggplot2:geom_path]{geom_line()}} in all other cases.
+}
 }
 \examples{
 df <- data.frame(var_1 = c(1:100),

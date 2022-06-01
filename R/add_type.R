@@ -22,8 +22,12 @@
 #' Quickly add a new 'geom' to an existing `plot2`/`ggplot` model. Like [plot2()], they support tidy evaluation, meaning that variables can be unquoted. They can be added using the pipe (new base \R `|>` or tidyverse `%>%`).
 #' @param plot a `ggplot2` plot
 #' @param type a `ggplot2` geom name, all geoms are supported. Full function names can be used (e.g., `"geom_line"`), but they can also be abbreviated (e.g., `"l"`, `"line"`). These geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), violin (`"v"`).
-#' @param mapping a mapping created with [ggplot2::aes()] to pass on to the geom
+#' @param mapping a mapping created with [`aes()`][ggplot2::aes()] to pass on to the geom
 #' @param group,linetype,shape,size,width,... arguments passed on to the geom
+#' @details The function [add_line()] will add:
+#' * [`geom_hline()`][ggplot2::geom_hline()] if only `y` is provided and `y` contains one unique value;
+#' * [`geom_vline()`][ggplot2::geom_vline()] if only `x` is provided and `x` contains one unique value;
+#' * [`geom_line()`][ggplot2::geom_line()] in all other cases.
 #' @importFrom ggplot2 is.ggplot aes
 #' @rdname add_type
 #' @export

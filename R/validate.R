@@ -809,18 +809,21 @@ validate_y_scale <- function(df,
       }
       labels_n <- (max(y.limits) - min(y.limits)) / y.percent_break
       if (is.na(labels_n)) {
-        labels_n <- 10
+        labels_n <- 8
       }
-      if (isTRUE(misses_y.percent_break) && as.integer(labels_n) > 10) {
-        y.percent_break <- round((max(y.limits, na.rm = TRUE) - min(y.limits, na.rm = TRUE)) / 10, 2)
+      if (isTRUE(misses_y.percent_break) && as.integer(labels_n) > 8) {
+        y.percent_break <- round((max(y.limits, na.rm = TRUE) - min(y.limits, na.rm = TRUE)) / 8, 2)
         plot2_message("Using ", font_blue("y.percent_break =", y.percent_break),
-                      " (", y.percent_break * 100, "%) to keep a maximum of ~10 labels")
+                      " (", y.percent_break * 100, "%) to keep a maximum of ~8 labels")
       }
-      if (!all(is.na(y.limits)) && y.percent_break >= max(y.limits, na.rm = TRUE)) {
+      if (!all(is.na(y.limits)) && (y.percent_break >= max(y.limits, na.rm = TRUE) || labels_n <= 3)) {
         y.percent_break.bak <- y.percent_break
-        y.percent_break <- max(y.limits, na.rm = TRUE) / 10
-        plot2_message("Using ", font_blue("y.percent_break =", y.percent_break), 
-                      " since the original setting (", font_blue(y.percent_break.bak), ") was too high")
+        y.percent_break <- max(y.limits, na.rm = TRUE) / 8
+        allowed <- c(1e6 / 10 ^ c(1:18), 5e6 / 10 ^ c(1:18))
+        y.percent_break <- allowed[which.min(abs(allowed - y.percent_break))]
+        plot2_message("Using ", font_blue("y.percent_break =", format(y.percent_break, scientific = FALSE)), 
+                      " since the original setting (", font_blue(y.percent_break.bak), ")",
+                      " would yield too few labels")
       }
       function(x, ...) seq(from = min(0, x, na.rm = TRUE),
                            to = max(x, na.rm = TRUE),
@@ -853,8 +856,8 @@ validate_y_scale <- function(df,
         paste0(format2(x, decimal.mark = dec, big.mark = big, round = 0),
                ifelse(Sys.getlocale("LC_COLLATE") %like% "nl|dutch", " jr", " yrs"))
     } else if (isTRUE(y.percent) | isTRUE(stackedpercent)) {
-      function(x, dec = decimal.mark, big = big.mark, ...) 
-        format2(as.percentage(x), decimal.mark = dec, big.mark = big)
+      function(x, dec = decimal.mark, big = big.mark, ...)
+        format2(as.percentage(x), round = max(1, sigfigs(x) - 2), decimal.mark = dec, big.mark = big)
     } else {
       function(x, dec = decimal.mark, big = big.mark, ...) {
         is_scientific <- any(format(x) %like% "^(-?[0-9.]+e-?[0-9.]+)$", na.rm = TRUE) ||
@@ -1818,7 +1821,7 @@ set_datalabels <- function(p,
   }
   
   if (!isTRUE(stacked) && !isTRUE(stackedpercent) && type != "geom_sf") {
-    datalabels.colour_fill <- colourpicker(datalabels.colour_fill, opacity = 0.25) # 25% transparency
+    datalabels.colour_fill <- colourpicker(datalabels.colour_fill, opacity = 0.4) # 40% transparency
   } else {
     datalabels.colour_fill <- colourpicker(datalabels.colour_fill, opacity = 0.75) # 75% transparency
   }
@@ -2267,6 +2270,10 @@ format_datalabels <- function(datalabels,
   datalabels_out <- datalabels
   if (isTRUE(y.percent)) {
     if (!is.null(datalabels.format)) {
+      sigs <- max(sigfigs(datalabels) - 2, na.rm = TRUE)
+      if (any(sigs > datalabels.round)) {
+        datalabels.round <- sigs
+      }
       datalabels_out <- trimws(format2(datalabels,
                                        round = datalabels.round,
                                        decimal.mark = decimal.mark,
