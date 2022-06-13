@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.13</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.14</span>
       </span>
     </div>
 
@@ -1183,9 +1183,9 @@
 <dt>font</dt>
 <dd><p>font (family) to use, can be set with <code>options(plot2.font = "...")</code>. Can be any installed system font or any of the &gt; 1000 font names from <a href="https://fonts.google.com" class="external-link">Google Fonts</a>.</p></dd>
 <dt>theme</dt>
-<dd><p>a valid <code>ggplot2</code> <a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a> to apply, or <code>NULL</code> to use the default <code>theme_grey()</code>. This argument accepts themes (e.g., <code>theme_bw()</code>), functions (e.g., <code>theme_bw</code>) and characters themes (e.g., <code>"theme_bw"</code>). Can be set with <code>options(plot2.theme = "...")</code>.</p></dd>
+<dd><p>a valid <code>ggplot2</code> <a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a> to apply, or <code>NULL</code> to use the default <code>theme_grey()</code>. This argument accepts themes (e.g., <code>theme_bw()</code>), functions (e.g., <code>theme_bw</code>) and characters themes (e.g., <code>"theme_bw"</code>). The default is <code><a href="theme_minimal2.html">theme_minimal2()</a></code>, but can be set with <code>options(plot2.theme = "...")</code>.</p></dd>
 <dt>background</dt>
-<dd><p>the background colour of the entire plot, can also be <code>NA</code> to remove it. Only applies when <code>theme</code> is not empty.</p></dd>
+<dd><p>the background colour of the entire plot, can also be <code>NA</code> to remove it. Will be evaluated with <code><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/colourpicker.html" class="external-link">colourpicker()</a></code>. Only applies when <code>theme</code> is not <code>NULL</code>.</p></dd>
 <dt>markdown</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to turn all labels and titles into <a href="https://rdrr.io/r/grDevices/plotmath.html" class="external-link">plotmath</a> expressions, by converting common markdown language using the <code><a href="md_to_expression.html">md_to_expression()</a></code> function (defaults to <code>TRUE</code>)</p></dd>
 <dt>...</dt>
