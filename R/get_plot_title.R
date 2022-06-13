@@ -96,20 +96,35 @@ get_default_title <- function(plot, default) {
       gsub("~", "", sapply(plot$facet$params$facets, deparse)))
   }
   
-  is_dutch <- Sys.getlocale() %like% "nl|dutch|nederlands"
-  txt_per <- ifelse(is_dutch, "per", "per")
-  txt_sep <- ifelse(is_dutch, "en", "and")
-  txt_count <- ifelse(is_dutch, "aantal", "count")
-  txt_unique <- ifelse(is_dutch, "unieke", "unique")
   
   mapp <- get_mapping(plot)
   # no nonsense argument names
   mapp <- mapp[!mapp %in% c("x", "y")]
+  val <- unname(mapp[names(mapp) == "y"])
   
   # generate txt of y axis
-  val <- unname(mapp[names(mapp) == "y"])
-  val[val == "`n()`"] <- txt_count
-  val <- gsub("^`(n_distinct|length\\(unique)\\(+(.*?)\\)+`$", paste(txt_unique, "\\2"), val)
+  is_dutch <- Sys.getlocale() %like% "nl|dutch|nederlands"
+  txt_per <- ifelse(is_dutch, "per", "per")
+  txt_sep <- ifelse(is_dutch, "en", "and")
+  
+  val[tolower(val) %in% c("`n()`", "count", "freq")] <- ifelse(is_dutch, "aantal", "count")
+  
+  val <- gsub(", ?na[.]rm ?= ?(T(RUE)?|F(ALSE)?)", "", val)
+  val <- gsub("^`(n_distinct|length\\(unique)\\(+(.*?)\\)+`$",
+              paste(ifelse(is_dutch, "unieke", "unique"), "\\2"), tolower(val))
+  
+  val <- gsub("^`median\\(+(.*?)\\)+`$",
+              paste(ifelse(is_dutch, "mediane", "median"), "\\1"), tolower(val))
+  
+  val <- gsub("^`mean\\(+(.*?)\\)+`$",
+              paste(ifelse(is_dutch, "gemiddelde", "mean"), "\\1"), tolower(val))
+  
+  val <- gsub("^`min\\(+(.*?)\\)+`$",
+              paste(ifelse(is_dutch, "minimale", "minimum"), "\\1"), tolower(val))
+  
+  val <- gsub("^`max\\(+(.*?)\\)+`$",
+              paste(ifelse(is_dutch, "maximale", "maximum"), "\\1"), tolower(val))
+  
   val <- gsub("[_.]", " ", val)
   
   if (length(val) > 0) {
@@ -122,6 +137,14 @@ get_default_title <- function(plot, default) {
   mapp <- tolower(unique(unname(mapp[!names(mapp) %in% c("y", "group")])))
   mapp <- gsub("(^`|`$)", "", mapp)
   mapp <- gsub("[_.]", " ", mapp)
+  mapp <- gsub("c\\((.*?)\\)", "\\1", mapp)
+  mapp <- unlist(lapply(mapp, strsplit, ", ?"), use.names = FALSE)
+  
+  # don't create title if it contains nonsense such as functions
+  if (any(mapp %like% "[()]")) {
+    mapp <- character(0)
+  }
+  
   if (length(mapp) >= 1 && length(val) > 0 && val != "") {
     # transform to form: "x, y and z"
     if (length(mapp) > 1) {

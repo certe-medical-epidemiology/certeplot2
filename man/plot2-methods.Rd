@@ -1110,9 +1110,9 @@
 
 \item{font}{font (family) to use, can be set with \code{options(plot2.font = "...")}. Can be any installed system font or any of the > 1000 font names from \href{https://fonts.google.com}{Google Fonts}.}
 
-\item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}. This argument accepts themes (e.g., \code{theme_bw()}), functions (e.g., \code{theme_bw}) and characters themes (e.g., \code{"theme_bw"}). Can be set with \code{options(plot2.theme = "...")}.}
+\item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}. This argument accepts themes (e.g., \code{theme_bw()}), functions (e.g., \code{theme_bw}) and characters themes (e.g., \code{"theme_bw"}). The default is \code{\link[=theme_minimal2]{theme_minimal2()}}, but can be set with \code{options(plot2.theme = "...")}.}
 
-\item{background}{the background colour of the entire plot, can also be \code{NA} to remove it. Only applies when \code{theme} is not empty.}
+\item{background}{the background colour of the entire plot, can also be \code{NA} to remove it. Will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}}. Only applies when \code{theme} is not \code{NULL}.}
 
 \item{markdown}{a \link{logical} to turn all labels and titles into \link{plotmath} expressions, by converting common markdown language using the \code{\link[=md_to_expression]{md_to_expression()}} function (defaults to \code{TRUE})}
 

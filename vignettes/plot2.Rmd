@@ -376,8 +376,8 @@ admitted_patients |>
         stacked = TRUE,
         x.sort = "freq-asc",
         category.sort = "desc",
-        caption = paste("Hospitals (*x*) now sorted on frequencies (low to high),",
-                        "Age groups (*category*) now sorted on alphabet (desc)",
+        caption = paste("Hospitals (x) now sorted on frequencies (low to high),",
+                        "Age groups (category) now sorted on alphabet (desc)",
                         sep = "\n"))
 ```
 

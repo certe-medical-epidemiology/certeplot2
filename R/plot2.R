@@ -119,8 +119,8 @@
 #' @param print a [logical] to indicate if the result should be [printed][print()] instead of just returned
 #' @param text_factor text factor to use, which will apply to all texts shown in the plot
 #' @param font font (family) to use, can be set with `options(plot2.font = "...")`. Can be any installed system font or any of the > 1000 font names from [Google Fonts](https://fonts.google.com).
-#' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`). Can be set with `options(plot2.theme = "...")`.
-#' @param background the background colour of the entire plot, can also be `NA` to remove it. Only applies when `theme` is not empty.
+#' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`). The default is [theme_minimal2()], but can be set with `options(plot2.theme = "...")`.
+#' @param background the background colour of the entire plot, can also be `NA` to remove it. Will be evaluated with [`colourpicker()`][certestyle::colourpicker()]. Only applies when `theme` is not `NULL`.
 #' @param markdown a [logical] to turn all labels and titles into [plotmath] expressions, by converting common markdown language using the [md_to_expression()] function (defaults to `TRUE`)
 #' @param ... arguments passed on to methods
 #' @details The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions such as [`ggplot()`][ggplot2::ggplot()], [`aes()`][ggplot2::aes()], [`geom_col()`][ggplot2::geom_col()], [`facet_wrap()`][ggplot2::facet_wrap()], [`labs()`][ggplot2::labs()], etc., and provides:
@@ -174,9 +174,7 @@
 #'       
 #' iris |> 
 #'   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
-#'         colour = c("white", "red", "black"), # set own colours
-#'         background = NA,
-#'         facet.fill = NA)
+#'         colour = c("white", "red", "black")) # set own colours
 #'   
 #' admitted_patients
 #' 
@@ -704,10 +702,6 @@ plot2_exec <- function(.data,
     # this part will transform the data as needed
     validate_data(misses_x = misses_x,
                   misses_category = misses_category,
-                  label_x = dots$`_label.x`,
-                  label_y = dots$`_label.y`,
-                  label_category = dots$`_label.category`,
-                  label_facet = dots$`_label.facet`,
                   decimal.mark = decimal.mark,
                   big.mark = big.mark,
                   y.percent = y.percent,

@@ -276,21 +276,25 @@ validate_data <- function(df,
   }
   
   # add surrogate columns to df
-  if (has_x(df) && !dots$label_x %in% colnames(df) && dots$label_x != "NULL") {
+  if (has_x(df) && !is.null(plot2_env$mapping_x) &&
+      !plot2_env$mapping_x %in% colnames(df) && plot2_env$mapping_x != "NULL") {
     df$`_label_x` <- get_x(df)
-    colnames(df)[colnames(df) == "_label_x"] <- concat(dots$label_x)
+    colnames(df)[colnames(df) == "_label_x"] <- concat(plot2_env$mapping_x)
   }
-  if (has_y(df) && !dots$label_y %in% colnames(df) && dots$label_y != "NULL") {
+  if (has_y(df) && !is.null(plot2_env$mapping_y) &&
+      !plot2_env$mapping_y %in% colnames(df) && plot2_env$mapping_y != "NULL") {
     df$`_label_y` <- get_y(df)
-    colnames(df)[colnames(df) == "_label_y"] <- concat(dots$label_y)
+    colnames(df)[colnames(df) == "_label_y"] <- concat(plot2_env$mapping_y)
   }
-  if (has_category(df) && !dots$label_category %in% colnames(df) && dots$label_category != "NULL") {
+  if (has_category(df) && !is.null(plot2_env$mapping_category) &&
+      !plot2_env$mapping_category %in% colnames(df) && plot2_env$mapping_category != "NULL") {
     df$`_label_category` <- get_category(df)
-    colnames(df)[colnames(df) == "_label_category"] <- concat(dots$label_category)
+    colnames(df)[colnames(df) == "_label_category"] <- concat(plot2_env$mapping_category)
   }
-  if (has_facet(df) && !dots$label_facet %in% colnames(df) && dots$label_facet != "NULL") {
+  if (has_facet(df) && !is.null(plot2_env$mapping_facet) &&
+      !plot2_env$mapping_facet %in% colnames(df) && plot2_env$mapping_facet != "NULL") {
     df$`_label_facet` <- get_facet(df)
-    colnames(df)[colnames(df) == "_label_facet"] <- concat(dots$label_facet)
+    colnames(df)[colnames(df) == "_label_facet"] <- concat(plot2_env$mapping_facet)
   }
   
   if (has_datalabels(df)) {
@@ -362,23 +366,26 @@ validate_data <- function(df,
   }
   
   # remove or replace NAs
-  is_numeric <- function(x) {
-    mode(x) == "numeric" || is.numeric(x) || inherits(x, c("Date", "POSIXt"))
-  }
-  df_noNA <- df |>
-    filter(if_all(c(get_x_name(df), get_category_name(df), get_facet_name(df),
-                    matches("_var_(x|category|facet)")),
-                  ~(!is.na(.) & (!is_numeric(.) | is.factor(.)))))
-  if (nrow(df_noNA) < nrow(df)) {
+  rows_with_NA <- df |>
+    select(c(get_x_name(df), get_category_name(df), get_facet_name(df),
+             matches("_var_(x|category|facet)"))) |> 
+    stats::na.omit() |>
+    attributes()
+  rows_with_NA <- as.double(rows_with_NA$na.action)
+  if (length(rows_with_NA) > 0) {
     # so some are NAs
     if (isTRUE(dots$na.rm)) {
-      plot2_message("Removed ", nrow(df) - nrow(df_noNA), " rows since ",
-                    font_blue("na.rm = TRUE"))
-      df <- df_noNA
+      plot2_message("Removed ", length(rows_with_NA),
+                    " row", ifelse(rows_with_NA > 1, "s", ""),
+                    " since ", font_blue("na.rm = TRUE"))
+      df <- df[-rows_with_NA, , drop = FALSE]
     } else {
       # replace NAs
       plot2_env$na_replaced <- 0
       plot2_env$na_replaced_vars <- character(0)
+      is_numeric <- function(x) {
+        mode(x) == "numeric" || is.numeric(x) || inherits(x, c("Date", "POSIXt"))
+      }
       df <- df |>
         mutate(across(c(get_x_name(df), get_category_name(df), get_facet_name(df),
                         matches("_var_(x|category|facet)")),
@@ -1603,8 +1610,19 @@ validate_theme <- function(theme,
   
   if (!is.null(theme)) {
     if (is.character(theme)) {
+      theme.bak <- theme
+      if (theme == "ggplot2") {
+        theme <- "ggplot2::theme_grey()"
+      }
       # for `theme = "theme_bw"` and `theme = "theme_bw()"`
-      theme <- eval(parse(text = theme))
+      theme <- tryCatch(eval(parse(text = theme)), error = function(e) NULL)
+      if (is.null(theme)) {
+        # try again with prefix `ggplot2::`
+        theme <- tryCatch(eval(parse(text = paste0("ggplot2::", theme.bak))), error = function(e) NULL)
+      }
+      if (is.null(theme)) {
+        stop("unknown theme: ", theme.bak, call. = FALSE)
+      }
     }
     if (is.function(theme)) {
       # for `theme = theme_bw`
@@ -1625,11 +1643,11 @@ validate_theme <- function(theme,
   
   # set other properties to theme, that are set in plot2(...)
   if (!isTRUE(orginally_empty)) {
-    theme$panel.background <- element_rect(fill = background,
+    theme$panel.background <- element_rect(fill = colourpicker(background),
                                            colour = theme$panel.background$colour,
                                            size = theme$panel.background$size,
                                            linetype = theme$panel.background$linetype)
-    theme$plot.background <- element_rect(fill = background,
+    theme$plot.background <- element_rect(fill = colourpicker(background),
                                           colour = theme$plot.background$colour,
                                           size = theme$plot.background$size,
                                           linetype = theme$plot.background$linetype)

@@ -29,6 +29,7 @@ globalVariables(c("..count..",
                   "total",
                   "value",
                   "where",
+                  "_new_title",
                   "_var_category",
                   "_var_datalabels",
                   "_var_facet",
@@ -101,10 +102,17 @@ add_direction <- function(df, direction, var_name, var_label, sep) {
       colnames()
     selected_cols <- selected_cols[selected_cols %unlike% "^_var_"]
     if (length(selected_cols) > 1 && is.character(selected_cols) && !all(var_label %like% selected_cols)) {
-      plot2_message("Using ", font_blue(paste0(var_name, " = c(", paste0(selected_cols, collapse = ", "), ")")))
+      # replace e.g. `facet = where(is.character)` with `facet = c(var1, var2, var3)`
+      # in labels for columns, but also in mapping
+      new_var_name <- paste0("c(", paste0(selected_cols, collapse = ", "), ")")
+      plot2_message("Using ", font_blue(paste0(var_name, " = ", new_var_name)))
+      if (var_name == "x") plot2_env$mapping_x <- new_var_name
+      if (var_name == "category") plot2_env$mapping_category <- new_var_name
+      if (var_name == "facet") plot2_env$mapping_facet <- new_var_name
+      var_label <- new_var_name
     }
   }, error = function(e) invisible())
-  
+
   df <- tryCatch({
     out <- df |> 
       mutate(`_var_` = {{ direction }})
