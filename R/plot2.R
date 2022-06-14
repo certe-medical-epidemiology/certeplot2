@@ -118,7 +118,7 @@
 #' @param sep separator character to use if multiple columns are given to either of the three directions: `x`, `category` and `facet`, e.g. `facet = c(column1, column2)`
 #' @param print a [logical] to indicate if the result should be [printed][print()] instead of just returned
 #' @param text_factor text factor to use, which will apply to all texts shown in the plot
-#' @param font font (family) to use, can be set with `options(plot2.font = "...")`. Can be any installed system font or any of the > 1000 font names from [Google Fonts](https://fonts.google.com).
+#' @param font font (family) to use, can be set with `options(plot2.font = "...")`. Can be any installed system font or any of the > 1400 font names from [Google Fonts](https://fonts.google.com).
 #' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`). The default is [theme_minimal2()], but can be set with `options(plot2.theme = "...")`.
 #' @param background the background colour of the entire plot, can also be `NA` to remove it. Will be evaluated with [`colourpicker()`][certestyle::colourpicker()]. Only applies when `theme` is not `NULL`.
 #' @param markdown a [logical] to turn all labels and titles into [plotmath] expressions, by converting common markdown language using the [md_to_expression()] function (defaults to `TRUE`)
@@ -266,6 +266,14 @@
 #'   example_isolates[, c("mo", penicillins())] |> 
 #'     bug_drug_combinations(FUN = mo_gramstain) |>
 #'     plot2(y.percent_break = 0.25)
+#' }
+#' if (require("AMR") & require("dplyr")) {
+#'   example_isolates |>
+#'     select(date, NIT, FOS, AMC) |> 
+#'     group_by(year = format(date, "%Y")) |> 
+#'     rsi_df() |>
+#'     filter(year >= 2015) |> 
+#'     plot2(y.percent_break = 0.125)
 #' }
 #' @importFrom ggplot2 ggplot labs
 plot2 <- function(.data,

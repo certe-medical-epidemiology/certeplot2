@@ -8,6 +8,7 @@
 \alias{plot2.sf}
 \alias{plot2.data.frame}
 \alias{plot2.bug_drug_combinations}
+\alias{plot2.rsi_df}
 \alias{plot2.qc_test}
 \title{Methods for \code{\link[=plot2]{plot2()}}}
 \usage{
@@ -804,6 +805,137 @@
   ...
 )
 
+\method{plot2}{rsi_df}(
+  .data,
+  x = NULL,
+  y = isolates,
+  category = interpretation,
+  facet = antibiotic,
+  type = "column",
+  x.title = TRUE,
+  y.title = FALSE,
+  category.title = NULL,
+  title = FALSE,
+  subtitle = NULL,
+  caption = NULL,
+  tag = NULL,
+  title.linelength = 60,
+  title.colour = "black",
+  subtitle.linelength = 60,
+  subtitle.colour = "grey35",
+  na.replace = "",
+  na.rm = FALSE,
+  facet.position = "top",
+  facet.fill = NULL,
+  facet.bold = TRUE,
+  facet.italic = FALSE,
+  facet.size = 10,
+  facet.margin = 8,
+  facet.repeat_lbls_x = TRUE,
+  facet.repeat_lbls_y = TRUE,
+  facet.fixed_y = NULL,
+  facet.fixed_x = TRUE,
+  facet.drop = FALSE,
+  facet.nrow = NULL,
+  facet.relative = FALSE,
+  x.date_breaks = NULL,
+  x.date_labels = NULL,
+  category.focus = NULL,
+  colour = "certe_rsi2",
+  colour_fill = NULL,
+  colour_opacity = 0,
+  x.lbl_angle = 0,
+  x.lbl_align = NULL,
+  x.lbl_italic = FALSE,
+  x.lbl_taxonomy = TRUE,
+  x.remove = FALSE,
+  x.position = "bottom",
+  x.max_items = Inf,
+  x.max_txt = "(rest, x\%n)",
+  category.max_items = Inf,
+  category.max_txt = "(rest, x\%n)",
+  facet.max_items = Inf,
+  facet.max_txt = "(rest, x\%n)",
+  x.breaks = NULL,
+  x.n_breaks = NULL,
+  x.trans = "identity",
+  x.expand = NULL,
+  x.limits = NULL,
+  x.labels = NULL,
+  x.character = NULL,
+  x.drop = FALSE,
+  x.mic = FALSE,
+  x.zoom = FALSE,
+  y.remove = FALSE,
+  y.24h = FALSE,
+  y.age = FALSE,
+  y.scientific = NULL,
+  y.percent = FALSE,
+  y.percent_break = 0.1,
+  y.breaks = NULL,
+  y.n_breaks = NULL,
+  y.limits = NULL,
+  y.labels = NULL,
+  y.expand = NULL,
+  y.trans = "identity",
+  y.position = "left",
+  y.zoom = FALSE,
+  category.labels = NULL,
+  category.percent = FALSE,
+  category.breaks = NULL,
+  category.limits = NULL,
+  category.expand = 0,
+  category.midpoint = NULL,
+  category.trans = "identity",
+  x.sort = NULL,
+  category.sort = FALSE,
+  facet.sort = TRUE,
+  datalabels = TRUE,
+  datalabels.round = ifelse(y.percent, 2, 1),
+  datalabels.format = "\%n",
+  datalabels.colour = "grey25",
+  datalabels.colour_fill = NULL,
+  datalabels.size = (3 * text_factor),
+  datalabels.angle = 0,
+  decimal.mark = ",",
+  big.mark = ifelse(decimal.mark == ",", ".", ","),
+  summarise_function = base::sum,
+  stacked = FALSE,
+  stackedpercent = TRUE,
+  horizontal = FALSE,
+  reverse = TRUE,
+  smooth = NULL,
+  smooth.method = NULL,
+  smooth.formula = NULL,
+  smooth.se = TRUE,
+  smooth.level = 0.95,
+  smooth.alpha = 0.1,
+  smooth.size = 0.75,
+  smooth.linetype = 3,
+  size = NULL,
+  linetype = 1,
+  binwidth = NULL,
+  width = NULL,
+  jitter_seed = NA,
+  violin_scale = "count",
+  legend.position = NULL,
+  legend.title = NULL,
+  legend.reverse = FALSE,
+  legend.barheight = 6,
+  legend.barwidth = 1.5,
+  legend.nbin = 300,
+  legend.italic = FALSE,
+  zoom = FALSE,
+  sep = " / ",
+  print = FALSE,
+  text_factor = 1,
+  font = getOption("plot2.font"),
+  theme = getOption("plot2.theme", "theme_minimal2"),
+  background = "white",
+  markdown = TRUE,
+  ...
+)
+
 \method{plot2}{qc_test}(
   .data,
   x = x,
@@ -1108,7 +1240,7 @@
 
 \item{text_factor}{text factor to use, which will apply to all texts shown in the plot}
 
-\item{font}{font (family) to use, can be set with \code{options(plot2.font = "...")}. Can be any installed system font or any of the > 1000 font names from \href{https://fonts.google.com}{Google Fonts}.}
+\item{font}{font (family) to use, can be set with \code{options(plot2.font = "...")}. Can be any installed system font or any of the > 1400 font names from \href{https://fonts.google.com}{Google Fonts}.}
 
 \item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}. This argument accepts themes (e.g., \code{theme_bw()}), functions (e.g., \code{theme_bw}) and characters themes (e.g., \code{"theme_bw"}). The default is \code{\link[=theme_minimal2]{theme_minimal2()}}, but can be set with \code{options(plot2.theme = "...")}.}
 
@@ -1132,7 +1264,7 @@ These are the implemented methods for different S3 classes to be used in \code{\
 \details{
 For geographic information system (GIS) analysis, use the \code{sf} package with a data set containing geometries. The result can be used as input for \code{\link[=plot2]{plot2()}}.
 
-For antimicrobial resistance (AMR) data analysis, use the \code{\link[AMR:bug_drug_combinations]{bug_drug_combinations()}} function from the \code{AMR} package on a data set with antibiograms. The result can be used as input for \code{\link[=plot2]{plot2()}}.
+For antimicrobial resistance (AMR) data analysis, use the \code{\link[AMR:bug_drug_combinations]{bug_drug_combinations()}} or the \code{\link[AMR:proportion]{rsi_df()}} function from the \code{AMR} package on a data set with antibiograms. The result can be used as input for \code{\link[=plot2]{plot2()}}.
 
 The QC-test can be acquired with \code{\link[certestats:qc_rules]{certestats::qc_test()}}. It applies the Nelson QC rules for a vector of values.
 }

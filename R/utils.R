@@ -20,21 +20,24 @@
 plot2_env <- new.env(hash = FALSE)
 
 globalVariables(c("..count..",
+                  "_new_title",
+                  "_var_category",
+                  "_var_datalabels",
+                  "_var_facet",
+                  "_var_x",
+                  "_var_y",
                   "ab",
+                  "antibiotic", 
                   "geom",
+                  "interpretation",
+                  "isolates",
                   "mo",
                   "n",
                   "name",
                   "R",
                   "total",
                   "value",
-                  "where",
-                  "_new_title",
-                  "_var_category",
-                  "_var_datalabels",
-                  "_var_facet",
-                  "_var_x",
-                  "_var_y"))
+                  "where"))
 
 #' @importFrom dplyr n
 #' @export

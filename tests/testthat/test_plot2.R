@@ -85,8 +85,16 @@ test_that("S3 implementations work", {
   expect_s3_class(netherlands |> plot2(crs = 28992, theme = theme_minimal2()), "gg")
   # bug_drug_combinations
   expect_s3_class(AMR::example_isolates |>
-                    select(mo, CIP, AMC) |>
+                    dplyr::select(mo, CIP, AMC) |>
                     AMR::bug_drug_combinations(FUN = AMR::mo_gramstain) |>
+                    plot2(),
+                  "gg")
+  # rsi_df
+  expect_s3_class(AMR::example_isolates |>
+                    dplyr::select(date, NIT, CIP, IPM, MEM) |>
+                    dplyr::group_by(yr = format(date, "%Y")) |>
+                    AMR::rsi_df() |>
+                    dplyr::filter(yr >= 2015) |>
                     plot2(),
                   "gg")
   # qc_test

@@ -306,7 +306,7 @@ plot2(
 
 \item{text_factor}{text factor to use, which will apply to all texts shown in the plot}
 
-\item{font}{font (family) to use, can be set with \code{options(plot2.font = "...")}. Can be any installed system font or any of the > 1000 font names from \href{https://fonts.google.com}{Google Fonts}.}
+\item{font}{font (family) to use, can be set with \code{options(plot2.font = "...")}. Can be any installed system font or any of the > 1400 font names from \href{https://fonts.google.com}{Google Fonts}.}
 
 \item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}. This argument accepts themes (e.g., \code{theme_bw()}), functions (e.g., \code{theme_bw}) and characters themes (e.g., \code{"theme_bw"}). The default is \code{\link[=theme_minimal2]{theme_minimal2()}}, but can be set with \code{options(plot2.theme = "...")}.}
 
@@ -471,5 +471,13 @@ if (require("AMR")) {
   example_isolates[, c("mo", penicillins())] |> 
     bug_drug_combinations(FUN = mo_gramstain) |>
     plot2(y.percent_break = 0.25)
+}
+if (require("AMR") & require("dplyr")) {
+  example_isolates |>
+    select(date, NIT, FOS, AMC) |> 
+    group_by(year = format(date, "\%Y")) |> 
+    rsi_df() |>
+    filter(year >= 2015) |> 
+    plot2(y.percent_break = 0.125)
 }
 }
