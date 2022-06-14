@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.8.0</span>
       </span>
     </div>
 
@@ -137,24 +137,43 @@
     <h2>Arguments</h2>
     <dl><dt>plot</dt>
 <dd><p>a <code>ggplot2</code> plot</p></dd>
+
+
 <dt>type</dt>
 <dd><p>a <code>ggplot2</code> geom name, all geoms are supported. Full function names can be used (e.g., <code>"geom_line"</code>), but they can also be abbreviated (e.g., <code>"l"</code>, <code>"line"</code>). These geoms can be abbreviated by their first character: area (<code>"a"</code>), boxplot (<code>"b"</code>), column (<code>"c"</code>), histogram (<code>"h"</code>), jitter (<code>"j"</code>), line (<code>"l"</code>), point (<code>"p"</code>), ribbon (<code>"r"</code>), violin (<code>"v"</code>).</p></dd>
+
+
 <dt>mapping</dt>
 <dd><p>a mapping created with <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code> to pass on to the geom</p></dd>
+
+
 <dt>x, y</dt>
 <dd><p>aesthetic arguments</p></dd>
+
+
 <dt>group, linetype, shape, size, width, ...</dt>
 <dd><p>arguments passed on to the geom</p></dd>
+
+
 <dt>colour, colour_fill</dt>
 <dd><p>colour of the line or column, will be evaluated with <code><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/colourpicker.html" class="external-link">certestyle::colourpicker()</a></code>. If <code>colour_fill</code> is missing but <code>colour</code> is given, <code>colour_fill</code> will inherit the colour set with <code>colour</code>.</p></dd>
+
+
 <dt>inherit.aes</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the default aesthetics should be inherited, rather than combining with them</p></dd>
+
+
 <dt>sf_data</dt>
 <dd><p>an 'sf' <a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a>, such as the outcome of <code><a href="https://certe-medical-epidemiology.github.io/certegis/reference/geocoding.html" class="external-link">certegis::geocode()</a></code></p></dd>
+
+
 <dt>datalabels</dt>
 <dd><p>a column of <code>sf_data</code> to add as label below the points</p></dd>
+
+
 <dt>nudge_y</dt>
 <dd><p>is <code>datalabels</code> is not <code>NULL</code>, the amount of vertical adjustment of the datalabels</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -235,7 +254,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>
