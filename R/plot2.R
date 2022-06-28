@@ -263,17 +263,18 @@
 #' if (require("AMR")) {
 #'   options(AMR_locale = "nl")
 #'   
-#'   example_isolates[, c("mo", penicillins())] |> 
+#'   example_isolates[, c("mo", penicillins())] |>
 #'     bug_drug_combinations(FUN = mo_gramstain) |>
 #'     plot2(y.percent_break = 0.25)
 #' }
 #' if (require("AMR") & require("dplyr")) {
 #'   example_isolates |>
 #'     select(date, NIT, FOS, AMC) |> 
-#'     group_by(year = format(date, "%Y")) |> 
+#'     group_by(year = format(date, "%Y")) |>
 #'     rsi_df() |>
-#'     filter(year >= 2015) |> 
-#'     plot2(y.percent_break = 0.125)
+#'     filter(year >= 2015) |>
+#'     plot2(datalabels = paste0(round(value * 100), "%\nn = ", isolates),
+#'           y.percent_break = 0.125)
 #' }
 #' @importFrom ggplot2 ggplot labs
 plot2 <- function(.data,

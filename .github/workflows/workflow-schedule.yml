@@ -22,59 +22,20 @@
 
 on:
   push:
-    branches: '**' # matches every branch
+     # run after a git push on any branch in this repo
+    branches: '**'
   schedule:
-    # run a schedule every day at 1 AM.
+    # run additionally a schedule every day at 1 AM.
     # this is to check that all dependencies are still available
     - cron:  '0 1 * * *'
 
-name: R-CMD-check
-
 jobs:
   R-CMD-check:
-    runs-on: ${{ matrix.config.os }}
-    continue-on-error: ${{ matrix.config.allowfail }}
-    name: ${{ matrix.config.os }} (R-${{ matrix.config.r }})
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {os: ubuntu-20.04,   r: 'devel',   allowfail: true}
-          - {os: ubuntu-20.04,   r: '4.2',     allowfail: false}
-          - {os: macOS-latest,   r: '4.2',     allowfail: false}
-          - {os: windows-latest, r: '4.2',     allowfail: false}
-
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      R_KEEP_PKG_SOURCE: yes
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - uses: r-lib/actions/setup-pandoc@v2
-
-      - uses: r-lib/actions/setup-r@v2
-        with:
-          r-version: ${{ matrix.config.r }}
-          use-public-rspm: true
-          # be sure to enable our R-universe
-          extra-repositories: 'https://certe-medical-epidemiology.r-universe.dev'
-
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: rcmdcheck
-
-      - uses: r-lib/actions/check-r-package@v2
-
-      - name: Show testthat output
-        if: always()
-        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
-
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@main
-        with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: check
-          retention-days: 7
+    uses: certe-medical-epidemiology/template/.github/workflows/reusable-workflow-R-CMD-check.yml@main
+    secrets: inherit
+  Codecov:
+    uses: certe-medical-epidemiology/template/.github/workflows/reusable-workflow-codecov.yml@main
+    secrets: inherit
+  lintr:
+    uses: certe-medical-epidemiology/template/.github/workflows/reusable-workflow-lintr.yml@main
+    secrets: inherit
