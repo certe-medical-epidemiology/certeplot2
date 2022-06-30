@@ -24,7 +24,17 @@
 #' See [plot2-methods] for all implemented methods for different object classes.
 #' @param .data data to plot
 #' @param x plotting 'direction': the x axis
-#' @param y values to use for plotting along the y axis - can also be [n()] for the row count or a calculation of a variable, e.g. `max(column1)`, `median(column2)` or `n_distinct(person_id)`
+#' @param y values to use for plotting along the y axis. This can be:
+#' 
+#' * A single variable from `.data`, such as `y = column1`
+#' 
+#' * Multiple variables from `.data`, such as `y = c(column1, column2)` 
+#' 
+#'   (only allowed if `category` is not set)
+#' 
+#' * A [function] to calculate over `.data`, such as `y = `[n()] for the row count
+#' 
+#' * A [function] to calculate over one or more variables in `.data`, such as `y = max(column1)`, `y = median(column2) / column3`, or `y = n_distinct(person_id)`
 #' @param category plotting 'direction': the category (called 'fill' and 'colour' in `ggplot2`)
 #' @param facet plotting 'direction': the facet
 #' @param type type of visualisation to use. This can be:
@@ -175,6 +185,10 @@
 #' iris |> 
 #'   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
 #'         colour = c("white", "red", "black")) # set own colours
+#'
+#' # y can also be multiple columns
+#' iris |> 
+#'   plot2(x = Sepal.Length, y = c(Petal.Length, Petal.Width))
 #'   
 #' admitted_patients
 #' 
@@ -459,6 +473,7 @@ plot2 <- function(.data,
 #' @importFrom dplyr mutate vars group_by across summarise select matches
 #' @importFrom forcats fct_relabel
 #' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver
+#' @importFrom tidyr pivot_longer
 #' @importFrom certestyle format2 font_red font_black font_blue
 plot2_exec <- function(.data,
                        x,
@@ -686,6 +701,14 @@ plot2_exec <- function(.data,
                    summarise(val = {{ y }}),
                  error = function(e) stop(format_error(e), call. = FALSE))
       )
+      suppressWarnings(
+        has_multiple_cols <- tryCatch((.data |>
+                                         # no tibbles, data.tables, sf, etc. objects:
+                                         as.data.frame(stringsAsFactors = FALSE) |> 
+                                         select({{ y }}) |> 
+                                         ncol()) > 1,
+                                      error = function(e) FALSE)
+      )
       y_precalc <- y_precalc$val # will be NULL if y is missing
       if (length(y_precalc) == 1) {
         # outcome of y is a single calculated value (by using e.g. mean(...) or n_distinct(...)),
@@ -699,6 +722,24 @@ plot2_exec <- function(.data,
                                .groups = "drop"),
                    error = function(e) stop(format_error(e, replace = "_var_y", by = "y"), call. = FALSE))
         )
+        
+      } else if (isTRUE(has_multiple_cols)) {
+        # e.g. for: df |> plot2(y = c(var1, var2))  
+        if (has_category(.data)) {
+          # check if category was not already set
+          stop("if 'y' is of length > 1, 'category' must not be set", call. = FALSE)
+        }
+        
+        plot2_env$mapping_y <- "y"
+        plot2_env$mapping_category <- "category"
+        .data |>
+          # no tibbles, data.tables, sf, etc. objects:
+          as.data.frame(stringsAsFactors = FALSE) |> 
+          pivot_longer({{ y }}, names_to = "category", values_to = "y") |> 
+          # add the new variable "category" as category
+          mutate(`_var_y` = y,
+                 `_var_category` = category)
+        
       } else {
         # don't recalculate, just add the calculated values to save time
         suppressWarnings(

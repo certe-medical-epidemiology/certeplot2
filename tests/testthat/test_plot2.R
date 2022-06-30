@@ -168,6 +168,14 @@ test_that("adding types works", {
                          colour = "certeroze",
                          datalabels = place) |>
                   get_layers(), 3)
+  
+  # way off with labels, and different CRS between plot and input
+  expect_s3_class(plot2(certegis::geo_provincies |> sf::st_transform(4326),
+                        datalabels = FALSE) |>
+                    add_sf(certegis::geocode("Martini Ziekenhuis"),
+                           colour = "certeroze",
+                           datalabels = place),
+                  "gg")
 })
 
 test_that("titles work", {
@@ -279,6 +287,19 @@ test_that("y scale works", {
   expect_s3_class(data.frame(a = letters[1:10], y = 1) |> plot2(y.percent = TRUE, y.percent_break = 500), "gg")
   expect_s3_class(data.frame(a = letters[1:10], y = 1) |> plot2(y.percent = TRUE), "gg")
   expect_s3_class(suppressWarnings(mtcars |> plot2(mpg, hp, y.limits = c(100, 200))), "gg")
+  
+  # multiple vars of y
+  expect_s3_class(data.frame(x = letters[1:10],
+                             y1 = c(1:10),
+                             y2 = c(11:20)) |>
+                    plot2(x, c(y1, y2)),
+                  "gg")
+  expect_error(data.frame(x = letters[1:10],
+                          y1 = c(1:10),
+                          y2 = c(11:20)) |>
+                 plot2(x, c(y1, y2),
+                       # category must not be set
+                       category = 1))
 })
 
 test_that("category scale works", {

@@ -1074,7 +1074,15 @@
 
 \item{x}{plotting 'direction': the x axis}
 
-\item{y}{values to use for plotting along the y axis - can also be \code{\link[=n]{n()}} for the row count or a calculation of a variable, e.g. \code{max(column1)}, \code{median(column2)} or \code{n_distinct(person_id)}}
+\item{y}{values to use for plotting along the y axis. This can be:
+\itemize{
+\item A single variable from \code{.data}, such as \code{y = column1}
+\item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)}
+
+(only allowed if \code{category} is not set)
+\item A \link{function} to calculate over \code{.data}, such as \verb{y = }\code{\link[=n]{n()}} for the row count
+\item A \link{function} to calculate over one or more variables in \code{.data}, such as \code{y = max(column1)}, \code{y = median(column2) / column3}, or \code{y = n_distinct(person_id)}
+}}
 
 \item{category}{plotting 'direction': the category (called 'fill' and 'colour' in \code{ggplot2})}
 

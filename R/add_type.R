@@ -270,7 +270,7 @@ add_col <- function(plot, y = NULL, x = NULL, colour = "certeblauw", colour_fill
 #' @rdname add_type
 #' @param sf_data an 'sf' [data.frame], such as the outcome of [certegis::geocode()]
 #' @param datalabels a column of `sf_data` to add as label below the points
-#' @param nudge_y is `datalabels` is not `NULL`, the amount of vertical adjustment of the datalabels
+#' @param nudge_y is `datalabels` is not `NULL`, the amount of vertical adjustment of the datalabels (positive value: more to the North, negative value: more to the South)
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 geom_sf geom_sf_text aes is.ggplot
 #' @importFrom certestyle colourpicker
@@ -281,11 +281,28 @@ add_sf <- function(plot,
                    colour_fill = "certeblauw",
                    size = 3,
                    datalabels = NULL,
-                   nudge_y = -0.025,
+                   nudge_y = 2500,
                    ...,
                    inherit.aes = FALSE) {
+  if (!"sf" %in% rownames(utils::installed.packages())) {
+    stop("plotting 'sf' objects with plot2() requires the 'sf' package", call. = FALSE)
+  } else {
+    loadNamespace("sf")
+  }
+  
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
+  }
+  if (!"geometry" %in% colnames(plot$data)) {
+    stop("`plot` must be a ggplot2 model based on geographic data.", call. = FALSE)
+  }
+  
+  crs <- c(plot = as.character(sf::st_crs(plot$data$geometry))[1],
+           add = as.character(sf::st_crs(sf_data))[1])
+  if (n_distinct(crs) > 1) {
+    plot2_warning("The coordinate reference system (CRS) of `plot` and `sf_data` are different, transforming `sf_data` to ", crs[1])
+    sf_data <- sf::st_transform(sf_data, crs = crs[1])
+    crs <- crs[1]
   }
   
   p <- plot +
@@ -297,13 +314,16 @@ add_sf <- function(plot,
             ...)
   
   if (tryCatch(!is.null(datalabels), error = function(e) TRUE)) {
+    
+    if (abs(nudge_y) > 0.25 && crs %unlike% "28992") {
+      plot2_message(font_blue(paste0("nudge_y = ", nudge_y)),
+                    " might be very ", ifelse(nudge_y < 0, "low", "high"),
+                    " for the current coordinate reference system (", crs, ")")
+    }
+    
     sf_data <- sf_data |> 
       mutate(`_var_datalabels` = {{ datalabels }})
-    # these functions from the 'sf' package fix invalid geometries
-    st_is_valid <- getExportedValue(name = "st_is_valid", ns = asNamespace("sf"))
-    st_point <- getExportedValue(name = "st_point", ns = asNamespace("sf"))
-    st_point_on_surface <- getExportedValue(name = "st_point_on_surface", ns = asNamespace("sf"))
-    st_zm <- getExportedValue(name = "st_zm", ns = asNamespace("sf"))
+    
     p <- p +
       geom_sf_text(aes(label = `_var_datalabels`),
                    data = sf_data,
@@ -312,8 +332,8 @@ add_sf <- function(plot,
                    nudge_y = nudge_y,
                    colour = colourpicker(colour),
                    fun.geometry = function(x) {
-                     x[!st_is_valid(x)] <- st_point()
-                     suppressWarnings(st_point_on_surface(st_zm(x)))
+                     x[!sf::st_is_valid(x)] <- sf::st_point()
+                     suppressWarnings(sf::st_point_on_surface(sf::st_zm(x)))
                    })
   }
   p

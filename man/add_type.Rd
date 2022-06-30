@@ -52,7 +52,7 @@ add_sf(
   colour_fill = "certeblauw",
   size = 3,
   datalabels = NULL,
-  nudge_y = -0.025,
+  nudge_y = 2500,
   ...,
   inherit.aes = FALSE
 )
@@ -76,7 +76,7 @@ add_sf(
 
 \item{datalabels}{a column of \code{sf_data} to add as label below the points}
 
-\item{nudge_y}{is \code{datalabels} is not \code{NULL}, the amount of vertical adjustment of the datalabels}
+\item{nudge_y}{is \code{datalabels} is not \code{NULL}, the amount of vertical adjustment of the datalabels (positive value: more to the North, negative value: more to the South)}
 }
 \description{
 Quickly add a new 'geom' to an existing \code{plot2}/\code{ggplot} model. Like \code{\link[=plot2]{plot2()}}, they support tidy evaluation, meaning that variables can be unquoted. They can be added using the pipe (new base \R \verb{|>} or tidyverse \verb{\%>\%}).

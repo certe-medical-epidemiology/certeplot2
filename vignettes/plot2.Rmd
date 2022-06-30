@@ -129,9 +129,11 @@ In `ggplot2`, everything set in `aes()` will in fact become such a direction. `p
 All plotting directions in `plot2()` support tidy evaluation. This means that pretty much any input can be given, and `plot2()` (or actually, the `rlang` package) handles everything for you:
 
 ```{r}
-#                |------> this is x
-#                |    |-> this is y
+#    this is x <-|   |-> this is y
 mtcars |> plot2(mpg, hp)
+
+# y can contain multiple variables
+mtcars |> plot2(mpg, c(hp, disp))
 ```
 
 Tidy evaluation allows for in-place transformations as well:
