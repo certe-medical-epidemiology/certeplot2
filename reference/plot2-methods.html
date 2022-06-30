@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.8.2</span>
       </span>
     </div>
 
@@ -1163,8 +1163,10 @@
 <dd><p>values to use for plotting along the y axis. This can be:</p><ul><li><p>A single variable from <code>.data</code>, such as <code>y = column1</code></p></li>
 <li><p>Multiple variables from <code>.data</code>, such as <code>y = c(column1, column2)</code></p>
 <p>(only allowed if <code>category</code> is not set)</p></li>
+<li><p>One or more variables from <code>.data</code> using <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">selection helpers</a>, such as <code>y = where(is.double)</code> or <code>y = starts_with("var_")</code></p>
+<p>(multiple variables only allowed if <code>category</code> is not set)</p></li>
 <li><p>A <a href="https://rdrr.io/r/base/function.html" class="external-link">function</a> to calculate over <code>.data</code>, such as <code>y = </code><code><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n()</a></code> for the row count</p></li>
-<li><p>A <a href="https://rdrr.io/r/base/function.html" class="external-link">function</a> to calculate over one or more variables in <code>.data</code>, such as <code>y = max(column1)</code>, <code>y = median(column2) / column3</code>, or <code>y = n_distinct(person_id)</code></p></li>
+<li><p>A <a href="https://rdrr.io/r/base/function.html" class="external-link">function</a> to calculate over one or more variables from <code>.data</code>, such as <code>y = n_distinct(person_id)</code>, <code>y = max(column1)</code>, or <code>y = median(column2) / column3</code></p></li>
 </ul></dd>
 
 
