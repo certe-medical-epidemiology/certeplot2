@@ -1988,6 +1988,7 @@ validate_font <- function(font) {
     tryCatch({
       font_urls <- showtextdb::google_fonts(font.bak)
       # install and register using showtextdb
+      plot2_message("Downloading font \"", font.bak, "\" from Google Fonts")
       suppressMessages(showtextdb::font_install(font_urls, quiet = TRUE))
       showtextdb::load_showtext_fonts()
     }, error = function(e) invisible())

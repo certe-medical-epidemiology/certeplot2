@@ -28,13 +28,17 @@
 #' 
 #' * A single variable from `.data`, such as `y = column1`
 #' 
-#' * Multiple variables from `.data`, such as `y = c(column1, column2)` 
-#' 
+#' * Multiple variables from `.data`, such as `y = c(column1, column2)`
+#'   
 #'   (only allowed if `category` is not set)
+#'   
+#' * One or more variables from `.data` using [selection helpers][tidyselect::language], such as `y = where(is.double)` or `y = starts_with("var_")`
+#' 
+#'   (multiple variables only allowed if `category` is not set)
 #' 
 #' * A [function] to calculate over `.data`, such as `y = `[n()] for the row count
 #' 
-#' * A [function] to calculate over one or more variables in `.data`, such as `y = max(column1)`, `y = median(column2) / column3`, or `y = n_distinct(person_id)`
+#' * A [function] to calculate over one or more variables from `.data`, such as `y = n_distinct(person_id)`, `y = max(column1)`, or `y = median(column2) / column3`
 #' @param category plotting 'direction': the category (called 'fill' and 'colour' in `ggplot2`)
 #' @param facet plotting 'direction': the facet
 #' @param type type of visualisation to use. This can be:
@@ -189,6 +193,9 @@
 #' # y can also be multiple columns
 #' iris |> 
 #'   plot2(x = Sepal.Length, y = c(Petal.Length, Petal.Width))
+#' iris |>
+#'   # with selection helpers such as where(), starts_with(), etc.:
+#'   plot2(x = Species, y = where(is.double))
 #'   
 #' admitted_patients
 #' 
@@ -695,13 +702,6 @@ plot2_exec <- function(.data,
     # add y
     { function(.data) {
       suppressWarnings(
-        tryCatch(y_precalc <- .data |>
-                   # no tibbles, data.tables, sf, etc. objects:
-                   as.data.frame(stringsAsFactors = FALSE) |> 
-                   summarise(val = {{ y }}),
-                 error = function(e) stop(format_error(e), call. = FALSE))
-      )
-      suppressWarnings(
         has_multiple_cols <- tryCatch((.data |>
                                          # no tibbles, data.tables, sf, etc. objects:
                                          as.data.frame(stringsAsFactors = FALSE) |> 
@@ -709,45 +709,65 @@ plot2_exec <- function(.data,
                                          ncol()) > 1,
                                       error = function(e) FALSE)
       )
-      y_precalc <- y_precalc$val # will be NULL if y is missing
-      if (length(y_precalc) == 1) {
-        # outcome of y is a single calculated value (by using e.g. mean(...) or n_distinct(...)),
-        # so calculate it over all groups that are available
-        # this will support e.g. `data |> plot2(y = n_distinct(id))`
-        suppressWarnings(
-          tryCatch(.data |> 
-                     group_by(across(c(get_x_name(.data), get_category_name(.data), get_facet_name(.data),
-                                       matches("_var_(x|category|facet)")))) |>
-                     summarise(`_var_y` = {{ y }},
-                               .groups = "drop"),
-                   error = function(e) stop(format_error(e, replace = "_var_y", by = "y"), call. = FALSE))
-        )
-        
-      } else if (isTRUE(has_multiple_cols)) {
+      if (isTRUE(has_multiple_cols)) {
         # e.g. for: df |> plot2(y = c(var1, var2))  
         if (has_category(.data)) {
           # check if category was not already set
           stop("if 'y' is of length > 1, 'category' must not be set", call. = FALSE)
         }
         
-        plot2_env$mapping_y <- "y"
-        plot2_env$mapping_category <- "category"
-        .data |>
+       new_df <- .data |>
           # no tibbles, data.tables, sf, etc. objects:
           as.data.frame(stringsAsFactors = FALSE) |> 
-          pivot_longer({{ y }}, names_to = "category", values_to = "y") |> 
+          pivot_longer(c({{ y }}, -matches("^_var_"), -get_x_name(.data)), names_to = "category", values_to = "y") |> 
           # add the new variable "category" as category
           mutate(`_var_y` = y,
                  `_var_category` = category)
-        
+       if (!any(plot2_env$mapping_y %like% new_df$category)) {
+         plot2_message("Using ", font_blue("y = c(", paste(unique(new_df$category), collapse = ", "), ")", collapse = NULL))
+       }
+        plot2_env$mapping_y <- "y"
+        plot2_env$mapping_category <- "category"
+        if (is.null(y.title) || isTRUE(y.title)) {
+          # we just fabricated an y value, so remove the title if it says nothing (double arrow since we're in if()):
+          y.title <<- NULL
+        }
+        # return the data
+        new_df
       } else {
-        # don't recalculate, just add the calculated values to save time
+        
         suppressWarnings(
-          tryCatch(.data |> 
-                     mutate(`_var_y` = y_precalc),
-                   error = function(e) stop(format_error(e, replace = "_var_y", by = "y"), call. = FALSE))
+          tryCatch(y_precalc <- .data |>
+                     # no tibbles, data.tables, sf, etc. objects:
+                     as.data.frame(stringsAsFactors = FALSE) |> 
+                     summarise(val = {{ y }}),
+                   error = function(e) stop(format_error(e), call. = FALSE))
         )
-      }}}() |> 
+        
+        y_precalc <- y_precalc$val # will be NULL if y is missing
+        if (length(y_precalc) == 1) {
+          # outcome of y is a single calculated value (by using e.g. mean(...) or n_distinct(...)),
+          # so calculate it over all groups that are available
+          # this will support e.g. `data |> plot2(y = n_distinct(id))`
+          suppressWarnings(
+            tryCatch(.data |> 
+                       group_by(across(c(get_x_name(.data), get_category_name(.data), get_facet_name(.data),
+                                         matches("_var_(x|category|facet)")))) |>
+                       summarise(`_var_y` = {{ y }},
+                                 .groups = "drop"),
+                     error = function(e) stop(format_error(e, replace = "_var_y", by = "y"), call. = FALSE))
+          )
+          
+        } else {
+          # don't recalculate, just add the calculated values to save time
+          suppressWarnings(
+            tryCatch(.data |> 
+                       mutate(`_var_y` = y_precalc),
+                     error = function(e) stop(format_error(e, replace = "_var_y", by = "y"), call. = FALSE))
+          )
+        }
+      }
+    }}() |> 
     mutate(`_var_datalabels` = {{ datalabels }}) |> 
     # this part will transform the data as needed
     validate_data(misses_x = misses_x,

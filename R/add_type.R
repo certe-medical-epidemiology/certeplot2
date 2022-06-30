@@ -302,8 +302,8 @@ add_sf <- function(plot,
   if (n_distinct(crs) > 1) {
     plot2_warning("The coordinate reference system (CRS) of `plot` and `sf_data` are different, transforming `sf_data` to ", crs[1])
     sf_data <- sf::st_transform(sf_data, crs = crs[1])
-    crs <- crs[1]
   }
+  crs <- crs[1]
   
   p <- plot +
     geom_sf(data = sf_data,

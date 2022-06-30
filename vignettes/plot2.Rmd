@@ -122,7 +122,7 @@ data.frame(x = c("a", "a", "a", "a",
 
 `plot2()` comes with three different plotting directions: `x`, `category` and `facet`. The `x` direction plots along the x axis, the `category` plots using the legend (and replaces `ggplot2`'s *colour* and *fill*), and the `facet` direction plots using facets.
 
-In `ggplot2`, everything set in `aes()` will in fact become such a direction. `plot2()` provides no support for plotting categorically using e.g., *shape*, *linetype* or *size*.
+In `ggplot2`, everything set in `aes()` will in fact become such a direction. `plot2()` provides no support for plotting categorically using e.g., *shape*, *linetype* or *size*, although mapping can be added manually using `add_type()`.
 
 ### Tidy evaluation
 
@@ -131,9 +131,9 @@ All plotting directions in `plot2()` support tidy evaluation. This means that pr
 ```{r}
 #    this is x <-|   |-> this is y
 mtcars |> plot2(mpg, hp)
-
-# y can contain multiple variables
+# y can contain multiple variables, and even supports Tidyverse selection helpers:
 mtcars |> plot2(mpg, c(hp, disp))
+mtcars |> plot2(mpg, everything())
 ```
 
 Tidy evaluation allows for in-place transformations as well:
@@ -493,7 +493,7 @@ mtcars |>
 `plot2()` provides support for markdown and advanced plotmath expressions, by running all title texts through the helper function `md_to_expression()`:
 
 ```{r}
-md_to_expression("This is *italic*, **bold** and ***bold-italic*** text")
+md_to_expression("This is *some italic* and this is **some bold** text")
 
 mtcars |>
   plot2(mpg ^ 2, hp ^ 2,

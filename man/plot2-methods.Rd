@@ -1080,8 +1080,11 @@
 \item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)}
 
 (only allowed if \code{category} is not set)
+\item One or more variables from \code{.data} using \link[tidyselect:language]{selection helpers}, such as \code{y = where(is.double)} or \code{y = starts_with("var_")}
+
+(multiple variables only allowed if \code{category} is not set)
 \item A \link{function} to calculate over \code{.data}, such as \verb{y = }\code{\link[=n]{n()}} for the row count
-\item A \link{function} to calculate over one or more variables in \code{.data}, such as \code{y = max(column1)}, \code{y = median(column2) / column3}, or \code{y = n_distinct(person_id)}
+\item A \link{function} to calculate over one or more variables from \code{.data}, such as \code{y = n_distinct(person_id)}, \code{y = max(column1)}, or \code{y = median(column2) / column3}
 }}
 
 \item{category}{plotting 'direction': the category (called 'fill' and 'colour' in \code{ggplot2})}
