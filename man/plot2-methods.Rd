@@ -615,6 +615,10 @@
   y.trans = "identity",
   y.position = "left",
   y.zoom = FALSE,
+  y_secondary = NULL,
+  y_secondary.title = TRUE,
+  y_secondary.colour = "certeroze",
+  y_secondary.colour_fill = "certeroze3",
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -1262,6 +1266,8 @@
 \item{...}{arguments passed on to methods}
 
 \item{crs}{the coordinate reference system (CRS) to use. If this is not left blank, \code{\link[sf:st_transform]{sf::st_transform()}} will be used to transform the geometric data to the new CRS.}
+
+\item{y_secondary}{values to use for plotting along the secondary y axis. This functionality is poorly supported by \code{ggplot2} and might give unexpected results.}
 
 \item{minimum}{minimum number of results, defaults to \code{30}}
 

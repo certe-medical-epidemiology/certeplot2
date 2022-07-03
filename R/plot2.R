@@ -41,6 +41,7 @@
 #' * A [function] to calculate over one or more variables from `.data`, such as `y = n_distinct(person_id)`, `y = max(column1)`, or `y = median(column2) / column3`
 #' @param category plotting 'direction': the category (called 'fill' and 'colour' in `ggplot2`)
 #' @param facet plotting 'direction': the facet
+#' @param y_secondary values to use for plotting along the secondary y axis. This functionality is poorly supported by `ggplot2` and might give unexpected results.
 #' @param type type of visualisation to use. This can be:
 #' 
 #' * A `ggplot2` geom name, all geoms are supported (including [`geom_blank()`][ggplot2::geom_blank()]). Full function names can be used (e.g., `"geom_histogram"`), but they can also be abbreviated (e.g., `"h"`, `"hist"`). These geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), violin (`"v"`). **Please note:** in `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `type = "bar"` will set `type = "col"` and `horizontal = TRUE`.
@@ -372,6 +373,10 @@ plot2 <- function(.data,
                   y.trans = "identity",
                   y.position = "left",
                   y.zoom = FALSE,
+                  y_secondary = NULL,
+                  y_secondary.title = TRUE,
+                  y_secondary.colour = "certeroze",
+                  y_secondary.colour_fill = "certeroze3",
                   category.labels = NULL,
                   category.percent = FALSE,
                   category.breaks = NULL,
@@ -479,7 +484,7 @@ plot2 <- function(.data,
 
 #' @importFrom dplyr mutate vars group_by across summarise select matches
 #' @importFrom forcats fct_relabel
-#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver
+#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build
 #' @importFrom tidyr pivot_longer
 #' @importFrom certestyle format2 font_red font_black font_blue
 plot2_exec <- function(.data,
@@ -556,6 +561,10 @@ plot2_exec <- function(.data,
                        y.trans,
                        y.position,
                        y.zoom,
+                       y_secondary,
+                       y_secondary.title,
+                       y_secondary.colour,
+                       y_secondary.colour_fill,
                        category.labels,
                        category.percent,
                        category.breaks,
@@ -666,7 +675,8 @@ plot2_exec <- function(.data,
   set_plot2_env(dots$`_label.x`,
                 dots$`_label.y`,
                 dots$`_label.category`,
-                dots$`_label.facet`)
+                dots$`_label.facet`,
+                dots$`_label.y_secondary`)
   on.exit(clean_plot2_env())
   
   # get titles based on raw data ----
@@ -677,11 +687,12 @@ plot2_exec <- function(.data,
   tag <- validate_title({{ tag }}, markdown = isTRUE(markdown), df = .data)
   x.title <- validate_title({{ x.title }}, markdown = isTRUE(markdown), df = .data)
   y.title <- validate_title({{ y.title }}, markdown = isTRUE(markdown), df = .data)
+  y_secondary.title <- validate_title({{ y_secondary.title }}, markdown = isTRUE(markdown), df = .data)
   legend.title <- validate_title({{ legend.title }}, markdown = isTRUE(markdown), df = .data)
   category.title <- validate_title({{ category.title }}, markdown = isTRUE(markdown), df = .data)
   # category.title and legend.title both exist for convenience
   legend.title <- if (is.null(category.title)) legend.title else category.title
-  
+
   # prepare data ----
   # IMPORTANT: in this part, the data for mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
   # this is done for convenience - this is restored before returning the `ggplot` object in the end
@@ -699,7 +710,7 @@ plot2_exec <- function(.data,
                   var_name = "facet",
                   var_label = dots$`_label.facet`,
                   sep = sep) |> 
-    # add y
+    # add y (this will end in an ungrouped data.frame)
     { function(.data) {
       suppressWarnings(
         has_multiple_cols <- tryCatch((.data |>
@@ -713,7 +724,7 @@ plot2_exec <- function(.data,
         # e.g. for: df |> plot2(y = c(var1, var2))  
         if (has_category(.data)) {
           # check if category was not already set
-          stop("if 'y' is of length > 1, 'category' must not be set", call. = FALSE)
+          stop("if 'y' contains more than one variable, 'category' must not be set", call. = FALSE)
         }
         
        new_df <- .data |>
@@ -762,12 +773,15 @@ plot2_exec <- function(.data,
           # don't recalculate, just add the calculated values to save time
           suppressWarnings(
             tryCatch(.data |> 
+                       # no tibbles, data.tables, sf, etc. objects:
+                       as.data.frame(stringsAsFactors = FALSE) |> 
                        mutate(`_var_y` = y_precalc),
                      error = function(e) stop(format_error(e, replace = "_var_y", by = "y"), call. = FALSE))
           )
         }
       }
     }}() |> 
+    mutate(`_var_y_secondary` = {{ y_secondary }}) |>
     mutate(`_var_datalabels` = {{ datalabels }}) |> 
     # this part will transform the data as needed
     validate_data(misses_x = misses_x,
@@ -878,6 +892,10 @@ plot2_exec <- function(.data,
       colour <- stats::setNames(cols, nms)
     }
   }
+  if (has_y_secondary(df)) {
+    y_secondary.colour <- colourpicker(y_secondary.colour)[1L]
+    y_secondary.colour_fill <- colourpicker(y_secondary.colour_fill)[1L]
+  }
   cols <- validate_colour(df = df,
                           type = type,
                           colour = colour,
@@ -889,7 +907,7 @@ plot2_exec <- function(.data,
   # generate mapping / aesthetics ----
   # IMPORTANT: in this part, the mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
   # this is done for convenience - this is restored before returning the `ggplot` object in the end
-  if (type != "geom_sf" && !geom_is_continuous_x(type)) {
+  if (type != "geom_sf" && !geom_is_continuous_x(type) && !has_y_secondary(df)) {
     # histograms etc. have a continuous x variable, so only set y if not a histogram-like
     mapping <- aes(y = `_var_y`, group = 1)
   } else {
@@ -949,7 +967,29 @@ plot2_exec <- function(.data,
                   violin_scale = violin_scale,
                   jitter_seed = jitter_seed,
                   binwidth = binwidth,
-                  cols = cols)
+                  cols = cols,
+                  mapping = if (!has_y_secondary(df)) NULL else utils::modifyList(mapping, aes(y = `_var_y`)))
+  # add secondary y axis if available
+  if (has_y_secondary(df)) {
+    p <- p +
+      generate_geom(type = type,
+                    df = df,
+                    stacked = stacked,
+                    stackedpercent = stackedpercent,
+                    horizontal = horizontal,
+                    width = width,
+                    size = size,
+                    linetype = linetype,
+                    reverse = reverse,
+                    na.rm = na.rm,
+                    violin_scale = violin_scale,
+                    jitter_seed = jitter_seed,
+                    binwidth = binwidth,
+                    cols = list(colour = y_secondary.colour,
+                                colour_fill = y_secondary.colour_fill),
+                    mapping = utils::modifyList(mapping, aes(y = `_var_y_secondary`)))
+  }
+
   if (is.null(smooth) && type == "geom_histogram") {
     plot2_message("Assuming ", font_blue("smooth = TRUE"), " for ", font_blue("type = \"histogram\""))
     smooth <- TRUE
@@ -1069,6 +1109,36 @@ plot2_exec <- function(.data,
         scale_x_discrete(labels = NULL, breaks = NULL, drop = x.drop)
     }
     if (has_y(df)) {
+      p_added_y <- p +
+        validate_y_scale(df = df,
+                         y.24h = y.24h,
+                         y.age = y.age,
+                         y.scientific = y.scientific,
+                         y.breaks = y.breaks,
+                         y.n_breaks = y.n_breaks,
+                         y.expand = y.expand,
+                         y.labels = y.labels,
+                         y.limits = y.limits,
+                         y.percent = y.percent,
+                         y.percent_break = y.percent_break,
+                         misses_y.percent_break = misses_y.percent_break,
+                         y.position = y.position,
+                         y.trans = y.trans,
+                         y.zoom = y.zoom,
+                         stacked = stacked,
+                         stackedpercent = stackedpercent,
+                         facet.fixed_y = facet.fixed_y,
+                         decimal.mark = decimal.mark,
+                         big.mark = big.mark,
+                         add_y_secondary = FALSE,
+                         y_secondary.breaks = NULL,
+                         y_secondary.title = NULL)
+    }
+    if (has_y_secondary(df)) {
+      # add a secondary y axis
+      if (isTRUE(y_secondary.title)) {
+        y_secondary.title <- validate_title(get_y_secondary_name(df), markdown = isTRUE(markdown), df = df)
+      }
       p <- p +
         validate_y_scale(df = df,
                          y.24h = y.24h,
@@ -1089,7 +1159,14 @@ plot2_exec <- function(.data,
                          stackedpercent = stackedpercent,
                          facet.fixed_y = facet.fixed_y,
                          decimal.mark = decimal.mark,
-                         big.mark = big.mark)
+                         big.mark = big.mark,
+                         add_y_secondary = TRUE,
+                         # this get the breaks from the primary y axis
+                         y_secondary.breaks = ggplot_build(p_added_y)$layout$panel_params[[1]]$y$breaks,
+                         y_secondary.title = y_secondary.title)
+    } else {
+      # add the y axis without secondary axis
+      p <- p_added_y
     }
   }
   
@@ -1112,7 +1189,10 @@ plot2_exec <- function(.data,
                    facet.margin = facet.margin,
                    legend.italic = legend.italic,
                    title.colour = title.colour,
-                   subtitle.colour = subtitle.colour)
+                   subtitle.colour = subtitle.colour,
+                   has_y_secondary = has_y_secondary(df),
+                   col_y_primary = cols$colour[1L],
+                   col_y_secondary = y_secondary.colour)
   
   # add titles ----
   if (!misses_title) p <- p + labs(title = title)

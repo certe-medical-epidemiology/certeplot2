@@ -484,4 +484,7 @@ test_that("md to expression works", {
   expect_error(md_to_expression("test $**$"))
 })
 
-
+test_that("secondary y axis works", {
+  expect_s3_class(mtcars |> plot2(mpg, hp, y_secondary = disp), "gg")
+  expect_s3_class(mtcars |> plot2(mpg, hp, y_secondary = disp ^ 2), "gg")
+})

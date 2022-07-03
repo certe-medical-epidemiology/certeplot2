@@ -275,6 +275,17 @@ validate_data <- function(df,
     df <- df |> select(-`_var_datalabels`)
   }
   
+  # if the secondary y axis is not within the limits of the primary y axis, the primary axis will be transformed
+  # so store the factor in which they change, and transform the data accordingly
+  if (has_y_secondary(df)) {
+    max_primary <- max(get_y(df), na.rm = TRUE)
+    max_secondary <- max(get_y_secondary(df), na.rm = TRUE)
+    if (max_secondary > max_primary) {
+      plot2_env$y_secondary_factor <- max_secondary / max_primary
+      df$`_var_y_secondary` <- df$`_var_y_secondary` / plot2_env$y_secondary_factor
+    }
+  }
+
   # add surrogate columns to df
   if (has_x(df) && !is.null(plot2_env$mapping_x) &&
       !plot2_env$mapping_x %in% colnames(df) && plot2_env$mapping_x != "NULL") {
@@ -295,6 +306,11 @@ validate_data <- function(df,
       !plot2_env$mapping_facet %in% colnames(df) && plot2_env$mapping_facet != "NULL") {
     df$`_label_facet` <- get_facet(df)
     colnames(df)[colnames(df) == "_label_facet"] <- concat(plot2_env$mapping_facet)
+  }
+  if (has_y_secondary(df) && !is.null(plot2_env$mapping_y_secondary) &&
+       !plot2_env$mapping_y_secondary %in% colnames(df) && plot2_env$mapping_y_secondary != "NULL") {
+    df$`_label_y_secondary` <- get_y_secondary(df)
+    colnames(df)[colnames(df) == "_label_y_secondary"] <- concat(plot2_env$mapping_y_secondary)
   }
   
   if (has_datalabels(df)) {
@@ -712,7 +728,7 @@ validate_x_scale <- function(values,
 }
 
 #' @importFrom dplyr group_by across summarise
-#' @importFrom ggplot2 waiver expansion scale_y_continuous
+#' @importFrom ggplot2 waiver expansion scale_y_continuous sec_axis
 #' @importFrom cleaner as.percentage
 #' @importFrom scales pretty_breaks
 #' @importFrom certestyle format2 format2_scientific
@@ -735,7 +751,10 @@ validate_y_scale <- function(df,
                              stackedpercent,
                              facet.fixed_y,
                              decimal.mark,
-                             big.mark) {
+                             big.mark,
+                             add_y_secondary,
+                             y_secondary.breaks,
+                             y_secondary.title) {
   if (isTRUE(y.zoom) && is.null(y.limits)) {
     y.limits <- c(NA_real_, NA_real_)
     if (is.null(y.expand)) {
@@ -941,6 +960,36 @@ validate_y_scale <- function(df,
                       y.trans = y.trans,
                       df)
   
+  if (isTRUE(add_y_secondary)) {
+    # ggplot2::sec_axis() only supports a simple transformation function to determine the scale
+    # so determine it, based on the primary y axis
+    secondary_values <- get_y_secondary(df)
+    fun <- function(x) x
+    br <- y_secondary.breaks
+    if (!is.null(plot2_env$y_secondary_factor)) {
+      # we previously transformed this variable to stay within the range of the primary y axis,
+      # so now transform back for the labels and the breaks
+      secondary_values <- secondary_values * plot2_env$y_secondary_factor
+      fun <- function(x) x * plot2_env$y_secondary_factor
+      br <- br * plot2_env$y_secondary_factor
+    }
+    sec_y <- sec_axis(trans = fun,
+                      breaks = br,
+                      labels = labels_fn(values = secondary_values,
+                                         waiver = waiver(),
+                                         y.labels,
+                                         y.percent = FALSE,
+                                         y.age = FALSE,
+                                         y.24h = FALSE,
+                                         y.scientific = y.scientific,
+                                         stackedpercent = stackedpercent,
+                                         decimal.mark = decimal.mark,
+                                         big.mark = big.mark),
+                      name = y_secondary.title)
+  } else {
+    sec_y <- waiver()
+  }
+  
   scale_y_continuous(
     breaks = breaks_fn(values = values,
                        waiver = waiver(),
@@ -972,7 +1021,8 @@ validate_y_scale <- function(df,
                        stackedpercent = stackedpercent,
                        limits = limits),
     trans = y.trans,
-    position = y.position
+    position = y.position,
+    sec.axis = sec_y
   )
 }
 
@@ -1195,7 +1245,8 @@ generate_geom <- function(type,
                           violin_scale,
                           jitter_seed,
                           binwidth,
-                          cols) {
+                          cols,
+                          mapping = NULL) {
   
   if (type == "geom_col") {
     type <- "geom_bar"
@@ -1220,7 +1271,8 @@ generate_geom <- function(type,
                           position = position,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)]))
+                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_area") {
     do.call(geom_fn,
@@ -1230,7 +1282,8 @@ generate_geom <- function(type,
                           size = size,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)]))
+                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type %in% c("geom_line", "geom_path")) {
     do.call(geom_fn,
@@ -1238,20 +1291,23 @@ generate_geom <- function(type,
                           lineend = "round",
                           linetype = linetype,
                           na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)]))
+                     list(colour = cols$colour)[!has_category(df)],
+                     list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_point") {
     do.call(geom_fn,
             args = c(list(size = size,
                           na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)]))
+                     list(colour = cols$colour)[!has_category(df)],
+                     list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_jitter") {
     do.call(geom_fn,
             args = c(list(size = size,
                           position = position_jitter(seed = jitter_seed),
                           na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)]))
+                     list(colour = cols$colour)[!has_category(df)],
+                     list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_boxplot") {
     do.call(geom_fn,
@@ -1262,7 +1318,8 @@ generate_geom <- function(type,
                           fatten = 1.5, # factor to make median thicker compared to lwd
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)]))
+                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_violin") {
     do.call(geom_fn,
@@ -1273,7 +1330,8 @@ generate_geom <- function(type,
                           draw_quantiles = c(0.25, 0.5, 0.75),
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)]))
+                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_histogram") {
     if (is.null(binwidth)) {
@@ -1297,7 +1355,8 @@ generate_geom <- function(type,
                           binwidth = binwidth,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)]))
+                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_density") {
     do.call(geom_fn,
@@ -1305,7 +1364,8 @@ generate_geom <- function(type,
                           size = size,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)]))
+                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_sf") {
     do.call(geom_fn,
@@ -1327,7 +1387,8 @@ generate_geom <- function(type,
                           size = size,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)]))
+                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(mapping = mapping)[!is.null(mapping)]))
   }
 }
 
@@ -1606,7 +1667,10 @@ validate_theme <- function(theme,
                            facet.margin,
                            legend.italic,
                            title.colour,
-                           subtitle.colour) {
+                           subtitle.colour,
+                           has_y_secondary,
+                           col_y_primary,
+                           col_y_secondary) {
   
   if (!is.null(theme)) {
     if (is.character(theme)) {
@@ -1666,6 +1730,14 @@ validate_theme <- function(theme,
     if (isTRUE(x.remove)) {
       theme$axis.text.x <- element_blank()
     }
+  }
+  
+  if (isTRUE(has_y_secondary)) {
+    # set colour of geoms to title texts
+    theme$axis.title.y$colour <- col_y_primary
+    theme$axis.title.y$face <- "bold"
+    theme$axis.title.y.right$colour <- col_y_secondary
+    theme$axis.title.y.right$face <- "bold"
   }
   
   theme$axis.text.x$angle <- x.lbl_angle
