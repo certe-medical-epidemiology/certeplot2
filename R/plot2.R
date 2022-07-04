@@ -42,6 +42,7 @@
 #' @param category plotting 'direction': the category (called 'fill' and 'colour' in `ggplot2`)
 #' @param facet plotting 'direction': the facet
 #' @param y_secondary values to use for plotting along the secondary y axis. This functionality is poorly supported by `ggplot2` and might give unexpected results.
+#' @param y_secondary.type,y_secondary.title,y_secondary.colour,y_secondary.colour_fill,y_secondary.scientific,y_secondary.percent,y_secondary.labels options for the secundary y axis
 #' @param type type of visualisation to use. This can be:
 #' 
 #' * A `ggplot2` geom name, all geoms are supported (including [`geom_blank()`][ggplot2::geom_blank()]). Full function names can be used (e.g., `"geom_histogram"`), but they can also be abbreviated (e.g., `"h"`, `"hist"`). These geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), violin (`"v"`). **Please note:** in `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `type = "bar"` will set `type = "col"` and `horizontal = TRUE`.
@@ -374,9 +375,13 @@ plot2 <- function(.data,
                   y.position = "left",
                   y.zoom = FALSE,
                   y_secondary = NULL,
+                  y_secondary.type = type,
                   y_secondary.title = TRUE,
                   y_secondary.colour = "certeroze",
-                  y_secondary.colour_fill = "certeroze3",
+                  y_secondary.colour_fill = "certeroze6",
+                  y_secondary.scientific = NULL,
+                  y_secondary.percent = FALSE,
+                  y_secondary.labels = NULL,
                   category.labels = NULL,
                   category.percent = FALSE,
                   category.breaks = NULL,
@@ -562,9 +567,13 @@ plot2_exec <- function(.data,
                        y.position,
                        y.zoom,
                        y_secondary,
+                       y_secondary.type,
                        y_secondary.title,
                        y_secondary.colour,
                        y_secondary.colour_fill,
+                       y_secondary.scientific,
+                       y_secondary.percent,
+                       y_secondary.labels,
                        category.labels,
                        category.percent,
                        category.breaks,
@@ -825,6 +834,9 @@ plot2_exec <- function(.data,
   
   # validate type ----
   type <- validate_type(type = type, df = df) # this will automatically determine the type if is.null(type)
+  if (has_y_secondary(df)) {
+    y_secondary.type <- suppressMessages(validate_type(type = y_secondary.type, df = df))
+  }
   # transform data if not a continuous geom but group sizes are > 1
   if (any(group_sizes(df) > 1) && !geom_is_continuous(type)) {
     if (identical(type_backup, "barpercent")) {
@@ -948,6 +960,7 @@ plot2_exec <- function(.data,
     # first add the whiskers
     p <- p +
       stat_boxplot(geom = "errorbar",
+                   mapping = if (!has_y_secondary(df)) NULL else utils::modifyList(mapping, aes(y = `_var_y`)),
                    coef = 1.5, # 1.5 * IQR
                    width = width * ifelse(has_category(df), 1, 0.75),
                    lwd = size,
@@ -971,8 +984,18 @@ plot2_exec <- function(.data,
                   mapping = if (!has_y_secondary(df)) NULL else utils::modifyList(mapping, aes(y = `_var_y`)))
   # add secondary y axis if available
   if (has_y_secondary(df)) {
+    if (y_secondary.type == "geom_boxplot") {
+      # first add the whiskers
+      p <- p +
+        stat_boxplot(geom = "errorbar",
+                     mapping = utils::modifyList(mapping, aes(y = `_var_y_secondary`)),
+                     coef = 1.5, # 1.5 * IQR
+                     width = width * ifelse(has_category(df), 1, 0.75),
+                     lwd = size,
+                     colour = y_secondary.colour)
+    }
     p <- p +
-      generate_geom(type = type,
+      generate_geom(type = y_secondary.type,
                     df = df,
                     stacked = stacked,
                     stackedpercent = stackedpercent,
@@ -1130,9 +1153,7 @@ plot2_exec <- function(.data,
                          facet.fixed_y = facet.fixed_y,
                          decimal.mark = decimal.mark,
                          big.mark = big.mark,
-                         add_y_secondary = FALSE,
-                         y_secondary.breaks = NULL,
-                         y_secondary.title = NULL)
+                         add_y_secondary = FALSE)
     }
     if (has_y_secondary(df)) {
       # add a secondary y axis
@@ -1161,9 +1182,13 @@ plot2_exec <- function(.data,
                          decimal.mark = decimal.mark,
                          big.mark = big.mark,
                          add_y_secondary = TRUE,
-                         # this get the breaks from the primary y axis
+                         # this get the breaks from the primary y axis:
                          y_secondary.breaks = ggplot_build(p_added_y)$layout$panel_params[[1]]$y$breaks,
-                         y_secondary.title = y_secondary.title)
+                         # additional properties for secondary y axis:
+                         y_secondary.title = y_secondary.title,
+                         y_secondary.scientific = y_secondary.scientific,
+                         y_secondary.percent = y_secondary.percent,
+                         y_secondary.labels = y_secondary.labels)
     } else {
       # add the y axis without secondary axis
       p <- p_added_y

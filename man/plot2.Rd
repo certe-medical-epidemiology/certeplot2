@@ -80,9 +80,13 @@ plot2(
   y.position = "left",
   y.zoom = FALSE,
   y_secondary = NULL,
+  y_secondary.type = type,
   y_secondary.title = TRUE,
   y_secondary.colour = "certeroze",
-  y_secondary.colour_fill = "certeroze3",
+  y_secondary.colour_fill = "certeroze6",
+  y_secondary.scientific = NULL,
+  y_secondary.percent = FALSE,
+  y_secondary.labels = NULL,
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -257,6 +261,8 @@ plot2(
 
 \item{y_secondary}{values to use for plotting along the secondary y axis. This functionality is poorly supported by \code{ggplot2} and might give unexpected results.}
 
+\item{y_secondary.type, y_secondary.title, y_secondary.colour, y_secondary.colour_fill, y_secondary.scientific, y_secondary.percent, y_secondary.labels}{options for the secundary y axis}
+
 \item{category.labels, category.percent, category.breaks, category.expand, category.midpoint, category.trans}{settings for the plotting direction \code{category}.}
 
 \item{category.limits}{limits to use for a numeric category, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{category.limits = c(0, NA)} to have the scale start at zero.}
@@ -363,7 +369,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 131 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 135 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)

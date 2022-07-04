@@ -433,6 +433,7 @@ clean_plot2_env <- function() {
   plot2_env$mapping_category <- NULL
   plot2_env$mapping_facet <- NULL
   plot2_env$mapping_y_secondary <- NULL
+  plot2_env$y_secondary_factor <- NULL
 }
 
 sigfigs <- function(x) {
@@ -477,9 +478,17 @@ format_error <- function(e, replace = character(0), by = character(0)) {
     txt <- e$bullets
   }
   txt <- txt[txt %unlike% "^Problem while"]
+  print(txt)
+  if (length(txt) == 0) {
+    # return original error
+    stop(e, call. = FALSE)
+  }
   out <- gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", paste(txt, collapse = "\n"))
   for (i in seq_len(length(replace))) {
     out <- gsub(replace[i], by[i], out)
+  }
+  if (out == "") {
+    out <- "Plot cannot be generated due to unknown error"
   }
   out
 }

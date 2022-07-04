@@ -753,8 +753,11 @@ validate_y_scale <- function(df,
                              decimal.mark,
                              big.mark,
                              add_y_secondary,
-                             y_secondary.breaks,
-                             y_secondary.title) {
+                             y_secondary.breaks = NULL,
+                             y_secondary.title = NULL,
+                             y_secondary.scientific = NULL,
+                             y_secondary.percent = NULL,
+                             y_secondary.labels = NULL) {
   if (isTRUE(y.zoom) && is.null(y.limits)) {
     y.limits <- c(NA_real_, NA_real_)
     if (is.null(y.expand)) {
@@ -894,7 +897,7 @@ validate_y_scale <- function(df,
             plot2_message("Assuming ", font_blue("y.scientific = TRUE"))
           }
           # scientific notation or non-unique labels, use expression function from certestyle
-          format2_scientific(x,  decimal.mark = dec, big.mark = big)
+          format2_scientific(x, decimal.mark = dec, big.mark = big)
         } else {
           format2(x, decimal.mark = dec, big.mark = big)
         }
@@ -970,18 +973,19 @@ validate_y_scale <- function(df,
       # we previously transformed this variable to stay within the range of the primary y axis,
       # so now transform back for the labels and the breaks
       secondary_values <- secondary_values * plot2_env$y_secondary_factor
-      fun <- function(x) x * plot2_env$y_secondary_factor
+      fctr <- eval(plot2_env$y_secondary_factor)
+      fun <- function(x) x * fctr
       br <- br * plot2_env$y_secondary_factor
     }
     sec_y <- sec_axis(trans = fun,
                       breaks = br,
                       labels = labels_fn(values = secondary_values,
                                          waiver = waiver(),
-                                         y.labels,
-                                         y.percent = FALSE,
+                                         y.labels = y_secondary.labels,
+                                         y.percent = y_secondary.percent,
                                          y.age = FALSE,
                                          y.24h = FALSE,
-                                         y.scientific = y.scientific,
+                                         y.scientific = y_secondary.scientific,
                                          stackedpercent = stackedpercent,
                                          decimal.mark = decimal.mark,
                                          big.mark = big.mark),
@@ -1500,12 +1504,19 @@ validate_colour <- function(df,
       colour_fill <- colour
     }
     
-    minimum_length <- length(group_sizes(df))
-    if (length(colour) < minimum_length) {
-      colour <- c(colour, rep(colour, minimum_length)[seq_len(minimum_length - length(colour))])
+    # expand the range
+    grp_sizes <- group_sizes(df)
+    n_categories <- length(grp_sizes)
+    if (length(colour) < n_categories) {
+      # expand colour for all categories
+      colour <- c(colour, rep(colour, n_categories)[seq_len(n_categories - length(colour))])
+      # remove empty groups
+      colour <- colour[grp_sizes != 0]
     }
-    if (length(colour_fill) < minimum_length) {
-      colour_fill <- c(colour_fill, rep(colour_fill, minimum_length)[seq_len(minimum_length - length(colour_fill))])
+    if (length(colour_fill) < n_categories) {
+      colour_fill <- c(colour_fill, rep(colour_fill, n_categories)[seq_len(n_categories - length(colour_fill))])
+      # remove empty groups
+      colour_fill <- colour_fill[grp_sizes != 0]
     }
   }
   
