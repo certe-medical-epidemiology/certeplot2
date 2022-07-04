@@ -58,42 +58,42 @@ md_to_expression <- function(x) {
   }
   out <- paste0("'", out, "'")
   
-  # ***bold-italic***
+  # translate ***bold-italic***
   while (out %like% "[*]{3}.+[*]{3}") {
     out <- gsub("[*]{3}(.+?)[*]{3}", "', bolditalic('\\1'), '", out, perl = TRUE)
   }
   
-  # **bold**
+  # translate **bold**
   while (out %like% "[*]{2}.+[*]{2}") {
     out <- gsub("[*]{2}(.+?)[*]{2}", "', bold('\\1'), '", out, perl = TRUE)
   }
   
-  # *italic*
+  # translate *italic*
   while (out %like% "[*].+[*]") {
     out <- gsub("[*](.+?)[*]", "', italic('\\1'), '", out, perl = TRUE)
   }
   
-  # sub<sub>script</sub>
+  # translate sub<sub>script</sub>
   while (grepl("\\S+<sub>.+</sub>", out, ignore.case = FALSE)) {
     out <- gsub("(\\S+?)<sub>(.+?)</sub>", "', \\1['\\2'], '", out, perl = TRUE)
   }
   
-  # super<sup>script</sup>
+  # translate super<sup>script</sup>
   while (grepl("\\S+<sup>.+</sup>", out, ignore.case = FALSE)) {
     out <- gsub("(\\S+?)<sup>(.+?)</sup>", "', \\1^'\\2', '", out, perl = TRUE)
   }
   
-  # sub_script
+  # translate sub_script
   while (out %like% "(^'| )[a-z0-9,.-]+_[a-z0-9,.-]+( |'$)") {
     out <- gsub("( ?)([a-z0-9,.-]+?)_([a-z0-9,.-]+)( ?)", "\\1', \\2['\\3'], '\\4", out, perl = TRUE, ignore.case = TRUE)
   }
   
-  # super^script
+  # translate super^script
   while (out %like% "(^'| )[a-z0-9,.-]+ ?\\^ ?[a-z0-9,.-]+( |'$)") {
     out <- gsub("( ?)([a-z0-9,.-]+?) ?\\^ ?([a-z0-9,.-]+)( ?)", "\\1', \\2^'\\3', '\\4", out, perl = TRUE, ignore.case = TRUE)
   }
   
-  # $plotmath$, such as $omega$
+  # translate $plotmath$, such as $omega$
   while (out %like% "[$].+[$]") {
     out <- gsub("[$](.+?)[$]", "', \\1, '", out, perl = TRUE)
   }
@@ -109,7 +109,9 @@ md_to_expression <- function(x) {
   out <- gsub("^, ", "", out)
   
   tryCatch(parse(text = paste0("paste(", out, ")")),
-           error = function(e) stop("This cannot be parsed by md_to_expression(): \"", out,
-                                    "\"\n\nFor more complex expressions, start and end with '$' to write in plotmath, or use parse(text = \"...\").",
-                                    call. = FALSE))
+           error = function(e) {
+             stop("This cannot be parsed by md_to_expression(): \"", out,
+                  "\"\n\nFor more complex expressions, start and end with '$' to write in plotmath, or use parse(text = \"...\").",
+                  call. = FALSE)
+           })
 }

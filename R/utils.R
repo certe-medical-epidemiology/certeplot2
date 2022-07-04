@@ -359,7 +359,7 @@ restore_mapping <- function(p, df) {
     }
     att <- attributes(mapping)
     new_mapping <- lapply(mapping,
-                          function(map)
+                          function(map) {
                             if (any(deparse(map) %like% "_var_x")) {
                               aes_string(as.name(get_x_name(df)))[[1]] 
                             } else if (any(deparse(map) %like% "_var_y_secondary")) {
@@ -372,7 +372,7 @@ restore_mapping <- function(p, df) {
                               aes_string(as.name(get_facet_name(df)))[[1]] 
                             } else {
                               map
-                            })
+                            }})
     attributes(new_mapping) <- att
     new_mapping
   }

@@ -121,9 +121,9 @@ validate_data <- function(df,
   
   numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) mode(col) == "numeric" & !inherits(col, c("Date", "POSIXTt", "factor")))))
   numeric_cols <- numeric_cols[numeric_cols %unlike% "^_var_"]
-  character_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) is.character(col) | is.factor(col))))
+  character_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) is.character(col) || is.factor(col))))
   character_cols <- character_cols[character_cols %unlike% "^_var_"]
-  non_numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) mode(col) != "numeric" | inherits(col, c("Date", "POSIXTt", "factor")))))
+  non_numeric_cols <- names(which(vapply(FUN.VALUE = logical(1), df, function(col) mode(col) != "numeric" || inherits(col, c("Date", "POSIXTt", "factor")))))
   non_numeric_cols <- non_numeric_cols[non_numeric_cols %unlike% "^_var_"]
   
   if (!has_y(df) && "n" %in% numeric_cols && mode(df$n) == "numeric") {
@@ -235,9 +235,11 @@ validate_data <- function(df,
     # and if x was also missing
     cols <- vapply(FUN.VALUE = logical(1),
                    df,
-                   function(col) (is.factor(col) | is.character(col)) &
-                     !identical(get_y(df), col) &
-                     !(has_x(df) && identical(get_x(df), col)))
+                   function(col) {
+                     (is.factor(col) || is.character(col)) &
+                       !identical(get_y(df), col) &
+                       !(has_x(df) && identical(get_x(df), col))
+                   })
     cols <- names(cols)[cols]
     if (has_facet(df)) {
       # remove columns that are already used for facet
@@ -285,7 +287,7 @@ validate_data <- function(df,
       df$`_var_y_secondary` <- df$`_var_y_secondary` / plot2_env$y_secondary_factor
     }
   }
-
+  
   # add surrogate columns to df
   if (has_x(df) && !is.null(plot2_env$mapping_x) &&
       !plot2_env$mapping_x %in% colnames(df) && plot2_env$mapping_x != "NULL") {
@@ -308,7 +310,7 @@ validate_data <- function(df,
     colnames(df)[colnames(df) == "_label_facet"] <- concat(plot2_env$mapping_facet)
   }
   if (has_y_secondary(df) && !is.null(plot2_env$mapping_y_secondary) &&
-       !plot2_env$mapping_y_secondary %in% colnames(df) && plot2_env$mapping_y_secondary != "NULL") {
+      !plot2_env$mapping_y_secondary %in% colnames(df) && plot2_env$mapping_y_secondary != "NULL") {
     df$`_label_y_secondary` <- get_y_secondary(df)
     colnames(df)[colnames(df) == "_label_y_secondary"] <- concat(plot2_env$mapping_y_secondary)
   }
@@ -406,11 +408,11 @@ validate_data <- function(df,
         mutate(across(c(get_x_name(df), get_category_name(df), get_facet_name(df),
                         matches("_var_(x|category|facet)")),
                       function(x) {
-                        if (is.factor(x) & any(is.na(x))) {
+                        if (is.factor(x) && any(is.na(x))) {
                           # add as last factor level
                           levels(x) <- c(levels(x), dots$na.replace)
                         }
-                        if ((!is_numeric(x) | is.factor(x)) & any(is.na(x))) {
+                        if ((!is_numeric(x) || is.factor(x)) && any(is.na(x))) {
                           plot2_env$na_replaced_vars <- c(plot2_env$na_replaced_vars, cur_column())
                           plot2_env$na_replaced <- plot2_env$na_replaced + sum(is.na(x))
                           x[is.na(x)] <- dots$na.replace
@@ -817,13 +819,17 @@ validate_y_scale <- function(df,
       y.breaks
     } else if (isTRUE(y.age)) {
       # no decimal numbers, generate max 12 labels
-      function(x, ...) seq(from = min(0, x, na.rm = TRUE),
-                           to = min(120, max(x, na.rm = TRUE), na.rm = TRUE),
-                           by = 10)
+      function(x, ...) {
+        seq(from = min(0, x, na.rm = TRUE),
+            to = min(120, max(x, na.rm = TRUE), na.rm = TRUE),
+            by = 10)
+      }
     } else if (isTRUE(y.24h)) {
-      function(x, ...) seq(from = min(0, x, na.rm = TRUE),
-                           to = max(x, na.rm = TRUE),
-                           by = 24)
+      function(x, ...) {
+        seq(from = min(0, x, na.rm = TRUE),
+            to = max(x, na.rm = TRUE),
+            by = 24)
+      }
     } else if (isTRUE(stackedpercent)) {
       # special case of y.percent, where the y scale is always 0 to 1
       function(x, y_percent_break = y.percent_break, ...) {
@@ -854,13 +860,17 @@ validate_y_scale <- function(df,
                       " since the original setting (", font_blue(y.percent_break.bak), ")",
                       " would yield too few labels")
       }
-      function(x, ...) seq(from = min(0, x, na.rm = TRUE),
-                           to = max(x, na.rm = TRUE),
-                           by = y.percent_break)
+      function(x, ...) {
+        seq(from = min(0, x, na.rm = TRUE),
+            to = max(x, na.rm = TRUE),
+            by = y.percent_break)
+      }
       
     } else if (all(values %% 1 == 0, na.rm = TRUE) && data_max < 5) {
       # whole numbers - only strip decimal numbers if total y range is low
-      function(x, ...) unique(floor(pretty(seq(0, (max(x, na.rm = TRUE) + 1) * 3))))
+      function(x, ...) {
+        unique(floor(pretty(seq(0, (max(x, na.rm = TRUE) + 1) * 3))))
+      }
     } else {
       pretty_breaks(n = ifelse(is.null(y.n_breaks), 5, y.n_breaks))
     }
@@ -875,18 +885,21 @@ validate_y_scale <- function(df,
     } else if (isTRUE(y.scientific)) {
       format2_scientific
     } else if (isTRUE(y.24h)) {
-      function(x, dec = decimal.mark, big = big.mark, ...) 
+      function(x, dec = decimal.mark, big = big.mark, ...) {
         paste0(format2(x, decimal.mark = dec, big.mark = big),
                ifelse(Sys.getlocale("LC_COLLATE") %like% "nl|dutch", "u (", "h ("),
                x / 24,
                "d)")
+      }
     } else if (isTRUE(y.age)) {
-      function(x, dec = decimal.mark, big = big.mark, ...) 
+      function(x, dec = decimal.mark, big = big.mark, ...) {
         paste0(format2(x, decimal.mark = dec, big.mark = big, round = 0),
                ifelse(Sys.getlocale("LC_COLLATE") %like% "nl|dutch", " jr", " yrs"))
-    } else if (isTRUE(y.percent) | isTRUE(stackedpercent)) {
-      function(x, dec = decimal.mark, big = big.mark, ...)
+      }
+    } else if (isTRUE(y.percent) || isTRUE(stackedpercent)) {
+      function(x, dec = decimal.mark, big = big.mark, ...) {
         format2(as.percentage(x), round = max(1, sigfigs(x) - 2), decimal.mark = dec, big.mark = big)
+      }
     } else {
       function(x, dec = decimal.mark, big = big.mark, ...) {
         is_scientific <- any(format(x) %like% "^(-?[0-9.]+e-?[0-9.]+)$", na.rm = TRUE) ||
@@ -939,15 +952,15 @@ validate_y_scale <- function(df,
   expand_fn <- function(values, y.expand, y.age, stackedpercent, limits) {
     if (is.function(y.expand)) {
       y.expand
-    } else if (isTRUE(y.age) | isTRUE(stackedpercent)) {
+    } else if (isTRUE(y.age) || isTRUE(stackedpercent)) {
       expansion(mult = c(0, 0))
     } else {
       if (length(y.expand) == 1) {
         y.expand <- rep(y.expand, 2)
       }
       if (is.numeric(limits) && length(limits) == 2) {
-        expansion(mult = c(ifelse(any(values < 0) | is.na(limits[1L]), y.expand[1], 0),
-                           ifelse(any(values > 0) | is.na(limits[2L]), y.expand[2], 0)))
+        expansion(mult = c(ifelse(any(values < 0) || is.na(limits[1L]), y.expand[1], 0),
+                           ifelse(any(values > 0) || is.na(limits[2L]), y.expand[2], 0)))
       } else {
         expansion(mult = c(ifelse(any(values < 0), y.expand[1], 0),
                            ifelse(any(values > 0), y.expand[2], 0)))
@@ -1068,7 +1081,7 @@ validate_category_scale <- function(values,
   labels_fn <- function(values, category.labels, category.percent, stackedpercent, decimal.mark, big.mark) {
     if (!is.null(category.labels)) {
       category.labels
-    } else if (isTRUE(category.percent) | isTRUE(stackedpercent)) {
+    } else if (isTRUE(category.percent) || isTRUE(stackedpercent)) {
       function(x, dec = decimal.mark, big = big.mark, ...) format2(as.percentage(x), decimal.mark = dec, big.mark = big)
     } else {
       function(x, dec = decimal.mark, big = big.mark, ...) format2(x, decimal.mark = dec, big.mark = big)
@@ -1535,7 +1548,7 @@ validate_size <- function(size, type) {
   if (is.null(size)) {
     if (type == "geom_sf") {
       size <- 0.1
-    } else if (type %in% c("geom_boxplot", "geom_violin", "geom_area", "geom_ribbon") | geom_is_continuous_x(type)) {
+    } else if (type %in% c("geom_boxplot", "geom_violin", "geom_area", "geom_ribbon") || geom_is_continuous_x(type)) {
       size <- 0.5
     } else if (type %in% c("geom_point", "geom_jitter")) {
       size <- 2
@@ -1606,7 +1619,7 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
       return(x)
     }
   )
-
+  
   # support for calculations, e.g. `title = paste("Total number =", n(), "rows")`
   if (!is.null(df)) {
     out <- tryCatch(
@@ -1638,11 +1651,11 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
   # support for markdown
   if (isTRUE(markdown) &&
       (isTRUE(out %like% "[*]+.+[*]+")
-       | isTRUE(out %like% "[a-z0-9,.-]_[a-zA-Z0-9,.-]")
-       | isTRUE(out %like% "[a-z0-9,.-] ?\\^ ?[a-zA-Z0-9,.-]")
-       | isTRUE(out %like% "<sup>.+</sup>")
-       | isTRUE(out %like% "<sub>.+</sub>")
-       | isTRUE(out %like% "[$]"))) {
+       || isTRUE(out %like% "[a-z0-9,.-]_[a-zA-Z0-9,.-]")
+       || isTRUE(out %like% "[a-z0-9,.-] ?\\^ ?[a-zA-Z0-9,.-]")
+       || isTRUE(out %like% "<sup>.+</sup>")
+       || isTRUE(out %like% "<sub>.+</sub>")
+       || isTRUE(out %like% "[$]"))) {
     out <- md_to_expression(out)
   }
   
@@ -1938,7 +1951,7 @@ set_datalabels <- function(p,
   text_vertical <- -0.75
   label_horizontal <- 0.5
   label_vertical <- -0.1
-  if (isTRUE(horizontal) | datalabels.angle == 90) {
+  if (isTRUE(horizontal) || datalabels.angle == 90) {
     text_horizontal <- -0.25
     text_vertical <- 0.5
     label_horizontal <- -0.1
@@ -1996,8 +2009,8 @@ set_datalabels <- function(p,
                      list(vjust = label_vertical)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
                      list(hjust = label_horizontal)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
                      # only when stackedpercent:
-                     list(vjust = 0.5)[isTRUE(stackedpercent) | isTRUE(is_sf)],
-                     list(hjust = 0.5)[isTRUE(stackedpercent) | isTRUE(is_sf)],
+                     list(vjust = 0.5)[isTRUE(stackedpercent) || isTRUE(is_sf)],
+                     list(hjust = 0.5)[isTRUE(stackedpercent) || isTRUE(is_sf)],
                      # only when sf:
                      list(fun.geometry = geometry_fix_fn)[isTRUE(is_sf)])) +
     # set text
@@ -2014,8 +2027,8 @@ set_datalabels <- function(p,
                      list(vjust = text_vertical)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
                      list(hjust = text_horizontal)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
                      # only when stackedpercent:
-                     list(vjust = 0.5)[isTRUE(stackedpercent) | isTRUE(is_sf)],
-                     list(hjust = 0.5)[isTRUE(stackedpercent) | isTRUE(is_sf)],
+                     list(vjust = 0.5)[isTRUE(stackedpercent) || isTRUE(is_sf)],
+                     list(hjust = 0.5)[isTRUE(stackedpercent) || isTRUE(is_sf)],
                      # only when sf:
                      list(fun.geometry = geometry_fix_fn)[isTRUE(is_sf)]))
   
@@ -2050,7 +2063,7 @@ validate_font <- function(font) {
   # enable showtext
   showtext::showtext_auto(enable = TRUE)
   
-  if (isTRUE(getOption('knitr.in.progress'))) {
+  if (isTRUE(getOption("knitr.in.progress"))) {
     # if in knitr (R Markdown) set the right DPI for this plot according to current chunk setting
     showtext::showtext_opts(dpi = knitr::opts_current$get("dpi"))
   }
