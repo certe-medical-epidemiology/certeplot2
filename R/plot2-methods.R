@@ -1209,14 +1209,14 @@ plot2.sf <- function(.data,
              y.trans = y.trans,
              y.position = y.position,
              y.zoom = y.zoom,
-             y_secondary = {{ y_secondary }},
-             y_secondary.type = y_secondary.type,
-             y_secondary.title = {{ y_secondary.title }},
-             y_secondary.colour = y_secondary.colour,
-             y_secondary.colour_fill = y_secondary.colour_fill,
-             y_secondary.scientific = y_secondary.scientific,
-             y_secondary.percent = y_secondary.percent,
-             y_secondary.labels = y_secondary.labels,
+             y_secondary = NULL,
+             y_secondary.type = NULL,
+             y_secondary.title = TRUE,
+             y_secondary.colour = NULL,
+             y_secondary.colour_fill = NULL,
+             y_secondary.scientific = NULL,
+             y_secondary.percent = NULL,
+             y_secondary.labels = NULL,
              category.labels = category.labels,
              category.percent = category.percent,
              category.breaks = category.breaks,
@@ -1291,7 +1291,6 @@ plot2.sf <- function(.data,
              `_label.y` = deparse(substitute(y)),
              `_label.category` = deparse(substitute(category)),
              `_label.facet` = deparse(substitute(facet)),
-             `_label.y_secondary` = deparse(substitute(y_secondary)),
              `_summarise_fn_name` = deparse(substitute(summarise_function)),
              `_sf.column` = attributes(.data)$sf_column,
              ...)
@@ -2319,6 +2318,14 @@ plot2.qc_test <- function(.data,
                           y.trans = "identity",
                           y.position = "left",
                           y.zoom = TRUE,
+                          y_secondary = NULL,
+                          y_secondary.type = type,
+                          y_secondary.title = TRUE,
+                          y_secondary.colour = "certeroze",
+                          y_secondary.colour_fill = "certeroze6",
+                          y_secondary.scientific = NULL,
+                          y_secondary.percent = FALSE,
+                          y_secondary.labels = NULL,
                           category.labels = NULL,
                           category.percent = FALSE,
                           category.breaks = NULL,
@@ -2374,6 +2381,8 @@ plot2.qc_test <- function(.data,
                           markdown = TRUE,
                           ...) {
   
+  loadNamespace("certestats")
+  
   att <- attributes(.data)
   df <- data.frame(x = seq_len(length(att$values)),
                    y = att$values,
@@ -2396,9 +2405,8 @@ plot2.qc_test <- function(.data,
   
   df <- df[order(df$x, df$rule), , drop = FALSE]
   
-  if (missing(caption) && "certestats" %in% rownames(utils::installed.packages())) {
+  if (missing(caption)) {
     # fill caption with rules
-    qc_rule_text <- getExportedValue("qc_rule_text", ns = asNamespace("certestats"))
     rules <- names(.data[unlist(lapply(.data, function(r) length(r) > 0))])
     rules <- as.integer(gsub("[^0-9]", "", rules))
     threshold <- att$threshold[rules]
@@ -2406,7 +2414,7 @@ plot2.qc_test <- function(.data,
     for (i in seq_len(length(rules))) {
       rule <- paste0("Rule ", rules[i], ":")
       caption <- c(caption, 
-                   paste(rule, qc_rule_text(rules[i], threshold[i])))
+                   paste(rule, certestats::qc_rule_text(rules[i], threshold[i])))
     }
     caption <- paste0(caption, collapse = "\n")
   }
@@ -2485,14 +2493,14 @@ plot2.qc_test <- function(.data,
                   y.trans = y.trans,
                   y.position = y.position,
                   y.zoom = y.zoom,
-                  y_secondary = {{ y_secondary }},
-                  y_secondary.type = y_secondary.type,
-                  y_secondary.title = {{ y_secondary.title }},
-                  y_secondary.colour = y_secondary.colour,
-                  y_secondary.colour_fill = y_secondary.colour_fill,
-                  y_secondary.scientific = y_secondary.scientific,
-                  y_secondary.percent = y_secondary.percent,
-                  y_secondary.labels = y_secondary.labels,
+                  y_secondary = NULL,
+                  y_secondary.type = NULL,
+                  y_secondary.title = TRUE,
+                  y_secondary.colour = NULL,
+                  y_secondary.colour_fill = NULL,
+                  y_secondary.scientific = NULL,
+                  y_secondary.percent = NULL,
+                  y_secondary.labels = NULL,
                   category.labels = category.labels,
                   category.percent = category.percent,
                   category.breaks = category.breaks,

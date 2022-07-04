@@ -1507,16 +1507,19 @@ validate_colour <- function(df,
     # expand the range
     grp_sizes <- group_sizes(df)
     n_categories <- length(grp_sizes)
-    if (length(colour) < n_categories) {
-      # expand colour for all categories
-      colour <- c(colour, rep(colour, n_categories)[seq_len(n_categories - length(colour))])
-      # remove empty groups
-      colour <- colour[grp_sizes != 0]
-    }
-    if (length(colour_fill) < n_categories) {
-      colour_fill <- c(colour_fill, rep(colour_fill, n_categories)[seq_len(n_categories - length(colour_fill))])
-      # remove empty groups
-      colour_fill <- colour_fill[grp_sizes != 0]
+    if (any(grp_sizes > 1, na.rm = TRUE)) {
+      if (length(colour) < n_categories) {
+        # expand colour for all categories, except when all colours were named
+        colour <- c(colour, rep(colour, n_categories)[seq_len(n_categories - length(colour))])
+        # remove empty groups
+        colour <- colour[grp_sizes != 0]
+      }
+      if (length(colour_fill) < n_categories) {
+        # expand colour_fill for all categories, except when all colours were named
+        colour_fill <- c(colour_fill, rep(colour_fill, n_categories)[seq_len(n_categories - length(colour_fill))])
+        # remove empty groups
+        colour_fill <- colour_fill[grp_sizes != 0]
+      }
     }
   }
   
@@ -1603,7 +1606,7 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
       return(x)
     }
   )
-  
+
   # support for calculations, e.g. `title = paste("Total number =", n(), "rows")`
   if (!is.null(df)) {
     out <- tryCatch(

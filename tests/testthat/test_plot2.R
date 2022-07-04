@@ -487,4 +487,9 @@ test_that("md to expression works", {
 test_that("secondary y axis works", {
   expect_s3_class(mtcars |> plot2(mpg, hp, y_secondary = disp), "gg")
   expect_s3_class(mtcars |> plot2(mpg, hp, y_secondary = disp ^ 2), "gg")
+  
+  # this function is being used to determine breaks, so checks its functionality
+  p <- mtcars |> plot2(mpg, hp)
+  expect_identical(ggplot_build(p)$layout$panel_params[[1]]$y$breaks,
+                   as.double(c(0, 100, 200, 300, 400, NA)))
 })

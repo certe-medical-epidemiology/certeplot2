@@ -24,6 +24,7 @@ globalVariables(c("..count..",
                   "_var_category",
                   "_var_datalabels",
                   "_var_facet",
+                  "_var_y_secondary",
                   "_var_x",
                   "_var_y",
                   "ab",
@@ -478,7 +479,6 @@ format_error <- function(e, replace = character(0), by = character(0)) {
     txt <- e$bullets
   }
   txt <- txt[txt %unlike% "^Problem while"]
-  print(txt)
   if (length(txt) == 0) {
     # return original error
     stop(e, call. = FALSE)
