@@ -79,6 +79,14 @@ plot2(
   y.trans = "identity",
   y.position = "left",
   y.zoom = FALSE,
+  y_secondary = NULL,
+  y_secondary.type = type,
+  y_secondary.title = TRUE,
+  y_secondary.colour = "certeroze",
+  y_secondary.colour_fill = "certeroze6",
+  y_secondary.scientific = NULL,
+  y_secondary.percent = FALSE,
+  y_secondary.labels = NULL,
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -157,14 +165,14 @@ plot2(
 
 \item{facet}{plotting 'direction': the facet}
 
-\item{type}{type of visualisation to use. This can be:
+\item{type, y_secondary.type}{type of visualisation to use. This can be:
 \itemize{
 \item A \code{ggplot2} geom name, all geoms are supported (including \code{\link[ggplot2:geom_blank]{geom_blank()}}). Full function names can be used (e.g., \code{"geom_histogram"}), but they can also be abbreviated (e.g., \code{"h"}, \code{"hist"}). These geoms can be abbreviated by their first character: area (\code{"a"}), boxplot (\code{"b"}), column (\code{"c"}), histogram (\code{"h"}), jitter (\code{"j"}), line (\code{"l"}), point (\code{"p"}), ribbon (\code{"r"}), violin (\code{"v"}). \strong{Please note:} in \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{type = "bar"} will set \code{type = "col"} and \code{horizontal = TRUE}.
 \item A shortcut. There is currently one supported shortcut: \code{"barpercent"}, which will set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
 \item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X axis or if the length of unique values per X axis item is at least 3, \code{"point"} if both the Y and X axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} print a geom.
 }}
 
-\item{title, subtitle, caption, tag, x.title, y.title, category.title, legend.title}{a title to use. This can be:
+\item{title, subtitle, caption, tag, x.title, y.title, category.title, legend.title, y_secondary.title}{a title to use. This can be:
 \itemize{
 \item An \link{expression}, e.g. using \code{parse(text = "...")}
 \item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
@@ -231,7 +239,7 @@ plot2(
 
 \item{x.limits, y.limits}{limits to use for the axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the y scale start at zero.}
 
-\item{x.labels, y.labels}{a labels function or character vector to use for the axis}
+\item{x.labels, y.labels, y_secondary.labels}{a labels function or character vector to use for the axis}
 
 \item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (x values between 2000 and 2050)}
 
@@ -245,11 +253,15 @@ plot2(
 
 \item{y.age}{a \link{logical} to indicate whether the y labels and breaks should be formatted as ages in years}
 
-\item{y.scientific}{a \link{logical} to indicate whether the y labels should be formatted in scientific notation, using \code{\link[certestyle:format2]{format2_scientific()}}. Defaults to \code{TRUE} only if the range of the y values spans more than \code{10e5}.}
+\item{y.scientific, y_secondary.scientific}{a \link{logical} to indicate whether the y labels should be formatted in scientific notation, using \code{\link[certestyle:format2]{format2_scientific()}}. Defaults to \code{TRUE} only if the range of the y values spans more than \code{10e5}.}
 
-\item{y.percent}{a \link{logical} to indicate whether the y labels should be formatted as percentages}
+\item{y.percent, y_secondary.percent}{a \link{logical} to indicate whether the y labels should be formatted as percentages}
 
 \item{y.percent_break}{a value on which the y axis should have breaks}
+
+\item{y_secondary}{values to use for plotting along the secondary y axis. This functionality is poorly supported by \code{ggplot2} and might give unexpected results. Setting the secondary y axis will set the colour to the axis titles.}
+
+\item{y_secondary.colour, y_secondary.colour_fill}{colours to set for the secondary y axis, will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}}}
 
 \item{category.labels, category.percent, category.breaks, category.expand, category.midpoint, category.trans}{settings for the plotting direction \code{category}.}
 
@@ -357,7 +369,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 127 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 135 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)
@@ -399,6 +411,15 @@ iris |>
   # with selection helpers such as where(), starts_with(), etc.:
   plot2(x = Species, y = where(is.double))
   
+# support for secondary y axis
+mtcars |>
+  plot2(x = mpg,
+        y = hp,
+        y_secondary = disp ^ 2, 
+        y_secondary.scientific = TRUE,
+        title = "Secondary y axis sets colour to the axis titles")
+
+
 admitted_patients
 
 # the arguments are in this order: x, y, category, facet

@@ -256,7 +256,7 @@ test_that("x scale works", {
   expect_s3_class(runif(n = 100, min = 2.0004, max = 2.0006) |> plot2(type = "h"), "gg")
   expect_s3_class(suppressWarnings(mtcars |> plot2(mpg, hp, x.limits = c(10, 20))), "gg")
   
-  mics <- AMR::as.mic(c(1,2,8,32))
+  mics <- AMR::as.mic(c(1, 2, 8, 32))
   # should print missing factors levels:
   expect_equal(mics |> plot2(x.mic = TRUE) |> get_range_x(),
                as.character(2 ^ c(0:5)))
@@ -484,4 +484,12 @@ test_that("md to expression works", {
   expect_error(md_to_expression("test $**$"))
 })
 
-
+test_that("secondary y axis works", {
+  expect_s3_class(mtcars |> plot2(mpg, hp, y_secondary = disp), "gg")
+  expect_s3_class(mtcars |> plot2(mpg, hp, y_secondary = disp ^ 2), "gg")
+  
+  # this function is being used to determine breaks, so checks its functionality
+  p <- mtcars |> plot2(mpg, hp)
+  expect_identical(ggplot_build(p)$layout$panel_params[[1]]$y$breaks,
+                   as.double(c(0, 100, 200, 300, 400, NA)))
+})

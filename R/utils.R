@@ -24,6 +24,7 @@ globalVariables(c("..count..",
                   "_var_category",
                   "_var_datalabels",
                   "_var_facet",
+                  "_var_y_secondary",
                   "_var_x",
                   "_var_y",
                   "ab",
@@ -249,6 +250,28 @@ has_facet <- function(df) {
   "_var_facet" %in% colnames(df)
 }
 
+get_y_secondary <- function(df) {
+  if (has_y_secondary(df)) {
+    df$`_var_y_secondary`
+  } else {
+    NULL
+  }
+}
+get_y_secondary_name <- function(df) {
+  if (has_y_secondary(df)) {
+    if (!is.null(plot2_env$mapping_y_secondary) && plot2_env$mapping_y_secondary != "NULL" && plot2_env$mapping_y_secondary %in% colnames(df)) {
+      plot2_env$mapping_y_secondary
+    } else {
+      get_column_name(df, `_var_y_secondary`)
+    }
+  } else {
+    NULL
+  }
+}
+has_y_secondary <- function(df) {
+  "_var_y_secondary" %in% colnames(df)
+}
+
 get_datalabels <- function(df) {
   if (has_datalabels(df)) {
     df$`_var_datalabels`
@@ -336,9 +359,11 @@ restore_mapping <- function(p, df) {
     }
     att <- attributes(mapping)
     new_mapping <- lapply(mapping,
-                          function(map)
+                          function(map) {
                             if (any(deparse(map) %like% "_var_x")) {
                               aes_string(as.name(get_x_name(df)))[[1]] 
+                            } else if (any(deparse(map) %like% "_var_y_secondary")) {
+                              aes_string(as.name(get_y_secondary_name(df)))[[1]] 
                             } else if (any(deparse(map) %like% "_var_y")) {
                               aes_string(as.name(get_y_name(df)))[[1]] 
                             } else if (any(deparse(map) %like% "_var_category")) {
@@ -347,7 +372,7 @@ restore_mapping <- function(p, df) {
                               aes_string(as.name(get_facet_name(df)))[[1]] 
                             } else {
                               map
-                            })
+                            }})
     attributes(new_mapping) <- att
     new_mapping
   }
@@ -381,11 +406,12 @@ restore_mapping <- function(p, df) {
   p
 }
 
-set_plot2_env <- function(x = NULL, y = NULL, category = NULL, facet = NULL) {
+set_plot2_env <- function(x = NULL, y = NULL, category = NULL, facet = NULL, y_secondary = NULL) {
   x <- paste0(x, collapse = " ")
   y <- paste0(y, collapse = " ")
   category <- paste0(category, collapse = " ")
   facet <- paste0(facet, collapse = " ")
+  y_secondary <- paste0(y_secondary, collapse = " ")
   if (!x %in% c("NULL", "") && is.null(plot2_env$mapping_x)) {
     plot2_env$mapping_x <- x
   }
@@ -398,12 +424,17 @@ set_plot2_env <- function(x = NULL, y = NULL, category = NULL, facet = NULL) {
   if (!facet %in% c("NULL", "") && is.null(plot2_env$mapping_facet)) {
     plot2_env$mapping_facet <- facet
   }
+  if (!y_secondary %in% c("NULL", "") && is.null(plot2_env$mapping_y_secondary)) {
+    plot2_env$mapping_y_secondary <- y_secondary
+  }
 }
 clean_plot2_env <- function() {
   plot2_env$mapping_x <- NULL
   plot2_env$mapping_y <- NULL
   plot2_env$mapping_category <- NULL
   plot2_env$mapping_facet <- NULL
+  plot2_env$mapping_y_secondary <- NULL
+  plot2_env$y_secondary_factor <- NULL
 }
 
 sigfigs <- function(x) {
@@ -448,9 +479,16 @@ format_error <- function(e, replace = character(0), by = character(0)) {
     txt <- e$bullets
   }
   txt <- txt[txt %unlike% "^Problem while"]
+  if (length(txt) == 0) {
+    # return original error
+    stop(e, call. = FALSE)
+  }
   out <- gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", paste(txt, collapse = "\n"))
   for (i in seq_len(length(replace))) {
     out <- gsub(replace[i], by[i], out)
+  }
+  if (out == "") {
+    out <- "Plot cannot be generated due to unknown error"
   }
   out
 }

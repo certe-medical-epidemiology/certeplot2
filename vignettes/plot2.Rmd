@@ -186,7 +186,7 @@ data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
 
 These arguments automatically pop up if you press <kbd>tab</kbd> after typing `plot2(x.)`:
 
-```{r, echo = FALSE, out.width = "347px", out.height =  "188px"}
+```{r, echo = FALSE, out.width = "347px", out.height = "188px"}
 knitr::include_graphics("x_elements.png")
 ```
 

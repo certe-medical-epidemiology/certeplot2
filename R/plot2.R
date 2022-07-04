@@ -41,14 +41,16 @@
 #' * A [function] to calculate over one or more variables from `.data`, such as `y = n_distinct(person_id)`, `y = max(column1)`, or `y = median(column2) / column3`
 #' @param category plotting 'direction': the category (called 'fill' and 'colour' in `ggplot2`)
 #' @param facet plotting 'direction': the facet
-#' @param type type of visualisation to use. This can be:
+#' @param y_secondary values to use for plotting along the secondary y axis. This functionality is poorly supported by `ggplot2` and might give unexpected results. Setting the secondary y axis will set the colour to the axis titles.
+#' @param y_secondary.colour,y_secondary.colour_fill colours to set for the secondary y axis, will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
+#' @param type,y_secondary.type type of visualisation to use. This can be:
 #' 
 #' * A `ggplot2` geom name, all geoms are supported (including [`geom_blank()`][ggplot2::geom_blank()]). Full function names can be used (e.g., `"geom_histogram"`), but they can also be abbreviated (e.g., `"h"`, `"hist"`). These geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), violin (`"v"`). **Please note:** in `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `type = "bar"` will set `type = "col"` and `horizontal = TRUE`.
 #' 
 #' * A shortcut. There is currently one supported shortcut: `"barpercent"`, which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
 #' 
 #' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* print a geom.
-#' @param title,subtitle,caption,tag,x.title,y.title,category.title,legend.title a title to use. This can be:
+#' @param title,subtitle,caption,tag,x.title,y.title,category.title,legend.title,y_secondary.title a title to use. This can be:
 #' 
 #' * An [expression], e.g. using `parse(text = "...")`
 #' * A [character], which supports markdown by using [md_to_expression()] internally if `markdown = TRUE`
@@ -82,13 +84,13 @@
 #' @param x.remove,y.remove a [logical] to indicate whether the axis labels and title should be removed
 #' @param y.24h a [logical] to indicate whether the y labels and breaks should be formatted as 24-hour sequences
 #' @param y.age a [logical] to indicate whether the y labels and breaks should be formatted as ages in years
-#' @param y.scientific a [logical] to indicate whether the y labels should be formatted in scientific notation, using [`format2_scientific()`][certestyle::format2_scientific()]. Defaults to `TRUE` only if the range of the y values spans more than `10e5`.
-#' @param y.percent a [logical] to indicate whether the y labels should be formatted as percentages
+#' @param y.scientific,y_secondary.scientific a [logical] to indicate whether the y labels should be formatted in scientific notation, using [`format2_scientific()`][certestyle::format2_scientific()]. Defaults to `TRUE` only if the range of the y values spans more than `10e5`.
+#' @param y.percent,y_secondary.percent a [logical] to indicate whether the y labels should be formatted as percentages
 #' @param y.percent_break a value on which the y axis should have breaks
 #' @param x.breaks,y.breaks a breaks function or numeric vector to use for the axis
 #' @param x.n_breaks,y.n_breaks number of breaks, only useful if `x.breaks` cq. `y.breaks` is `NULL`
 #' @param x.limits,y.limits limits to use for the axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `y.limits = c(0, NA)` to have the y scale start at zero.
-#' @param x.labels,y.labels a labels function or character vector to use for the axis
+#' @param x.labels,y.labels,y_secondary.labels a labels function or character vector to use for the axis
 #' @param x.expand,y.expand [expansion](ggplot2::expansion()) to use for the axis, can be length 1 or 2. `x.expand` defaults to 0.5 and `y.expand` defaults to `0.25`, except for sf objects (then both default to 0).
 #' @param x.trans,y.trans a transformation function to use for the axis, e.g. `"log2"`
 #' @param x.position,y.position position of the axis
@@ -197,6 +199,15 @@
 #'   # with selection helpers such as where(), starts_with(), etc.:
 #'   plot2(x = Species, y = where(is.double))
 #'   
+#' # support for secondary y axis
+#' mtcars |>
+#'   plot2(x = mpg,
+#'         y = hp,
+#'         y_secondary = disp ^ 2, 
+#'         y_secondary.scientific = TRUE,
+#'         title = "Secondary y axis sets colour to the axis titles")
+#' 
+#' 
 #' admitted_patients
 #' 
 #' # the arguments are in this order: x, y, category, facet
@@ -372,6 +383,14 @@ plot2 <- function(.data,
                   y.trans = "identity",
                   y.position = "left",
                   y.zoom = FALSE,
+                  y_secondary = NULL,
+                  y_secondary.type = type,
+                  y_secondary.title = TRUE,
+                  y_secondary.colour = "certeroze",
+                  y_secondary.colour_fill = "certeroze6",
+                  y_secondary.scientific = NULL,
+                  y_secondary.percent = FALSE,
+                  y_secondary.labels = NULL,
                   category.labels = NULL,
                   category.percent = FALSE,
                   category.breaks = NULL,
@@ -450,7 +469,10 @@ plot2 <- function(.data,
                      facet.margin = facet.margin,
                      legend.italic = legend.italic,
                      title.colour = title.colour,
-                     subtitle.colour = subtitle.colour)
+                     subtitle.colour = subtitle.colour,
+                     has_y_secondary = FALSE,
+                     col_y_primary = NULL,
+                     col_y_secondary = NULL)
     if (!missing(x.title)) p <- p + labs(x = validate_title(x.title, markdown = markdown))
     if (!missing(y.title)) p <- p + labs(y = validate_title(y.title, markdown = markdown))
     if (!missing(title)) p <- p + labs(title = validate_title(title, markdown = markdown, max_length = title.linelength))
@@ -479,7 +501,7 @@ plot2 <- function(.data,
 
 #' @importFrom dplyr mutate vars group_by across summarise select matches
 #' @importFrom forcats fct_relabel
-#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver
+#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build
 #' @importFrom tidyr pivot_longer
 #' @importFrom certestyle format2 font_red font_black font_blue
 plot2_exec <- function(.data,
@@ -556,6 +578,14 @@ plot2_exec <- function(.data,
                        y.trans,
                        y.position,
                        y.zoom,
+                       y_secondary,
+                       y_secondary.type,
+                       y_secondary.title,
+                       y_secondary.colour,
+                       y_secondary.colour_fill,
+                       y_secondary.scientific,
+                       y_secondary.percent,
+                       y_secondary.labels,
                        category.labels,
                        category.percent,
                        category.breaks,
@@ -666,7 +696,8 @@ plot2_exec <- function(.data,
   set_plot2_env(dots$`_label.x`,
                 dots$`_label.y`,
                 dots$`_label.category`,
-                dots$`_label.facet`)
+                dots$`_label.facet`,
+                dots$`_label.y_secondary`)
   on.exit(clean_plot2_env())
   
   # get titles based on raw data ----
@@ -681,6 +712,9 @@ plot2_exec <- function(.data,
   category.title <- validate_title({{ category.title }}, markdown = isTRUE(markdown), df = .data)
   # category.title and legend.title both exist for convenience
   legend.title <- if (is.null(category.title)) legend.title else category.title
+  if (tryCatch(!is.null(y_secondary), error = function(e) TRUE)) {
+    y_secondary.title <- validate_title({{ y_secondary.title }}, markdown = isTRUE(markdown), df = .data)
+  }
   
   # prepare data ----
   # IMPORTANT: in this part, the data for mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
@@ -699,7 +733,7 @@ plot2_exec <- function(.data,
                   var_name = "facet",
                   var_label = dots$`_label.facet`,
                   sep = sep) |> 
-    # add y
+    # add y (this will end in an ungrouped data.frame)
     { function(.data) {
       suppressWarnings(
         has_multiple_cols <- tryCatch((.data |>
@@ -713,7 +747,7 @@ plot2_exec <- function(.data,
         # e.g. for: df |> plot2(y = c(var1, var2))  
         if (has_category(.data)) {
           # check if category was not already set
-          stop("if 'y' is of length > 1, 'category' must not be set", call. = FALSE)
+          stop("if 'y' contains more than one variable, 'category' must not be set", call. = FALSE)
         }
         
        new_df <- .data |>
@@ -760,6 +794,7 @@ plot2_exec <- function(.data,
           
         } else {
           # don't recalculate, just add the calculated values to save time
+          # don't do as.data.frame() here - sf plots will lose their structure
           suppressWarnings(
             tryCatch(.data |> 
                        mutate(`_var_y` = y_precalc),
@@ -768,6 +803,7 @@ plot2_exec <- function(.data,
         }
       }
     }}() |> 
+    mutate(`_var_y_secondary` = {{ y_secondary }}) |>
     mutate(`_var_datalabels` = {{ datalabels }}) |> 
     # this part will transform the data as needed
     validate_data(misses_x = misses_x,
@@ -811,6 +847,9 @@ plot2_exec <- function(.data,
   
   # validate type ----
   type <- validate_type(type = type, df = df) # this will automatically determine the type if is.null(type)
+  if (has_y_secondary(df)) {
+    y_secondary.type <- suppressMessages(validate_type(type = y_secondary.type, df = df))
+  }
   # transform data if not a continuous geom but group sizes are > 1
   if (any(group_sizes(df) > 1) && !geom_is_continuous(type)) {
     if (identical(type_backup, "barpercent")) {
@@ -878,6 +917,10 @@ plot2_exec <- function(.data,
       colour <- stats::setNames(cols, nms)
     }
   }
+  if (has_y_secondary(df)) {
+    y_secondary.colour <- colourpicker(y_secondary.colour)[1L]
+    y_secondary.colour_fill <- colourpicker(y_secondary.colour_fill)[1L]
+  }
   cols <- validate_colour(df = df,
                           type = type,
                           colour = colour,
@@ -911,6 +954,8 @@ plot2_exec <- function(.data,
     if (type == "geom_sf") {
       # no colour in sf's
       mapping <- utils::modifyList(mapping, aes(colour = NULL))
+      # # and set sf column
+      # mapping <- utils::modifyList(mapping, aes_string(geometry = dots$`_sf.column`))
     }
   }
   if (geom_is_continuous(type) && !geom_is_line(type) && has_category(df)) {
@@ -950,6 +995,37 @@ plot2_exec <- function(.data,
                   jitter_seed = jitter_seed,
                   binwidth = binwidth,
                   cols = cols)
+  # add secondary y axis if available
+  if (has_y_secondary(df)) {
+    if (y_secondary.type == "geom_boxplot") {
+      # first add the whiskers
+      p <- p +
+        stat_boxplot(geom = "errorbar",
+                     mapping = utils::modifyList(mapping, aes(y = `_var_y_secondary`)),
+                     coef = 1.5, # 1.5 * IQR
+                     width = width * ifelse(has_category(df), 1, 0.75),
+                     lwd = size,
+                     colour = y_secondary.colour)
+    }
+    p <- p +
+      generate_geom(type = y_secondary.type,
+                    df = df,
+                    stacked = stacked,
+                    stackedpercent = stackedpercent,
+                    horizontal = horizontal,
+                    width = width,
+                    size = size,
+                    linetype = linetype,
+                    reverse = reverse,
+                    na.rm = na.rm,
+                    violin_scale = violin_scale,
+                    jitter_seed = jitter_seed,
+                    binwidth = binwidth,
+                    cols = list(colour = y_secondary.colour,
+                                colour_fill = y_secondary.colour_fill),
+                    mapping = utils::modifyList(mapping, aes(y = `_var_y_secondary`)))
+  }
+
   if (is.null(smooth) && type == "geom_histogram") {
     plot2_message("Assuming ", font_blue("smooth = TRUE"), " for ", font_blue("type = \"histogram\""))
     smooth <- TRUE
@@ -1069,6 +1145,34 @@ plot2_exec <- function(.data,
         scale_x_discrete(labels = NULL, breaks = NULL, drop = x.drop)
     }
     if (has_y(df)) {
+      p_added_y <- p +
+        validate_y_scale(df = df,
+                         y.24h = y.24h,
+                         y.age = y.age,
+                         y.scientific = y.scientific,
+                         y.breaks = y.breaks,
+                         y.n_breaks = y.n_breaks,
+                         y.expand = y.expand,
+                         y.labels = y.labels,
+                         y.limits = y.limits,
+                         y.percent = y.percent,
+                         y.percent_break = y.percent_break,
+                         misses_y.percent_break = misses_y.percent_break,
+                         y.position = y.position,
+                         y.trans = y.trans,
+                         y.zoom = y.zoom,
+                         stacked = stacked,
+                         stackedpercent = stackedpercent,
+                         facet.fixed_y = facet.fixed_y,
+                         decimal.mark = decimal.mark,
+                         big.mark = big.mark,
+                         add_y_secondary = FALSE)
+    }
+    if (has_y_secondary(df)) {
+      # add a secondary y axis
+      if (isTRUE(y_secondary.title)) {
+        y_secondary.title <- validate_title(get_y_secondary_name(df), markdown = isTRUE(markdown), df = df)
+      }
       p <- p +
         validate_y_scale(df = df,
                          y.24h = y.24h,
@@ -1089,7 +1193,18 @@ plot2_exec <- function(.data,
                          stackedpercent = stackedpercent,
                          facet.fixed_y = facet.fixed_y,
                          decimal.mark = decimal.mark,
-                         big.mark = big.mark)
+                         big.mark = big.mark,
+                         add_y_secondary = TRUE,
+                         # this get the breaks from the primary y axis (requires ggplot version >= 3.3.0):
+                         y_secondary.breaks = ggplot_build(p_added_y)$layout$panel_params[[1]]$y$breaks,
+                         # additional properties for secondary y axis:
+                         y_secondary.title = y_secondary.title,
+                         y_secondary.scientific = y_secondary.scientific,
+                         y_secondary.percent = y_secondary.percent,
+                         y_secondary.labels = y_secondary.labels)
+    } else {
+      # add the y axis without secondary axis
+      p <- p_added_y
     }
   }
   
@@ -1112,7 +1227,10 @@ plot2_exec <- function(.data,
                    facet.margin = facet.margin,
                    legend.italic = legend.italic,
                    title.colour = title.colour,
-                   subtitle.colour = subtitle.colour)
+                   subtitle.colour = subtitle.colour,
+                   has_y_secondary = has_y_secondary(df),
+                   col_y_primary = cols$colour[1L],
+                   col_y_secondary = y_secondary.colour)
   
   # add titles ----
   if (!misses_title) p <- p + labs(title = title)
