@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.1</span>
       </span>
     </div>
 
@@ -127,7 +127,11 @@
 <span>  colour_fill <span class="op">=</span> <span class="st">"certeblauw"</span>,</span>
 <span>  size <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  datalabels <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  nudge_y <span class="op">=</span> <span class="fl">2500</span>,</span>
+<span>  datalabels.colour <span class="op">=</span> <span class="va">colour</span>,</span>
+<span>  datalabels.size <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  datalabels.angle <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  datalabels.font <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.font"</span><span class="op">)</span>,</span>
+<span>  datalabels.nudge_y <span class="op">=</span> <span class="fl">2500</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  inherit.aes <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -171,7 +175,11 @@
 <dd><p>a column of <code>sf_data</code> to add as label below the points</p></dd>
 
 
-<dt>nudge_y</dt>
+<dt>datalabels.colour, datalabels.size, datalabels.angle, datalabels.font</dt>
+<dd><p>properties of <code>datalabels</code></p></dd>
+
+
+<dt>datalabels.nudge_y</dt>
 <dd><p>is <code>datalabels</code> is not <code>NULL</code>, the amount of vertical adjustment of the datalabels (positive value: more to the North, negative value: more to the South)</p></dd>
 
 </dl></div>
@@ -198,7 +206,8 @@
 <span class="r-in"><span><span class="va">df</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">add_line</span><span class="op">(</span>y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">var_2</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>           size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>           size <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>           linetype <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">add_col</span><span class="op">(</span>y <span class="op">=</span> <span class="va">var_2</span> <span class="op">/</span> <span class="fl">5</span>,</span></span>
 <span class="r-in"><span>          width <span class="op">=</span> <span class="fl">0.25</span>,</span></span>
 <span class="r-in"><span>          colour <span class="op">=</span> <span class="st">"certeroze"</span><span class="op">)</span></span></span>
@@ -210,10 +219,9 @@
 <span class="r-in"><span>   </span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://certe-medical-epidemiology.github.io/certestats" class="external-link">"certestats"</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>   <span class="va">df</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>     <span class="fu"><a href="plot2.html">plot2</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"EWMA in pink :)"</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
+<span class="r-in"><span>     <span class="fu"><a href="plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>     <span class="fu">add_line</span><span class="op">(</span>y <span class="op">=</span> <span class="fu"><a href="https://certe-medical-epidemiology.github.io/certestats/reference/distribution_metrics.html" class="external-link">ewma</a></span><span class="op">(</span><span class="va">var_2</span>, <span class="fl">0.75</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>              colour <span class="op">=</span> <span class="st">"certeroze"</span>,</span></span>
-<span class="r-in"><span>              linetype <span class="op">=</span> <span class="fl">3</span>,</span></span>
 <span class="r-in"><span>              size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: certestats</span>
@@ -229,8 +237,19 @@
 <span class="r-in"><span>                         <span class="st">"Treant Emmen"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">geo_gemeenten</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://certe-medical-epidemiology.github.io/certegis/reference/GIS.html" class="external-link">crop_certe</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="plot2.html">plot2</a></span><span class="op">(</span>datalabels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>    <span class="fu">add_sf</span><span class="op">(</span><span class="va">hospitals</span>, colour <span class="op">=</span> <span class="st">"certeroze"</span>, datalabels <span class="op">=</span> <span class="va">place</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="plot2.html">plot2</a></span><span class="op">(</span>datalabels <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>          category.title <span class="op">=</span> <span class="st">"Inhabitants"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>    <span class="fu">add_sf</span><span class="op">(</span><span class="va">hospitals</span>,</span></span>
+<span class="r-in"><span>           colour <span class="op">=</span> <span class="st">"certeroze"</span>,</span></span>
+<span class="r-in"><span>           datalabels <span class="op">=</span> <span class="va">place</span>,</span></span>
+<span class="r-in"><span>           <span class="co"># Just a Google Font:</span></span></span>
+<span class="r-in"><span>           datalabels.font <span class="op">=</span> <span class="st">"Rock Salt"</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
+<span class="r-in"><span>    <span class="fu">add_sf</span><span class="op">(</span><span class="va">geo_provincies</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>             <span class="fu"><a href="https://certe-medical-epidemiology.github.io/certegis/reference/GIS.html" class="external-link">crop_certe</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>           colour_fill <span class="op">=</span> <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>           colour <span class="op">=</span> <span class="st">"certeblauw"</span>,</span></span>
+<span class="r-in"><span>           linetype <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>           size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: certegis</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Linking to open data from Statistics Netherlands:</span>

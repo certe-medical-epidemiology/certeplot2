@@ -18,7 +18,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.1</span>
       </span>
     </div>
 
@@ -185,8 +185,8 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span>  datalabels.colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  datalabels.size <span class="op">=</span> <span class="op">(</span><span class="fl">3</span> <span class="op">*</span> <span class="va">text_factor</span><span class="op">)</span>,</span>
 <span>  datalabels.angle <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  decimal.mark <span class="op">=</span> <span class="st">","</span>,</span>
-<span>  big.mark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">decimal.mark</span> <span class="op">==</span> <span class="st">","</span>, <span class="st">"."</span>, <span class="st">","</span><span class="op">)</span>,</span>
+<span>  decimal.mark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"OutDec"</span><span class="op">)</span>,</span>
+<span>  big.mark <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  summarise_function <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span>,</span>
 <span>  stacked <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  stackedpercent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -466,11 +466,11 @@ See plot2-methods for all implemented methods for different object classes."><me
 
 
 <dt>decimal.mark</dt>
-<dd><p>decimal mark, defaults to Dutch use (a comma)</p></dd>
+<dd><p>decimal mark, defaults to <code>getOption("OutDec")</code> (following <code><a href="https://rdrr.io/r/base/format.html" class="external-link">base::format()</a></code>)</p></dd>
 
 
 <dt>big.mark</dt>
-<dd><p>thousands separator, defaults to Dutch use (a full stop)</p></dd>
+<dd><p>thousands separator, defaults to a comma if <code>decimal.mark</code> is a full stop, and a full stop if <code>decimal.mark</code> is a comma</p></dd>
 
 
 <dt>summarise_function</dt>
