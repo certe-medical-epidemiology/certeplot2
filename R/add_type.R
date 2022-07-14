@@ -41,17 +41,17 @@
 #' df |>
 #'   plot2() |> 
 #'   add_line(y = mean(var_2), 
-#'            size = 2) |>
+#'            size = 2,
+#'            linetype = 3) |>
 #'   add_col(y = var_2 / 5,
 #'           width = 0.25,
 #'           colour = "certeroze")
 #'    
 #' if (require("certestats", warn.conflicts = FALSE)) {
 #'    df |>
-#'      plot2(caption = "EWMA in pink :)") |> 
+#'      plot2() |> 
 #'      add_line(y = ewma(var_2, 0.75),
 #'               colour = "certeroze",
-#'               linetype = 3,
 #'               size = 1)
 #' }
 #' 
@@ -62,8 +62,19 @@
 #'                          "Treant Emmen"))
 #'   geo_gemeenten |>
 #'     crop_certe() |>
-#'     plot2(datalabels = FALSE) |>
-#'     add_sf(hospitals, colour = "certeroze", datalabels = place)
+#'     plot2(datalabels = FALSE,
+#'           category.title = "Inhabitants") |>
+#'     add_sf(hospitals,
+#'            colour = "certeroze",
+#'            datalabels = place,
+#'            # Just a Google Font:
+#'            datalabels.font = "Rock Salt") |> 
+#'     add_sf(geo_provincies |>
+#'              crop_certe(),
+#'            colour_fill = NA,
+#'            colour = "certeblauw",
+#'            linetype = 2,
+#'            size = 0.5)
 #' }
 add_type <- function(plot, type = NULL, mapping = aes(), ...) {
   if (!is.ggplot(plot)) {
@@ -270,7 +281,8 @@ add_col <- function(plot, y = NULL, x = NULL, colour = "certeblauw", colour_fill
 #' @rdname add_type
 #' @param sf_data an 'sf' [data.frame], such as the outcome of [certegis::geocode()]
 #' @param datalabels a column of `sf_data` to add as label below the points
-#' @param nudge_y is `datalabels` is not `NULL`, the amount of vertical adjustment of the datalabels (positive value: more to the North, negative value: more to the South)
+#' @param datalabels.colour,datalabels.size,datalabels.angle,datalabels.font properties of `datalabels`
+#' @param datalabels.nudge_y is `datalabels` is not `NULL`, the amount of vertical adjustment of the datalabels (positive value: more to the North, negative value: more to the South)
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 geom_sf geom_sf_text aes is.ggplot
 #' @importFrom certestyle colourpicker
@@ -281,7 +293,11 @@ add_sf <- function(plot,
                    colour_fill = "certeblauw",
                    size = 3,
                    datalabels = NULL,
-                   nudge_y = 2500,
+                   datalabels.colour = colour,
+                   datalabels.size = 3,
+                   datalabels.angle = 0,
+                   datalabels.font = getOption("plot2.font"),
+                   datalabels.nudge_y = 2500,
                    ...,
                    inherit.aes = FALSE) {
   if (!"sf" %in% rownames(utils::installed.packages())) {
@@ -315,21 +331,25 @@ add_sf <- function(plot,
   
   if (tryCatch(!is.null(datalabels), error = function(e) TRUE)) {
     
-    if (abs(nudge_y) > 0.25 && crs %unlike% "28992") {
-      plot2_message(font_blue(paste0("nudge_y = ", nudge_y)),
-                    " might be very ", ifelse(nudge_y < 0, "low", "high"),
+    if (abs(datalabels.nudge_y) > 0.25 && crs %unlike% "28992") {
+      plot2_message(font_blue(paste0("datalabels.nudge_y = ", datalabels.nudge_y)),
+                    " might be very ", ifelse(datalabels.nudge_y < 0, "low", "high"),
                     " for the current coordinate reference system (", crs, ")")
     }
     
     sf_data <- sf_data |> 
       mutate(`_var_datalabels` = {{ datalabels }})
     
+    datalabels.font <- suppressMessages(validate_font(datalabels.font))
+    
     p <- p +
       geom_sf_text(aes(label = `_var_datalabels`),
                    data = sf_data,
                    inherit.aes = inherit.aes,
-                   size = size,
-                   nudge_y = nudge_y,
+                   size = datalabels.size,
+                   family = datalabels.font,
+                   angle = datalabels.angle,
+                   nudge_y = datalabels.nudge_y,
                    colour = colourpicker(colour),
                    fun.geometry = function(x) {
                      x[!sf::st_is_valid(x)] <- sf::st_point()

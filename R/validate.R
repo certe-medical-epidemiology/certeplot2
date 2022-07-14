@@ -282,7 +282,8 @@ validate_data <- function(df,
   if (has_y_secondary(df)) {
     max_primary <- max(get_y(df), na.rm = TRUE)
     max_secondary <- max(get_y_secondary(df), na.rm = TRUE)
-    if (max_secondary > max_primary) {
+    # if 15% difference, create own secondary y breaks
+    if (abs((max_secondary - max_primary) / max_secondary) >= 0.15)  {
       plot2_env$y_secondary_factor <- max_secondary / max_primary
       df$`_var_y_secondary` <- df$`_var_y_secondary` / plot2_env$y_secondary_factor
     }
@@ -844,16 +845,16 @@ validate_y_scale <- function(df,
       }
       labels_n <- (max(y.limits) - min(y.limits)) / y.percent_break
       if (is.na(labels_n)) {
-        labels_n <- 8
+        labels_n <- 10
       }
-      if (isTRUE(misses_y.percent_break) && as.integer(labels_n) > 8) {
-        y.percent_break <- round((max(y.limits, na.rm = TRUE) - min(y.limits, na.rm = TRUE)) / 8, 2)
+      if (isTRUE(misses_y.percent_break) && as.integer(labels_n) > 10) {
+        y.percent_break <- round((max(y.limits, na.rm = TRUE) - min(y.limits, na.rm = TRUE)) / 10, 2)
         plot2_message("Using ", font_blue("y.percent_break =", y.percent_break),
-                      " (", y.percent_break * 100, "%) to keep a maximum of ~8 labels")
+                      " (", y.percent_break * 100, "%) to keep a maximum of ~10 labels")
       }
       if (!all(is.na(y.limits)) && (y.percent_break >= max(y.limits, na.rm = TRUE) || labels_n <= 3)) {
         y.percent_break.bak <- y.percent_break
-        y.percent_break <- max(y.limits, na.rm = TRUE) / 8
+        y.percent_break <- max(y.limits, na.rm = TRUE) / 10
         allowed <- c(1e6 / 10 ^ c(1:18), 5e6 / 10 ^ c(1:18))
         y.percent_break <- allowed[which.min(abs(allowed - y.percent_break))]
         plot2_message("Using ", font_blue("y.percent_break =", format(y.percent_break, scientific = FALSE)), 
@@ -2378,6 +2379,7 @@ summarise_data <- function(df,
 }
 
 #' @importFrom certestyle format2 font_blue
+#' @importFrom dplyr n_distinct
 format_datalabels <- function(datalabels,
                               datalabels.round,
                               datalabels.format,
@@ -2388,15 +2390,14 @@ format_datalabels <- function(datalabels,
   datalabels_out <- datalabels
   if (isTRUE(y.percent)) {
     if (!is.null(datalabels.format)) {
-      sigs <- max(sigfigs(datalabels) - 2, na.rm = TRUE)
-      if (any(sigs > datalabels.round)) {
-        datalabels.round <- sigs
-      }
       datalabels_out <- trimws(format2(datalabels,
                                        round = datalabels.round,
                                        decimal.mark = decimal.mark,
                                        big.mark = big.mark,
                                        percent = TRUE))
+      if (n_distinct(datalabels) > n_distinct(datalabels_out)) {
+        plot2_message("Use ", font_blue("datalabels.round"), " to edit the rounding of datalabels")
+      }
       if (datalabels.format != "%n") {
         plot2_message("Ignoring ", font_blue("datalabels.format = \"", datalabels.format, "\"", collapse = NULL),
                       " since ",  font_blue("y.percent = TRUE"))

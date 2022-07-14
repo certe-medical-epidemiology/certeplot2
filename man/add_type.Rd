@@ -52,7 +52,11 @@ add_sf(
   colour_fill = "certeblauw",
   size = 3,
   datalabels = NULL,
-  nudge_y = 2500,
+  datalabels.colour = colour,
+  datalabels.size = 3,
+  datalabels.angle = 0,
+  datalabels.font = getOption("plot2.font"),
+  datalabels.nudge_y = 2500,
   ...,
   inherit.aes = FALSE
 )
@@ -76,7 +80,9 @@ add_sf(
 
 \item{datalabels}{a column of \code{sf_data} to add as label below the points}
 
-\item{nudge_y}{is \code{datalabels} is not \code{NULL}, the amount of vertical adjustment of the datalabels (positive value: more to the North, negative value: more to the South)}
+\item{datalabels.colour, datalabels.size, datalabels.angle, datalabels.font}{properties of \code{datalabels}}
+
+\item{datalabels.nudge_y}{is \code{datalabels} is not \code{NULL}, the amount of vertical adjustment of the datalabels (positive value: more to the North, negative value: more to the South)}
 }
 \description{
 Quickly add a new 'geom' to an existing \code{plot2}/\code{ggplot} model. Like \code{\link[=plot2]{plot2()}}, they support tidy evaluation, meaning that variables can be unquoted. They can be added using the pipe (new base \R \verb{|>} or tidyverse \verb{\%>\%}).
@@ -99,17 +105,17 @@ df |>
 df |>
   plot2() |> 
   add_line(y = mean(var_2), 
-           size = 2) |>
+           size = 2,
+           linetype = 3) |>
   add_col(y = var_2 / 5,
           width = 0.25,
           colour = "certeroze")
    
 if (require("certestats", warn.conflicts = FALSE)) {
    df |>
-     plot2(caption = "EWMA in pink :)") |> 
+     plot2() |> 
      add_line(y = ewma(var_2, 0.75),
               colour = "certeroze",
-              linetype = 3,
               size = 1)
 }
 
@@ -120,7 +126,18 @@ if (require("certegis")) {
                          "Treant Emmen"))
   geo_gemeenten |>
     crop_certe() |>
-    plot2(datalabels = FALSE) |>
-    add_sf(hospitals, colour = "certeroze", datalabels = place)
+    plot2(datalabels = FALSE,
+          category.title = "Inhabitants") |>
+    add_sf(hospitals,
+           colour = "certeroze",
+           datalabels = place,
+           # Just a Google Font:
+           datalabels.font = "Rock Salt") |> 
+    add_sf(geo_provincies |>
+             crop_certe(),
+           colour_fill = NA,
+           colour = "certeblauw",
+           linetype = 2,
+           size = 0.5)
 }
 }
