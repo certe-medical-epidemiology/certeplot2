@@ -104,8 +104,8 @@ plot2(
   datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
-  decimal.mark = getOption("OutDec"),
-  big.mark = NULL,
+  decimal.mark = dec_mark(),
+  big.mark = big_mark(),
   summarise_function = base::sum,
   stacked = FALSE,
   stackedpercent = FALSE,
@@ -287,9 +287,9 @@ plot2(
 
 \item{datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle}{settings for the datalabels}
 
-\item{decimal.mark}{decimal mark, defaults to \code{getOption("OutDec")} (following \code{\link[base:format]{base::format()}})}
+\item{decimal.mark}{decimal mark, defaults to \code{\link[certestyle:dec_mark]{dec_mark()}}}
 
-\item{big.mark}{thousands separator, defaults to a comma if \code{decimal.mark} is a full stop, and a full stop if \code{decimal.mark} is a comma}
+\item{big.mark}{thousands separator, defaults to \code{\link[certestyle:dec_mark]{big_mark()}}}
 
 \item{summarise_function}{a \link{function} to use if the data has to be summarised, see \emph{Examples}}
 

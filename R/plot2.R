@@ -113,8 +113,8 @@
 #' @param datalabels.round number of digits to round the datalabels, applies to both `"%n"` and `"%p"` for replacement (see `datalabels.format`)
 #' @param datalabels.format format to use for datalabels - `"%n"` will be replaced by the count number, `"%p"` will be replaced by the percentage of the total count. Use `datalabels.format = NULL` to not transform the datalabels.
 #' @param datalabels.colour,datalabels.colour_fill,datalabels.size,datalabels.angle settings for the datalabels
-#' @param decimal.mark decimal mark, defaults to `getOption("OutDec")` (following [base::format()])
-#' @param big.mark thousands separator, defaults to a comma if `decimal.mark` is a full stop, and a full stop if `decimal.mark` is a comma
+#' @param decimal.mark decimal mark, defaults to [`dec_mark()`][certestyle::dec_mark()]
+#' @param big.mark thousands separator, defaults to [`big_mark()`][certestyle::big_mark()]
 #' @param summarise_function a [function] to use if the data has to be summarised, see *Examples*
 #' @param stacked a [logical] to indicate that values must be stacked
 #' @param stackedpercent a [logical] to indicate that values must be 100% stacked
@@ -309,6 +309,7 @@
 #'           y.percent_break = 0.125)
 #' }
 #' @importFrom ggplot2 ggplot labs
+#' @importFrom certestyle dec_mark big_mark
 plot2 <- function(.data,
                   x = NULL,
                   y = NULL,
@@ -408,8 +409,8 @@ plot2 <- function(.data,
                   datalabels.colour_fill = NULL,
                   datalabels.size = (3 * text_factor),
                   datalabels.angle = 0,
-                  decimal.mark = getOption("OutDec"),
-                  big.mark = NULL,
+                  decimal.mark = dec_mark(),
+                  big.mark = big_mark(),
                   summarise_function = base::sum,
                   stacked = FALSE,
                   stackedpercent = FALSE,
@@ -673,18 +674,7 @@ plot2_exec <- function(.data,
     x.drop <- !isTRUE(facet.fixed_x)
   }
   
-  if (is.null(decimal.mark)) {
-    decimal.mark <- "."
-  } else {
-    decimal.mark <- as.character(decimal.mark)[1]
-  }
-  if (is.null(big.mark)) {
-    big.mark <- ifelse(decimal.mark == ".", ",", ".")
-  } else {
-    big.mark <- as.character(big.mark)[1]
-  }
-  
-  # prevalidate types for special types ----
+  # pre-validate types for special types ----
   if (!is_empty(type) && !is.character(type)) {
     stop("'type' must be a character", call. = FALSE)
   }
