@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.2</span>
       </span>
     </div>
 
@@ -184,8 +184,8 @@
 <span>  datalabels.colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  datalabels.size <span class="op">=</span> <span class="op">(</span><span class="fl">3</span> <span class="op">*</span> <span class="va">text_factor</span><span class="op">)</span>,</span>
 <span>  datalabels.angle <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  decimal.mark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"OutDec"</span><span class="op">)</span>,</span>
-<span>  big.mark <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  decimal.mark <span class="op">=</span> <span class="fu">dec_mark</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  big.mark <span class="op">=</span> <span class="fu">big_mark</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  summarise_function <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span>,</span>
 <span>  stacked <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  stackedpercent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -324,8 +324,8 @@
 <span>  datalabels.colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  datalabels.size <span class="op">=</span> <span class="op">(</span><span class="fl">3</span> <span class="op">*</span> <span class="va">text_factor</span><span class="op">)</span>,</span>
 <span>  datalabels.angle <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  decimal.mark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"OutDec"</span><span class="op">)</span>,</span>
-<span>  big.mark <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  decimal.mark <span class="op">=</span> <span class="fu">dec_mark</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  big.mark <span class="op">=</span> <span class="fu">big_mark</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  summarise_function <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span>,</span>
 <span>  stacked <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  stackedpercent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -464,8 +464,8 @@
 <span>  datalabels.colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  datalabels.size <span class="op">=</span> <span class="op">(</span><span class="fl">3</span> <span class="op">*</span> <span class="va">text_factor</span><span class="op">)</span>,</span>
 <span>  datalabels.angle <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  decimal.mark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"OutDec"</span><span class="op">)</span>,</span>
-<span>  big.mark <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  decimal.mark <span class="op">=</span> <span class="fu">dec_mark</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  big.mark <span class="op">=</span> <span class="fu">big_mark</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  summarise_function <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span>,</span>
 <span>  stacked <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  stackedpercent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -604,8 +604,8 @@
 <span>  datalabels.colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  datalabels.size <span class="op">=</span> <span class="op">(</span><span class="fl">3</span> <span class="op">*</span> <span class="va">text_factor</span><span class="op">)</span>,</span>
 <span>  datalabels.angle <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  decimal.mark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"OutDec"</span><span class="op">)</span>,</span>
-<span>  big.mark <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  decimal.mark <span class="op">=</span> <span class="fu">dec_mark</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  big.mark <span class="op">=</span> <span class="fu">big_mark</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  summarise_function <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span>,</span>
 <span>  stacked <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  stackedpercent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -748,8 +748,8 @@
 <span>  datalabels.colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  datalabels.size <span class="op">=</span> <span class="op">(</span><span class="fl">3</span> <span class="op">*</span> <span class="va">text_factor</span><span class="op">)</span>,</span>
 <span>  datalabels.angle <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  decimal.mark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"OutDec"</span><span class="op">)</span>,</span>
-<span>  big.mark <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  decimal.mark <span class="op">=</span> <span class="fu">dec_mark</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  big.mark <span class="op">=</span> <span class="fu">big_mark</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  summarise_function <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span>,</span>
 <span>  stacked <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  stackedpercent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -888,8 +888,8 @@
 <span>  datalabels.colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  datalabels.size <span class="op">=</span> <span class="op">(</span><span class="fl">3</span> <span class="op">*</span> <span class="va">text_factor</span><span class="op">)</span>,</span>
 <span>  datalabels.angle <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  decimal.mark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"OutDec"</span><span class="op">)</span>,</span>
-<span>  big.mark <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  decimal.mark <span class="op">=</span> <span class="fu">dec_mark</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  big.mark <span class="op">=</span> <span class="fu">big_mark</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  summarise_function <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span>,</span>
 <span>  stacked <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  stackedpercent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -1031,8 +1031,8 @@
 <span>  datalabels.colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  datalabels.size <span class="op">=</span> <span class="op">(</span><span class="fl">3</span> <span class="op">*</span> <span class="va">text_factor</span><span class="op">)</span>,</span>
 <span>  datalabels.angle <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  decimal.mark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"OutDec"</span><span class="op">)</span>,</span>
-<span>  big.mark <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  decimal.mark <span class="op">=</span> <span class="fu">dec_mark</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  big.mark <span class="op">=</span> <span class="fu">big_mark</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  summarise_function <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span>,</span>
 <span>  stacked <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  stackedpercent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -1173,8 +1173,8 @@
 <span>  datalabels.colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  datalabels.size <span class="op">=</span> <span class="op">(</span><span class="fl">3</span> <span class="op">*</span> <span class="va">text_factor</span><span class="op">)</span>,</span>
 <span>  datalabels.angle <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  decimal.mark <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"OutDec"</span><span class="op">)</span>,</span>
-<span>  big.mark <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  decimal.mark <span class="op">=</span> <span class="fu">dec_mark</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  big.mark <span class="op">=</span> <span class="fu">big_mark</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  summarise_function <span class="op">=</span> <span class="fu">base</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span>,</span>
 <span>  stacked <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  stackedpercent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -1454,11 +1454,11 @@
 
 
 <dt>decimal.mark</dt>
-<dd><p>decimal mark, defaults to <code>getOption("OutDec")</code> (following <code><a href="https://rdrr.io/r/base/format.html" class="external-link">base::format()</a></code>)</p></dd>
+<dd><p>decimal mark, defaults to <code><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/dec_mark.html" class="external-link">dec_mark()</a></code></p></dd>
 
 
 <dt>big.mark</dt>
-<dd><p>thousands separator, defaults to a comma if <code>decimal.mark</code> is a full stop, and a full stop if <code>decimal.mark</code> is a comma</p></dd>
+<dd><p>thousands separator, defaults to <code><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/dec_mark.html" class="external-link">big_mark()</a></code></p></dd>
 
 
 <dt>summarise_function</dt>
@@ -1592,7 +1592,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
