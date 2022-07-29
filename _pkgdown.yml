@@ -43,5 +43,5 @@ navbar:
       icon: "fa-flask"
       href: "https://certe.nl"
 
-figures:
-  dev: grDevices::png
+# figures:
+#   dev: grDevices::png

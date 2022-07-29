@@ -2064,7 +2064,8 @@ validate_font <- function(font) {
   # enable showtext
   showtext::showtext_auto(enable = TRUE)
   
-  if (isTRUE(getOption("knitr.in.progress"))) {
+  if (isTRUE(getOption("knitr.in.progress")) &&
+        !identical(Sys.getenv("IN_PKGDOWN"), "true")) {
     # if in knitr (R Markdown) set the right DPI for this plot according to current chunk setting
     showtext::showtext_opts(dpi = knitr::opts_current$get("dpi"))
   }
@@ -2086,9 +2087,9 @@ validate_font <- function(font) {
   if (NROW(fonts) == 0) {
     # font does not exist yet - try to download from Google Fonts
     tryCatch({
+      plot2_message("Downloading font \"", font.bak, "\" from Google Fonts")
       font_urls <- showtextdb::google_fonts(font.bak)
       # install and register using showtextdb
-      plot2_message("Downloading font \"", font.bak, "\" from Google Fonts")
       suppressMessages(showtextdb::font_install(font_urls, quiet = TRUE))
       showtextdb::load_showtext_fonts()
     }, error = function(e) invisible())
@@ -2121,7 +2122,6 @@ validate_font <- function(font) {
     return("")
   }
 }
-
 
 validate_sorting <- function(sort_method, horizontal) {
   if (is.null(sort_method)) {

@@ -113,8 +113,8 @@
 #' @param datalabels.round number of digits to round the datalabels, applies to both `"%n"` and `"%p"` for replacement (see `datalabels.format`)
 #' @param datalabels.format format to use for datalabels - `"%n"` will be replaced by the count number, `"%p"` will be replaced by the percentage of the total count. Use `datalabels.format = NULL` to not transform the datalabels.
 #' @param datalabels.colour,datalabels.colour_fill,datalabels.size,datalabels.angle settings for the datalabels
-#' @param decimal.mark decimal mark, defaults to [`dec_mark()`][certestyle::dec_mark()]
-#' @param big.mark thousands separator, defaults to [`big_mark()`][certestyle::big_mark()]
+#' @param decimal.mark decimal mark, defaults to [dec_mark()]
+#' @param big.mark thousands separator, defaults to [big_mark()]
 #' @param summarise_function a [function] to use if the data has to be summarised, see *Examples*
 #' @param stacked a [logical] to indicate that values must be stacked
 #' @param stackedpercent a [logical] to indicate that values must be 100% stacked
@@ -309,7 +309,6 @@
 #'           y.percent_break = 0.125)
 #' }
 #' @importFrom ggplot2 ggplot labs
-#' @importFrom certestyle dec_mark big_mark
 plot2 <- function(.data,
                   x = NULL,
                   y = NULL,

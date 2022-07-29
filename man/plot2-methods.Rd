@@ -1277,9 +1277,9 @@
 
 \item{datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle}{settings for the datalabels}
 
-\item{decimal.mark}{decimal mark, defaults to \code{\link[certestyle:dec_mark]{dec_mark()}}}
+\item{decimal.mark}{decimal mark, defaults to \code{\link[=dec_mark]{dec_mark()}}}
 
-\item{big.mark}{thousands separator, defaults to \code{\link[certestyle:dec_mark]{big_mark()}}}
+\item{big.mark}{thousands separator, defaults to \code{\link[=big_mark]{big_mark()}}}
 
 \item{summarise_function}{a \link{function} to use if the data has to be summarised, see \emph{Examples}}
 

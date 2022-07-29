@@ -5,6 +5,10 @@
 \alias{reexports}
 \alias{n}
 \alias{n_distinct}
+\alias{all_of}
+\alias{any_of}
+\alias{dec_mark}
+\alias{big_mark}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -12,6 +16,8 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{dplyr}{\code{\link[dplyr:context]{n}}, \code{\link[dplyr]{n_distinct}}}
+  \item{certestyle}{\code{\link[certestyle:dec_mark]{big_mark}}, \code{\link[certestyle]{dec_mark}}}
+
+  \item{dplyr}{\code{\link[dplyr:reexports]{all_of}}, \code{\link[dplyr:reexports]{any_of}}, \code{\link[dplyr:context]{n}}, \code{\link[dplyr]{n_distinct}}}
 }}
 

@@ -48,6 +48,22 @@ dplyr::n
 #' @export
 dplyr::n_distinct
 
+#' @importFrom dplyr all_of
+#' @export
+dplyr::all_of
+
+#' @importFrom dplyr any_of
+#' @export
+dplyr::any_of
+
+#' @importFrom certestyle dec_mark
+#' @export
+certestyle::dec_mark
+
+#' @importFrom certestyle big_mark
+#' @export
+certestyle::big_mark
+
 #' @importFrom certestyle font_black font_blue font_red font_white font_bold
 plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", type = "info") {
   # at default, only prints in interactive mode and for the website generation
