@@ -383,6 +383,15 @@ validate_data <- function(df,
     df <- df |>
       mutate(`_var_x` = as.character(`_var_x`))
   }
+
+  # remove infinite values
+  if (has_y(df) && any(is.infinite(get_y(df)))) {
+    inf_values <- sum(is.infinite(get_y(df)))
+    df <- df |> filter(!is.infinite(`_var_y`))
+    plot2_message("Removed ", inf_values,
+                  " row", ifelse(inf_values > 1, "s", ""),
+                  " with an infinite value of y")
+  }
   
   # remove or replace NAs
   rows_with_NA <- df |>
@@ -792,12 +801,14 @@ validate_y_scale <- function(df,
     y_maxima <- df |>
       group_by(across(get_facet_name(df))) |> 
       summarise(max = max(`_var_y`, na.rm = TRUE))
-    coeff_of_variation <- stats::sd(y_maxima$max) / mean(y_maxima$max)
-    if (coeff_of_variation < 0.15) {
-      plot2_message("Assuming ", font_blue("facet.fixed_y = TRUE"), 
-                    " since the ", digit_to_text(nrow(y_maxima)), " ",
-                    font_blue("y"), " scales are roughly equal")
-      facet.fixed_y <- TRUE
+    if (!is.infinite(y_maxima$max)) {   
+      coeff_of_variation <- stats::sd(y_maxima$max) / mean(y_maxima$max)
+      if (coeff_of_variation < 0.15) {
+        plot2_message("Assuming ", font_blue("facet.fixed_y = TRUE"), 
+                      " since the ", digit_to_text(nrow(y_maxima)), " ",
+                      font_blue("y"), " scales are roughly equal")
+        facet.fixed_y <- TRUE
+      }
     }
   }
   
