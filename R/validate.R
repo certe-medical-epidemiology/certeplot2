@@ -111,7 +111,7 @@ validate_legend.position <- function(legend.position) {
 }
 
 #' @importFrom dplyr select pull mutate arrange across if_all cur_column
-#' @importFrom certestyle font_bold font_blue font_red
+#' @importFrom certestyle font_bold font_blue font_red font_black
 validate_data <- function(df,
                           misses_x,
                           misses_category,
@@ -385,12 +385,16 @@ validate_data <- function(df,
   }
 
   # remove infinite values
-  if (has_y(df) && any(is.infinite(get_y(df)))) {
+  if (has_y(df) && any(is.infinite(get_y(df)), na.rm = TRUE)) {
     inf_values <- sum(is.infinite(get_y(df)))
     df <- df |> filter(!is.infinite(`_var_y`))
     plot2_message("Removed ", inf_values,
                   " row", ifelse(inf_values > 1, "s", ""),
-                  " with an infinite value of y")
+                  " with an infinite value of ",
+                  font_blue("y"), 
+                  ifelse(get_y_name(df) != "y",
+                         paste0(font_black(" ("), font_blue(get_y_name(df)), font_black(")")),
+                         ""))
   }
   
   # remove or replace NAs
@@ -801,7 +805,7 @@ validate_y_scale <- function(df,
     y_maxima <- df |>
       group_by(across(get_facet_name(df))) |> 
       summarise(max = max(`_var_y`, na.rm = TRUE))
-    if (!is.infinite(y_maxima$max)) {   
+    if (!any(is.infinite(y_maxima$max), na.rm = TRUE)) {   
       coeff_of_variation <- stats::sd(y_maxima$max) / mean(y_maxima$max)
       if (coeff_of_variation < 0.15) {
         plot2_message("Assuming ", font_blue("facet.fixed_y = TRUE"), 

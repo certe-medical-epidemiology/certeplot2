@@ -75,6 +75,16 @@ test_that("na.rm works", {
   expect_lt(df |> plot2(na.rm = FALSE) |> get_data() |> nrow(), nrow(df))
 })
 
+
+test_that("infinite values are removed", {
+  expect_equal(data.frame(x = letters[1:10],
+                          y123 = c(1:9, Inf)) |>
+                 plot2() |>
+                 get_data() |> 
+                 nrow(),
+               9)
+})
+
 test_that("S3 implementations work", {
   # lm
   expect_s3_class(lm(mpg ~ hp, mtcars) |> plot2(), "gg")
