@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.2</span>
       </span>
     </div>
 
@@ -1220,7 +1220,9 @@
 
 
 <dt>x</dt>
-<dd><p>plotting 'direction': the x axis</p></dd>
+<dd><p>plotting 'direction' for the x axis. This can be:</p><ul><li><p>A single variable from <code>.data</code>, such as <code>category = column1</code></p></li>
+<li><p>A <a href="https://rdrr.io/r/base/function.html" class="external-link">function</a> to calculate over one or more variables from <code>.data</code>, such as <code>x = format(column1, "%Y")</code>, or <code>x = ifelse(column1 == "A", "Group A", "Other")</code></p></li>
+</ul></dd>
 
 
 <dt>y</dt>
@@ -1234,12 +1236,12 @@
 </ul></dd>
 
 
-<dt>category</dt>
-<dd><p>plotting 'direction': the category (called 'fill' and 'colour' in <code>ggplot2</code>)</p></dd>
-
-
-<dt>facet</dt>
-<dd><p>plotting 'direction': the facet</p></dd>
+<dt>category, facet</dt>
+<dd><p>plotting 'direction' (<code>category</code> is called 'fill' and 'colour' in <code>ggplot2</code>). This can be:</p><ul><li><p>A single variable from <code>.data</code>, such as <code>category = column1</code></p></li>
+<li><p>A <a href="https://rdrr.io/r/base/function.html" class="external-link">function</a> to calculate over one or more variables from <code>.data</code>, such as <code>category = median(column2) / column3</code>, or <code>facet = ifelse(column1 == "A", "Group A", "Other")</code></p></li>
+<li><p>Multiple variables from <code>.data</code>, such as <code>facet = c(column1, column2)</code> (use <code>sep</code> to control the separator character)</p></li>
+<li><p>One or more variables from <code>.data</code> using <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">selection helpers</a>, such as <code>category = where(is.double)</code> or <code>facet = starts_with("var_")</code></p></li>
+</ul></dd>
 
 
 <dt>type, y_secondary.type</dt>
@@ -1462,7 +1464,7 @@
 
 
 <dt>summarise_function</dt>
-<dd><p>a <a href="https://rdrr.io/r/base/function.html" class="external-link">function</a> to use if the data has to be summarised, see <em>Examples</em></p></dd>
+<dd><p>a <a href="https://rdrr.io/r/base/function.html" class="external-link">function</a> to use if the data has to be summarised, see <em>Examples</em>. This can also be <code>NULL</code>, which will be converted to <code>function(x) x</code>.</p></dd>
 
 
 <dt>stacked</dt>
