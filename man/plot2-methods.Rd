@@ -1136,7 +1136,11 @@
 \arguments{
 \item{.data}{data to plot}
 
-\item{x}{plotting 'direction': the x axis}
+\item{x}{plotting 'direction' for the x axis. This can be:
+\itemize{
+\item A single variable from \code{.data}, such as \code{category = column1}
+\item A \link{function} to calculate over one or more variables from \code{.data}, such as \code{x = format(column1, "\%Y")}, or \code{x = ifelse(column1 == "A", "Group A", "Other")}
+}}
 
 \item{y}{values to use for plotting along the y axis. This can be:
 \itemize{
@@ -1151,9 +1155,13 @@
 \item A \link{function} to calculate over one or more variables from \code{.data}, such as \code{y = n_distinct(person_id)}, \code{y = max(column1)}, or \code{y = median(column2) / column3}
 }}
 
-\item{category}{plotting 'direction': the category (called 'fill' and 'colour' in \code{ggplot2})}
-
-\item{facet}{plotting 'direction': the facet}
+\item{category, facet}{plotting 'direction' (\code{category} is called 'fill' and 'colour' in \code{ggplot2}). This can be:
+\itemize{
+\item A single variable from \code{.data}, such as \code{category = column1}
+\item A \link{function} to calculate over one or more variables from \code{.data}, such as \code{category = median(column2) / column3}, or \code{facet = ifelse(column1 == "A", "Group A", "Other")}
+\item Multiple variables from \code{.data}, such as \code{facet = c(column1, column2)} (use \code{sep} to control the separator character)
+\item One or more variables from \code{.data} using \link[tidyselect:language]{selection helpers}, such as \code{category = where(is.double)} or \code{facet = starts_with("var_")}
+}}
 
 \item{type, y_secondary.type}{type of visualisation to use. This can be:
 \itemize{
@@ -1281,7 +1289,7 @@
 
 \item{big.mark}{thousands separator, defaults to \code{\link[=big_mark]{big_mark()}}}
 
-\item{summarise_function}{a \link{function} to use if the data has to be summarised, see \emph{Examples}}
+\item{summarise_function}{a \link{function} to use if the data has to be summarised, see \emph{Examples}. This can also be \code{NULL}, which will be converted to \code{function(x) x}.}
 
 \item{stacked}{a \link{logical} to indicate that values must be stacked}
 

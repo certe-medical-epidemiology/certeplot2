@@ -338,6 +338,7 @@ plot2.default <- function(.data,
              `_label.facet` = deparse(substitute(facet)),
              `_label.y_secondary` = deparse(substitute(y_secondary)),
              `_summarise_fn_name` = deparse(substitute(summarise_function)),
+             `_misses.summarise_function` = missing(summarise_function),
              ...)
 }
 
@@ -660,6 +661,7 @@ plot2.numeric <- function(.data,
              `_label.facet` = deparse(substitute(facet)),
              `_label.y_secondary` = deparse(substitute(y_secondary)),
              `_summarise_fn_name` = deparse(substitute(summarise_function)),
+             `_misses.summarise_function` = missing(summarise_function),
              ...)
 }
 
@@ -959,6 +961,7 @@ plot2.freq <- function(.data,
              `_label.facet` = deparse(substitute(facet)),
              `_label.y_secondary` = deparse(substitute(y_secondary)),
              `_summarise_fn_name` = deparse(substitute(summarise_function)),
+             `_misses.summarise_function` = missing(summarise_function),
              ...)
 }
 
@@ -1292,6 +1295,7 @@ plot2.sf <- function(.data,
              `_label.category` = deparse(substitute(category)),
              `_label.facet` = deparse(substitute(facet)),
              `_summarise_fn_name` = deparse(substitute(summarise_function)),
+             `_misses.summarise_function` = missing(summarise_function),
              `_sf.column` = attributes(.data)$sf_column,
              ...)
 }
@@ -1599,6 +1603,7 @@ plot2.data.frame <- function(.data,
              `_label.y_secondary` = deparse(substitute(y_secondary)),
              `_label.y_secondary` = deparse(substitute(y_secondary)),
              `_summarise_fn_name` = deparse(substitute(summarise_function)),
+             `_misses.summarise_function` = missing(summarise_function),
              ...) 
 }
 
@@ -1922,6 +1927,7 @@ plot2.bug_drug_combinations <- function(.data,
              `_label.facet` = deparse(substitute(facet)),
              `_label.y_secondary` = deparse(substitute(y_secondary)),
              `_summarise_fn_name` = deparse(substitute(summarise_function)),
+             `_misses.summarise_function` = missing(summarise_function),
              ...) 
 }
 
@@ -2228,6 +2234,7 @@ plot2.rsi_df <- function(.data,
              `_label.facet` = deparse(substitute(facet)),
              `_label.y_secondary` = deparse(substitute(y_secondary)),
              `_summarise_fn_name` = deparse(substitute(summarise_function)),
+             `_misses.summarise_function` = missing(summarise_function),
              ...) 
 }
 
@@ -2577,6 +2584,7 @@ plot2.qc_test <- function(.data,
                   `_label.facet` = deparse(substitute(facet)),
                   `_label.y_secondary` = deparse(substitute(y_secondary)),
                   `_summarise_fn_name` = deparse(substitute(summarise_function)),
+                  `_misses.summarise_function` = missing(summarise_function),
                   ...)
   
   # left align the rule texts

@@ -23,7 +23,11 @@
 #' 
 #' See [plot2-methods] for all implemented methods for different object classes.
 #' @param .data data to plot
-#' @param x plotting 'direction': the x axis
+#' @param x plotting 'direction' for the x axis. This can be:
+#' 
+#' * A single variable from `.data`, such as `category = column1`
+#' 
+#' * A [function] to calculate over one or more variables from `.data`, such as `x = format(column1, "%Y")`, or `x = ifelse(column1 == "A", "Group A", "Other")`
 #' @param y values to use for plotting along the y axis. This can be:
 #' 
 #' * A single variable from `.data`, such as `y = column1`
@@ -39,8 +43,16 @@
 #' * A [function] to calculate over `.data`, such as `y = `[n()] for the row count
 #' 
 #' * A [function] to calculate over one or more variables from `.data`, such as `y = n_distinct(person_id)`, `y = max(column1)`, or `y = median(column2) / column3`
-#' @param category plotting 'direction': the category (called 'fill' and 'colour' in `ggplot2`)
-#' @param facet plotting 'direction': the facet
+#' @param category,facet plotting 'direction' (`category` is called 'fill' and 'colour' in `ggplot2`). This can be:
+#' 
+#' * A single variable from `.data`, such as `category = column1`
+#' 
+#' * A [function] to calculate over one or more variables from `.data`, such as `category = median(column2) / column3`, or `facet = ifelse(column1 == "A", "Group A", "Other")`
+#' 
+#' * Multiple variables from `.data`, such as `facet = c(column1, column2)` (use `sep` to control the separator character)
+#'   
+#' * One or more variables from `.data` using [selection helpers][tidyselect::language], such as `category = where(is.double)` or `facet = starts_with("var_")`
+#' 
 #' @param y_secondary values to use for plotting along the secondary y axis. This functionality is poorly supported by `ggplot2` and might give unexpected results. Setting the secondary y axis will set the colour to the axis titles.
 #' @param y_secondary.colour,y_secondary.colour_fill colours to set for the secondary y axis, will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
 #' @param type,y_secondary.type type of visualisation to use. This can be:
@@ -115,7 +127,7 @@
 #' @param datalabels.colour,datalabels.colour_fill,datalabels.size,datalabels.angle settings for the datalabels
 #' @param decimal.mark decimal mark, defaults to [dec_mark()]
 #' @param big.mark thousands separator, defaults to [big_mark()]
-#' @param summarise_function a [function] to use if the data has to be summarised, see *Examples*
+#' @param summarise_function a [function] to use if the data has to be summarised, see *Examples*. This can also be `NULL`, which will be converted to `function(x) x`.
 #' @param stacked a [logical] to indicate that values must be stacked
 #' @param stackedpercent a [logical] to indicate that values must be 100% stacked
 #' @param horizontal a [logical] to turn the plot 90 degrees using [`coord_flip()`][ggplot2::coord_flip()]. This option also updates some theme options, so that e.g., `x.lbl_italic` will still apply to the original x axis.
@@ -668,6 +680,7 @@ plot2_exec <- function(.data,
   misses_y.percent <- isTRUE(dots$`_misses.y.percent`)
   misses_y.percent_break <- isTRUE(dots$`_misses.y.percent_break`)
   misses_facet.fixed_x <- isTRUE(dots$`_misses.facet.fixed_x`)
+  misses_summarise_function <- isTRUE(dots$`_misses.summarise_function`)
   
   if (!misses_facet.fixed_x) {
     x.drop <- !isTRUE(facet.fixed_x)
@@ -716,6 +729,13 @@ plot2_exec <- function(.data,
     y_secondary.title <- validate_title({{ y_secondary.title }}, markdown = isTRUE(markdown), df = .data)
   }
   
+  if (is.null(summarise_function)) {
+    summarise_function <- function(x) x
+    dots$`_summarise_fn_name` <- "function(x) x"
+  } else if (!is.function(summarise_function)) {
+    stop("'summarise_function' must be a function")
+  }
+  
   # prepare data ----
   # IMPORTANT: in this part, the data for mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
   # this is done for convenience - this is restored before returning the `ggplot` object in the end
@@ -750,16 +770,35 @@ plot2_exec <- function(.data,
           stop("if 'y' contains more than one variable, 'category' must not be set", call. = FALSE)
         }
         
-       new_df <- .data |>
+        if (isTRUE(misses_summarise_function)) {
+          summarise_function <<- function(x) x
+          dots$`_summarise_fn_name` <<- "function(x) x"
+          misses_summarise_function <<- FALSE
+          plot2_message("Assuming ", font_blue(paste0("summarise_function = ", dots$`_summarise_fn_name`)))
+        }
+        new_df <- .data |>
           # no tibbles, data.tables, sf, etc. objects:
           as.data.frame(stringsAsFactors = FALSE) |> 
-          pivot_longer(c({{ y }}, -matches("^_var_"), -get_x_name(.data)), names_to = "category", values_to = "y") |> 
-          # add the new variable "category" as category
-          mutate(`_var_y` = y,
-                 `_var_category` = category)
-       if (!any(plot2_env$mapping_y %like% new_df$category)) {
-         plot2_message("Using ", font_blue("y = c(", paste(unique(new_df$category), collapse = ", "), ")", collapse = NULL))
-       }
+          pivot_longer(c({{ y }}, -matches("^_var_"), -get_x_name(.data)), names_to = "_var_category", values_to = "_var_y") |> 
+          # apply summarise_function
+          group_by(across(c(get_x_name(.data), get_category_name(.data), get_facet_name(.data),
+                            matches("_var_(x|category|facet)")))) |> 
+          summarise(`_var_y` = summarise_function(`_var_y`),
+                    .groups = "drop") |> 
+          mutate(y = `_var_y`,
+                 category = `_var_category`)
+        
+        if (!dots$`_summarise_fn_name` %in% c("NULL", "function(x) x")) {
+          plot2_message("Summarising values using ",
+                        font_blue(paste0("summarise_function = ", dots$`_summarise_fn_name`)),
+                        ifelse(isTRUE(misses_summarise_function),
+                               paste0(" (use ", font_blue("summarise_function = NULL"), font_black(" to prevent this)")),
+                               ""))
+        }
+        
+        if (!any(plot2_env$mapping_y %like% new_df$category)) {
+          plot2_message("Using ", font_blue("y = c(", paste(unique(new_df$category), collapse = ", "), ")", collapse = NULL))
+        }
         plot2_env$mapping_y <- "y"
         plot2_env$mapping_category <- "category"
         if (is.null(y.title) || isTRUE(y.title)) {

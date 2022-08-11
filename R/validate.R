@@ -44,7 +44,7 @@ validate_type <- function(type, df = NULL) {
         type <- "geom_boxplot"
         plot2_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL),
                       " since all groups in ",
-                      paste0(font_blue(c(get_x_name(df), get_category_name(df), get_facet_name(df)),
+                      paste0(font_blue(unique(c(get_x_name(df), get_category_name(df), get_facet_name(df))),
                                        collapse = NULL),
                              collapse = font_black(" and ")), 
                       " contain at least three values")
@@ -218,11 +218,12 @@ validate_data <- function(df,
   }
   
   if (misses_x && !has_x(df) && ncol(df) > 1) {
+    eligible_cols <- colnames(df)[colnames(df) %unlike% "^(y|_var_(x|y|category|facet|datalabels))$"]
     # take first column if it's not used for y
     if (identical(pull(df, 1), get_y(df))) {
-      x_col <- colnames(df)[2L]
+      x_col <- eligible_cols[2L]
     } else {
-      x_col <- colnames(df)[1L]
+      x_col <- eligible_cols[1L]
     }
     plot2_message("Using ", font_blue("x = ", x_col, collapse = NULL))
     df <- df |> 
@@ -2371,10 +2372,15 @@ summarise_data <- function(df,
   category <- get_category_name(df)
   facet <- get_facet_name(df)
   has_datalbls <- has_datalabels(df)
+  summ_fn <- function(x, fn = summarise_function, ...) {
+    # alter summarise_function to remove NAs
+    out <- fn(x, ...)
+    out[!is.na(out)]
+  }
   df <- df |>
     mutate(n = get_y(df)) |>
     group_by(across(c(x, category, facet))) |>
-    summarise(n = summarise_function(n, na.rm = TRUE),
+    summarise(n = summ_fn(n),
               .groups = "drop")
   colnames(df)[colnames(df) == "n"] <- y
   df$`_var_y` <- df[, y, drop = TRUE]
