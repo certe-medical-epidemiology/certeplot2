@@ -1701,6 +1701,7 @@ validate_theme <- function(theme,
                            font,
                            horizontal,
                            x.remove,
+                           y.remove,
                            x.lbl_angle,
                            x.lbl_align,
                            x.lbl_italic,
@@ -1767,12 +1768,18 @@ validate_theme <- function(theme,
     if (isTRUE(x.remove)) {
       theme$axis.text.y <- element_blank()
     }
+    if (isTRUE(y.remove)) {
+      theme$axis.text.x <- element_blank()
+    }
   } else {
     if (isTRUE(x.lbl_italic)) {
       theme$axis.text.x$face <- "italic"
     }
     if (isTRUE(x.remove)) {
       theme$axis.text.x <- element_blank()
+    }
+    if (isTRUE(y.remove)) {
+      theme$axis.text.y <- element_blank()
     }
   }
   
