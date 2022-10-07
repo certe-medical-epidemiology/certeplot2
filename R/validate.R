@@ -548,8 +548,7 @@ validate_taxonomy <- function(df) {
   taxonomic_nms <- unique(c(AMR::microorganisms$family,
                             AMR::microorganisms$genus,
                             AMR::microorganisms$species,
-                            AMR::microorganisms$subspecies,
-                            AMR::microorganisms.old$fullname))
+                            AMR::microorganisms$subspecies))
   make_taxonomy <- function(x, nms = taxonomic_nms) {
     if (is.null(x)) {
       return(NULL)
