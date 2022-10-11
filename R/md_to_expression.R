@@ -23,7 +23,7 @@
 #' @param x text to convert, only the first value will be evaluated
 #' @details This function only supports common markdown (italic, bold, bold-italic, subscript, superscript), but also supports some additional functionalities for more advanced expressions using \R [plotmath][grDevices::plotmath]. Please see *Examples*.
 #' 
-#' *Rationale*: we tried to use the `ggtext` package instead to support markdown using their `element_markdown()` function for `ggplot2` [themes][ggplot2::theme()], but it appeared to be incompatible with the `showtext` package to support different fonts. We subsequently developed this function to transform markdown into [plotmath][grDevices::plotmath].
+#' *Rationale*: we tried to use the `ggtext` package instead to support markdown using their `element_markdown()` function for `ggplot2` [themes][ggplot2::theme()], but it currently supports only very limited markdown and no [plotmath][grDevices::plotmath] at all.
 #' @export
 #' @return An [expression]
 #' @examples
@@ -34,16 +34,18 @@
 #' 
 #' md_to_expression("this is ***bold and italic*** text")
 #' 
-#' # subscript and superscript can never be preceded by a space.
-#' md_to_expression("this is long<sub>subscripted text</sub>, this is short_subscripted text")
-#' md_to_expression("this is long<sup>superscripted text</sup>, this is short^superscripted text")
+#' # subscript and superscript can be done in HTML or markdown with curly brackets:
+#' md_to_expression("this is some<sub>subscripted text</sub>, this is more_{additional subscripted} text")
+#' md_to_expression("this is some<sup>superscripted text</sup>, this is more^{additional superscripted} text")
 #' 
 #' # use $...$ to use any plotmath expression as-is (see ?plotmath):
 #' md_to_expression("text $omega$ text, $a[x]$")
 #' 
 #' mtcars |>
 #'   plot2(mpg, hp,
-#'         title = "These are the **Greek** lower $omega$ and upper $Omega$")
+#'         title = "*These are* the **Greek** lower $omega$ and upper $Omega$",
+#'         x.title = "x_{mpg}",
+#'         y.title = "y_{hp}")
 #'         
 #' mtcars |> 
 #'   plot2(mpg, hp,
@@ -83,14 +85,14 @@ md_to_expression <- function(x) {
     out <- gsub("(\\S+?)<sup>(.+?)</sup>", "', \\1^'\\2', '", out, perl = TRUE)
   }
   
-  # translate sub_script
-  while (out %like% "(^'| )[a-z0-9,.-]+_[a-z0-9,.-]+( |'$)") {
-    out <- gsub("( ?)([a-z0-9,.-]+?)_([a-z0-9,.-]+)( ?)", "\\1', \\2['\\3'], '\\4", out, perl = TRUE, ignore.case = TRUE)
+  # translate sub_{script}
+  while (grepl("\\S+_[{].+[}]", out, ignore.case = FALSE)) {
+    out <- gsub("(\\S+?)_[{](.+?)[}]", "', \\1['\\2'], '", out, perl = TRUE)
   }
   
-  # translate super^script
-  while (out %like% "(^'| )[a-z0-9,.-]+ ?\\^ ?[a-z0-9,.-]+( |'$)") {
-    out <- gsub("( ?)([a-z0-9,.-]+?) ?\\^ ?([a-z0-9,.-]+)( ?)", "\\1', \\2^'\\3', '\\4", out, perl = TRUE, ignore.case = TRUE)
+  # translate super^{script}
+  while (grepl("\\S+\\^[{].+[}]", out, ignore.case = FALSE)) {
+    out <- gsub("(\\S+?)\\^[{](.+?)[}]", "', \\1^'\\2', '", out, perl = TRUE)
   }
   
   # translate $plotmath$, such as $omega$

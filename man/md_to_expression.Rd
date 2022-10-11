@@ -18,7 +18,7 @@ This function converts common markdown language to an \R \link[grDevices:plotmat
 \details{
 This function only supports common markdown (italic, bold, bold-italic, subscript, superscript), but also supports some additional functionalities for more advanced expressions using \R \link[grDevices:plotmath]{plotmath}. Please see \emph{Examples}.
 
-\emph{Rationale}: we tried to use the \code{ggtext} package instead to support markdown using their \code{element_markdown()} function for \code{ggplot2} \link[ggplot2:theme]{themes}, but it appeared to be incompatible with the \code{showtext} package to support different fonts. We subsequently developed this function to transform markdown into \link[grDevices:plotmath]{plotmath}.
+\emph{Rationale}: we tried to use the \code{ggtext} package instead to support markdown using their \code{element_markdown()} function for \code{ggplot2} \link[ggplot2:theme]{themes}, but it currently supports only very limited markdown and no \link[grDevices:plotmath]{plotmath} at all.
 }
 \examples{
 # use '*' for italics, not '_', to prevent conflicts with variable naming
@@ -28,16 +28,18 @@ md_to_expression("this is **bold** text")
 
 md_to_expression("this is ***bold and italic*** text")
 
-# subscript and superscript can never be preceded by a space.
-md_to_expression("this is long<sub>subscripted text</sub>, this is short_subscripted text")
-md_to_expression("this is long<sup>superscripted text</sup>, this is short^superscripted text")
+# subscript and superscript can be done in HTML or markdown with curly brackets:
+md_to_expression("this is some<sub>subscripted text</sub>, this is more_{additional subscripted} text")
+md_to_expression("this is some<sup>superscripted text</sup>, this is more^{additional superscripted} text")
 
 # use $...$ to use any plotmath expression as-is (see ?plotmath):
 md_to_expression("text $omega$ text, $a[x]$")
 
 mtcars |>
   plot2(mpg, hp,
-        title = "These are the **Greek** lower $omega$ and upper $Omega$")
+        title = "*These are* the **Greek** lower $omega$ and upper $Omega$",
+        x.title = "x_{mpg}",
+        y.title = "y_{hp}")
         
 mtcars |> 
   plot2(mpg, hp,

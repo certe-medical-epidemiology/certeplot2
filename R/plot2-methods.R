@@ -480,7 +480,10 @@ plot2.numeric <- function(.data,
                           background = "white",
                           markdown = TRUE,
                           ...) {
-  y_deparse <- deparse(substitute(.data))
+  y_deparse <- paste0(deparse(substitute(.data)), collapse = "")
+  if (nchar(y_deparse) > 30) {
+    y_deparse <- "y"
+  }
   if (missing(.data)) {
     .data <- y
     y_deparse <- "y"
