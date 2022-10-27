@@ -1713,6 +1713,14 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
                    collapse = "\n")
     }
   }
+  
+  if (isTRUE(markdown)) {
+    # support mathematical characters
+    out <- gsub("!=", "\u2260", out, fixed = TRUE)
+    out <- gsub("<=", "\u2264", out, fixed = TRUE)
+    out <- gsub(">=", "\u2265", out, fixed = TRUE)
+  }
+  
   out
 }
 
