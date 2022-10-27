@@ -102,6 +102,7 @@
   category.expand = 0,
   category.midpoint = NULL,
   category.trans = "identity",
+  category.character = NULL,
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
@@ -241,6 +242,7 @@
   category.expand = 0,
   category.midpoint = NULL,
   category.trans = "identity",
+  category.character = NULL,
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
@@ -380,6 +382,7 @@
   category.expand = 0,
   category.midpoint = NULL,
   category.trans = "identity",
+  category.character = NULL,
   x.sort = "freq-desc",
   category.sort = TRUE,
   facet.sort = TRUE,
@@ -519,6 +522,7 @@
   category.expand = 0,
   category.midpoint = NULL,
   category.trans = "identity",
+  category.character = NULL,
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
@@ -662,6 +666,7 @@
   category.expand = 0,
   category.midpoint = NULL,
   category.trans = "identity",
+  category.character = NULL,
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
@@ -801,6 +806,7 @@
   category.expand = 0,
   category.midpoint = NULL,
   category.trans = "identity",
+  category.character = NULL,
   x.sort = NULL,
   category.sort = FALSE,
   facet.sort = TRUE,
@@ -943,6 +949,7 @@
   category.expand = 0,
   category.midpoint = NULL,
   category.trans = "identity",
+  category.character = NULL,
   x.sort = NULL,
   category.sort = FALSE,
   facet.sort = TRUE,
@@ -1084,6 +1091,7 @@
   category.expand = 0,
   category.midpoint = NULL,
   category.trans = "identity",
+  category.character = NULL,
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
@@ -1145,7 +1153,7 @@
 \item{y}{values to use for plotting along the y axis. This can be:
 \itemize{
 \item A single variable from \code{.data}, such as \code{y = column1}
-\item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)}
+\item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)} or \code{y = c(name1 = column1, "name 2" = column2)}
 
 (only allowed if \code{category} is not set)
 \item One or more variables from \code{.data} using \link[tidyselect:language]{selection helpers}, such as \code{y = where(is.double)} or \code{y = starts_with("var_")}
@@ -1239,7 +1247,7 @@
 
 \item{x.labels, y.labels, y_secondary.labels}{a labels function or character vector to use for the axis}
 
-\item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (x values between 2000 and 2050)}
+\item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (values between 2000 and 2050) and months (values from 1 to 12).}
 
 \item{x.drop}{\link{logical} to indicate whether factor levels should be dropped}
 
@@ -1264,6 +1272,8 @@
 \item{category.labels, category.percent, category.breaks, category.expand, category.midpoint, category.trans}{settings for the plotting direction \code{category}.}
 
 \item{category.limits}{limits to use for a numeric category, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{category.limits = c(0, NA)} to have the scale start at zero.}
+
+\item{category.character}{a \link{logical} to indicate whether the values of the category should be forced to \link{character}. The default is \code{FALSE}, except for years (values between 2000 and 2050) and months (values from 1 to 12).}
 
 \item{x.sort, category.sort, facet.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
 \itemize{

@@ -32,7 +32,7 @@
 #' 
 #' * A single variable from `.data`, such as `y = column1`
 #' 
-#' * Multiple variables from `.data`, such as `y = c(column1, column2)`
+#' * Multiple variables from `.data`, such as `y = c(column1, column2)` or `y = c(name1 = column1, "name 2" = column2)`
 #'   
 #'   (only allowed if `category` is not set)
 #'   
@@ -90,7 +90,7 @@
 #' @param x.lbl_align alignment for the x axis between `0` (left aligned) and `1` (right aligned)
 #' @param x.lbl_italic [logical] to indicate whether the x labels should in in *italics*
 #' @param x.lbl_taxonomy a [logical] to transform all words of the `x` labels into italics that are in the [microorganisms][AMR::microorganisms] data set of the `AMR` package. This uses [md_to_expression()] internally and will set `x.labels` to parse expressions.
-#' @param x.character a [logical] to indicate whether the values of the x axis should be forced to [character]. The default is `FALSE`, except for years (x values between 2000 and 2050)
+#' @param x.character a [logical] to indicate whether the values of the x axis should be forced to [character]. The default is `FALSE`, except for years (values between 2000 and 2050) and months (values from 1 to 12).
 #' @param x.drop [logical] to indicate whether factor levels should be dropped
 #' @param x.mic [logical] to indicate whether the x axis should be formatted as [MIC values][AMR::as.mic()], by dropping all factor levels and adding missing factors of 2
 #' @param x.remove,y.remove a [logical] to indicate whether the axis labels and title should be removed
@@ -109,6 +109,7 @@
 #' @param x.zoom,y.zoom a [logical] to indicate if the axis should be zoomed on the data, by setting `x.limits = c(NA, NA)` and `x.expand = 0` for the x axis, or `y.limits = c(NA, NA)` and `y.expand = 0` for the y axis
 #' @param category.labels,category.percent,category.breaks,category.expand,category.midpoint,category.trans settings for the plotting direction `category`.
 #' @param category.limits limits to use for a numeric category, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `category.limits = c(0, NA)` to have the scale start at zero.
+#' @param category.character a [logical] to indicate whether the values of the category should be forced to [character]. The default is `FALSE`, except for years (values between 2000 and 2050) and months (values from 1 to 12).
 #' @param x.max_items,category.max_items,facet.max_items number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the `summarise_function` function. **Please note:** the sorting will be applied first, allowing to e.g. plot the top *n* most frequent values of the x axis by combining `x.sort = "freq-desc"` with `x.max_items =` *n*.
 #' @param x.max_txt,category.max_txt,facet.max_txt the text to use of values not included number of `*.max_items`. The placeholder `%n` will be replaced with the outcome of the `summarise_function` function, the placeholder `%p` will be replaced with the percentage.
 #' @param x.sort,category.sort,facet.sort sorting of the plotting direction, defaults to `TRUE`, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered [factor], which `ggplot2` uses to orient the data. Valid values are:
@@ -204,9 +205,9 @@
 #'   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
 #'         colour = c("white", "red", "black")) # set own colours
 #'
-#' # y can also be multiple columns
+#' # y can also be multiple (named) columns
 #' iris |> 
-#'   plot2(x = Sepal.Length, y = c(Petal.Length, Petal.Width))
+#'   plot2(x = Sepal.Length, y = c(L = Petal.Length, W = Petal.Width))
 #' iris |>
 #'   # with selection helpers such as where(), starts_with(), etc.:
 #'   plot2(x = Species, y = where(is.double))
@@ -410,6 +411,7 @@ plot2 <- function(.data,
                   category.expand = 0,
                   category.midpoint = NULL,
                   category.trans = "identity",
+                  category.character = NULL,
                   x.sort = NULL,
                   category.sort = TRUE,
                   facet.sort = TRUE,
@@ -512,7 +514,7 @@ plot2 <- function(.data,
   }
 }
 
-#' @importFrom dplyr mutate vars group_by across summarise select matches
+#' @importFrom dplyr mutate vars group_by across summarise select matches bind_cols
 #' @importFrom forcats fct_relabel
 #' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build
 #' @importFrom tidyr pivot_longer
@@ -606,6 +608,7 @@ plot2_exec <- function(.data,
                        category.expand,
                        category.midpoint,
                        category.trans,
+                       category.character,
                        x.sort,
                        category.sort,
                        facet.sort,
@@ -757,13 +760,13 @@ plot2_exec <- function(.data,
     # add y (this will end in an ungrouped data.frame)
     { function(.data) {
       suppressWarnings(
-        has_multiple_cols <- tryCatch((.data |>
-                                         # no tibbles, data.tables, sf, etc. objects:
-                                         as.data.frame(stringsAsFactors = FALSE) |> 
-                                         select({{ y }}) |> 
-                                         ncol()) > 1,
-                                      error = function(e) FALSE)
+        y_vector <- tryCatch((.data |>
+                                # no tibbles, data.tables, sf, etc. objects:
+                                as.data.frame(stringsAsFactors = FALSE) |> 
+                                select({{ y }})),
+                             error = function(e) FALSE)
       )
+      has_multiple_cols <- is.data.frame(y_vector) && ncol(y_vector) > 1
       if (isTRUE(has_multiple_cols)) {
         # e.g. for: df |> plot2(y = c(var1, var2))  
         if (has_category(.data)) {
@@ -777,9 +780,11 @@ plot2_exec <- function(.data,
           misses_summarise_function <<- FALSE
           plot2_message("Assuming ", font_blue(paste0("summarise_function = ", dots$`_summarise_fn_name`)))
         }
+        
         new_df <- .data |>
           # no tibbles, data.tables, sf, etc. objects:
           as.data.frame(stringsAsFactors = FALSE) |> 
+          bind_cols(y_vector[, colnames(y_vector)[which(!colnames(y_vector) %in% colnames(.data))], drop = FALSE]) |> 
           pivot_longer(c({{ y }}, -matches("^_var_"), -get_x_name(.data)), names_to = "_var_category", values_to = "_var_y") |> 
           # apply summarise_function
           group_by(across(c(get_x_name(.data), get_category_name(.data), get_facet_name(.data),
@@ -867,6 +872,7 @@ plot2_exec <- function(.data,
                   x.mic = x.mic,
                   category.max_items = category.max_items,
                   category.max_txt = category.max_txt,
+                  category.character = category.character,
                   facet.max_items = facet.max_items,
                   facet.max_txt = facet.max_txt,
                   na.rm = na.rm,
@@ -1241,7 +1247,8 @@ plot2_exec <- function(.data,
                          y_secondary.title = y_secondary.title,
                          y_secondary.scientific = y_secondary.scientific,
                          y_secondary.percent = y_secondary.percent,
-                         y_secondary.labels = y_secondary.labels)
+                         y_secondary.labels = y_secondary.labels,
+                         markdown = markdown)
     } else {
       # add the y axis without secondary axis
       p <- p_added_y
@@ -1270,6 +1277,7 @@ plot2_exec <- function(.data,
                    title.colour = title.colour,
                    subtitle.colour = subtitle.colour,
                    has_y_secondary = has_y_secondary(df),
+                   has_category = has_category(df),
                    col_y_primary = cols$colour[1L],
                    col_y_secondary = y_secondary.colour)
   

@@ -94,6 +94,7 @@ md_to_expression <- function(x) {
   while (grepl("\\S+\\^[{].+[}]", out, ignore.case = FALSE)) {
     out <- gsub("(\\S+?)\\^[{](.+?)[}]", "', \\1^'\\2', '", out, perl = TRUE)
   }
+  out <- gsub("(\\S+?)\\^([a-zA-Z0-9,._-]+?)", "', \\1^'\\2', '", out, perl = TRUE)
   
   # translate $plotmath$, such as $omega$
   while (out %like% "[$].+[$]") {

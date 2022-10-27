@@ -349,6 +349,7 @@ validate_data <- function(df,
                                                    y.percent = dots$y.percent))
   }
   
+  # turn x to character if data seems to suggest so
   if (is.null(dots$x.character) &&
       has_x(df) &&
       is.numeric(get_x(df)) &&
@@ -383,6 +384,28 @@ validate_data <- function(df,
   if (isTRUE(dots$x.character)) {
     df <- df |>
       mutate(`_var_x` = as.character(`_var_x`))
+  }
+  # turn category to character if data seems to suggest so
+  if (is.null(dots$category.character) &&
+      has_category(df) &&
+      is.numeric(get_category(df)) &&
+      all(get_category(df, na.rm = TRUE) >= 2000) &&
+      all(get_category(df, na.rm = TRUE) <= 2050)) {
+    plot2_message("Assuming ", font_blue("category.character = TRUE"),
+                  " since ", font_blue("category"), " seems to be years")
+    dots$category.character <- TRUE
+  } else if (is.null(dots$category.character) &&
+             has_category(df) &&
+             is.numeric(get_category(df)) &&
+             (identical(sort(unique(get_category(df))), seq_len(12)) ||
+              identical(sort(unique(get_category(df))), as.double(seq_len(12))))) {
+    plot2_message("Assuming ", font_blue("category.character = TRUE"),
+                  " since ", font_blue("category"), " seems to be months")
+    dots$category.character <- TRUE
+  }
+  if (isTRUE(dots$category.character) && has_category(df)) {
+    df <- df |>
+      mutate(`_var_category` = as.character(`_var_category`))
   }
 
   # remove infinite values
@@ -773,7 +796,8 @@ validate_y_scale <- function(df,
                              y_secondary.title = NULL,
                              y_secondary.scientific = NULL,
                              y_secondary.percent = NULL,
-                             y_secondary.labels = NULL) {
+                             y_secondary.labels = NULL,
+                             markdown = NULL) {
   if (isTRUE(y.zoom) && is.null(y.limits)) {
     y.limits <- c(NA_real_, NA_real_)
     if (is.null(y.expand)) {
@@ -1018,7 +1042,7 @@ validate_y_scale <- function(df,
                                          stackedpercent = stackedpercent,
                                          decimal.mark = decimal.mark,
                                          big.mark = big.mark),
-                      name = y_secondary.title)
+                      name = validate_title(y_secondary.title, markdown = markdown))
   } else {
     sec_y <- waiver()
   }
@@ -1434,7 +1458,7 @@ validate_colour <- function(df,
                             misses_colour_fill,
                             horizontal) {
   
-  if (geom_is_continuous(type) && is.numeric(get_category(df))) {
+  if (is.numeric(get_category(df))) {
     viridis_colours <- c("viridis", "magma", "inferno", "plasma", "cividis", "rocket", "mako", "turbo")
     colour.bak <- colour
     # this is for validate_category_scale()
@@ -1667,8 +1691,9 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
   # support for markdown
   if (isTRUE(markdown) &&
       (isTRUE(out %like% "[*]+.+[*]+")
-       || isTRUE(out %like% "[a-z0-9,.-]_[{].+[}]")
-       || isTRUE(out %like% "[a-z0-9,.-] ?\\^ ?[{].+[}]")
+       || isTRUE(out %like% "[a-zA-Z0-9,.-]_[{].+[}]")
+       || isTRUE(out %like% "[a-zA-Z0-9,.-] ?\\^ ?[{].+[}]")
+       || isTRUE(out %like% "[a-zA-Z0-9,.-] ?\\^ ?[a-zA-Z0-9,._-]")
        || isTRUE(out %like% "<sup>.+</sup>")
        || isTRUE(out %like% "<sub>.+</sub>")
        || isTRUE(out %like% "[$]"))) {
@@ -1713,6 +1738,7 @@ validate_theme <- function(theme,
                            title.colour,
                            subtitle.colour,
                            has_y_secondary,
+                           has_category,
                            col_y_primary,
                            col_y_secondary) {
   
@@ -1782,7 +1808,7 @@ validate_theme <- function(theme,
     }
   }
   
-  if (isTRUE(has_y_secondary)) {
+  if (isTRUE(has_y_secondary) && !isTRUE(has_category)) {
     # set colour of geoms to title texts
     theme$axis.title.y$colour <- col_y_primary
     theme$axis.title.y$face <- "bold"

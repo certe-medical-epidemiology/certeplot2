@@ -94,6 +94,7 @@ plot2(
   category.expand = 0,
   category.midpoint = NULL,
   category.trans = "identity",
+  category.character = NULL,
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
@@ -155,7 +156,7 @@ plot2(
 \item{y}{values to use for plotting along the y axis. This can be:
 \itemize{
 \item A single variable from \code{.data}, such as \code{y = column1}
-\item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)}
+\item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)} or \code{y = c(name1 = column1, "name 2" = column2)}
 
 (only allowed if \code{category} is not set)
 \item One or more variables from \code{.data} using \link[tidyselect:language]{selection helpers}, such as \code{y = where(is.double)} or \code{y = starts_with("var_")}
@@ -249,7 +250,7 @@ plot2(
 
 \item{x.labels, y.labels, y_secondary.labels}{a labels function or character vector to use for the axis}
 
-\item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (x values between 2000 and 2050)}
+\item{x.character}{a \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (values between 2000 and 2050) and months (values from 1 to 12).}
 
 \item{x.drop}{\link{logical} to indicate whether factor levels should be dropped}
 
@@ -274,6 +275,8 @@ plot2(
 \item{category.labels, category.percent, category.breaks, category.expand, category.midpoint, category.trans}{settings for the plotting direction \code{category}.}
 
 \item{category.limits}{limits to use for a numeric category, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{category.limits = c(0, NA)} to have the scale start at zero.}
+
+\item{category.character}{a \link{logical} to indicate whether the values of the category should be forced to \link{character}. The default is \code{FALSE}, except for years (values between 2000 and 2050) and months (values from 1 to 12).}
 
 \item{x.sort, category.sort, facet.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
 \itemize{
@@ -377,7 +380,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 135 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 136 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)
@@ -412,9 +415,9 @@ iris |>
   plot2(Sepal.Length, Sepal.Width, Petal.Length, Species,
         colour = c("white", "red", "black")) # set own colours
 
-# y can also be multiple columns
+# y can also be multiple (named) columns
 iris |> 
-  plot2(x = Sepal.Length, y = c(Petal.Length, Petal.Width))
+  plot2(x = Sepal.Length, y = c(L = Petal.Length, W = Petal.Width))
 iris |>
   # with selection helpers such as where(), starts_with(), etc.:
   plot2(x = Species, y = where(is.double))

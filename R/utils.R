@@ -222,9 +222,13 @@ has_y <- function(df) {
   "_var_y" %in% colnames(df)
 }
 
-get_category <- function(df) {
+get_category <- function(df, na.rm = FALSE) {
   if (has_category(df)) {
-    df$`_var_category`
+    out <- df$`_var_category`
+    if (isTRUE(na.rm)) {
+      out <- out[!is.na(out)]
+    }
+    out
   } else {
     NULL
   }
