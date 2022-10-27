@@ -1688,6 +1688,13 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
   out <- gsub("<br>", "\n", out, fixed = TRUE)
   out_plain <- gsub("[^a-zA-Z0-9,. .-]", "", out)
   
+  if (isTRUE(markdown)) {
+    # support mathematical characters
+    out <- gsub("!=", "\u2260", out, fixed = TRUE)
+    out <- gsub("<=", "\u2264", out, fixed = TRUE)
+    out <- gsub(">=", "\u2265", out, fixed = TRUE)
+  }
+  
   # support for markdown
   if (isTRUE(markdown) &&
       (isTRUE(out %like% "[*]+.+[*]+")
@@ -1712,13 +1719,6 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
       out <- paste(strwrap(x = out, width = max_length),
                    collapse = "\n")
     }
-  }
-  
-  if (isTRUE(markdown)) {
-    # support mathematical characters
-    out <- gsub("!=", "\u2260", out, fixed = TRUE)
-    out <- gsub("<=", "\u2264", out, fixed = TRUE)
-    out <- gsub(">=", "\u2265", out, fixed = TRUE)
   }
   
   out
