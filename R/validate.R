@@ -370,7 +370,7 @@ validate_data <- function(df,
              is.numeric(get_x(df)) &&
              !type %in% c("", "geom_blank") &&
              !geom_is_continuous(type)) {
-    plot2_message("Assuming ", font_blue("x.character = TRUE"),
+    plot2_message("Using ", font_blue("x.character = TRUE"),
                   " for discrete plot type (", font_blue(type), ")",
                   " since ", font_blue(get_x_name(df)), " is numeric")
     dots$x.character <- TRUE

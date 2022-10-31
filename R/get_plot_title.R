@@ -107,7 +107,7 @@ get_default_title <- function(plot, default) {
   txt_per <- ifelse(is_dutch, "per", "per")
   txt_sep <- ifelse(is_dutch, "en", "and")
   
-  val[tolower(val) %in% c("`n()`", "count", "freq")] <- ifelse(is_dutch, "aantal", "count")
+  val[tolower(val) %in% c("`n()`", "n", "count", "freq")] <- ifelse(is_dutch, "aantal", "count")
   
   val <- gsub(", ?na[.]rm ?= ?(T(RUE)?|F(ALSE)?)", "", val)
   val <- gsub("^`(n_distinct|length\\(unique)\\(+(.*?)\\)+`$",

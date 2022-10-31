@@ -60,6 +60,9 @@ md_to_expression <- function(x) {
   }
   out <- paste0("'", out, "'")
   
+  # remove backticks
+  out <- gsub("`", "", out, fixed = TRUE)
+  
   # translate ***bold-italic***
   while (out %like% "[*]{3}.+[*]{3}") {
     out <- gsub("[*]{3}(.+?)[*]{3}", "', bolditalic('\\1'), '", out, perl = TRUE)
@@ -91,10 +94,10 @@ md_to_expression <- function(x) {
   }
   
   # translate super^{script}
+  out <- gsub("\\^([a-zA-Z0-9,._-]+)", "^{\\1}", out)
   while (grepl("\\S+\\^[{].+[}]", out, ignore.case = FALSE)) {
-    out <- gsub("(\\S+?)\\^[{](.+?)[}]", "', \\1^'\\2', '", out, perl = TRUE)
+    out <- gsub("(\\S+?)\\^[{](.+?)[}]+?", "\\1'^'\\2', '", out, perl = TRUE)
   }
-  out <- gsub("(\\S+?)\\^([a-zA-Z0-9,._-]+?)", "', \\1^'\\2', '", out, perl = TRUE)
   
   # translate $plotmath$, such as $omega$
   while (out %like% "[$].+[$]") {
