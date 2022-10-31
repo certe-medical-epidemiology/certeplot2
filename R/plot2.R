@@ -697,26 +697,30 @@ plot2_exec <- function(.data,
   if (!is_empty(type) && !is.character(type)) {
     stop("'type' must be a character", call. = FALSE)
   }
-  type <- tolower(type[1L])
-  type_backup <- type
-  if (type %like% "^(barpercent|bp)$") {
-    type_backup <- "barpercent"
-    if (misses_x.max_items) {
-      x.max_items <- 10 # instead of the default Inf
+  if (!is.null(type)) {
+    type <- tolower(type[1L])
+    type_backup <- type
+    if (type %like% "^(barpercent|bp)$") {
+      type_backup <- "barpercent"
+      if (misses_x.max_items) {
+        x.max_items <- 10 # instead of the default Inf
+      }
+      x.sort <- "freq-desc"
+      datalabels.format <- "%n (%p)"
+      type <- "col"
+      horizontal <- TRUE
     }
-    x.sort <- "freq-desc"
-    datalabels.format <- "%n (%p)"
-    type <- "col"
-    horizontal <- TRUE
-  }
-  if (type %like% "^(linedot|linepoint|dotline|pointline|ld|lp|dl|pl)$") {
-    # set line for here, dots will be added in the end
-    type_backup <- "linedot"
-    type <- "line"
-  }
-  if (type %like% "bar") {
-    type <- "col"
-    horizontal <- TRUE
+    if (type %like% "^(linedot|linepoint|dotline|pointline|ld|lp|dl|pl)$") {
+      # set line for here, dots will be added in the end
+      type_backup <- "linedot"
+      type <- "line"
+    }
+    if (type %like% "bar") {
+      type <- "col"
+      horizontal <- TRUE
+    }
+  } else {
+    type_backup <- ""
   }
   
   set_plot2_env(dots$`_label.x`,
