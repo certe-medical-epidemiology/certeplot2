@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.8</span>
       </span>
     </div>
 
@@ -123,8 +123,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> expression(paste("this is ", some["subscripted text"], ", this is ", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     more["additional subscripted"], " text"))</span>
 <span class="r-in"><span><span class="fu">md_to_expression</span><span class="op">(</span><span class="st">"this is some&lt;sup&gt;superscripted text&lt;/sup&gt;, this is more^{additional superscripted} text"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> expression(paste("this is ", some^"superscripted text", ", this is ", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     more^"additional superscripted", " text"))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> expression(paste("this is ", some^"superscripted text", ", this is more"^"additional superscripted", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     " text"))</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># use $...$ to use any plotmath expression as-is (see ?plotmath):</span></span></span>
 <span class="r-in"><span><span class="fu">md_to_expression</span><span class="op">(</span><span class="st">"text $omega$ text, $a[x]$"</span><span class="op">)</span></span></span>
