@@ -2124,6 +2124,8 @@ validate_font <- function(font) {
         !identical(Sys.getenv("IN_PKGDOWN"), "true")) {
     # if in knitr (R Markdown) set the right DPI for this plot according to current chunk setting
     showtext::showtext_opts(dpi = knitr::opts_current$get("dpi"))
+  } else if (identical(Sys.getenv("IN_PKGDOWN"), "true")) {
+    showtext::showtext_opts(dpi = 96)
   }
   
   font.bak <- font

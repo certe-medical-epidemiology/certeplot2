@@ -176,9 +176,17 @@ plot2(
 
 \item{type, y_secondary.type}{type of visualisation to use. This can be:
 \itemize{
-\item A \code{ggplot2} geom name, all geoms are supported (including \code{\link[ggplot2:geom_blank]{geom_blank()}}). Full function names can be used (e.g., \code{"geom_histogram"}), but they can also be abbreviated (e.g., \code{"h"}, \code{"hist"}). These geoms can be abbreviated by their first character: area (\code{"a"}), boxplot (\code{"b"}), column (\code{"c"}), histogram (\code{"h"}), jitter (\code{"j"}), line (\code{"l"}), point (\code{"p"}), ribbon (\code{"r"}), violin (\code{"v"}). \strong{Please note:} in \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{type = "bar"} will set \code{type = "col"} and \code{horizontal = TRUE}.
-\item A shortcut. There is currently one supported shortcut: \code{"barpercent"}, which will set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
-\item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X axis or if the length of unique values per X axis item is at least 3, \code{"point"} if both the Y and X axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} print a geom.
+\item A \code{ggplot2} geom name or their abbreviation such as \code{"col"} and \code{"point"}. All geoms are supported (including \code{\link[ggplot2:geom_blank]{geom_blank()}}).
+
+Full function names can be used (e.g., \code{"geom_histogram"}), but they can also be abbreviated (e.g., \code{"h"}, \code{"hist"}). The following geoms can be abbreviated by their first character: area (\code{"a"}), boxplot (\code{"b"}), column (\code{"c"}), histogram (\code{"h"}), jitter (\code{"j"}), line (\code{"l"}), point (\code{"p"}), ribbon (\code{"r"}), and violin (\code{"v"}).
+
+Please note: in \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{type = "bar"} will set \code{type = "col"} and \code{horizontal = TRUE}.
+\item A shortcut. There are currently two supported shortcuts:
+\itemize{
+\item \code{"barpercent"}, which will set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
+\item \code{"linedot"}, which will set \code{type = "line"} and adds two point geoms using \code{\link[=add_point]{add_point()}}; one with large white dots and one with smaller dots using the colours set in \code{colour}. This is essentially equal to base \R \code{plot(..., type = "b")} but with closed shapes.
+}
+\item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X axis or if the length of unique values per X axis item is at least 3, \code{"point"} if both the Y and X axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} add a geom.
 }}
 
 \item{title, subtitle, caption, tag, x.title, y.title, category.title, legend.title, y_secondary.title}{a title to use. This can be:
@@ -355,6 +363,8 @@ a \code{ggplot} object
 }
 \description{
 The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \code{\link[ggplot2:ggplot]{ggplot2}} functions. By design, the \code{ggplot2} package requires users to use a lot of functions, while the \code{\link[=plot2]{plot2()}} function auto-determines needs and only requires to define arguments in one single function.
+
+Moreover, \code{\link[=plot2]{plot2()}} allows for in-place calculation of \code{y}, all axes, and all axis labels.
 
 See \link{plot2-methods} for all implemented methods for different object classes.
 }

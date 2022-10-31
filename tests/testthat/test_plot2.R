@@ -260,6 +260,7 @@ test_that("x scale works", {
   expect_s3_class(plotdata |> plot2(n, type = "jitter"), "gg")
   expect_s3_class(plotdata |> plot2(type = "line"), "gg")
   expect_s3_class(plotdata |> plot2(type = "barpercent"), "gg")
+  expect_s3_class(plotdata |> plot2(type = "linedot", category = NULL), "gg")
   expect_s3_class(plotdata |> plot2(x.trans = "log2"), "gg")
   expect_s3_class(mtcars |> plot2(mpg, hp, x.lbl_angle = 40), "gg")
   expect_s3_class(mtcars |> plot2(mpg, hp, x.lbl_angle = 200), "gg")

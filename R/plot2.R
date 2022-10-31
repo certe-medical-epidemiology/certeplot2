@@ -20,6 +20,8 @@
 #' Conveniently Create a New `ggplot`
 #'
 #' @description  The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions. By design, the `ggplot2` package requires users to use a lot of functions, while the [plot2()] function auto-determines needs and only requires to define arguments in one single function.
+#'
+#' Moreover, [plot2()] allows for in-place calculation of `y`, all axes, and all axis labels.
 #' 
 #' See [plot2-methods] for all implemented methods for different object classes.
 #' @param .data data to plot
@@ -57,11 +59,19 @@
 #' @param y_secondary.colour,y_secondary.colour_fill colours to set for the secondary y axis, will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
 #' @param type,y_secondary.type type of visualisation to use. This can be:
 #' 
-#' * A `ggplot2` geom name, all geoms are supported (including [`geom_blank()`][ggplot2::geom_blank()]). Full function names can be used (e.g., `"geom_histogram"`), but they can also be abbreviated (e.g., `"h"`, `"hist"`). These geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), violin (`"v"`). **Please note:** in `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `type = "bar"` will set `type = "col"` and `horizontal = TRUE`.
+#' * A `ggplot2` geom name or their abbreviation such as `"col"` and `"point"`. All geoms are supported (including [`geom_blank()`][ggplot2::geom_blank()]).
 #' 
-#' * A shortcut. There is currently one supported shortcut: `"barpercent"`, which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
+#'   Full function names can be used (e.g., `"geom_histogram"`), but they can also be abbreviated (e.g., `"h"`, `"hist"`). The following geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), and violin (`"v"`).
 #' 
-#' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* print a geom.
+#'   Please note: in `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `type = "bar"` will set `type = "col"` and `horizontal = TRUE`.
+#' 
+#' * A shortcut. There are currently two supported shortcuts:
+#' 
+#'   * `"barpercent"`, which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
+#' 
+#'   * `"linedot"`, which will set `type = "line"` and adds two point geoms using [add_point()]; one with large white dots and one with smaller dots using the colours set in `colour`. This is essentially equal to base \R `plot(..., type = "b")` but with closed shapes.
+#' 
+#' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* add a geom.
 #' @param title,subtitle,caption,tag,x.title,y.title,category.title,legend.title,y_secondary.title a title to use. This can be:
 #' 
 #' * An [expression], e.g. using `parse(text = "...")`
@@ -179,13 +189,6 @@
 #' # the type will be points since the first two variables are numeric
 #' iris |>
 #'   plot2()
-#' 
-#' # ggplot2 defaults (more or less):
-#' iris |> 
-#'   plot2(theme = NULL,
-#'         zoom = TRUE,
-#'         legend.title = TRUE,
-#'         legend.position = "right")
 #' 
 #' # if x and y are set, no additional mapping will be set:
 #' iris |> 
@@ -694,8 +697,9 @@ plot2_exec <- function(.data,
   if (!is_empty(type) && !is.character(type)) {
     stop("'type' must be a character", call. = FALSE)
   }
+  type <- tolower(type[1L])
   type_backup <- type
-  if (isTRUE(type[1L] %like% "^(barpercent|bp)$")) {
+  if (type %like% "^(barpercent|bp)$") {
     type_backup <- "barpercent"
     if (misses_x.max_items) {
       x.max_items <- 10 # instead of the default Inf
@@ -705,7 +709,12 @@ plot2_exec <- function(.data,
     type <- "col"
     horizontal <- TRUE
   }
-  if (isTRUE(type[1L] %like% "bar")) {
+  if (type %like% "^(linedot|linepoint|dotline|pointline|ld|lp|dl|pl)$") {
+    # set line for here, dots will be added in the end
+    type_backup <- "linedot"
+    type <- "line"
+  }
+  if (type %like% "bar") {
     type <- "col"
     horizontal <- TRUE
   }
@@ -1394,6 +1403,13 @@ plot2_exec <- function(.data,
   if (isTRUE(misses_title) && is.null(title)) {
     p <- p + labs(title = validate_title(get_plot_title(p, valid_filename = FALSE),
                                          markdown = isTRUE(markdown), df = df))
+  }
+  
+  # set linedot type if required ----
+  if (type_backup == "linedot") {
+    p <- p |> 
+      add_point(colour = background, size = size * 5) |> 
+      add_point(size = size * 2)
   }
   
   # return plot ----
