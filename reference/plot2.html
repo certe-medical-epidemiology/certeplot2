@@ -19,7 +19,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.11</span>
       </span>
     </div>
 
@@ -451,7 +451,8 @@ See plot2-methods for all implemented methods for different object classes."><me
 
 
 <dt>x.sort, category.sort, facet.sort</dt>
-<dd><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul><li><p><code>TRUE</code>: sort <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<dd><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul><li><p>A manual vector of values</p></li>
+<li><p><code>TRUE</code>: sort <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
 <li><p><code>FALSE</code>: sort according to the order in the data</p></li>
 <li><p><code>NULL</code>: do not sort/transform at all</p></li>
 <li><p><code>"asc"</code> or <code>"alpha"</code>: sort as <code>TRUE</code></p></li>
@@ -777,7 +778,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "col"</span><span style="color: #080808;"> as the default</span></span>
 <span class="r-plt img"><img src="plot2-20.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span> </span></span>
-<span class="r-in"><span><span class="co"># sort on any direction:       </span></span></span>
+<span class="r-in"><span><span class="co"># sort on any direction:</span></span></span>
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gender</span>,</span></span>
 <span class="r-in"><span>        x.sort <span class="op">=</span> <span class="st">"freq-asc"</span>,</span></span>
@@ -785,6 +786,14 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Applying </span><span style="color: #008787;">x.sort = "freq-asc"</span><span style="color: #080808;"> using </span><span style="color: #008787;">summarise_function = base::sum</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "col"</span><span style="color: #080808;"> as the default</span></span>
 <span class="r-plt img"><img src="plot2-21.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span> </span></span>
+<span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gender</span>,</span></span>
+<span class="r-in"><span>        x.sort <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B"</span>, <span class="st">"D"</span>, <span class="st">"A"</span><span class="op">)</span>, <span class="co"># missing values ("C") will be added</span></span></span>
+<span class="r-in"><span>        category.sort <span class="op">=</span> <span class="st">"alpha-desc"</span>,</span></span>
+<span class="r-in"><span>        stacked <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "col"</span><span style="color: #080808;"> as the default</span></span>
+<span class="r-plt img"><img src="plot2-22.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot2() supports all S3 extensions available through</span></span></span>
 <span class="r-in"><span><span class="co"># ggplot2::fortify(), such as regression models:</span></span></span>
@@ -797,7 +806,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>        title <span class="op">=</span> <span class="st">"Titles/captions *support* **markdown**"</span>,</span></span>
 <span class="r-in"><span>        subtitle <span class="op">=</span> <span class="st">"Axis titles contain the square notation: x^2"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-22.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot2-23.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot2() also has various other S3 implementations:</span></span></span>
 <span class="r-in"><span></span></span>
@@ -807,7 +816,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>    <span class="fu"><a href="https://certe-medical-epidemiology.github.io/certestats/reference/qc_rules.html" class="external-link">qc_test</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>    <span class="fu">plot2</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-plt img"><img src="plot2-23.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot2-24.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>        </span></span>
 <span class="r-in"><span><span class="co"># sf objects (geographic plots, 'simple features') are also supported</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://r-spatial.github.io/sf/" class="external-link">"sf"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -817,7 +826,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: sf</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Linking to GEOS 3.8.0, GDAL 3.0.4, PROJ 6.3.1; sf_use_s2() is TRUE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">category = area_km2</span></span>
-<span class="r-plt img"><img src="plot2-24.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot2-25.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Antimicrobial resistance (AMR) data analysis</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://msberends.github.io/AMR/" class="external-link">"AMR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -833,7 +842,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   (amoxicillin/clavulanic acid), 'AMP' (ampicillin) and 'TZP'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   (piperacillin/tazobactam)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ℹ Using column 'mo' as input for `col_mo`.</span>
-<span class="r-plt img"><img src="plot2-25.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot2-26.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://msberends.github.io/AMR/" class="external-link">"AMR"</a></span><span class="op">)</span> <span class="op">&amp;</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org" class="external-link">"dplyr"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">example_isolates</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">NIT</span>, <span class="va">FOS</span>, <span class="va">AMC</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
@@ -853,7 +862,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     intersect, setdiff, setequal, union</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">x = year</span></span>
-<span class="r-plt img"><img src="plot2-26.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot2-27.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </div>

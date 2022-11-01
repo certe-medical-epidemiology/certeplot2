@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.11</span>
       </span>
     </div>
 
@@ -1444,7 +1444,8 @@
 
 
 <dt>x.sort, category.sort, facet.sort</dt>
-<dd><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul><li><p><code>TRUE</code>: sort <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
+<dd><p>sorting of the plotting direction, defaults to <code>TRUE</code>, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>, which <code>ggplot2</code> uses to orient the data. Valid values are:</p><ul><li><p>A manual vector of values</p></li>
+<li><p><code>TRUE</code>: sort <a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a>s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (<em>numeric</em> sort)</p></li>
 <li><p><code>FALSE</code>: sort according to the order in the data</p></li>
 <li><p><code>NULL</code>: do not sort/transform at all</p></li>
 <li><p><code>"asc"</code> or <code>"alpha"</code>: sort as <code>TRUE</code></p></li>
