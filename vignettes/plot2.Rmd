@@ -355,6 +355,7 @@ admitted_patients |>
 
 Applying one of the sorting methods will transform the values to an ordered `factor`, which will be used to orient the data. Valid options are:
   
+  - a manual vector of values
   - `TRUE`: sort as `"asc"`
   - `FALSE`: sort according to the order in the data
   - `NULL`: do not sort/transform at all
@@ -381,6 +382,10 @@ admitted_patients |>
         caption = paste("Hospitals (x) now sorted on frequencies (low to high),",
                         "Age groups (category) now sorted on alphabet (desc)",
                         sep = "\n"))
+admitted_patients |>
+    plot2(hospital, y = n(),
+          x.sort = c("B", "D", "A"),
+          caption = "Hospitals are now sorted according to a manual sort.")
 ```
 
 The sorting can be used in combination with setting a maximum number of items to plot per plotting direction.

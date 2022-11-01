@@ -248,7 +248,19 @@ test_that("max items and sorting work", {
                     plot2(x = format(date, "%Y"), y = n(), category = hospital, facet = age_group,
                           x.max_items = 2, category.max_items = 2, facet.max_items = 2),
                   "gg")
-  
+  expect_equal(admitted_patients |>
+                 plot2(gender, n(), hospital,
+                       category.sort = c("A", "C", "D", "B"),
+                       x.sort = c("M", "F")) |> 
+                 get_range_x(),
+               c("M", "F"))
+  expect_equal(admitted_patients |>
+                 plot2(gender, n(), hospital,
+                       category.sort = c("A", "C", "D", "B"),
+                       horizontal = TRUE,
+                       x.sort = c("M", "F")) |> 
+                 get_range_x(),
+               c("F", "M"))
 })
 
 test_that("x scale works", {

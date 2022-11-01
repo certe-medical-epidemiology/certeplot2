@@ -288,6 +288,7 @@ Please note: in \code{ggplot2}, 'bars' and 'columns' are equal, while it is comm
 
 \item{x.sort, category.sort, facet.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
 \itemize{
+\item A manual vector of values
 \item \code{TRUE}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
 \item \code{FALSE}: sort according to the order in the data
 \item \code{NULL}: do not sort/transform at all
@@ -485,10 +486,16 @@ admitted_patients |>
   plot2(hospital, n(), gender,
         stackedpercent = TRUE)
  
-# sort on any direction:       
+# sort on any direction:
 admitted_patients |> 
   plot2(hospital, n(), gender,
         x.sort = "freq-asc",
+        stacked = TRUE)
+
+admitted_patients |> 
+  plot2(hospital, n(), gender,
+        x.sort = c("B", "D", "A"), # missing values ("C") will be added
+        category.sort = "alpha-desc",
         stacked = TRUE)
 
 # plot2() supports all S3 extensions available through

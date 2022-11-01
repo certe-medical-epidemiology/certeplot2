@@ -124,6 +124,7 @@
 #' @param x.max_txt,category.max_txt,facet.max_txt the text to use of values not included number of `*.max_items`. The placeholder `%n` will be replaced with the outcome of the `summarise_function` function, the placeholder `%p` will be replaced with the percentage.
 #' @param x.sort,category.sort,facet.sort sorting of the plotting direction, defaults to `TRUE`, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered [factor], which `ggplot2` uses to orient the data. Valid values are:
 #' 
+#' - A manual vector of values
 #' - `TRUE`: sort [factor]s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (*numeric* sort)
 #' - `FALSE`: sort according to the order in the data
 #' - `NULL`: do not sort/transform at all
@@ -275,10 +276,16 @@
 #'   plot2(hospital, n(), gender,
 #'         stackedpercent = TRUE)
 #'  
-#' # sort on any direction:       
+#' # sort on any direction:
 #' admitted_patients |> 
 #'   plot2(hospital, n(), gender,
 #'         x.sort = "freq-asc",
+#'         stacked = TRUE)
+#' 
+#' admitted_patients |> 
+#'   plot2(hospital, n(), gender,
+#'         x.sort = c("B", "D", "A"), # missing values ("C") will be added
+#'         category.sort = "alpha-desc",
 #'         stacked = TRUE)
 #' 
 #' # plot2() supports all S3 extensions available through

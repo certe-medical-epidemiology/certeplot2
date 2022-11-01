@@ -350,58 +350,62 @@ validate_data <- function(df,
   }
   
   # turn x to character if data seems to suggest so
-  if (is.null(dots$x.character) &&
-      has_x(df) &&
-      is.numeric(get_x(df)) &&
-      all(get_x(df, na.rm = TRUE) >= 2000) &&
-      all(get_x(df, na.rm = TRUE) <= 2050)) {
-    plot2_message("Assuming ", font_blue("x.character = TRUE"),
-                  " since the ", font_blue("x"), " labels seem to be years")
-    dots$x.character <- TRUE
-  } else if (is.null(dots$x.character) &&
-             has_x(df) &&
-             is.numeric(get_x(df)) &&
-             (identical(sort(unique(get_x(df))), seq_len(12)) ||
-              identical(sort(unique(get_x(df))), as.double(seq_len(12))))) {
-    plot2_message("Assuming ", font_blue("x.character = TRUE"),
-                  " since the ", font_blue("x"), " labels seem to be months")
-    dots$x.character <- TRUE
-  } else if (has_x(df) && 
-             is.numeric(get_x(df)) &&
-             !type %in% c("", "geom_blank") &&
-             !geom_is_continuous(type)) {
-    plot2_message("Using ", font_blue("x.character = TRUE"),
-                  " for discrete plot type (", font_blue(type), ")",
-                  " since ", font_blue(get_x_name(df)), " is numeric")
-    dots$x.character <- TRUE
-  } else if (has_x(df) && 
-             is.numeric(get_x(df)) &&
-             !is.null(dots$x.sort)) {
-    plot2_message("Assuming ", font_blue("x.character = TRUE"),
-                  " since ", font_blue("x.sort"), " is set")
-    dots$x.character <- TRUE
+  if (!isTRUE(dots$x.character)) {
+    if (is.null(dots$x.character) &&
+        has_x(df) &&
+        is.numeric(get_x(df)) &&
+        all(get_x(df, na.rm = TRUE) >= 2000) &&
+        all(get_x(df, na.rm = TRUE) <= 2050)) {
+      plot2_message("Assuming ", font_blue("x.character = TRUE"),
+                    " since the ", font_blue("x"), " labels seem to be years")
+      dots$x.character <- TRUE
+    } else if (is.null(dots$x.character) &&
+               has_x(df) &&
+               is.numeric(get_x(df)) &&
+               (identical(sort(unique(get_x(df))), seq_len(12)) ||
+                identical(sort(unique(get_x(df))), as.double(seq_len(12))))) {
+      plot2_message("Assuming ", font_blue("x.character = TRUE"),
+                    " since the ", font_blue("x"), " labels seem to be months")
+      dots$x.character <- TRUE
+    } else if (has_x(df) && 
+               is.numeric(get_x(df)) &&
+               !type %in% c("", "geom_blank") &&
+               !geom_is_continuous(type)) {
+      plot2_message("Using ", font_blue("x.character = TRUE"),
+                    " for discrete plot type (", font_blue(type), ")",
+                    " since ", font_blue(get_x_name(df)), " is numeric")
+      dots$x.character <- TRUE
+    } else if (has_x(df) && 
+               is.numeric(get_x(df)) &&
+               !is.null(dots$x.sort)) {
+      plot2_message("Using ", font_blue("x.character = TRUE"),
+                    " since ", font_blue("x.sort"), " is set")
+      dots$x.character <- TRUE
+    }
   }
   if (isTRUE(dots$x.character)) {
     df <- df |>
       mutate(`_var_x` = as.character(`_var_x`))
   }
   # turn category to character if data seems to suggest so
-  if (is.null(dots$category.character) &&
-      has_category(df) &&
-      is.numeric(get_category(df)) &&
-      all(get_category(df, na.rm = TRUE) >= 2000) &&
-      all(get_category(df, na.rm = TRUE) <= 2050)) {
-    plot2_message("Assuming ", font_blue("category.character = TRUE"),
-                  " since ", font_blue("category"), " seems to be years")
-    dots$category.character <- TRUE
-  } else if (is.null(dots$category.character) &&
-             has_category(df) &&
-             is.numeric(get_category(df)) &&
-             (identical(sort(unique(get_category(df))), seq_len(12)) ||
-              identical(sort(unique(get_category(df))), as.double(seq_len(12))))) {
-    plot2_message("Assuming ", font_blue("category.character = TRUE"),
-                  " since ", font_blue("category"), " seems to be months")
-    dots$category.character <- TRUE
+  if (!isTRUE(dots$category.character)) {
+    if (is.null(dots$category.character) &&
+        has_category(df) &&
+        is.numeric(get_category(df)) &&
+        all(get_category(df, na.rm = TRUE) >= 2000) &&
+        all(get_category(df, na.rm = TRUE) <= 2050)) {
+      plot2_message("Assuming ", font_blue("category.character = TRUE"),
+                    " since ", font_blue("category"), " seems to be years")
+      dots$category.character <- TRUE
+    } else if (is.null(dots$category.character) &&
+               has_category(df) &&
+               is.numeric(get_category(df)) &&
+               (identical(sort(unique(get_category(df))), seq_len(12)) ||
+                identical(sort(unique(get_category(df))), as.double(seq_len(12))))) {
+      plot2_message("Assuming ", font_blue("category.character = TRUE"),
+                    " since ", font_blue("category"), " seems to be months")
+      dots$category.character <- TRUE
+    }
   }
   if (isTRUE(dots$category.character) && has_category(df)) {
     df <- df |>
@@ -2185,6 +2189,10 @@ validate_sorting <- function(sort_method, horizontal) {
   if (is.null(sort_method)) {
     return(sort_method)
   }
+  if (length(sort_method) > 1) {
+    # is a vector of values
+    return("manual")
+  }
   sort_method <- tolower(sort_method[1L])
   sort_method <- gsub("[^a-z-]+", "", sort_method)
   sort_method <- gsub("true", "asc", sort_method)      # when sort_method = TRUE
@@ -2224,8 +2232,23 @@ sort_data <- function(values,
   }
   
   # set up sort_method
-  sort_method.bak <- sort_method[1L]
+  sort_method.bak <- sort_method
   sort_method <- validate_sorting(sort_method = sort_method, horizontal = horizontal)
+  if (sort_method != "manual") {
+    # 'manual' is because of a manually set vector of values
+    sort_method.bak <- sort_method.bak[1L]
+  }
+  
+  # manually set values
+  if (sort_method == "manual") {
+    values <- as.character(values)
+    sort_method.bak <- as.character(sort_method.bak)
+    lvls <- union(sort_method.bak, values[!values %in% sort_method.bak])
+    if (isTRUE(horizontal)) {
+      lvls <- rev(lvls)
+    }
+    return(factor(values, levels = lvls, ordered = TRUE))
+  }
   
   # factors get a special treatment - they are sorted on their levels
   if (is.factor(values)) {
