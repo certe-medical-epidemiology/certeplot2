@@ -400,13 +400,6 @@ head(iris)
 iris |>
   plot2()
 
-# ggplot2 defaults (more or less):
-iris |> 
-  plot2(theme = NULL,
-        zoom = TRUE,
-        legend.title = TRUE,
-        legend.position = "right")
-
 # if x and y are set, no additional mapping will be set:
 iris |> 
   plot2(Sepal.Width, Sepal.Length)

@@ -484,7 +484,7 @@ test_that("md to expression works", {
   expr1 <- md_to_expression("test1 *test2* **test3** ***test4*** _test5_ test6 **_test7_** _**test8**_ test_{9} test<sub>10</sub> test^{11} test<sup>12</sup>")
   expect_true(is.expression(expr1))
   expect_identical(as.character(expr1),
-                   as.character(parse(text = "paste('test1 ', italic('test2'), ' ', bold('test3'), ' ', bolditalic('test4'), ' _test5_ test6 ', bold('_test7_'), ' _', bold('test8'), '_ ', test['9'], ' ', test['10'], ' ', test^'11', ' ', test^'12')")))
+                   as.character(parse(text = "paste(\"test1 \", italic(\"test2\"), \" \", bold(\"test3\"), \" \", bolditalic(\"test4\"), \" _test5_ test6 \", bold(\"_test7_\"), \" _\", bold(\"test8\"), \"_ \", test[\"9\"], \" \", test[\"10\"], \" test\"^\"11\", \" \", test^\"12\")")))
   
   expr2 <- md_to_expression("test $alpha$")
   expect_true(is.expression(expr2))

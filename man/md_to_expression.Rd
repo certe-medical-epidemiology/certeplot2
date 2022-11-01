@@ -29,8 +29,8 @@ md_to_expression("this is **bold** text")
 md_to_expression("this is ***bold and italic*** text")
 
 # subscript and superscript can be done in HTML or markdown with curly brackets:
-md_to_expression("this is some<sub>subscripted text</sub>, this is more_{additional subscripted} text")
-md_to_expression("this is some<sup>superscripted text</sup>, this is more^{additional superscripted} text")
+md_to_expression("this is some<sub>subscripted text</sub>, this is also_{subscripted} text")
+md_to_expression("this is some<sup>superscripted text</sup>, this is also^{superscripted} text")
 
 # use $...$ to use any plotmath expression as-is (see ?plotmath):
 md_to_expression("text $omega$ text, $a[x]$")
