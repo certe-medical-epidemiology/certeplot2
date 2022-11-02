@@ -541,4 +541,9 @@ if (require("AMR") & require("dplyr")) {
     plot2(datalabels = paste0(round(value * 100), "\%\nn = ", isolates),
           y.percent_break = 0.125)
 }
+
+# support for any font
+mtcars |>
+  plot2(mpg, hp, font = "Rock Salt",
+        title = "This plot uses a Google Font")
 }

@@ -182,6 +182,7 @@
 #'   
 #' The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. The generic [plot2()] function currently has `r length(formals(plot2)) - 1` arguments, all with a default value. **Less typing, faster coding.**
 #' @return a `ggplot` object
+#' @importFrom ggplot2 ggplot labs
 #' @export
 #' @examples
 #' head(iris)
@@ -331,7 +332,11 @@
 #'     plot2(datalabels = paste0(round(value * 100), "%\nn = ", isolates),
 #'           y.percent_break = 0.125)
 #' }
-#' @importFrom ggplot2 ggplot labs
+#' 
+#' # support for any font
+#' mtcars |>
+#'   plot2(mpg, hp, font = "Rock Salt",
+#'         title = "This plot uses a Google Font")
 plot2 <- function(.data,
                   x = NULL,
                   y = NULL,

@@ -350,9 +350,8 @@ validate_data <- function(df,
   }
   
   # turn x to character if data seems to suggest so
-  if (!isTRUE(dots$x.character)) {
+  if (has_x(df) &&!isTRUE(dots$x.character)) {
     if (is.null(dots$x.character) &&
-        has_x(df) &&
         is.numeric(get_x(df)) &&
         all(get_x(df, na.rm = TRUE) >= 2000) &&
         all(get_x(df, na.rm = TRUE) <= 2050)) {
@@ -360,23 +359,20 @@ validate_data <- function(df,
                     " since the ", font_blue("x"), " labels seem to be years")
       dots$x.character <- TRUE
     } else if (is.null(dots$x.character) &&
-               has_x(df) &&
                is.numeric(get_x(df)) &&
                (identical(sort(unique(get_x(df))), seq_len(12)) ||
                 identical(sort(unique(get_x(df))), as.double(seq_len(12))))) {
       plot2_message("Assuming ", font_blue("x.character = TRUE"),
                     " since the ", font_blue("x"), " labels seem to be months")
       dots$x.character <- TRUE
-    } else if (has_x(df) && 
-               is.numeric(get_x(df)) &&
+    } else if (is.numeric(get_x(df)) &&
                !type %in% c("", "geom_blank") &&
                !geom_is_continuous(type)) {
       plot2_message("Using ", font_blue("x.character = TRUE"),
                     " for discrete plot type (", font_blue(type), ")",
                     " since ", font_blue(get_x_name(df)), " is numeric")
       dots$x.character <- TRUE
-    } else if (has_x(df) && 
-               is.numeric(get_x(df)) &&
+    } else if (is.numeric(get_x(df)) &&
                !is.null(dots$x.sort)) {
       plot2_message("Using ", font_blue("x.character = TRUE"),
                     " since ", font_blue("x.sort"), " is set")
@@ -388,9 +384,8 @@ validate_data <- function(df,
       mutate(`_var_x` = as.character(`_var_x`))
   }
   # turn category to character if data seems to suggest so
-  if (!isTRUE(dots$category.character)) {
+  if (has_category(df) &&!isTRUE(dots$category.character)) {
     if (is.null(dots$category.character) &&
-        has_category(df) &&
         is.numeric(get_category(df)) &&
         all(get_category(df, na.rm = TRUE) >= 2000) &&
         all(get_category(df, na.rm = TRUE) <= 2050)) {
@@ -398,12 +393,22 @@ validate_data <- function(df,
                     " since ", font_blue("category"), " seems to be years")
       dots$category.character <- TRUE
     } else if (is.null(dots$category.character) &&
-               has_category(df) &&
                is.numeric(get_category(df)) &&
                (identical(sort(unique(get_category(df))), seq_len(12)) ||
                 identical(sort(unique(get_category(df))), as.double(seq_len(12))))) {
       plot2_message("Assuming ", font_blue("category.character = TRUE"),
                     " since ", font_blue("category"), " seems to be months")
+      dots$category.character <- TRUE
+    } else if (is.numeric(get_category(df)) &&
+               is.null(dots$category.character) &&
+               !geom_is_continuous(type)) {
+      if (type == "") {
+        # get preliminary type
+        type <- tryCatch(suppressMessages(validate_type("", df = df)), error = function(e) "geom_col")
+      }
+      plot2_message("Assuming ", font_blue("category.character = TRUE"),
+                    " for discrete plot type (", font_blue(type), ")",
+                    " since ", font_blue(get_category_name(df)), " is numeric")
       dots$category.character <- TRUE
     }
   }
@@ -897,7 +902,7 @@ validate_y_scale <- function(df,
       }
       if (!all(is.na(y.limits)) && (y.percent_break >= max(y.limits, na.rm = TRUE) || labels_n <= 3)) {
         y.percent_break.bak <- y.percent_break
-        y.percent_break <- max(y.limits, na.rm = TRUE) / 10
+        y.percent_break <- max(y.limits, na.rm = TRUE) / 8
         allowed <- c(1e6 / 10 ^ c(1:18), 5e6 / 10 ^ c(1:18))
         y.percent_break <- allowed[which.min(abs(allowed - y.percent_break))]
         plot2_message("Using ", font_blue("y.percent_break =", format(y.percent_break, scientific = FALSE)), 
@@ -2128,8 +2133,6 @@ validate_font <- function(font) {
         !identical(Sys.getenv("IN_PKGDOWN"), "true")) {
     # if in knitr (R Markdown) set the right DPI for this plot according to current chunk setting
     showtext::showtext_opts(dpi = knitr::opts_current$get("dpi"))
-  } else if (identical(Sys.getenv("IN_PKGDOWN"), "true")) {
-    showtext::showtext_opts(dpi = 96)
   }
   
   font.bak <- font
@@ -2481,7 +2484,8 @@ format_datalabels <- function(datalabels,
                                        decimal.mark = decimal.mark,
                                        big.mark = big.mark,
                                        percent = TRUE))
-      if (n_distinct(datalabels) > n_distinct(datalabels_out)) {
+      if (datalabels.round == eval(formals(plot2)$datalabels.round) && n_distinct(datalabels) > n_distinct(datalabels_out)) {
+        # formals() get the default value, so that's why it's in this if()
         plot2_message("Use ", font_blue("datalabels.round"), " to edit the rounding of datalabels")
       }
       if (datalabels.format != "%n") {

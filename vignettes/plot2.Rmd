@@ -483,16 +483,6 @@ Now, we had to use 14 functions to get the plot - while defining all variables t
 
 And why is 2014 still so wide?? Look at it like this: if you know the solution, you're way deeper into `ggplot2` than should ever be necessary for an R package. 
 
-# Support for any font, including all Google Fonts
-
-Any installed font and any of the [over 1400 Google Fonts](https://fonts.google.com) is supported in `plot2()`. Missing fonts will be downloaded automatically and the required DPI will be set automatically as well, even in R Markdown such as this page:
-
-```{r}
-mtcars |>
-  plot2(mpg, hp, font = "Rock Salt",
-        title = "This plot uses a Google Font")
-```
-
 # Markdown and plotmath expressions
 
 `plot2()` provides support for markdown and advanced plotmath expressions, by running all title texts through the helper function `md_to_expression()`:
