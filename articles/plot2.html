@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0</span>
       </span>
     </div>
 
@@ -233,8 +233,12 @@ be a histogram:</p>
 <span>  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">x = x</span></span></span>
 <span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">type = "histogram"</span><span style="color: #080808;"> since the data has only one numeric variable and no other variables</span></span></span>
-<span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">binwidth = 0.275</span><span style="color: #080808;"> based on data</span></span></span>
-<span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">smooth = TRUE</span><span style="color: #080808;"> for </span><span style="color: #008787;">type = "histogram"</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">binwidth = 0.281</span><span style="color: #080808;"> based on data</span></span></span>
+<span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">smooth = TRUE</span><span style="color: #080808;"> for </span><span style="color: #008787;">type = "histogram"</span></span></span>
+<span><span class="co">#&gt; Warning: The dot-dot notation (`..count..`) was deprecated in ggplot2 3.4.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `after_stat(count)` instead.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">certeplot2</span> package.</span></span>
+<span><span class="co">#&gt;   Please report the issue to the authors.</span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-5-1.png" width="576"></p>
 <p>If there are multiple y values for each x, the default will be a
 boxplot:</p>
@@ -453,12 +457,12 @@ of scale automatically:</p>
 <span>                          stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">character_z</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   x        y z</span></span>
-<span><span class="co">#&gt; 1 a 4.336950 f</span></span>
-<span><span class="co">#&gt; 2 b 5.971350 g</span></span>
-<span><span class="co">#&gt; 3 c 5.043423 h</span></span>
-<span><span class="co">#&gt; 4 d 5.650458 i</span></span>
-<span><span class="co">#&gt; 5 e 5.093035 j</span></span>
-<span><span class="co">#&gt; 6 a 5.893485 f</span></span>
+<span><span class="co">#&gt; 1 a 4.708304 f</span></span>
+<span><span class="co">#&gt; 2 b 3.842916 g</span></span>
+<span><span class="co">#&gt; 3 c 6.202314 h</span></span>
+<span><span class="co">#&gt; 4 d 5.483174 i</span></span>
+<span><span class="co">#&gt; 5 e 5.107322 j</span></span>
+<span><span class="co">#&gt; 6 a 4.241562 f</span></span>
 <span></span>
 <span><span class="va">numeric_z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span>,</span>
 <span>                        y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">5</span><span class="op">)</span>,</span>
@@ -467,12 +471,12 @@ of scale automatically:</p>
 <span>                        stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">numeric_z</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   x        y        z</span></span>
-<span><span class="co">#&gt; 1 a 4.351904 5.701977</span></span>
-<span><span class="co">#&gt; 2 b 4.989961 3.865968</span></span>
-<span><span class="co">#&gt; 3 c 5.098485 5.508644</span></span>
-<span><span class="co">#&gt; 4 d 5.892739 4.887144</span></span>
-<span><span class="co">#&gt; 5 e 6.076938 6.960422</span></span>
-<span><span class="co">#&gt; 6 a 5.237372 4.746343</span></span>
+<span><span class="co">#&gt; 1 a 5.344063 5.471074</span></span>
+<span><span class="co">#&gt; 2 b 7.492744 6.084758</span></span>
+<span><span class="co">#&gt; 3 c 4.156250 6.274212</span></span>
+<span><span class="co">#&gt; 4 d 3.683832 5.469287</span></span>
+<span><span class="co">#&gt; 5 e 3.651594 5.816740</span></span>
+<span><span class="co">#&gt; 6 a 6.100270 6.375982</span></span>
 <span></span>
 <span><span class="va">character_z</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>, type <span class="op">=</span> <span class="st">"jitter"</span>,</span>
@@ -496,7 +500,7 @@ colour, it defaults to the centre of the current legend scale:</p>
 <span>    <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>,</span>
 <span>          type <span class="op">=</span> <span class="st">"jitter"</span>,</span>
 <span>          colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">category.midpoint = 5.03</span><span style="color: #080808;"> (the current </span><span style="color: #008787;">category</span><span style="color: #080808;"> scale centre)</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">category.midpoint = 4.86</span><span style="color: #080808;"> (the current </span><span style="color: #008787;">category</span><span style="color: #080808;"> scale centre)</span></span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-15-1.png" width="576"></p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">numeric_z</span> <span class="op">|&gt;</span>  </span>

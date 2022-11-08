@@ -19,7 +19,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0</span>
       </span>
     </div>
 
@@ -749,6 +749,10 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">age</span>, type <span class="op">=</span> <span class="st">"hist"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">binwidth = 6.4</span><span style="color: #080808;"> based on data</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">smooth = TRUE</span><span style="color: #080808;"> for </span><span style="color: #008787;">type = "histogram"</span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The dot-dot notation (`..count..`) was deprecated in ggplot2 3.4.0.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `after_stat(count)` instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">certeplot2</span> package.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   Please report the issue to the authors.</span>
 <span class="r-plt img"><img src="plot2-16.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># even titles support calculations, including support for {glue}</span></span></span>
@@ -798,6 +802,48 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "col"</span><span style="color: #080808;"> as the default</span></span>
 <span class="r-plt img"><img src="plot2-22.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># matrix support, such as for cor()</span></span></span>
+<span class="r-in"><span><span class="va">correlation_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">correlation_matrix</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "matrix" "array" </span>
+<span class="r-in"><span><span class="va">correlation_matrix</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             mpg        cyl       disp         hp        drat         wt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mpg   1.0000000 -0.8521620 -0.8475514 -0.7761684  0.68117191 -0.8676594</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> cyl  -0.8521620  1.0000000  0.9020329  0.8324475 -0.69993811  0.7824958</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> disp -0.8475514  0.9020329  1.0000000  0.7909486 -0.71021393  0.8879799</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> hp   -0.7761684  0.8324475  0.7909486  1.0000000 -0.44875912  0.6587479</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> drat  0.6811719 -0.6999381 -0.7102139 -0.4487591  1.00000000 -0.7124406</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> wt   -0.8676594  0.7824958  0.8879799  0.6587479 -0.71244065  1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> qsec  0.4186840 -0.5912421 -0.4336979 -0.7082234  0.09120476 -0.1747159</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vs    0.6640389 -0.8108118 -0.7104159 -0.7230967  0.44027846 -0.5549157</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> am    0.5998324 -0.5226070 -0.5912270 -0.2432043  0.71271113 -0.6924953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gear  0.4802848 -0.4926866 -0.5555692 -0.1257043  0.69961013 -0.5832870</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> carb -0.5509251  0.5269883  0.3949769  0.7498125 -0.09078980  0.4276059</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             qsec         vs          am       gear        carb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mpg   0.41868403  0.6640389  0.59983243  0.4802848 -0.55092507</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> cyl  -0.59124207 -0.8108118 -0.52260705 -0.4926866  0.52698829</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> disp -0.43369788 -0.7104159 -0.59122704 -0.5555692  0.39497686</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> hp   -0.70822339 -0.7230967 -0.24320426 -0.1257043  0.74981247</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> drat  0.09120476  0.4402785  0.71271113  0.6996101 -0.09078980</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> wt   -0.17471588 -0.5549157 -0.69249526 -0.5832870  0.42760594</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> qsec  1.00000000  0.7445354 -0.22986086 -0.2126822 -0.65624923</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> vs    0.74453544  1.0000000  0.16834512  0.2060233 -0.56960714</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> am   -0.22986086  0.1683451  1.00000000  0.7940588  0.05753435</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gear -0.21268223  0.2060233  0.79405876  1.0000000  0.27407284</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> carb -0.65624923 -0.5696071  0.05753435  0.2740728  1.00000000</span>
+<span class="r-in"><span><span class="va">correlation_matrix</span> <span class="op">|&gt;</span> </span></span>
+<span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">type = "tile"</span><span style="color: #080808;"> since the matrix contains identical row and column names</span></span>
+<span class="r-plt img"><img src="plot2-23.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">correlation_matrix</span> <span class="op">|&gt;</span> </span></span>
+<span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"certeblauw"</span>, <span class="st">"white"</span>, <span class="st">"certeroze"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>        category.limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">type = "tile"</span><span style="color: #080808;"> since the matrix contains identical row and column names</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">category.midpoint = 0</span><span style="color: #080808;"> (the current </span><span style="color: #008787;">category</span><span style="color: #080808;"> scale centre)</span></span>
+<span class="r-plt img"><img src="plot2-24.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot2() supports all S3 extensions available through</span></span></span>
 <span class="r-in"><span><span class="co"># ggplot2::fortify(), such as regression models:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">hp</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
@@ -809,7 +855,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>        title <span class="op">=</span> <span class="st">"Titles/captions *support* **markdown**"</span>,</span></span>
 <span class="r-in"><span>        subtitle <span class="op">=</span> <span class="st">"Axis titles contain the square notation: x^2"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-23.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot2-25.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot2() also has various other S3 implementations:</span></span></span>
 <span class="r-in"><span></span></span>
@@ -819,7 +865,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>    <span class="fu"><a href="https://certe-medical-epidemiology.github.io/certestats/reference/qc_rules.html" class="external-link">qc_test</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>    <span class="fu">plot2</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-plt img"><img src="plot2-24.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot2-26.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>        </span></span>
 <span class="r-in"><span><span class="co"># sf objects (geographic plots, 'simple features') are also supported</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://r-spatial.github.io/sf/" class="external-link">"sf"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -829,7 +875,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: sf</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Linking to GEOS 3.8.0, GDAL 3.0.4, PROJ 6.3.1; sf_use_s2() is TRUE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">category = area_km2</span></span>
-<span class="r-plt img"><img src="plot2-25.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot2-27.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Antimicrobial resistance (AMR) data analysis</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://msberends.github.io/AMR/" class="external-link">"AMR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -845,7 +891,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   (amoxicillin/clavulanic acid), 'AMP' (ampicillin) and 'TZP'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   (piperacillin/tazobactam)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ℹ Using column 'mo' as input for `col_mo`.</span>
-<span class="r-plt img"><img src="plot2-26.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot2-28.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://msberends.github.io/AMR/" class="external-link">"AMR"</a></span><span class="op">)</span> <span class="op">&amp;</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org" class="external-link">"dplyr"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">example_isolates</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">NIT</span>, <span class="va">FOS</span>, <span class="va">AMC</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
@@ -865,14 +911,14 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     intersect, setdiff, setequal, union</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">x = year</span></span>
-<span class="r-plt img"><img src="plot2-27.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot2-29.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># support for any font</span></span></span>
 <span class="r-in"><span><span class="va">mtcars</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">mpg</span>, <span class="va">hp</span>, font <span class="op">=</span> <span class="st">"Rock Salt"</span>,</span></span>
 <span class="r-in"><span>        title <span class="op">=</span> <span class="st">"This plot uses a Google Font"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-28.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot2-30.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </div>
