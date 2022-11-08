@@ -1177,24 +1177,23 @@ validate_category_scale <- function(values,
     } else if (isTRUE(category.percent)) {
       function(x, ...) c(min(0, x, na.rm = TRUE), max(1, x, na.rm = TRUE))
     } else {
-      function(x, ...) {
-        # now determine if we should start at zero:
-        # x will be the lower and upper limit - if zero under lower minus fifth of upper then start at zero
-        upper <- max(x, na.rm = TRUE)
-        lower <- min(x, na.rm = TRUE)
-        # round upper to significance of lower
-        new_upper <- max(upper, round(upper, digits = nchar(lower) * -1))
-        # but only if within a 5th of the scale
-        if (upper / new_upper >= 0.8) {
-          upper <- new_upper
-        }
-        if (lower - (upper / 5) < 0) {
-          lower <- 0
-        }
-        c(lower, upper)
+      # now determine if we should start at zero:
+      # x will be the lower and upper limit - if zero under lower minus fifth of upper then start at zero
+      upper <- max(values, na.rm = TRUE)
+      lower <- min(values, na.rm = TRUE)
+      # round upper to significance of lower
+      new_upper <- max(upper, round(upper, digits = nchar(lower) * -1))
+      # but only if within a 5th of the scale
+      if (upper / new_upper >= 0.8) {
+        upper <- new_upper
       }
+      if (lower >= 0 && lower - (upper / 5) < 0) {
+        lower <- 0
+      }
+      c(lower, upper)
     }
   }
+  
   if (is.numeric(category.expand)) {
     category.expand <- expansion(mult = c(0, category.expand))
   }
@@ -1206,6 +1205,7 @@ validate_category_scale <- function(values,
     aest <- "fill"
     cols_category <- cols$colour_fill
   }
+  
   # general arguments for any scale function below (they are called with do.call())
   args <- list(aesthetics = aest,
                na.value = "white",
@@ -1444,6 +1444,12 @@ generate_geom <- function(type,
   } else if (type == "geom_blank") {
     do.call(geom_fn,
             args = list(na.rm = na.rm))
+    
+  } else if (type == "geom_tile") {
+    do.call(geom_fn,
+            args = c(list(#linetype = linetype,
+                          size = size,
+                          na.rm = na.rm)))
     
   } else {
     # try to put some arguments into the requested geom
@@ -1887,6 +1893,13 @@ validate_theme <- function(theme,
     el
   })
   attributes(theme) <- attr_bak # restore class and all other attributes
+  
+  # special case for tile-like types, remove axis line and add raster
+  if (type %in% c("geom_tile", "geom_raster", "geom_rect")) {
+    theme$axis.line.x <- theme$axis.line.y
+    theme$panel.grid.major.x <- theme$panel.grid.major.y
+    theme$panel.grid.minor.x <- theme$panel.grid.minor.y
+  }
   
   # if horizontal, all x and y grid lines etc. should be exchanged
   if (isTRUE(horizontal)) {

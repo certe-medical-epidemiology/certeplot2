@@ -498,6 +498,18 @@ admitted_patients |>
         category.sort = "alpha-desc",
         stacked = TRUE)
 
+# matrix support, such as for cor()
+correlation_matrix <- cor(mtcars)
+class(correlation_matrix)
+correlation_matrix
+correlation_matrix |> 
+  plot2()
+
+correlation_matrix |> 
+  plot2(colour = c("certeblauw", "white", "certeroze"),
+        category.limits = c(-1, 1))
+
+
 # plot2() supports all S3 extensions available through
 # ggplot2::fortify(), such as regression models:
 lm(mpg ~ hp, data = mtcars) |> 

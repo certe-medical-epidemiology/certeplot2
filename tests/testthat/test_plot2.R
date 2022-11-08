@@ -516,3 +516,13 @@ test_that("secondary y axis works", {
   expect_identical(ggplot_build(p)$layout$panel_params[[1]]$y$breaks,
                    as.double(c(0, 100, 200, 300, 400, NA)))
 })
+
+test_that("matrices works", {
+  expect_s3_class(mtcars |>
+                    stats::cor() |>
+                    plot2(), "gg")
+  expect_s3_class(mtcars |>
+                    stats::cor() |>
+                    plot2(colour = c("certeblauw", "white", "certeroze"),
+                                                  category.limits = c(-1, 1)), "gg")
+})

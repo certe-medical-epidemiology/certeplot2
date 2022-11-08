@@ -288,6 +288,18 @@
 #'         x.sort = c("B", "D", "A"), # missing values ("C") will be added
 #'         category.sort = "alpha-desc",
 #'         stacked = TRUE)
+#'
+#' # matrix support, such as for cor()
+#' correlation_matrix <- cor(mtcars)
+#' class(correlation_matrix)
+#' correlation_matrix
+#' correlation_matrix |> 
+#'   plot2()
+#' 
+#' correlation_matrix |> 
+#'   plot2(colour = c("certeblauw", "white", "certeroze"),
+#'         category.limits = c(-1, 1))
+#' 
 #' 
 #' # plot2() supports all S3 extensions available through
 #' # ggplot2::fortify(), such as regression models:
@@ -999,7 +1011,7 @@ plot2_exec <- function(.data,
                           colour_opacity = colour_opacity,
                           misses_colour_fill = misses_colour_fill,
                           horizontal = horizontal)
-  
+
   # generate mapping / aesthetics ----
   # IMPORTANT: in this part, the mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
   # this is done for convenience - this is restored before returning the `ggplot` object in the end
@@ -1029,15 +1041,15 @@ plot2_exec <- function(.data,
       # mapping <- utils::modifyList(mapping, aes_string(geometry = dots$`_sf.column`))
     }
   }
-  if (geom_is_continuous(type) && !geom_is_line(type) && has_category(df)) {
+  if (geom_is_continuous(type) && !geom_has_colour(type) && has_category(df)) {
     # remove the group from the mapping
     mapping <- utils::modifyList(mapping, aes(group = NULL))
   }
-  if ((geom_is_line(type) | geom_is_continuous_x(type) | geom_has_only_colour(type)) && !has_category(df)) {
+  if ((geom_has_colour(type) || geom_is_continuous_x(type) || geom_has_only_colour(type)) && !has_category(df)) {
     # exception for line plots without colour/fill, force group = 1
     mapping <- utils::modifyList(mapping, aes(group = 1))
   }
-  
+
   # generate ggplot ----
   p <- ggplot(data = df, mapping = mapping, colour = cols$colour, fill = cols$colour_fill)
   
@@ -1192,7 +1204,7 @@ plot2_exec <- function(.data,
                           base::force
                         })
   }
-  if (type != "geom_sf") {
+  if (!type %in% c("geom_sf", "geom_tile", "geom_raster", "geom_rect")) {
     if (has_x(df)) {
       p <- p + 
         validate_x_scale(values = get_x(df),
