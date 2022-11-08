@@ -1230,6 +1230,7 @@ plot2_exec <- function(.data,
     if (has_y(df)) {
       p_added_y <- p +
         validate_y_scale(df = df,
+                         type = type,
                          y.24h = y.24h,
                          y.age = y.age,
                          y.scientific = y.scientific,

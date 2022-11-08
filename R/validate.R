@@ -781,6 +781,7 @@ validate_x_scale <- function(values,
 #' @importFrom scales pretty_breaks
 #' @importFrom certestyle format2 format2_scientific
 validate_y_scale <- function(df,
+                             type,
                              y.24h,
                              y.age,
                              y.scientific,
@@ -828,8 +829,8 @@ validate_y_scale <- function(df,
   
   values <- get_y(df)
   if (mode(values) != "numeric") {
-    stop("The y scale cannot be non-numeric (current class: ",
-         paste0(class(values), collapse = "/"), ")",
+    stop("The y scale must be numeric for plot type '", gsub("geom_", "", type), "' (current y class: ",
+         paste0(class(values), collapse = "/"), ").",
          call. = FALSE)
   }
   
@@ -1187,8 +1188,13 @@ validate_category_scale <- function(values,
       if (upper / new_upper >= 0.8) {
         upper <- new_upper
       }
+      # and set lower to 0 if need be
       if (lower >= 0 && lower - (upper / 5) < 0) {
         lower <- 0
+      }
+      # check if negative lower should be equal to upper
+      if (lower < 0 && lower / (upper * -1) >= 0.8) {
+        lower <- upper * -1
       }
       c(lower, upper)
     }
@@ -1205,7 +1211,6 @@ validate_category_scale <- function(values,
     aest <- "fill"
     cols_category <- cols$colour_fill
   }
-  
   # general arguments for any scale function below (they are called with do.call())
   args <- list(aesthetics = aest,
                na.value = "white",
@@ -1447,9 +1452,13 @@ generate_geom <- function(type,
     
   } else if (type == "geom_tile") {
     do.call(geom_fn,
-            args = c(list(#linetype = linetype,
+            args = c(list(linetype = linetype,
                           size = size,
                           na.rm = na.rm)))
+    
+  } else if (type == "geom_raster") {
+    do.call(geom_fn,
+            args = c(list(na.rm = na.rm)))
     
   } else {
     # try to put some arguments into the requested geom

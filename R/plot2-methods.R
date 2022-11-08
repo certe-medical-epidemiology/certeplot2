@@ -1746,7 +1746,7 @@ plot2.matrix <- function(.data,
                          width = NULL,
                          jitter_seed = NA,
                          violin_scale = "count",
-                         legend.position = "right",
+                         legend.position = NULL,
                          legend.title = NULL, # TRUE in numeric categories
                          legend.reverse = FALSE,
                          legend.barheight = 6,

@@ -839,7 +839,7 @@
   width = NULL,
   jitter_seed = NA,
   violin_scale = "count",
-  legend.position = "right",
+  legend.position = NULL,
   legend.title = NULL,
   legend.reverse = FALSE,
   legend.barheight = 6,
