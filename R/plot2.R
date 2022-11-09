@@ -302,7 +302,7 @@
 #' correlation_matrix |> 
 #'   plot2(colour = c("certeblauw2", "white", "certeroze2"),
 #'         datalabels = TRUE,
-#'         category.title = "*r*",
+#'         category.title = "*r*-value",
 #'         title =  "Correlation matrix")
 #' 
 #' 
@@ -783,7 +783,7 @@ plot2_exec <- function(.data,
   }
   
   if (decimal.mark == big.mark) {
-    big.mark <- " " 
+    big.mark <- " "
   }
   
   # prepare data ----

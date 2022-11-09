@@ -513,7 +513,7 @@ correlation_matrix |>
 correlation_matrix |> 
   plot2(colour = c("certeblauw2", "white", "certeroze2"),
         datalabels = TRUE,
-        category.title = "*r*",
+        category.title = "*r*-value",
         title =  "Correlation matrix")
 
 

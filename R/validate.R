@@ -406,14 +406,17 @@ validate_data <- function(df,
     } else if (is.numeric(get_category(df)) &&
                is.null(dots$category.character) &&
                !geom_is_continuous(type)) {
-      if (type == "") {
+      type_prelim <- type
+      if (type_prelim == "") {
         # get preliminary type
-        type <- tryCatch(suppressMessages(validate_type("", df = df)), error = function(e) "geom_col")
+        type_prelim <- tryCatch(suppressMessages(validate_type("", df = df)), error = function(e) "geom_col")
       }
-      plot2_message("Assuming ", font_blue("category.character = TRUE"),
-                    " for discrete plot type (", font_blue(type), ")",
-                    " since ", font_blue(get_category_name(df)), " is numeric")
-      dots$category.character <- TRUE
+      if (!geom_is_continuous(type_prelim)) {
+        plot2_message("Assuming ", font_blue("category.character = TRUE"),
+                      " for discrete plot type (", font_blue(type), ")",
+                      " since ", font_blue(get_category_name(df)), " is numeric")
+        dots$category.character <- TRUE
+      }
     }
   }
   if (isTRUE(dots$category.character) && has_category(df)) {
