@@ -273,7 +273,8 @@ validate_data <- function(df,
   if (has_datalabels(df) && 
       (all(get_datalabels(df) == FALSE) ||
        (!is.null(dots$type) && dots$type != "sf" &&
-        geom_is_continuous(suppressMessages(validate_type(dots$type, df)))))) {
+        geom_is_continuous(suppressMessages(validate_type(dots$type, df))) &&
+        isTRUE(!type %in% c("geom_tile", "geom_raster", "geom_rect"))))) {
     # remove datalabels if `datalabels = FALSE`, or if the type now seems to be continuous
     df <- df |> select(-`_var_datalabels`)
   }
@@ -329,6 +330,9 @@ validate_data <- function(df,
           plot2_warning("No suitable column found for ", font_blue("datalabels = TRUE"))
           df <- df |> select(-`_var_datalabels`)
         }
+      } else if (has_category(df) && type %in% c("geom_tile", "geom_raster", "geom_rect")) {
+        # take the values from the category column
+        df <- df |> mutate(`_var_datalabels` = `_var_category`)
       } else {
         # otherwise take values from the y column
         df <- df |> mutate(`_var_datalabels` = `_var_y`)
@@ -904,7 +908,7 @@ validate_y_scale <- function(df,
       if (!all(is.na(y.limits)) && (y.percent_break >= max(y.limits, na.rm = TRUE) || labels_n <= 3)) {
         y.percent_break.bak <- y.percent_break
         y.percent_break <- max(y.limits, na.rm = TRUE) / 8
-        allowed <- c(1e6 / 10 ^ c(1:18), 5e6 / 10 ^ c(1:18))
+        allowed <- c(1e6 / 10 ^ 1:18, 5e6 / 10 ^ 1:18)
         y.percent_break <- allowed[which.min(abs(allowed - y.percent_break))]
         plot2_message("Using ", font_blue("y.percent_break =", format(y.percent_break, scientific = FALSE)), 
                       " since the original setting (", font_blue(y.percent_break.bak), ")",
@@ -1854,10 +1858,10 @@ validate_theme <- function(theme,
     if (abs(x.lbl_angle) %in% c(0:10, 171:190, 351:360)) {
       x.lbl_align <- 0.5 # centre
     }
-    if (abs(x.lbl_angle) %in% c(191:350)) {
+    if (abs(x.lbl_angle) %in% 191:350) {
       x.lbl_align <- 0 # left
     }
-    if (abs(x.lbl_angle) %in% c(11:170)) {
+    if (abs(x.lbl_angle) %in% 11:170) {
       x.lbl_align <- 1 # right
     }
     if (x.lbl_angle < 0) {
@@ -2016,25 +2020,30 @@ set_datalabels <- function(p,
     return(p)
   }
   
+  is_sf <- (type == "geom_sf")
+  is_tile <- (type %in% c("geom_tile", "geom_raster", "geom_rect"))
+  
   if (is.null(datalabels.colour_fill)) {
-    # try to get from current theme
-    datalabels.colour_fill <- p$theme$panel.background$fill
-    if (is.null(datalabels.colour_fill)) {
-      # still NULL, then make fill invisible (NA)
+    if (isTRUE(is_tile)) {
       datalabels.colour_fill <- NA
+    } else {
+      # try to get from current theme
+      datalabels.colour_fill <- p$theme$panel.background$fill
+      if (is.null(datalabels.colour_fill)) {
+        # still NULL, then make fill invisible (NA)
+        datalabels.colour_fill <- NA
+      }
     }
   }
   
-  if (!isTRUE(stacked) && !isTRUE(stackedpercent) && type != "geom_sf") {
+  if (!isTRUE(stacked) && !isTRUE(stackedpercent) && !isTRUE(is_sf) && !isTRUE(is_tile)) {
     datalabels.colour_fill <- colourpicker(datalabels.colour_fill, opacity = 0.4) # 40% transparency
   } else {
     datalabels.colour_fill <- colourpicker(datalabels.colour_fill, opacity = 0.75) # 75% transparency
   }
   datalabels.colour <- colourpicker(datalabels.colour)
   
-  is_sf <- (type == "geom_sf")
-  
-  # set label and text sizes
+  # set label and text offsets (does not apply to sf and tile plots)
   text_horizontal <- 0.5
   text_vertical <- -0.75
   label_horizontal <- 0.5
@@ -2092,13 +2101,13 @@ set_datalabels <- function(p,
                      # only when there's a category:
                      list(position = position_fn)[has_category(df) & !isTRUE(is_sf)],
                      # only when not stacked at all:
-                     list(label.padding = unit(0.25, "lines"))[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
-                     list(label.r = unit(0, "lines"))[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
-                     list(vjust = label_vertical)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
-                     list(hjust = label_horizontal)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
+                     list(label.padding = unit(0.25, "lines"))[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf) & !isTRUE(is_tile)],
+                     list(label.r = unit(0, "lines"))[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf) & !isTRUE(is_tile)],
+                     list(vjust = label_vertical)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf) & !isTRUE(is_tile)],
+                     list(hjust = label_horizontal)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf) & !isTRUE(is_tile)],
                      # only when stackedpercent:
-                     list(vjust = 0.5)[isTRUE(stackedpercent) || isTRUE(is_sf)],
-                     list(hjust = 0.5)[isTRUE(stackedpercent) || isTRUE(is_sf)],
+                     list(vjust = 0.5)[isTRUE(stackedpercent) || isTRUE(is_sf) || isTRUE(is_tile)],
+                     list(hjust = 0.5)[isTRUE(stackedpercent) || isTRUE(is_sf) || isTRUE(is_tile)],
                      # only when sf:
                      list(fun.geometry = geometry_fix_fn)[isTRUE(is_sf)])) +
     # set text
@@ -2110,26 +2119,24 @@ set_datalabels <- function(p,
                           angle = datalabels.angle,
                           na.rm = TRUE),
                      # only when there's a category:
-                     list(position = position_fn)[has_category(df) & !isTRUE(is_sf)],
+                     list(position = position_fn)[has_category(df) & !isTRUE(is_sf) & !isTRUE(is_tile)],
                      # only when not stacked at all:
-                     list(vjust = text_vertical)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
-                     list(hjust = text_horizontal)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf)],
+                     list(vjust = text_vertical)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf) & !isTRUE(is_tile)],
+                     list(hjust = text_horizontal)[!isTRUE(stacked) & !isTRUE(stackedpercent) & !isTRUE(is_sf) & !isTRUE(is_tile)],
                      # only when stackedpercent:
-                     list(vjust = 0.5)[isTRUE(stackedpercent) || isTRUE(is_sf)],
-                     list(hjust = 0.5)[isTRUE(stackedpercent) || isTRUE(is_sf)],
+                     list(vjust = 0.5)[isTRUE(stackedpercent) || isTRUE(is_sf) || isTRUE(is_tile)],
+                     list(hjust = 0.5)[isTRUE(stackedpercent) || isTRUE(is_sf) || isTRUE(is_tile)],
                      # only when sf:
                      list(fun.geometry = geometry_fix_fn)[isTRUE(is_sf)]))
   
-  if (!isTRUE(is_sf)) {
-    if (!isTRUE(stacked) && !isTRUE(stackedpercent)) {
-      # move label layer to back + 1;
-      # this will make the labels only interfere with plot lines,
-      # not with the data (such as columns)
-      layer_n <- seq_len(length(p$layers))
-      layer_label <- length(layer_n) - 1
-      layer_others <- layer_n[-layer_label]
-      p$layers <- p$layers[c(layer_label, layer_others)]
-    }
+  if (!isTRUE(stacked) && !isTRUE(stackedpercent) && !isTRUE(is_sf) && !isTRUE(is_tile)) {
+    # move label layer to back + 1;
+    # this will make the labels only interfere with plot lines,
+    # not with the data (such as columns)
+    layer_n <- seq_len(length(p$layers))
+    layer_label <- length(layer_n) - 1
+    layer_others <- layer_n[-layer_label]
+    p$layers <- p$layers[c(layer_label, layer_others)]
   }
   
   p

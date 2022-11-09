@@ -472,7 +472,7 @@ sigfigs <- function(x) {
 }
 
 data_is_numeric <- function(x) {
-  all(x %like% "^[0-9.,-e+]+$", na.rm = TRUE)
+  all(x %like% "^[0-9.,-]+(e[+][0-9.,-]+)?$", na.rm = TRUE)
 }
 
 digit_to_text <- function(x) {

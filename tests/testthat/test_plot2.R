@@ -127,7 +127,7 @@ test_that("general mapping works", {
                c("y", "x", "fill", "colour"))
   # remove x axis
   expect_s3_class(admitted_patients |> plot2(x = NULL, y = age), "gg")
-  expect_s3_class(admitted_patients |> plot2(x = c(1:250), y = age), "gg")
+  expect_s3_class(admitted_patients |> plot2(x = 1:250, y = age), "gg")
 })
 
 test_that("adding mapping works", {
@@ -146,7 +146,7 @@ test_that("adding types works", {
   expect_length(mtcars |> plot2(mpg, hp, cyl) |> add_col() |> get_layers(), 2)
   expect_error(mtcars |> plot2(mpg, hp, cyl) |> add_type(type = NULL))
   
-  p <- data.frame(x = c(1:100),
+  p <- data.frame(x = 1:100,
                   y = rnorm(100, 100, 25)) |> 
     plot2()
   expect_length(p |> get_layers(), 1)
@@ -282,7 +282,7 @@ test_that("x scale works", {
   mics <- AMR::as.mic(c(1, 2, 8, 32))
   # should print missing factors levels:
   expect_equal(mics |> plot2(x.mic = TRUE) |> get_range_x(),
-               as.character(2 ^ c(0:5)))
+               as.character(2 ^ 0:5))
   
   p <- plotdata |>
     plot2(x = x_date,
@@ -291,7 +291,7 @@ test_that("x scale works", {
   expect_equal(p |> get_range_x() |> as.Date(origin = "1970-01-01"),
                c(Sys.Date() - 13 - 1, Sys.Date() + 2 + 1))
   
-  plotdata2 <- data.frame(x = factor(c(1:30)), y = rnorm(30, 30, 5), z = rep(letters[1:10], 3))
+  plotdata2 <- data.frame(x = factor(1:30), y = rnorm(30, 30, 5), z = rep(letters[1:10], 3))
   expect_identical(plotdata2 |> plot2(facet = z, facet.fixed_x = TRUE) |> get_range_x(),
                    plotdata2 |> plot2(facet = z, x.drop = FALSE) |> get_range_x())
   expect_identical(plotdata2 |> plot2(facet = z, facet.fixed_x = FALSE) |> get_range_x(),
@@ -299,27 +299,27 @@ test_that("x scale works", {
 })
 
 test_that("y scale works", {
-  expect_error(data.frame(a = c(1:10), b = letters[10]) |> plot2(x = a, y = b))
+  expect_error(data.frame(a = 1:10, b = letters[10]) |> plot2(x = a, y = b))
   expect_s3_class(plotdata |> plot2(y = n * 24, y.24h = TRUE), "gg")
   expect_s3_class(plotdata |> plot2(y = n * 12, y.age = TRUE), "gg")
   expect_s3_class(plotdata |> plot2(y = n * 10, y.scientific = TRUE), "gg")
   expect_s3_class(plotdata |> plot2(y.percent = TRUE), "gg")
-  expect_s3_class(data.frame(a = letters[1:10], y = 10 ^ c(1:10)) |> plot2(), "gg")
-  expect_s3_class(data.frame(a = letters[1:10], b = 10 ^ c(1:10)) |> plot2(y.trans = "log10", y.n_breaks = 10), "gg")
-  expect_s3_class(data.frame(a = letters[1:10], b = 10 ^ c(1:10)) |> plot2(y.trans = "log10", y.n_breaks = 10), "gg")
+  expect_s3_class(data.frame(a = letters[1:10], y = 10 ^ 1:10) |> plot2(), "gg")
+  expect_s3_class(data.frame(a = letters[1:10], b = 10 ^ 1:10) |> plot2(y.trans = "log10", y.n_breaks = 10), "gg")
+  expect_s3_class(data.frame(a = letters[1:10], b = 10 ^ 1:10) |> plot2(y.trans = "log10", y.n_breaks = 10), "gg")
   expect_s3_class(data.frame(a = letters[1:10], y = 1) |> plot2(y.percent = TRUE, y.percent_break = 500), "gg")
   expect_s3_class(data.frame(a = letters[1:10], y = 1) |> plot2(y.percent = TRUE), "gg")
   expect_s3_class(suppressWarnings(mtcars |> plot2(mpg, hp, y.limits = c(100, 200))), "gg")
   
   # multiple vars of y
   expect_s3_class(data.frame(x = letters[1:10],
-                             y1 = c(1:10),
-                             y2 = c(11:20)) |>
+                             y1 = 1:10,
+                             y2 = 11:20) |>
                     plot2(x, c(y1, y2)),
                   "gg")
   expect_error(data.frame(x = letters[1:10],
-                          y1 = c(1:10),
-                          y2 = c(11:20)) |>
+                          y1 = 1:10,
+                          y2 = 11:20) |>
                  plot2(x, c(y1, y2),
                        # category must not be set
                        category = 1))
@@ -410,7 +410,7 @@ test_that("get title works", {
 test_that("type validation works", {
   library(dplyr, warn.conflicts = FALSE)
   df <- tibble(x = letters[1:10],
-               y = c(1:10),
+               y = 1:10,
                z = LETTERS[1:10],
                `_var_x` = x,
                `_var_y` = y,

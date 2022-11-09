@@ -27,60 +27,59 @@
 #' @param .data data to plot
 #' @param x plotting 'direction' for the x axis. This can be:
 #' 
-#' * A single variable from `.data`, such as `category = column1`
+#' - A single variable from `.data`, such as `category = column1`
 #' 
-#' * A [function] to calculate over one or more variables from `.data`, such as `x = format(column1, "%Y")`, or `x = ifelse(column1 == "A", "Group A", "Other")`
+#' - A [function] to calculate over one or more variables from `.data`, such as `x = format(column1, "%Y")`, or `x = ifelse(column1 == "A", "Group A", "Other")`
 #' @param y values to use for plotting along the y axis. This can be:
 #' 
-#' * A single variable from `.data`, such as `y = column1`
+#' - A single variable from `.data`, such as `y = column1`
 #' 
-#' * Multiple variables from `.data`, such as `y = c(column1, column2)` or `y = c(name1 = column1, "name 2" = column2)`
+#' - Multiple variables from `.data`, such as `y = c(column1, column2)` or `y = c(name1 = column1, "name 2" = column2)`
 #'   
 #'   (only allowed if `category` is not set)
 #'   
-#' * One or more variables from `.data` using [selection helpers][tidyselect::language], such as `y = where(is.double)` or `y = starts_with("var_")`
+#' - One or more variables from `.data` using [selection helpers][tidyselect::language], such as `y = where(is.double)` or `y = starts_with("var_")`
 #' 
 #'   (multiple variables only allowed if `category` is not set)
 #' 
-#' * A [function] to calculate over `.data`, such as `y = `[n()] for the row count
+#' - A [function] to calculate over `.data`, such as `y = `[n()] for the row count
 #' 
-#' * A [function] to calculate over one or more variables from `.data`, such as `y = n_distinct(person_id)`, `y = max(column1)`, or `y = median(column2) / column3`
+#' - A [function] to calculate over one or more variables from `.data`, such as `y = n_distinct(person_id)`, `y = max(column1)`, or `y = median(column2) / column3`
 #' @param category,facet plotting 'direction' (`category` is called 'fill' and 'colour' in `ggplot2`). This can be:
 #' 
-#' * A single variable from `.data`, such as `category = column1`
+#' - A single variable from `.data`, such as `category = column1`
 #' 
-#' * A [function] to calculate over one or more variables from `.data`, such as `category = median(column2) / column3`, or `facet = ifelse(column1 == "A", "Group A", "Other")`
+#' - A [function] to calculate over one or more variables from `.data`, such as `category = median(column2) / column3`, or `facet = ifelse(column1 == "A", "Group A", "Other")`
 #' 
-#' * Multiple variables from `.data`, such as `facet = c(column1, column2)` (use `sep` to control the separator character)
+#' - Multiple variables from `.data`, such as `facet = c(column1, column2)` (use `sep` to control the separator character)
 #'   
-#' * One or more variables from `.data` using [selection helpers][tidyselect::language], such as `category = where(is.double)` or `facet = starts_with("var_")`
+#' - One or more variables from `.data` using [selection helpers][tidyselect::language], such as `category = where(is.double)` or `facet = starts_with("var_")`
 #' 
 #' @param y_secondary values to use for plotting along the secondary y axis. This functionality is poorly supported by `ggplot2` and might give unexpected results. Setting the secondary y axis will set the colour to the axis titles.
 #' @param y_secondary.colour,y_secondary.colour_fill colours to set for the secondary y axis, will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
 #' @param type,y_secondary.type type of visualisation to use. This can be:
 #' 
-#' * A `ggplot2` geom name or their abbreviation such as `"col"` and `"point"`. All geoms are supported (including [`geom_blank()`][ggplot2::geom_blank()]).
+#' - A `ggplot2` geom name or their abbreviation such as `"col"` and `"point"`. All geoms are supported (including [`geom_blank()`][ggplot2::geom_blank()]).
 #' 
 #'   Full function names can be used (e.g., `"geom_histogram"`), but they can also be abbreviated (e.g., `"h"`, `"hist"`). The following geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), and violin (`"v"`).
 #' 
 #'   Please note: in `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `type = "bar"` will set `type = "col"` and `horizontal = TRUE`.
 #' 
-#' * A shortcut. There are currently two supported shortcuts:
+#' - A shortcut. There are currently two supported shortcuts:
 #' 
-#'   * `"barpercent"`, which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
+#'   - `"barpercent"`, which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
+#'   - `"linedot"`, which will set `type = "line"` and adds two point geoms using [add_point()]; one with large white dots and one with smaller dots using the colours set in `colour`. This is essentially equal to base \R `plot(..., type = "b")` but with closed shapes.
 #' 
-#'   * `"linedot"`, which will set `type = "line"` and adds two point geoms using [add_point()]; one with large white dots and one with smaller dots using the colours set in `colour`. This is essentially equal to base \R `plot(..., type = "b")` but with closed shapes.
-#' 
-#' * Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no X axis or if the length of unique values per X axis item is at least 3, `"point"` if both the Y and X axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* add a geom.
+#' - Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no x axis or if the length of unique values per x axis item is at least 3, `"point"` if both the y and x axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* add a geom.
 #' @param title,subtitle,caption,tag,x.title,y.title,category.title,legend.title,y_secondary.title a title to use. This can be:
 #' 
-#' * An [expression], e.g. using `parse(text = "...")`
-#' * A [character], which supports markdown by using [md_to_expression()] internally if `markdown = TRUE`
-#' * A vector of characters and functions, which allows calculations over `.data` (see *Examples*)
+#' - A [character], which supports markdown by using [md_to_expression()] internally if `markdown = TRUE` (which is the default)
+#' - A [function] to calculate over `.data`, such as `title = paste("Based on n =", n_distinct(person_id), "individuals")` or `subtitle = paste("Total rows:", n())`, see *Examples*
+#' - An [expression], e.g. using `parse(text = "...")`
 #' 
-#' `title` will be guessed with [get_plot_title()] when left blank.
+#' The `title` will be guessed with [get_plot_title()] when left blank.
 #' 
-#' `category.title` defaults to `TRUE` if the legend items are numeric.
+#' The `category.title` defaults to `TRUE` if the legend items are numeric.
 #' @param title.linelength maximum number of characters per line in the title, before a linebreak occurs
 #' @param title.colour text colour of the title
 #' @param subtitle.linelength maximum number of characters per line in the subtitle, before a linebreak occurs
@@ -133,9 +132,13 @@
 #' - `"order"` or `"inorder"`: sort as `FALSE`
 #' - `"freq"` or `"freq-desc"`: sort descending according to the frequencies of `y` computed by `summarise_function` (highest value first)
 #' - `"freq-asc"`: sort ascending according to the frequencies of `y` computed by `summarise_function` (lowest value first)
-#' @param datalabels variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' data, and values of `y` otherwise. It will print a maximum of 50 labels at default, which can be enforced by explicitly adding `datalabels = TRUE`.
+#' @param datalabels values to show as datalabels, see also `datalabels.format`. This can be:
+#' 
+#' - Left blank. This will default to the values of `y` in column-type plots, or when plotting spatial 'sf' data, the values of the first column. It will print a maximum of 50 labels unless `datalabels = TRUE`.
+#' - `TRUE` or `FALSE` to force or remove datalabels
+#' - A function to calculate over `.data`, such as `datalabels = paste(round(column1), "\n", column2)`
 #' @param datalabels.round number of digits to round the datalabels, applies to both `"%n"` and `"%p"` for replacement (see `datalabels.format`)
-#' @param datalabels.format format to use for datalabels - `"%n"` will be replaced by the count number, `"%p"` will be replaced by the percentage of the total count. Use `datalabels.format = NULL` to not transform the datalabels.
+#' @param datalabels.format format to use for datalabels - `"%n"` will be replaced by the count number, `"%p"` will be replaced by the percentage of the total count. Use `datalabels.format = NULL` to *not* transform the datalabels.
 #' @param datalabels.colour,datalabels.colour_fill,datalabels.size,datalabels.angle settings for the datalabels
 #' @param decimal.mark decimal mark, defaults to [dec_mark()]
 #' @param big.mark thousands separator, defaults to [big_mark()]
@@ -164,21 +167,21 @@
 #' @param markdown a [logical] to turn all labels and titles into [plotmath] expressions, by converting common markdown language using the [md_to_expression()] function (defaults to `TRUE`)
 #' @param ... arguments passed on to methods
 #' @details The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions such as [`ggplot()`][ggplot2::ggplot()], [`aes()`][ggplot2::aes()], [`geom_col()`][ggplot2::geom_col()], [`facet_wrap()`][ggplot2::facet_wrap()], [`labs()`][ggplot2::labs()], etc., and provides:
-#'   * Writing as few lines of codes as possible
-#'   * Easy plotting in three 'directions': `x` (the regular x axis), `category` (replaces 'fill' and 'colour') and `facet`
-#'   * Automatic setting of these 'directions' based on the input data
-#'   * Setting in-place calculations for all plotting directions and even `y`
-#'   * Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': `x.sort`, `category.sort` and `facet.sort`
-#'   * Easy limiting values, e.g. by setting `x.max_items = 5` or `category.max_items = 5`
-#'   * Markdown support for any title text, with any theme
-#'   * Integrated support for any Google Font and any installed system font
-#'   * An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: `theme_minimal2()`
-#'   * Some conveniences from Microsoft Excel:
-#'     * The y axis starts at 0 if possible
-#'     * The y scale expands at the top to be better able to interpret all data points
-#'     * Date breaks can be written in a human-readable format (such as "d mmm yyyy")
-#'     * Labels with data values can easily be printed and are automatically determined
-#'   * Support for any `ggplot2` extension based on [ggplot2::fortify()]
+#'   - Writing as few lines of codes as possible
+#'   - Easy plotting in three 'directions': `x` (the regular x axis), `category` (replaces 'fill' and 'colour') and `facet`
+#'   - Automatic setting of these 'directions' based on the input data
+#'   - Setting in-place calculations for all plotting directions and even `y`
+#'   - Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': `x.sort`, `category.sort` and `facet.sort`
+#'   - Easy limiting values, e.g. by setting `x.max_items = 5` or `category.max_items = 5`
+#'   - Markdown support for any title text, with any theme
+#'   - Integrated support for any Google Font and any installed system font
+#'   - An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: `theme_minimal2()`
+#'   - Some conveniences from Microsoft Excel:
+#'     - The y axis starts at 0 if possible
+#'     - The y scale expands at the top to be better able to interpret all data points
+#'     - Date breaks can be written in a human-readable format (such as "d mmm yyyy")
+#'     - Labels with data values can easily be printed and are automatically determined
+#'   - Support for any `ggplot2` extension based on [ggplot2::fortify()]
 #'   
 #' The `ggplot2` package in conjunction with the `tidyr`, `forcats` and `cleaner` packages can provide above functionalities, but the goal of the [plot2()] function is to generalise this into one function. The generic [plot2()] function currently has `r length(formals(plot2)) - 1` arguments, all with a default value. **Less typing, faster coding.**
 #' @return a `ggplot` object
@@ -292,13 +295,15 @@
 #' # matrix support, such as for cor()
 #' correlation_matrix <- cor(mtcars)
 #' class(correlation_matrix)
-#' correlation_matrix
+#' head(correlation_matrix)
 #' correlation_matrix |> 
 #'   plot2()
 #' 
 #' correlation_matrix |> 
-#'   plot2(colour = c("certeblauw", "white", "certeroze"),
-#'         category.limits = c(-1, 1))
+#'   plot2(colour = c("certeblauw2", "white", "certeroze2"),
+#'         datalabels = TRUE,
+#'         category.title = "*r*",
+#'         title =  "Correlation matrix")
 #' 
 #' 
 #' # plot2() supports all S3 extensions available through
@@ -345,10 +350,10 @@
 #'           y.percent_break = 0.125)
 #' }
 #' 
-#' # support for any font
-#' mtcars |>
-#'   plot2(mpg, hp, font = "Rock Salt",
-#'         title = "This plot uses a Google Font")
+#' # # support for any font
+#' # mtcars |>
+#' #   plot2(mpg, hp, font = "Rock Salt",
+#' #         title = "This plot uses a Google Font")
 plot2 <- function(.data,
                   x = NULL,
                   y = NULL,
@@ -777,6 +782,10 @@ plot2_exec <- function(.data,
     stop("'summarise_function' must be a function")
   }
   
+  if (decimal.mark == big.mark) {
+    big.mark <- " " 
+  }
+  
   # prepare data ----
   # IMPORTANT: in this part, the data for mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
   # this is done for convenience - this is restored before returning the `ggplot` object in the end
@@ -959,7 +968,9 @@ plot2_exec <- function(.data,
   markdown <- validate_markdown(markdown, x.title, y.title, legend.title, title, subtitle, tag, caption, df)
   
   # remove datalabels in continuous geoms
-  if (has_datalabels(df) && isTRUE(misses_datalabels) && (geom_is_continuous(type) | type %like% "path|line") && type != "geom_sf") {
+  if (has_datalabels(df) && isTRUE(misses_datalabels) &&
+      (geom_is_continuous(type) | type %like% "path|line") &&
+      !type %in% c("geom_sf", "geom_tile", "geom_raster", "geom_rect")) {
     df <- df |> select(-`_var_datalabels`)
   }
   if (!isTRUE(misses_y) && geom_is_continuous_x(type)) {

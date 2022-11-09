@@ -724,8 +724,8 @@
   category = NULL,
   facet = NULL,
   type = NULL,
-  x.title = TRUE,
-  y.title = TRUE,
+  x.title = FALSE,
+  y.title = FALSE,
   category.title = NULL,
   title = NULL,
   subtitle = NULL,
@@ -1324,19 +1324,19 @@ Please note: in \code{ggplot2}, 'bars' and 'columns' are equal, while it is comm
 \item \code{"barpercent"}, which will set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
 \item \code{"linedot"}, which will set \code{type = "line"} and adds two point geoms using \code{\link[=add_point]{add_point()}}; one with large white dots and one with smaller dots using the colours set in \code{colour}. This is essentially equal to base \R \code{plot(..., type = "b")} but with closed shapes.
 }
-\item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X axis or if the length of unique values per X axis item is at least 3, \code{"point"} if both the Y and X axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} add a geom.
+\item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no x axis or if the length of unique values per x axis item is at least 3, \code{"point"} if both the y and x axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} add a geom.
 }}
 
 \item{title, subtitle, caption, tag, x.title, y.title, category.title, legend.title, y_secondary.title}{a title to use. This can be:
 \itemize{
+\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE} (which is the default)
+\item A \link{function} to calculate over \code{.data}, such as \code{title = paste("Based on n =", n_distinct(person_id), "individuals")} or \code{subtitle = paste("Total rows:", n())}, see \emph{Examples}
 \item An \link{expression}, e.g. using \code{parse(text = "...")}
-\item A \link{character}, which supports markdown by using \code{\link[=md_to_expression]{md_to_expression()}} internally if \code{markdown = TRUE}
-\item A vector of characters and functions, which allows calculations over \code{.data} (see \emph{Examples})
 }
 
-\code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
+The \code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
 
-\code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
+The \code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
 
 \item{title.linelength}{maximum number of characters per line in the title, before a linebreak occurs}
 
@@ -1437,11 +1437,16 @@ Please note: in \code{ggplot2}, 'bars' and 'columns' are equal, while it is comm
 \item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (lowest value first)
 }}
 
-\item{datalabels}{variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' data, and values of \code{y} otherwise. It will print a maximum of 50 labels at default, which can be enforced by explicitly adding \code{datalabels = TRUE}.}
+\item{datalabels}{values to show as datalabels, see also \code{datalabels.format}. This can be:
+\itemize{
+\item Left blank. This will default to the values of \code{y} in column-type plots, or when plotting spatial 'sf' data, the values of the first column. It will print a maximum of 50 labels unless \code{datalabels = TRUE}.
+\item \code{TRUE} or \code{FALSE} to force or remove datalabels
+\item A function to calculate over \code{.data}, such as \code{datalabels = paste(round(column1), "\\n", column2)}
+}}
 
 \item{datalabels.round}{number of digits to round the datalabels, applies to both \code{"\%n"} and \code{"\%p"} for replacement (see \code{datalabels.format})}
 
-\item{datalabels.format}{format to use for datalabels - \code{"\%n"} will be replaced by the count number, \code{"\%p"} will be replaced by the percentage of the total count. Use \code{datalabels.format = NULL} to not transform the datalabels.}
+\item{datalabels.format}{format to use for datalabels - \code{"\%n"} will be replaced by the count number, \code{"\%p"} will be replaced by the percentage of the total count. Use \code{datalabels.format = NULL} to \emph{not} transform the datalabels.}
 
 \item{datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle}{settings for the datalabels}
 
