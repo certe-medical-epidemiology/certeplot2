@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.2</span>
       </span>
     </div>
 
@@ -800,8 +800,8 @@
 <span>  category <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  facet <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  type <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  x.title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  y.title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  x.title <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  y.title <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  category.title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subtitle <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -1400,16 +1400,16 @@
 <li><p>A shortcut. There are currently two supported shortcuts:</p><ul><li><p><code>"barpercent"</code>, which will set <code>type = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc"</code> and <code>datalabels.format = "%n (%p)"</code>.</p></li>
 <li><p><code>"linedot"</code>, which will set <code>type = "line"</code> and adds two point geoms using <code><a href="add_type.html">add_point()</a></code>; one with large white dots and one with smaller dots using the colours set in <code>colour</code>. This is essentially equal to base <span style="R">R</span> <code>plot(..., type = "b")</code> but with closed shapes.</p></li>
 </ul></li>
-<li><p>Left blank. In this case, the type will be determined automatically: <code>"boxplot"</code> if there is no X axis or if the length of unique values per X axis item is at least 3, <code>"point"</code> if both the Y and X axes are numeric, and the <a href="https://rdrr.io/r/base/options.html" class="external-link">option</a> <code>"plot2.default_type"</code> otherwise (which defaults to <code>"col"</code>). Use <code>type = "blank"</code> or <code>type = "geom_blank"</code> to <em>not</em> add a geom.</p></li>
+<li><p>Left blank. In this case, the type will be determined automatically: <code>"boxplot"</code> if there is no x axis or if the length of unique values per x axis item is at least 3, <code>"point"</code> if both the y and x axes are numeric, and the <a href="https://rdrr.io/r/base/options.html" class="external-link">option</a> <code>"plot2.default_type"</code> otherwise (which defaults to <code>"col"</code>). Use <code>type = "blank"</code> or <code>type = "geom_blank"</code> to <em>not</em> add a geom.</p></li>
 </ul></dd>
 
 
 <dt>title, subtitle, caption, tag, x.title, y.title, category.title, legend.title, y_secondary.title</dt>
-<dd><p>a title to use. This can be:</p><ul><li><p>An <a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a>, e.g. using <code>parse(text = "...")</code></p></li>
-<li><p>A <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>, which supports markdown by using <code><a href="md_to_expression.html">md_to_expression()</a></code> internally if <code>markdown = TRUE</code></p></li>
-<li><p>A vector of characters and functions, which allows calculations over <code>.data</code> (see <em>Examples</em>)</p></li>
-</ul><p><code>title</code> will be guessed with <code><a href="get_plot_title.html">get_plot_title()</a></code> when left blank.</p>
-<p><code>category.title</code> defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
+<dd><p>a title to use. This can be:</p><ul><li><p>A <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>, which supports markdown by using <code><a href="md_to_expression.html">md_to_expression()</a></code> internally if <code>markdown = TRUE</code> (which is the default)</p></li>
+<li><p>A <a href="https://rdrr.io/r/base/function.html" class="external-link">function</a> to calculate over <code>.data</code>, such as <code>title = paste("Based on n =", n_distinct(person_id), "individuals")</code> or <code>subtitle = paste("Total rows:", n())</code>, see <em>Examples</em></p></li>
+<li><p>An <a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a>, e.g. using <code>parse(text = "...")</code></p></li>
+</ul><p>The <code>title</code> will be guessed with <code><a href="get_plot_title.html">get_plot_title()</a></code> when left blank.</p>
+<p>The <code>category.title</code> defaults to <code>TRUE</code> if the legend items are numeric.</p></dd>
 
 
 <dt>title.linelength</dt>
@@ -1598,7 +1598,10 @@
 
 
 <dt>datalabels</dt>
-<dd><p>variables or character vector to use as datalabels - if left blank, will take the first character column in 'sf' data, and values of <code>y</code> otherwise. It will print a maximum of 50 labels at default, which can be enforced by explicitly adding <code>datalabels = TRUE</code>.</p></dd>
+<dd><p>values to show as datalabels, see also <code>datalabels.format</code>. This can be:</p><ul><li><p>Left blank. This will default to the values of <code>y</code> in column-type plots, or when plotting spatial 'sf' data, the values of the first column. It will print a maximum of 50 labels unless <code>datalabels = TRUE</code>.</p></li>
+<li><p><code>TRUE</code> or <code>FALSE</code> to force or remove datalabels</p></li>
+<li><p>A function to calculate over <code>.data</code>, such as <code>datalabels = paste(round(column1), "\n", column2)</code></p></li>
+</ul></dd>
 
 
 <dt>datalabels.round</dt>
@@ -1606,7 +1609,7 @@
 
 
 <dt>datalabels.format</dt>
-<dd><p>format to use for datalabels - <code>"%n"</code> will be replaced by the count number, <code>"%p"</code> will be replaced by the percentage of the total count. Use <code>datalabels.format = NULL</code> to not transform the datalabels.</p></dd>
+<dd><p>format to use for datalabels - <code>"%n"</code> will be replaced by the count number, <code>"%p"</code> will be replaced by the percentage of the total count. Use <code>datalabels.format = NULL</code> to <em>not</em> transform the datalabels.</p></dd>
 
 
 <dt>datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle</dt>
