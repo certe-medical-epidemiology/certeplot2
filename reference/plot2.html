@@ -19,7 +19,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.0</span>
       </span>
     </div>
 
@@ -631,31 +631,31 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">y = Sepal.Width</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">category = Species</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-1.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># if x and y are set, no additional mapping will be set:</span></span></span>
 <span class="r-in"><span><span class="va">iris</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">Sepal.Width</span>, <span class="va">Sepal.Length</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-2.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">iris</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">Species</span>, <span class="va">Sepal.Length</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "boxplot"</span><span style="color: #080808;"> since all groups in </span><span style="color: #008787;">Species</span><span style="color: #080808;"> contain at least three values</span></span>
-<span class="r-plt img"><img src="plot2-3.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># the arguments are in this order: x, y, category, facet</span></span></span>
 <span class="r-in"><span><span class="va">iris</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">Sepal.Length</span>, <span class="va">Sepal.Width</span>, <span class="va">Petal.Length</span>, <span class="va">Species</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">facet.fixed_y = TRUE</span><span style="color: #080808;"> since the three </span><span style="color: #008787;">y</span><span style="color: #080808;"> scales are roughly equal</span></span>
-<span class="r-plt img"><img src="plot2-4.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">iris</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">Sepal.Length</span>, <span class="va">Sepal.Width</span>, <span class="va">Petal.Length</span>, <span class="va">Species</span>,</span></span>
 <span class="r-in"><span>        colour <span class="op">=</span> <span class="st">"viridis"</span><span class="op">)</span> <span class="co"># set the viridis colours</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">facet.fixed_y = TRUE</span><span style="color: #080808;"> since the three </span><span style="color: #008787;">y</span><span style="color: #080808;"> scales are roughly equal</span></span>
-<span class="r-plt img"><img src="plot2-5.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>      </span></span>
 <span class="r-in"><span><span class="va">iris</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">Sepal.Length</span>, <span class="va">Sepal.Width</span>, <span class="va">Petal.Length</span>, <span class="va">Species</span>,</span></span>
@@ -663,21 +663,21 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">category.midpoint = 3.45</span><span style="color: #080808;"> (the current </span><span style="color: #008787;">category</span><span style="color: #080808;"> scale centre)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">facet.fixed_y = TRUE</span><span style="color: #080808;"> since the three </span><span style="color: #008787;">y</span><span style="color: #080808;"> scales are roughly equal</span></span>
-<span class="r-plt img"><img src="plot2-6.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># y can also be multiple (named) columns</span></span></span>
 <span class="r-in"><span><span class="va">iris</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sepal.Length</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>L <span class="op">=</span> <span class="va">Petal.Length</span>, W <span class="op">=</span> <span class="va">Petal.Width</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">summarise_function = function(x) x</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-7.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-7.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">iris</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="co"># with selection helpers such as where(), starts_with(), etc.:</span></span></span>
-<span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Species</span>, y <span class="op">=</span> <span class="fu">where</span><span class="op">(</span><span class="va">is.double</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># with included selection helpers such as where(), starts_with(), etc.:</span></span></span>
+<span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Species</span>, y <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/where.html" class="external-link">where</a></span><span class="op">(</span><span class="va">is.double</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">summarise_function = function(x) x</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">y = c(Petal.Length, Petal.Width, Sepal.Length, Sepal.Width)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "boxplot"</span><span style="color: #080808;"> since all groups in </span><span style="color: #008787;">Species</span><span style="color: #080808;"> and </span><span style="color: #008787;">category</span><span style="color: #080808;"> contain at least three values</span></span>
-<span class="r-plt img"><img src="plot2-8.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-8.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co"># support for secondary y axis</span></span></span>
 <span class="r-in"><span><span class="va">mtcars</span> <span class="op">|&gt;</span></span></span>
@@ -687,7 +687,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>        y_secondary.scientific <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>        title <span class="op">=</span> <span class="st">"Secondary y axis sets colour to the axis titles"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-9.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-9.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">admitted_patients</span></span></span>
@@ -710,29 +710,29 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="va">age</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "boxplot"</span><span style="color: #080808;"> since all groups in </span><span style="color: #008787;">hospital</span><span style="color: #080808;"> contain at least three values</span></span>
-<span class="r-plt img"><img src="plot2-10.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-10.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="va">age</span>, <span class="va">gender</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "boxplot"</span><span style="color: #080808;"> since all groups in </span><span style="color: #008787;">hospital</span><span style="color: #080808;"> and </span><span style="color: #008787;">gender</span><span style="color: #080808;"> contain at least three values</span></span>
-<span class="r-plt img"><img src="plot2-11.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-11.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="va">age</span>, <span class="va">gender</span>, <span class="va">ward</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "boxplot"</span><span style="color: #080808;"> since all groups in </span><span style="color: #008787;">hospital</span><span style="color: #080808;"> and </span><span style="color: #008787;">gender</span><span style="color: #080808;"> and </span><span style="color: #008787;">ward</span><span style="color: #080808;"> contain at least three values</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">facet.fixed_y = TRUE</span><span style="color: #080808;"> since the two </span><span style="color: #008787;">y</span><span style="color: #080808;"> scales are roughly equal</span></span>
-<span class="r-plt img"><img src="plot2-12.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-12.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co"># or use any function for y</span></span></span>
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="fu"><a href="https://certe-medical-epidemiology.github.io/certestats/reference/math_functions.html" class="external-link">median</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span>, <span class="va">gender</span>, <span class="va">ward</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "col"</span><span style="color: #080808;"> as the default</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">facet.fixed_y = TRUE</span><span style="color: #080808;"> since the two </span><span style="color: #008787;">y</span><span style="color: #080808;"> scales are roughly equal</span></span>
-<span class="r-plt img"><img src="plot2-13.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-13.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gender</span>, <span class="va">ward</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "col"</span><span style="color: #080808;"> as the default</span></span>
-<span class="r-plt img"><img src="plot2-14.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-14.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span>x <span class="op">=</span> <span class="va">hospital</span>,</span></span>
@@ -743,7 +743,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>        size <span class="op">=</span> <span class="fl">1.25</span>,</span></span>
 <span class="r-in"><span>        y.age <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "boxplot"</span><span style="color: #080808;"> since all groups in </span><span style="color: #008787;">hospital</span><span style="color: #080808;"> and </span><span style="color: #008787;">gender</span><span style="color: #080808;"> contain at least three values</span></span>
-<span class="r-plt img"><img src="plot2-15.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-15.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">age</span>, type <span class="op">=</span> <span class="st">"hist"</span><span class="op">)</span></span></span>
@@ -753,7 +753,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `after_stat(count)` instead.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">certeplot2</span> package.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>   Please report the issue to the authors.</span>
-<span class="r-plt img"><img src="plot2-16.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-16.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># even titles support calculations, including support for {glue}</span></span></span>
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span></span></span>
@@ -764,26 +764,26 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>        x.title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Age ranging from"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://certe-medical-epidemiology.github.io/certestats/reference/math_functions.html" class="external-link">range</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" to "</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">binwidth = 6.4</span><span style="color: #080808;"> based on data</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">smooth = TRUE</span><span style="color: #080808;"> for </span><span style="color: #008787;">type = "histogram"</span></span>
-<span class="r-plt img"><img src="plot2-17.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-17.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># the default type is column, datalabels are automatically</span></span></span>
 <span class="r-in"><span><span class="co"># set in non-continuous types:</span></span></span>
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gender</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "col"</span><span style="color: #080808;"> as the default</span></span>
-<span class="r-plt img"><img src="plot2-18.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-18.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gender</span>,</span></span>
 <span class="r-in"><span>        stacked <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "col"</span><span style="color: #080808;"> as the default</span></span>
-<span class="r-plt img"><img src="plot2-19.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-19.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>        </span></span>
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gender</span>,</span></span>
 <span class="r-in"><span>        stackedpercent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "col"</span><span style="color: #080808;"> as the default</span></span>
-<span class="r-plt img"><img src="plot2-20.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-20.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># sort on any direction:</span></span></span>
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span> </span></span>
@@ -792,7 +792,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>        stacked <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Applying </span><span style="color: #008787;">x.sort = "freq-asc"</span><span style="color: #080808;"> using </span><span style="color: #008787;">summarise_function = base::sum</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "col"</span><span style="color: #080808;"> as the default</span></span>
-<span class="r-plt img"><img src="plot2-21.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-21.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">admitted_patients</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="va">hospital</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">gender</span>,</span></span>
@@ -800,7 +800,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>        category.sort <span class="op">=</span> <span class="st">"alpha-desc"</span>,</span></span>
 <span class="r-in"><span>        stacked <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "col"</span><span style="color: #080808;"> as the default</span></span>
-<span class="r-plt img"><img src="plot2-22.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-22.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># matrix support, such as for cor()</span></span></span>
 <span class="r-in"><span><span class="va">correlation_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span></span>
@@ -825,7 +825,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">type = "tile"</span><span style="color: #080808;"> since the matrix contains identical row and column names</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #FF0000;">!</span> <span style="color: #FF0000;">Omitting printing of 121 datalabels - use </span><span style="color: #008787;">datalabels = TRUE</span><span style="color: #FF0000;"> to force printing</span></span>
-<span class="r-plt img"><img src="plot2-23.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-23.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">correlation_matrix</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>  <span class="fu">plot2</span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"certeblauw2"</span>, <span class="st">"white"</span>, <span class="st">"certeroze2"</span><span class="op">)</span>,</span></span>
@@ -834,7 +834,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>        title <span class="op">=</span>  <span class="st">"Correlation matrix"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">type = "tile"</span><span style="color: #080808;"> since the matrix contains identical row and column names</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">category.midpoint = 0</span><span style="color: #080808;"> (the current </span><span style="color: #008787;">category</span><span style="color: #080808;"> scale centre)</span></span>
-<span class="r-plt img"><img src="plot2-24.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-24.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot2() supports all S3 extensions available through</span></span></span>
@@ -848,7 +848,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>        title <span class="op">=</span> <span class="st">"Titles/captions *support* **markdown**"</span>,</span></span>
 <span class="r-in"><span>        subtitle <span class="op">=</span> <span class="st">"Axis titles contain the square notation: x^2"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">type = "point"</span><span style="color: #080808;"> since both axes are numeric</span></span>
-<span class="r-plt img"><img src="plot2-25.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-25.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot2() also has various other S3 implementations:</span></span></span>
 <span class="r-in"><span></span></span>
@@ -858,7 +858,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>    <span class="fu"><a href="https://certe-medical-epidemiology.github.io/certestats/reference/qc_rules.html" class="external-link">qc_test</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
 <span class="r-in"><span>    <span class="fu">plot2</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-plt img"><img src="plot2-26.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-26.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span>        </span></span>
 <span class="r-in"><span><span class="co"># sf objects (geographic plots, 'simple features') are also supported</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://r-spatial.github.io/sf/" class="external-link">"sf"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -868,7 +868,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: sf</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Linking to GEOS 3.8.0, GDAL 3.0.4, PROJ 6.3.1; sf_use_s2() is TRUE</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">category = area_km2</span></span>
-<span class="r-plt img"><img src="plot2-27.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-27.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Antimicrobial resistance (AMR) data analysis</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://msberends.github.io/AMR/" class="external-link">"AMR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -884,7 +884,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   (amoxicillin/clavulanic acid), 'AMP' (ampicillin) and 'TZP'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   (piperacillin/tazobactam)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ℹ Using column 'mo' as input for `col_mo`.</span>
-<span class="r-plt img"><img src="plot2-28.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-28.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://msberends.github.io/AMR/" class="external-link">"AMR"</a></span><span class="op">)</span> <span class="op">&amp;</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org" class="external-link">"dplyr"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">example_isolates</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">NIT</span>, <span class="va">FOS</span>, <span class="va">AMC</span><span class="op">)</span> <span class="op">|&gt;</span> </span></span>
@@ -904,7 +904,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     intersect, setdiff, setequal, union</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">x = year</span></span>
-<span class="r-plt img"><img src="plot2-29.png" alt="" width="350" height="216"></span>
+<span class="r-plt img"><img src="plot2-29.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># # support for any font</span></span></span>
 <span class="r-in"><span><span class="co"># mtcars |&gt;</span></span></span>
