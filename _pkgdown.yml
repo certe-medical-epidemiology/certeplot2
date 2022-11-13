@@ -42,7 +42,3 @@ navbar:
     - text: "Certe Website"
       icon: "fa-flask"
       href: "https://certe.nl"
-
-figures:
-  dev: grDevices::png
-  dpi: 48

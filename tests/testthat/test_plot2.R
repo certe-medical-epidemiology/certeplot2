@@ -282,7 +282,7 @@ test_that("x scale works", {
   mics <- AMR::as.mic(c(1, 2, 8, 32))
   # should print missing factors levels:
   expect_equal(mics |> plot2(x.mic = TRUE) |> get_range_x(),
-               as.character(2 ^ 0:5))
+               as.character(2 ^ c(0:5)))
   
   p <- plotdata |>
     plot2(x = x_date,

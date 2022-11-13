@@ -49,6 +49,34 @@ dplyr::n
 #' @export
 dplyr::n_distinct
 
+#' @importFrom tidyselect everything
+#' @export
+tidyselect::everything
+
+#' @importFrom tidyselect starts_with
+#' @export
+tidyselect::starts_with
+
+#' @importFrom tidyselect ends_with
+#' @export
+tidyselect::ends_with
+
+#' @importFrom tidyselect matches
+#' @export
+tidyselect::matches
+
+#' @importFrom tidyselect where
+#' @export
+tidyselect::where
+
+#' @importFrom dplyr first
+#' @export
+dplyr::first
+
+#' @importFrom dplyr last
+#' @export
+dplyr::last
+
 #' @importFrom dplyr all_of
 #' @export
 dplyr::all_of

@@ -162,7 +162,7 @@ add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw",
     plot2_message("Adding type ", font_blue("vline"))
     add_type(plot = plot,
              type = "vline",
-             mapping = utils::modifyList(mapping, aes_string(y = NULL, xintercept = mapping$x)),
+             mapping = utils::modifyList(mapping, aes_string(x = NULL, xintercept = mapping$x)),
              utils::modifyList(params, list(inherit.aes = NULL)))
   } else {
     # add the geom

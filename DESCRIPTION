@@ -1,13 +1,13 @@
 Package: certeplot2
 Title: A Certe R Package for Convenient Plotting
-Version: 1.11.3
+Version: 1.12.0
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
          family = "Berends",
          role = c("aut", "cre"),
          email = "m.berends@certe.nl"),
   person(given = c("Erwin", "E.", "A."),
-         family = "Hassing", 
+         family = "Hassing",
          role = c("aut"),
          email = "e.hassing@certe.nl"),
   person(given = "Certe Medical Diagnostics & Advice Foundation",
@@ -28,6 +28,7 @@ Imports:
   scales (>= 1.1.1),
   stringr (>= 1.4.0),
   tibble (>= 3.0.0),
+  tidyselect (>= 1.1.0),
   tidyr (>= 1.0.0),
   yaml (>= 2.2.0)
 Suggests: 
@@ -47,6 +48,6 @@ License: GPL-2
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.2
 Config/testthat/edition: 2
 VignetteBuilder: knitr

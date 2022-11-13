@@ -5,6 +5,13 @@
 \alias{reexports}
 \alias{n}
 \alias{n_distinct}
+\alias{everything}
+\alias{starts_with}
+\alias{ends_with}
+\alias{matches}
+\alias{where}
+\alias{first}
+\alias{last}
 \alias{all_of}
 \alias{any_of}
 \alias{dec_mark}
@@ -18,6 +25,8 @@ below to see their documentation.
 \describe{
   \item{certestyle}{\code{\link[certestyle:dec_mark]{big_mark}}, \code{\link[certestyle]{dec_mark}}}
 
-  \item{dplyr}{\code{\link[dplyr:reexports]{all_of}}, \code{\link[dplyr:reexports]{any_of}}, \code{\link[dplyr:context]{n}}, \code{\link[dplyr]{n_distinct}}}
+  \item{dplyr}{\code{\link[dplyr:reexports]{all_of}}, \code{\link[dplyr:reexports]{any_of}}, \code{\link[dplyr:nth]{first}}, \code{\link[dplyr:nth]{last}}, \code{\link[dplyr:context]{n}}, \code{\link[dplyr]{n_distinct}}}
+
+  \item{tidyselect}{\code{\link[tidyselect:starts_with]{ends_with}}, \code{\link[tidyselect]{everything}}, \code{\link[tidyselect:starts_with]{matches}}, \code{\link[tidyselect]{starts_with}}, \code{\link[tidyselect]{where}}}
 }}
 

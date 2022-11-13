@@ -2460,6 +2460,7 @@ set_max_items <- function(df,
   
 }
 
+#' @importFrom dplyr mutate group_by across all_of summarise
 summarise_data <- function(df,
                            summarise_function,
                            decimal.mark,
@@ -2479,7 +2480,7 @@ summarise_data <- function(df,
   }
   df <- df |>
     mutate(n = get_y(df)) |>
-    group_by(across(c(x, category, facet))) |>
+    group_by(across(all_of(c(x, category, facet)))) |>
     summarise(n = summ_fn(n),
               .groups = "drop")
   colnames(df)[colnames(df) == "n"] <- y

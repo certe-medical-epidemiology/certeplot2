@@ -428,7 +428,7 @@ iris |>
 iris |> 
   plot2(x = Sepal.Length, y = c(L = Petal.Length, W = Petal.Width))
 iris |>
-  # with selection helpers such as where(), starts_with(), etc.:
+  # with included selection helpers such as where(), starts_with(), etc.:
   plot2(x = Species, y = where(is.double))
   
 # support for secondary y axis

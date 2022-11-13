@@ -217,7 +217,7 @@
 #' iris |> 
 #'   plot2(x = Sepal.Length, y = c(L = Petal.Length, W = Petal.Width))
 #' iris |>
-#'   # with selection helpers such as where(), starts_with(), etc.:
+#'   # with included selection helpers such as where(), starts_with(), etc.:
 #'   plot2(x = Species, y = where(is.double))
 #'   
 #' # support for secondary y axis
@@ -546,7 +546,7 @@ plot2 <- function(.data,
   }
 }
 
-#' @importFrom dplyr mutate vars group_by across summarise select matches bind_cols
+#' @importFrom dplyr mutate vars group_by across summarise select bind_cols
 #' @importFrom forcats fct_relabel
 #' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build
 #' @importFrom tidyr pivot_longer
