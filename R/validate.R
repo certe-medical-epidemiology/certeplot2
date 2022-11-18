@@ -841,8 +841,9 @@ validate_y_scale <- function(df,
          call. = FALSE)
   }
   
-  if (is.null(facet.fixed_y) && is.null(y.limits) && has_facet(df) && !isTRUE(stackedpercent)) {
+  if (is.null(facet.fixed_y) && is.null(y.limits) && has_facet(df) && !isTRUE(stackedpercent) && type != "geom_histogram") {
     # determine if scales should be fixed - if CV_ymax < 15% then fix them:
+    # (this does not work for facetted histograms)
     y_maxima <- df |>
       group_by(across(get_facet_name(df))) |> 
       summarise(max = max(`_var_y`, na.rm = TRUE))
@@ -998,6 +999,9 @@ validate_y_scale <- function(df,
           summarise(maximum = sum(`_var_y`, na.rm = TRUE))
         c(min_value, max(max_y$maximum))
       } else {
+        if (type == "geom_histogram") {
+          plot2_warning("Maximum limit of ", font_blue("y"), " cannot be determined well in histograms when ", font_blue("facet.fixed_y = TRUE"))
+        }
         # otherwise, return max per y
         c(min_value, max(values, na.rm = TRUE))
       }
@@ -1393,8 +1397,8 @@ generate_geom <- function(type,
             args = c(list(outlier.size = size * 3,
                           outlier.alpha = 0.75,
                           width = width,
-                          lwd = size, # line width, of whole box
-                          fatten = 1.5, # factor to make median thicker compared to lwd
+                          linewidth = linewidth, # line width of whole box
+                          fatten = ifelse(linewidth < 1, 1.5, linewidth + 0.5), # factor to make median thicker compared to lwd
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
                      list(fill = cols$colour_fill)[!has_category(df)],

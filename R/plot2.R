@@ -151,7 +151,7 @@
 #' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.linewidth,smooth.linetype settings for `smooth`
 #' @param size size of the geom. Defaults to `2` for geoms [point][ggplot2::geom_point()] and [jitter][ggplot2::geom_jitter()], and to `0.75` otherwise.
 #' @param linetype linetype of the geom, only suitable for geoms that draw lines. Defaults to 1.
-#' @param linewidth linewidth of the geom, only suitable for geoms that draw lines. Defaults to `0.5` for geoms that have no area (such as [point][ggplot2::geom_point()] and [line][ggplot2::geom_line()]), to `0.1` for [sf][ggplot2::geom_sf()], and to `0.25` otherwise (such as [boxplot][ggplot2::geom_boxplot()] and [area][ggplot2::geom_area()]).
+#' @param linewidth linewidth of the geom, only suitable for geoms that draw lines. Defaults to `0.5` for geoms that have no area (such as [line][ggplot2::geom_line()]), to `0.1` for [sf][ggplot2::geom_sf()], and to `0.25` otherwise (such as [boxplot][ggplot2::geom_boxplot()], [histogram][ggplot2::geom_histogram()] and [area][ggplot2::geom_area()]).
 #' @param binwidth width of bins (only useful for `geom = "histogram"`), can be specified as a numeric value or as a function that calculates width from `x`, see [`geom_histogram()`][ggplot2::geom_histogram()]. It defaults to approx. `diff(range(x))` divided by 12 to 22 based on the data.
 #' @param width width of the geom. Defaults to `0.75` for geoms [boxplot][ggplot2::geom_boxplot()], [violin][ggplot2::geom_violin()] and [jitter][ggplot2::geom_jitter()], and to `0.5` otherwise.
 #' @param jitter_seed seed (randomisation factor) to be set when using `type = "jitter"`
@@ -550,7 +550,7 @@ plot2 <- function(.data,
 
 #' @importFrom dplyr mutate vars group_by across summarise select bind_cols
 #' @importFrom forcats fct_relabel
-#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build
+#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build after_stat
 #' @importFrom tidyr pivot_longer
 #' @importFrom certestyle format2 font_red font_black font_blue
 plot2_exec <- function(.data,
@@ -1075,7 +1075,7 @@ plot2_exec <- function(.data,
       stat_boxplot(geom = "errorbar",
                    coef = 1.5, # 1.5 * IQR
                    width = width * ifelse(has_category(df), 1, 0.75),
-                   lwd = size,
+                   linewidth = linewidth,
                    colour = cols$colour)
   }
   p <- p +
@@ -1136,7 +1136,7 @@ plot2_exec <- function(.data,
       set_binwidth <- p$layers[[1]]$stat_params$binwidth
       p <- p +
         do.call(geom_density,
-                c(list(mapping = aes(y = ..count.. * set_binwidth),
+                c(list(mapping = aes(y = after_stat(count) * set_binwidth),
                        alpha = smooth.alpha,
                        linetype = smooth.linetype,
                        linewidth = smooth.linewidth,

@@ -335,7 +335,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{linetype}{linetype of the geom, only suitable for geoms that draw lines. Defaults to 1.}
 
-\item{linewidth}{linewidth of the geom, only suitable for geoms that draw lines. Defaults to \code{0.5} for geoms that have no area (such as \link[ggplot2:geom_point]{point} and \link[ggplot2:geom_path]{line}), to \code{0.1} for \link[ggplot2:ggsf]{sf}, and to \code{0.25} otherwise (such as \link[ggplot2:geom_boxplot]{boxplot} and \link[ggplot2:geom_ribbon]{area}).}
+\item{linewidth}{linewidth of the geom, only suitable for geoms that draw lines. Defaults to \code{0.5} for geoms that have no area (such as \link[ggplot2:geom_path]{line}), to \code{0.1} for \link[ggplot2:ggsf]{sf}, and to \code{0.25} otherwise (such as \link[ggplot2:geom_boxplot]{boxplot}, \link[ggplot2:geom_histogram]{histogram} and \link[ggplot2:geom_ribbon]{area}).}
 
 \item{binwidth}{width of bins (only useful for \code{geom = "histogram"}), can be specified as a numeric value or as a function that calculates width from \code{x}, see \code{\link[ggplot2:geom_histogram]{geom_histogram()}}. It defaults to approx. \code{diff(range(x))} divided by 12 to 22 based on the data.}
 

@@ -19,8 +19,7 @@
 
 plot2_env <- new.env(hash = FALSE)
 
-globalVariables(c("..count..",
-                  "_new_title",
+globalVariables(c("_new_title",
                   "_var_category",
                   "_var_datalabels",
                   "_var_facet",
@@ -29,6 +28,7 @@ globalVariables(c("..count..",
                   "_var_y",
                   "ab",
                   "antibiotic", 
+                  "count",
                   "geom",
                   "interpretation",
                   "isolates",
