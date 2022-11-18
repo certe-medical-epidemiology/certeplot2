@@ -23,7 +23,7 @@
 #' @param plot a `ggplot2` plot
 #' @param type a `ggplot2` geom name, all geoms are supported. Full function names can be used (e.g., `"geom_line"`), but they can also be abbreviated (e.g., `"l"`, `"line"`). These geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), violin (`"v"`).
 #' @param mapping a mapping created with [`aes()`][ggplot2::aes()] to pass on to the geom
-#' @param group,linetype,shape,size,width,... arguments passed on to the geom
+#' @param group,linetype,linewidth,shape,size,width,... arguments passed on to the geom
 #' @details The function [add_line()] will add:
 #' * [`geom_hline()`][ggplot2::geom_hline()] if only `y` is provided and `y` contains one unique value;
 #' * [`geom_vline()`][ggplot2::geom_vline()] if only `x` is provided and `x` contains one unique value;
@@ -41,7 +41,7 @@
 #' df |>
 #'   plot2() |> 
 #'   add_line(y = mean(var_2), 
-#'            size = 2,
+#'            linewidth = 2,
 #'            linetype = 3) |>
 #'   add_col(y = var_2 / 5,
 #'           width = 0.25,
@@ -52,7 +52,7 @@
 #'      plot2() |> 
 #'      add_line(y = ewma(var_2, 0.75),
 #'               colour = "certeroze",
-#'               size = 1)
+#'               linewidth = 1)
 #' }
 #' 
 #' if (require("certegis")) {
@@ -63,18 +63,16 @@
 #'   geo_gemeenten |>
 #'     crop_certe() |>
 #'     plot2(datalabels = FALSE,
-#'           category.title = "Inhabitants") |>
+#'           category.title = "Inhabitants",
+#'           colour_fill = c("white", "certeblauw2")) |>
 #'     add_sf(hospitals,
 #'            colour = "certeroze",
-#'            datalabels = place,
-#'            # Just a Google Font:
-#'            datalabels.font = "Rock Salt") |> 
-#'     add_sf(geo_provincies |>
-#'              crop_certe(),
+#'            datalabels = place) |> 
+#'     add_sf(geo_provincies |> crop_certe(),
 #'            colour_fill = NA,
 #'            colour = "certeblauw",
 #'            linetype = 2,
-#'            size = 0.5)
+#'            linewidth = 0.5)
 #' }
 add_type <- function(plot, type = NULL, mapping = aes(), ...) {
   if (!is.ggplot(plot)) {
@@ -102,7 +100,7 @@ add_type <- function(plot, type = NULL, mapping = aes(), ...) {
 #' @importFrom ggplot2 aes_string
 #' @importFrom certestyle colourpicker
 #' @export
-add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw", size, linetype, ..., inherit.aes = TRUE) {
+add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw", linetype, linewidth, ..., inherit.aes = TRUE) {
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
   }
@@ -138,8 +136,8 @@ add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw",
   if (!missing(colour) || !isTRUE(inherit.aes) || !"colour" %in% names(plot$mapping)) {
     params <- c(params, list(colour = colourpicker(colour)))
   }
-  if (!missing(size)) {
-    params <- c(params, list(size = size))
+  if (!missing(linewidth)) {
+    params <- c(params, list(linewidth = linewidth))
   }
   if (!missing(linetype)) {
     params <- c(params, list(linetype = linetype))
@@ -291,7 +289,8 @@ add_sf <- function(plot,
                    sf_data,
                    colour = "certeblauw",
                    colour_fill = "certeblauw",
-                   size = 3,
+                   size = 2,
+                   linewidth = 0.1,
                    datalabels = NULL,
                    datalabels.colour = colour,
                    datalabels.size = 3,
@@ -325,6 +324,7 @@ add_sf <- function(plot,
     geom_sf(data = sf_data,
             inherit.aes = inherit.aes,
             size = size,
+            linewidth = linewidth,
             colour = colourpicker(colour),
             fill = colourpicker(colour_fill),
             ...)

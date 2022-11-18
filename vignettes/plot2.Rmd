@@ -24,6 +24,9 @@ args <- names(formals(plot2))
 x_settings <- args[grepl("^x[.]", args)]
 category_settings <- args[grepl("^category[.]", args)]
 facet_settings <- args[grepl("^facet[.]", args)]
+exported <- getNamespaceExports("certeplot2")
+all_ls <- ls(envir = asNamespace("certeplot2"))
+reexported <- sort(exported[!exported %in% c(all_ls, "big_mark", "dec_mark")])
 ```
 
 # Introduction
@@ -61,6 +64,8 @@ library(certeplot2)
 ```
 
 The `ggplot2` package must (of course) be installed, but it does not need to be loaded using `library()`. The same goes for other tidyverse packages, such as `dplyr`, `forcats` and `stringr`. They are only used internally and not required to load before using the `plot2()` function.
+
+If the `certeplot2` package is loaded, these tidyverse functions are available to use inside `plot2()` without loading other packages: `r paste0("\u0060", reexported, "()\u0060", collapse = ", ")`.
 
 # Setting plot type / geom
 
@@ -525,4 +530,14 @@ plot2(netherlands,
       colour_fill = "viridis",
       # datalabels support tidy evaluation too:
       datalabels = paste0(province, "\n", round(area_km2)))
+```
+
+# Support for any font, including all Google Fonts
+
+Any installed font and any of the [over 1400 Google Fonts](https://fonts.google.com) is supported in `plot2()`. Missing fonts will be downloaded automatically and the required DPI will be set automatically as well, even in R Markdown such as this page:
+
+```{r}
+mtcars |>
+  plot2(mpg, hp, font = "Rock Salt",
+        title = "This plot uses a Google Font")
 ```

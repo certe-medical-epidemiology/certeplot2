@@ -148,11 +148,12 @@
 #' @param horizontal a [logical] to turn the plot 90 degrees using [`coord_flip()`][ggplot2::coord_flip()]. This option also updates some theme options, so that e.g., `x.lbl_italic` will still apply to the original x axis.
 #' @param reverse a [logical] to reverse the *values* of `category`. Use `legend.reverse` to reverse the *legend* of `category`.
 #' @param smooth a [logical] to add a smooth. In histograms, this will add the density count as an overlaying line (default: `TRUE`). In all other cases, a smooth will be added using [`geom_smooth()`][ggplot2::geom_smooth()] (default: `FALSE`).
-#' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.size,smooth.linetype settings for `smooth`
-#' @param size size of the geom
-#' @param linetype linetype of the geom, only suitable for geoms that draw lines
+#' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.linewidth,smooth.linetype settings for `smooth`
+#' @param size size of the geom. Defaults to `2` for geoms [point][ggplot2::geom_point()] and [jitter][ggplot2::geom_jitter()], and to `0.75` otherwise.
+#' @param linetype linetype of the geom, only suitable for geoms that draw lines. Defaults to 1.
+#' @param linewidth linewidth of the geom, only suitable for geoms that draw lines. Defaults to `0.5` for geoms that have no area (such as [point][ggplot2::geom_point()] and [line][ggplot2::geom_line()]), to `0.1` for [sf][ggplot2::geom_sf()], and to `0.25` otherwise (such as [boxplot][ggplot2::geom_boxplot()] and [area][ggplot2::geom_area()]).
 #' @param binwidth width of bins (only useful for `geom = "histogram"`), can be specified as a numeric value or as a function that calculates width from `x`, see [`geom_histogram()`][ggplot2::geom_histogram()]. It defaults to approx. `diff(range(x))` divided by 12 to 22 based on the data.
-#' @param width width of the geom
+#' @param width width of the geom. Defaults to `0.75` for geoms [boxplot][ggplot2::geom_boxplot()], [violin][ggplot2::geom_violin()] and [jitter][ggplot2::geom_jitter()], and to `0.5` otherwise.
 #' @param jitter_seed seed (randomisation factor) to be set when using `type = "jitter"`
 #' @param violin_scale scale to be set when using `type = "violin"`, can also be set to `"area"`
 #' @param legend.position position of the legend, must be `"top"`, `"right"`, `"bottom"`, `"left"` or `"none"` (or `NA` or `NULL`), can be abbreviated. Defaults to `"right"` for numeric `category` values and 'sf' plots, and `"top"` otherwise.
@@ -253,7 +254,7 @@
 #'         category = gender,
 #'         colour = c("F" = "#3F681C", "M" = "#375E97"),
 #'         colour_fill = "#FFBB00AA",
-#'         size = 1.25,
+#'         linewidth = 1.25,
 #'         y.age = TRUE)
 #' 
 #' admitted_patients |>
@@ -467,10 +468,11 @@ plot2 <- function(.data,
                   smooth.se = TRUE,
                   smooth.level = 0.95,
                   smooth.alpha = 0.1,
-                  smooth.size = 0.75,
+                  smooth.linewidth = 0.75,
                   smooth.linetype = 3,
                   size = NULL,
                   linetype = 1,
+                  linewidth = NULL,
                   binwidth = NULL,
                   width = NULL,
                   jitter_seed = NA,
@@ -664,10 +666,11 @@ plot2_exec <- function(.data,
                        smooth.se,
                        smooth.level,
                        smooth.alpha,
-                       smooth.size,
+                       smooth.linewidth,
                        smooth.linetype,
                        size,
                        linetype,
+                       linewidth,
                        binwidth,
                        width,
                        jitter_seed,
@@ -992,6 +995,7 @@ plot2_exec <- function(.data,
   # set default size and width ----
   size <- validate_size(size = size, type = type)
   width <- validate_width(width = width, type = type)
+  linewidth <- validate_linewidth(linewidth = linewidth, type = type)
   
   # generate colour vectors ----
   if (has_category(df) && !is.null(category.focus)) {
@@ -1083,6 +1087,7 @@ plot2_exec <- function(.data,
                   width = width,
                   size = size,
                   linetype = linetype,
+                  linewidth = linewidth,
                   reverse = reverse,
                   na.rm = na.rm,
                   violin_scale = violin_scale,
@@ -1110,6 +1115,7 @@ plot2_exec <- function(.data,
                     width = width,
                     size = size,
                     linetype = linetype,
+                    linewidth = linewidth,
                     reverse = reverse,
                     na.rm = na.rm,
                     violin_scale = violin_scale,
@@ -1133,7 +1139,7 @@ plot2_exec <- function(.data,
                 c(list(mapping = aes(y = ..count.. * set_binwidth),
                        alpha = smooth.alpha,
                        linetype = smooth.linetype,
-                       size = smooth.size,
+                       linewidth = smooth.linewidth,
                        na.rm = na.rm),
                   list(colour = cols$colour[1L])[!has_category(df)]))
     } else {
@@ -1147,7 +1153,7 @@ plot2_exec <- function(.data,
                        level = smooth.level,
                        alpha = smooth.alpha,
                        linetype = smooth.linetype,
-                       size = smooth.size,
+                       linewidth = smooth.linewidth,
                        na.rm = na.rm),
                   list(colour = cols$colour[1L])[!has_category(df)],
                   list(fill = cols$colour[1L])[!has_category(df)]))

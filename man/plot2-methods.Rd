@@ -127,10 +127,11 @@
   smooth.se = TRUE,
   smooth.level = 0.95,
   smooth.alpha = 0.1,
-  smooth.size = 0.75,
+  smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
   linetype = 1,
+  linewidth = NULL,
   binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
@@ -267,10 +268,11 @@
   smooth.se = TRUE,
   smooth.level = 0.95,
   smooth.alpha = 0.1,
-  smooth.size = 0.75,
+  smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
   linetype = 1,
+  linewidth = NULL,
   binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
@@ -407,10 +409,11 @@
   smooth.se = TRUE,
   smooth.level = 0.95,
   smooth.alpha = 0.1,
-  smooth.size = 0.75,
+  smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
   linetype = 1,
+  linewidth = NULL,
   binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
@@ -547,10 +550,11 @@
   smooth.se = TRUE,
   smooth.level = 0.95,
   smooth.alpha = 0.1,
-  smooth.size = 0.75,
+  smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
   linetype = 1,
+  linewidth = NULL,
   binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
@@ -691,10 +695,11 @@
   smooth.se = TRUE,
   smooth.level = 0.95,
   smooth.alpha = 0.1,
-  smooth.size = 0.75,
+  smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
   linetype = 1,
+  linewidth = NULL,
   binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
@@ -831,10 +836,11 @@
   smooth.se = TRUE,
   smooth.level = 0.95,
   smooth.alpha = 0.1,
-  smooth.size = 0.75,
+  smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
   linetype = 1,
+  linewidth = NULL,
   binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
@@ -971,10 +977,11 @@
   smooth.se = TRUE,
   smooth.level = 0.95,
   smooth.alpha = 0.1,
-  smooth.size = 0.75,
+  smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
   linetype = 1,
+  linewidth = NULL,
   binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
@@ -1114,10 +1121,11 @@
   smooth.se = TRUE,
   smooth.level = 0.95,
   smooth.alpha = 0.1,
-  smooth.size = 0.75,
+  smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
   linetype = 1,
+  linewidth = NULL,
   binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
@@ -1256,10 +1264,11 @@
   smooth.se = TRUE,
   smooth.level = 0.95,
   smooth.alpha = 0.1,
-  smooth.size = 0.75,
+  smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = 2,
   linetype = 1,
+  linewidth = NULL,
   binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
@@ -1466,15 +1475,17 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{smooth}{a \link{logical} to add a smooth. In histograms, this will add the density count as an overlaying line (default: \code{TRUE}). In all other cases, a smooth will be added using \code{\link[ggplot2:geom_smooth]{geom_smooth()}} (default: \code{FALSE}).}
 
-\item{smooth.method, smooth.formula, smooth.se, smooth.level, smooth.alpha, smooth.size, smooth.linetype}{settings for \code{smooth}}
+\item{smooth.method, smooth.formula, smooth.se, smooth.level, smooth.alpha, smooth.linewidth, smooth.linetype}{settings for \code{smooth}}
 
-\item{size}{size of the geom}
+\item{size}{size of the geom. Defaults to \code{2} for geoms \link[ggplot2:geom_point]{point} and \link[ggplot2:geom_jitter]{jitter}, and to \code{0.75} otherwise.}
 
-\item{linetype}{linetype of the geom, only suitable for geoms that draw lines}
+\item{linetype}{linetype of the geom, only suitable for geoms that draw lines. Defaults to 1.}
+
+\item{linewidth}{linewidth of the geom, only suitable for geoms that draw lines. Defaults to \code{0.5} for geoms that have no area (such as \link[ggplot2:geom_point]{point} and \link[ggplot2:geom_path]{line}), to \code{0.1} for \link[ggplot2:ggsf]{sf}, and to \code{0.25} otherwise (such as \link[ggplot2:geom_boxplot]{boxplot} and \link[ggplot2:geom_ribbon]{area}).}
 
 \item{binwidth}{width of bins (only useful for \code{geom = "histogram"}), can be specified as a numeric value or as a function that calculates width from \code{x}, see \code{\link[ggplot2:geom_histogram]{geom_histogram()}}. It defaults to approx. \code{diff(range(x))} divided by 12 to 22 based on the data.}
 
-\item{width}{width of the geom}
+\item{width}{width of the geom. Defaults to \code{0.75} for geoms \link[ggplot2:geom_boxplot]{boxplot}, \link[ggplot2:geom_violin]{violin} and \link[ggplot2:geom_jitter]{jitter}, and to \code{0.5} otherwise.}
 
 \item{jitter_seed}{seed (randomisation factor) to be set when using \code{type = "jitter"}}
 

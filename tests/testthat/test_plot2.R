@@ -164,7 +164,7 @@ test_that("adding types works", {
   expect_length(p |>
                   add_line(certestats::rr_ewma(y, 0.75),
                            colour = "certeroze",
-                           size = 2,
+                           linewidth = 2,
                            linetype = 2,
                            alpha = 0.5) |>
                   get_layers(), 2)

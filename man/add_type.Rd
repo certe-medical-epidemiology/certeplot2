@@ -16,8 +16,8 @@ add_line(
   x = NULL,
   group = 1,
   colour = "certeblauw",
-  size,
   linetype,
+  linewidth,
   ...,
   inherit.aes = TRUE
 )
@@ -50,7 +50,8 @@ add_sf(
   sf_data,
   colour = "certeblauw",
   colour_fill = "certeblauw",
-  size = 3,
+  size = 2,
+  linewidth = 0.1,
   datalabels = NULL,
   datalabels.colour = colour,
   datalabels.size = 3,
@@ -70,7 +71,7 @@ add_sf(
 
 \item{x, y}{aesthetic arguments}
 
-\item{group, linetype, shape, size, width, ...}{arguments passed on to the geom}
+\item{group, linetype, linewidth, shape, size, width, ...}{arguments passed on to the geom}
 
 \item{colour, colour_fill}{colour of the line or column, will be evaluated with \code{\link[certestyle:colourpicker]{certestyle::colourpicker()}}. If \code{colour_fill} is missing but \code{colour} is given, \code{colour_fill} will inherit the colour set with \code{colour}.}
 
@@ -105,7 +106,7 @@ df |>
 df |>
   plot2() |> 
   add_line(y = mean(var_2), 
-           size = 2,
+           linewidth = 2,
            linetype = 3) |>
   add_col(y = var_2 / 5,
           width = 0.25,
@@ -116,7 +117,7 @@ if (require("certestats", warn.conflicts = FALSE)) {
      plot2() |> 
      add_line(y = ewma(var_2, 0.75),
               colour = "certeroze",
-              size = 1)
+              linewidth = 1)
 }
 
 if (require("certegis")) {
@@ -127,17 +128,15 @@ if (require("certegis")) {
   geo_gemeenten |>
     crop_certe() |>
     plot2(datalabels = FALSE,
-          category.title = "Inhabitants") |>
+          category.title = "Inhabitants",
+          colour_fill = c("white", "certeblauw2")) |>
     add_sf(hospitals,
            colour = "certeroze",
-           datalabels = place,
-           # Just a Google Font:
-           datalabels.font = "Rock Salt") |> 
-    add_sf(geo_provincies |>
-             crop_certe(),
+           datalabels = place) |> 
+    add_sf(geo_provincies |> crop_certe(),
            colour_fill = NA,
            colour = "certeblauw",
            linetype = 2,
-           size = 0.5)
+           linewidth = 0.5)
 }
 }

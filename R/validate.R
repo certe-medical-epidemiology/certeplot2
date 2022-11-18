@@ -1318,6 +1318,7 @@ generate_geom <- function(type,
                           width,
                           size,
                           linetype,
+                          linewidth,
                           reverse,
                           na.rm,
                           violin_scale,
@@ -1355,9 +1356,9 @@ generate_geom <- function(type,
   } else if (type == "geom_area") {
     do.call(geom_fn,
             args = c(list(linetype = linetype,
+                          linewidth = linewidth,
                           stat = "identity",
                           position = position,
-                          size = size,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
                      list(fill = cols$colour_fill)[!has_category(df)],
@@ -1365,9 +1366,9 @@ generate_geom <- function(type,
     
   } else if (type %in% c("geom_line", "geom_path")) {
     do.call(geom_fn,
-            args = c(list(size = size,
-                          lineend = "round",
+            args = c(list(lineend = "round",
                           linetype = linetype,
+                          linewidth = linewidth,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
                      list(mapping = mapping)[!is.null(mapping)]))
@@ -1402,7 +1403,7 @@ generate_geom <- function(type,
   } else if (type == "geom_violin") {
     do.call(geom_fn,
             args = c(list(width = width,
-                          lwd = size, # line width, of whole violin
+                          linewidth = linewidth, # line width, of whole violin
                           scale = violin_scale,
                           trim = TRUE,
                           draw_quantiles = c(0.25, 0.5, 0.75),
@@ -1430,6 +1431,7 @@ generate_geom <- function(type,
     }
     do.call(geom_fn,
             args = c(list(size = size,
+                          linewidth = linewidth,
                           binwidth = binwidth,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
@@ -1439,7 +1441,7 @@ generate_geom <- function(type,
   } else if (type == "geom_density") {
     do.call(geom_fn,
             args = c(list(linetype = linetype,
-                          size = size,
+                          linewidth = linewidth,
                           na.rm = na.rm),
                      list(colour = cols$colour)[!has_category(df)],
                      list(fill = cols$colour_fill)[!has_category(df)],
@@ -1448,7 +1450,7 @@ generate_geom <- function(type,
   } else if (type == "geom_sf") {
     do.call(geom_fn,
             args = c(list(linetype = linetype,
-                          size = size,
+                          linewidth = linewidth,
                           na.rm = na.rm),
                      list(colour = cols$colour)[length(cols$colour) == 1],
                      list(fill = cols$colour_fill)[!has_category(df)]))
@@ -1460,7 +1462,7 @@ generate_geom <- function(type,
   } else if (type == "geom_tile") {
     do.call(geom_fn,
             args = c(list(linetype = linetype,
-                          size = size,
+                          linewidth = linewidth,
                           na.rm = na.rm)))
     
   } else if (type == "geom_raster") {
@@ -1617,11 +1619,7 @@ validate_colour <- function(df,
 
 validate_size <- function(size, type) {
   if (is.null(size)) {
-    if (type == "geom_sf") {
-      size <- 0.1
-    } else if (type %in% c("geom_boxplot", "geom_violin", "geom_area", "geom_ribbon") || geom_is_continuous_x(type)) {
-      size <- 0.5
-    } else if (type %in% c("geom_point", "geom_jitter")) {
+    if (type %in% c("geom_point", "geom_jitter")) {
       size <- 2
     } else {
       size <- 0.75
@@ -1639,6 +1637,19 @@ validate_width <- function(width, type) {
     }
   }
   width
+}
+
+validate_linewidth <- function(linewidth, type) {
+  if (is.null(linewidth)) {
+    if (type == "geom_sf") {
+      linewidth <- 0.1
+    } else if (geom_is_continuous(type) && !geom_has_only_colour(type)) {
+      linewidth <- 0.25
+    } else {
+      linewidth <- 0.5
+    }
+  }
+  linewidth
 }
 
 validate_markdown <- function(markdown,
