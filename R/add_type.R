@@ -82,7 +82,7 @@ add_type <- function(plot, type = NULL, mapping = aes(), ...) {
   if (type == "") {
     stop("`type` must be set for `add_type()`", call. = FALSE)
   } else if (type == "geom_smooth") {
-    plot2_warning("Adding a smooth using `add_type()` is less convenient than using `plot2(..., smooth = TRUE)")
+    plot2_caution("Adding a smooth using `add_type()` is less convenient than using `plot2(..., smooth = TRUE)")
   }
   geom_fn <- getExportedValue(name = type, ns = asNamespace("ggplot2"))
   
@@ -315,7 +315,7 @@ add_sf <- function(plot,
   crs <- c(plot = as.character(sf::st_crs(plot$data$geometry))[1],
            add = as.character(sf::st_crs(sf_data))[1])
   if (n_distinct(crs) > 1) {
-    plot2_warning("The coordinate reference system (CRS) of `plot` and `sf_data` are different, transforming `sf_data` to ", crs[1])
+    plot2_caution("The coordinate reference system (CRS) of `plot` and `sf_data` are different, transforming `sf_data` to ", crs[1])
     sf_data <- sf::st_transform(sf_data, crs = crs[1])
   }
   crs <- crs[1]

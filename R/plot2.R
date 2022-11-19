@@ -498,7 +498,7 @@ plot2 <- function(.data,
   if (tryCatch(NROW(.data) == 0, error = function(e) stop(format_error(e), call. = FALSE))) {
     # check if markdown is required
     markdown <- validate_markdown(markdown, x.title, y.title, c(category.title, legend.title), title, subtitle, tag, caption)
-    plot2_warning("No observations, returning an empty plot")
+    plot2_caution("No observations, returning an empty plot")
     p <- ggplot() +
       validate_theme(theme = theme,
                      type = "",
@@ -552,7 +552,7 @@ plot2 <- function(.data,
 #' @importFrom forcats fct_relabel
 #' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build after_stat
 #' @importFrom tidyr pivot_longer
-#' @importFrom certestyle format2 font_red font_black font_blue
+#' @importFrom certestyle format2 font_magenta font_black font_blue
 plot2_exec <- function(.data,
                        x,
                        y,
@@ -695,10 +695,10 @@ plot2_exec <- function(.data,
   dots <- list(...)
   dots_unknown <- names(dots) %unlike% "^_(label[.]|misses[.]|sf.column|summarise_fn_name)"
   if (any(dots_unknown)) {
-    plot2_warning(ifelse(sum(dots_unknown) == 1,
+    plot2_caution(ifelse(sum(dots_unknown) == 1,
                          "This argument is unknown and was ignored: ",
                          "These arguments are unknown and were ignored: "),
-                  paste0(font_red(names(dots[dots_unknown]), collapse = NULL), collapse = font_black(", ")))
+                  paste0(font_magenta(names(dots[dots_unknown]), collapse = NULL), collapse = font_black(", ")))
   }
   
   # record missing arguments ----
@@ -934,7 +934,7 @@ plot2_exec <- function(.data,
     if (all(get_x(df) %like% "^paste\\(")) {
       # so x has taxonomic values
       if (!is.null(x.labels)) {
-        plot2_warning("Ignoring ", font_blue("x.labels"), " since ", font_blue("x.lbl_taxonomy = TRUE"))
+        plot2_caution("Ignoring ", font_blue("x.labels"), " since ", font_blue("x.lbl_taxonomy = TRUE"))
       }
       x.labels <- function(l) parse(text = l)
     }
@@ -942,6 +942,10 @@ plot2_exec <- function(.data,
   
   # validate type ----
   type <- validate_type(type = type, df = df) # this will automatically determine the type if is.null(type)
+  if (geom_is_line_or_area(type) && !is.null(size)) {
+    plot2_caution("'size' has been replaced with 'linewidth' for line/area types, assuming ", font_blue("linewidth = ", size, collapse = NULL))
+    linewidth <- size
+  }
   if (has_y_secondary(df)) {
     y_secondary.type <- suppressMessages(validate_type(type = y_secondary.type, df = df))
   }
@@ -988,7 +992,7 @@ plot2_exec <- function(.data,
   
   # keep only one of `stacked` and `stackedpercent`
   if (isTRUE(stacked) && isTRUE(stackedpercent)) {
-    plot2_warning("Ignoring ", font_blue("stacked = TRUE"), ", since ", font_blue("stackedpercent = TRUE"))
+    plot2_caution("Ignoring ", font_blue("stacked = TRUE"), ", since ", font_blue("stackedpercent = TRUE"))
     stacked <- FALSE
   }
   
@@ -1002,7 +1006,7 @@ plot2_exec <- function(.data,
     category.focus <- category.focus[1L]
     # check if value is actually in category
     if (!category.focus %in% get_category(df) && !is.numeric(category.focus)) {
-      plot2_warning("Value \"", category.focus, "\" not found in ", font_blue("category"))
+      plot2_caution("Value \"", category.focus, "\" not found in ", font_blue("category"))
     } else {
       category_unique <- sort(unique(get_category(df)))
       if (is.numeric(category.focus)) {
@@ -1056,11 +1060,11 @@ plot2_exec <- function(.data,
       # mapping <- utils::modifyList(mapping, aes_string(geometry = dots$`_sf.column`))
     }
   }
-  if (geom_is_continuous(type) && !geom_has_colour(type) && has_category(df)) {
+  if (geom_is_continuous(type) && !geom_is_line_or_area(type) && has_category(df)) {
     # remove the group from the mapping
     mapping <- utils::modifyList(mapping, aes(group = NULL))
   }
-  if ((geom_has_colour(type) || geom_is_continuous_x(type) || geom_has_only_colour(type)) && !has_category(df)) {
+  if ((geom_is_line_or_area(type) || geom_is_continuous_x(type) || geom_has_only_colour(type)) && !has_category(df)) {
     # exception for line plots without colour/fill, force group = 1
     mapping <- utils::modifyList(mapping, aes(group = 1))
   }

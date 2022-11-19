@@ -93,7 +93,7 @@ certestyle::dec_mark
 #' @export
 certestyle::big_mark
 
-#' @importFrom certestyle font_black font_blue font_red font_white font_bold
+#' @importFrom certestyle font_black font_blue font_magenta font_white font_bold
 plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", type = "info") {
   # at default, only prints in interactive mode and for the website generation
   if (isTRUE(print)) {
@@ -108,15 +108,15 @@ plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") 
       fn <- font_black
       icon <- font_blue(icon)
     } else {
-      fn <- font_red
-      icon <- font_red("!")
+      fn <- font_magenta
+      icon <- font_magenta("!")
     }
     msg <- paste0(fn(c(...), collapse = NULL), collapse = "")
     message(paste(icon, fn(msg)))
   }
 }
 
-plot2_warning <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "") {
+plot2_caution <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "") {
   plot2_message(..., print = print, type = "warning")
 }
 
@@ -380,7 +380,7 @@ geom_is_continuous <- function(geom) {
 geom_is_continuous_x <- function(geom) {
   geom %in% c("geom_histogram", "geom_density")
 }
-geom_has_colour <- function(geom) {
+geom_is_line_or_area <- function(geom) {
   geom %in% c("geom_line", "geom_hline", "geom_vline", "geom_path", "geom_qq_line", "geom_linerange", "geom_area", "geom_ribbon", "geom_tile", "geom_raster", "geom_rect")
 }
 geom_has_only_colour <- function(geom) {

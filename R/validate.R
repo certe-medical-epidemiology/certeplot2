@@ -59,7 +59,7 @@ validate_type <- function(type, df = NULL) {
     return("") # for quick validation
   } else {
     if (length(type) > 1) {
-      plot2_warning(font_blue("type"), " can only be of length 1")
+      plot2_caution(font_blue("type"), " can only be of length 1")
     }
     type <- trimws(tolower(type[1L]))
     type <- gsub(".*::", "", type) # for `type = "ggplot2::geom_col()"`
@@ -111,7 +111,7 @@ validate_legend.position <- function(legend.position) {
 }
 
 #' @importFrom dplyr select pull mutate arrange across if_all cur_column
-#' @importFrom certestyle font_bold font_blue font_red font_black
+#' @importFrom certestyle font_bold font_blue font_magenta font_black
 validate_data <- function(df,
                           misses_x,
                           misses_category,
@@ -327,7 +327,7 @@ validate_data <- function(df,
           plot2_message("Using ", font_blue("datalabels = ", character_cols[1L], collapse = NULL))
           df <- df |> mutate(`_var_datalabels` = df |> pull(character_cols[1L]))
         } else {
-          plot2_warning("No suitable column found for ", font_blue("datalabels = TRUE"))
+          plot2_caution("No suitable column found for ", font_blue("datalabels = TRUE"))
           df <- df |> select(-`_var_datalabels`)
         }
       } else if (has_category(df) && type %in% c("geom_tile", "geom_raster", "geom_rect")) {
@@ -475,7 +475,7 @@ validate_data <- function(df,
                       }))
       if (plot2_env$na_replaced > 0) {
         plot2_env$na_replaced_vars <- plot2_env$na_replaced_vars[plot2_env$na_replaced_vars %unlike% "^_var_"]
-        plot2_message("Replacing ", font_red("NA"),
+        plot2_message("Replacing ", font_magenta("NA"),
                       " in column", ifelse(length(plot2_env$na_replaced_vars) > 1, "s ", " "),
                       paste(font_blue(plot2_env$na_replaced_vars, collapse = NULL), collapse = " and "),
                       " using ", font_blue(paste0("na.replace = \"", dots$na.replace, "\"")))
@@ -869,7 +869,7 @@ validate_y_scale <- function(df,
     }
     if (y.trans != "identity") {
       if (!is.null(y.breaks)) {
-        plot2_warning("Ignoring ", font_blue("y.breaks"), " since ",
+        plot2_caution("Ignoring ", font_blue("y.breaks"), " since ",
                       font_blue(paste0("y.trans = \"", y.trans, "\"")))
       }
       return(waiver)
@@ -1000,7 +1000,7 @@ validate_y_scale <- function(df,
         c(min_value, max(max_y$maximum))
       } else {
         if (type == "geom_histogram") {
-          plot2_warning("Maximum limit of ", font_blue("y"), " cannot be determined well in histograms when ", font_blue("facet.fixed_y = TRUE"))
+          plot2_caution("Maximum limit of ", font_blue("y"), " cannot be determined well in histograms when ", font_blue("facet.fixed_y = TRUE"))
         }
         # otherwise, return max per y
         c(min_value, max(values, na.rm = TRUE))
@@ -1151,7 +1151,7 @@ validate_category_scale <- function(values,
   breaks_fn <- function(values, category.breaks, category.percent, category.trans, waiver) {
     if (category.trans != "identity") {
       if (!is.null(category.breaks)) {
-        plot2_warning("Ignoring ", font_blue("category.breaks"), " since ",
+        plot2_caution("Ignoring ", font_blue("category.breaks"), " since ",
                       font_blue(paste0("category.trans = \"", category.trans, "\"")))
       }
       return(waiver)
@@ -1180,7 +1180,7 @@ validate_category_scale <- function(values,
     if (category.trans != "identity") {
       # in certain transformations, such as log, 0 is not allowed
       if (!is.null(category.limits)) {
-        plot2_warning("Ignoring ", font_blue("category.limits"), " since ",
+        plot2_caution("Ignoring ", font_blue("category.limits"), " since ",
                       font_blue(paste0("category.trans = \"", category.trans, "\"")))
       }
       c(NA_real_, NA_real_)
@@ -1475,7 +1475,7 @@ generate_geom <- function(type,
     
   } else {
     # try to put some arguments into the requested geom
-    plot2_warning(font_blue("type = \"", type, "\"", collapse = ""), " is currently only loosely supported")
+    plot2_caution(font_blue("type = \"", type, "\"", collapse = ""), " is currently only loosely supported")
     do.call(geom_fn,
             args = c(list(width = width,
                           size = size,
@@ -1758,7 +1758,7 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
     if (is.expression(out)) {
       x_deparsed <- trimws(deparse(substitute(x)))
       x_deparsed <- x_deparsed[!x_deparsed %in% c("{", "}")]
-      plot2_warning("Multiple lines in ", font_blue(x_deparsed), 
+      plot2_caution("Multiple lines in ", font_blue(x_deparsed), 
                     " cannot be set since it is an expression (does it contain markdown characters?)")
     } else {
       out <- gsub("<br>", "\n", out, fixed = TRUE)
@@ -1817,7 +1817,7 @@ validate_theme <- function(theme,
       theme <- theme()
     }
     if (!inherits(theme, "theme")) {
-      plot2_warning("No valid ggplot2 theme, using ", font_blue("theme = ggplot2::theme_grey()"))
+      plot2_caution("No valid ggplot2 theme, using ", font_blue("theme = ggplot2::theme_grey()"))
       theme <- NULL
     }
   }
@@ -1997,7 +1997,7 @@ validate_facet <- function(df,
                         scales = scales,
                         switch = switch))
     } else {
-      plot2_warning("When using ", font_blue("facet.relative = TRUE"), ", the number of columns cannot be > 1 when ",
+      plot2_caution("When using ", font_blue("facet.relative = TRUE"), ", the number of columns cannot be > 1 when ",
                     font_blue("facet.nrow"), " is larger than 1")
       return(facet_grid(rows = vars(`_var_facet`),
                         space = scales,
@@ -2033,7 +2033,7 @@ set_datalabels <- function(p,
                            markdown) {
   
   if (isTRUE(misses_datalabels) && nrow(df) > 50) {
-    plot2_warning("Omitting printing of ", nrow(df), " datalabels - use ",
+    plot2_caution("Omitting printing of ", nrow(df), " datalabels - use ",
                   font_blue("datalabels = TRUE"), " to force printing")
     return(p)
   }
@@ -2168,7 +2168,7 @@ validate_font <- function(font) {
   required_pkg <- c("showtext", "showtextdb", "sysfonts")
   misses_pkg <- !required_pkg %in% rownames(utils::installed.packages())
   if (any(misses_pkg)) {
-    plot2_warning("Package ", paste0("'", required_pkg[misses_pkg], "'", collapse = " and "),
+    plot2_caution("Package ", paste0("'", required_pkg[misses_pkg], "'", collapse = " and "),
                   " not installed, ignoring ", font_blue("font = \"", font, "\"", collapse = ""))
     return("")
   }
@@ -2230,7 +2230,7 @@ validate_font <- function(font) {
   if (font %in% tolower(sysfonts::font_families())) {
     return(sysfonts::font_families()[tolower(sysfonts::font_families()) == font])
   } else {
-    plot2_warning("Ignoring unknown font family \"", font.bak, "\"")
+    plot2_caution("Ignoring unknown font family \"", font.bak, "\"")
     return("")
   }
 }
@@ -2377,7 +2377,7 @@ sort_data <- function(values,
 
 #' @importFrom forcats fct_relevel
 #' @importFrom dplyr group_by across group_size mutate summarise
-#' @importFrom certestyle font_blue font_red format2
+#' @importFrom certestyle font_blue font_magenta format2
 set_max_items <- function(df,
                           y,
                           x,
@@ -2409,7 +2409,7 @@ set_max_items <- function(df,
       return(values)
     }
     if (!is.factor(values)) {
-      plot2_warning("Setting ", font_blue("*.max_items"), " only works when values are a character or (sorted) factor, not ", font_red(paste0(class(values), collapse = "/")))
+      plot2_caution("Setting ", font_blue("*.max_items"), " only works when values are a character or (sorted) factor, not ", font_magenta(paste0(class(values), collapse = "/")))
       return(values)
     }
     if (n_max < length(levels(values))) {

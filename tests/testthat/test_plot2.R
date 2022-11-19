@@ -453,7 +453,7 @@ test_that("moving layer works", {
 
 test_that("messaging works", {
   expect_message(plot2_message("test", print = TRUE))
-  expect_message(plot2_warning("test", print = TRUE))
+  expect_message(plot2_caution("test", print = TRUE))
 })
 
 test_that("date labels work", {

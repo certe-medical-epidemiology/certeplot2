@@ -179,7 +179,7 @@ plot2.default <- function(.data,
       stop("Unable to initialise plot2(): input class '", paste(class(.data), collapse = "/"), "' is unsupported",
            call. = FALSE)
     }
-    plot2_warning("Input class '", paste(class(.data), collapse = "/"), "' was transformed using as.data.frame()")
+    plot2_caution("Input class '", paste(class(.data), collapse = "/"), "' was transformed using as.data.frame()")
   }
   
   plot2_exec(new_df,
@@ -1137,7 +1137,7 @@ plot2.sf <- function(.data,
   }
   
   if (!inherits(.data, "sf")) {
-    plot2_warning("Transforming plot data to an sf model using ", font_blue("sf::st_as_sf()"))
+    plot2_caution("Transforming plot data to an sf model using ", font_blue("sf::st_as_sf()"))
     .data <- sf::st_as_sf(.data)
   }
   if (!is.null(crs)) {
@@ -1145,10 +1145,10 @@ plot2.sf <- function(.data,
   }
   
   if (!is.null(x)) {
-    plot2_warning("In 'sf' plots, ", font_blue("x"), " will be ignored - did you mean ", font_blue("category"), "?")
+    plot2_caution("In 'sf' plots, ", font_blue("x"), " will be ignored - did you mean ", font_blue("category"), "?")
   }
   if (!is.null(y)) {
-    plot2_warning("In 'sf' plots, ", font_blue("y"), " will be ignored - did you mean ", font_blue("category"), "?")
+    plot2_caution("In 'sf' plots, ", font_blue("y"), " will be ignored - did you mean ", font_blue("category"), "?")
   }
   
   df <- .data
