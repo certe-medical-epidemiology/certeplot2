@@ -1597,7 +1597,8 @@ validate_colour <- function(df,
     # expand the range
     grp_sizes <- group_sizes(df)
     n_categories <- length(grp_sizes)
-    if (any(grp_sizes > 1, na.rm = TRUE)) {
+    # TODO this very hacky... since ggplot2 3.4.0 manual values in scale_*_manual work differently
+    if (any(grp_sizes > 1, na.rm = TRUE) && n_categories * n_distinct(get_category(df)) < nrow(df)) {
       if (length(colour) < n_categories) {
         # expand colour for all categories, except when all colours were named
         colour <- c(colour, rep(colour, n_categories)[seq_len(n_categories - length(colour))])

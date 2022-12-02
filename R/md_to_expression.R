@@ -24,8 +24,11 @@
 #' @details This function only supports common markdown (italic, bold, bold-italic, subscript, superscript), but also supports some additional functionalities for more advanced expressions using \R [plotmath][grDevices::plotmath]. Please see *Examples*.
 #' 
 #' *Rationale*: we tried to use the `ggtext` package instead to support markdown using their `element_markdown()` function for `ggplot2` [themes][ggplot2::theme()], but it currently supports only very limited markdown and no [plotmath][grDevices::plotmath] at all.
+#' 
+#' In [plot2()], this function can be set to argument `category.labels` to print the data values as expressions:
+#' - `plot2(..., category.labels = md_to_expression)`
 #' @export
-#' @return An [expression]
+#' @return An [expression] if `x` is length 1, or a [list] of expressions otherwise
 #' @examples
 #' # use '*' for italics, not '_', to prevent conflicts with variable naming
 #' md_to_expression("this is *italic* text, this is _not italic_ text")
@@ -52,71 +55,75 @@
 #'         title = "$f[X](x)==frac(1, sigma*sqrt(2*pi))*plain(e)^{frac(-(x-mu)^2, 2*sigma^2)}$",
 #'         subtitle = "Some insane $widehat(plotmath)$ title")
 md_to_expression <- function(x) {
-  out <- x[1L]
+  x <- as.character(x)
   
-  if (out %like% "^[$].+[$]$") {
-    # a full plotmath expression
-    return(parse(text = gsub("^[$](.+)[$]$", "\\1", out, perl = TRUE)))
+  if (length(x) > 1) {
+    return(lapply(x, md_to_expression))
   }
-  out <- paste0("'", out, "'")
+  
+  if (x %like% "^[$].+[$]$") {
+    # a full plotmath expression
+    return(parse(text = gsub("^[$](.+)[$]$", "\\1", x, perl = TRUE)))
+  }
+  x <- paste0("'", x, "'")
   
   # remove backticks
-  out <- gsub("`", "", out, fixed = TRUE)
+  x <- gsub("`", "", x, fixed = TRUE)
   
   # translate ***bold-italic***
-  while (out %like% "[*]{3}.+[*]{3}") {
-    out <- gsub("[*]{3}(.+?)[*]{3}", "', bolditalic('\\1'), '", out, perl = TRUE)
+  while (x %like% "[*]{3}.+[*]{3}") {
+    x <- gsub("[*]{3}(.+?)[*]{3}", "', bolditalic('\\1'), '", x, perl = TRUE)
   }
   
   # translate **bold**
-  while (out %like% "[*]{2}.+[*]{2}") {
-    out <- gsub("[*]{2}(.+?)[*]{2}", "', bold('\\1'), '", out, perl = TRUE)
+  while (x %like% "[*]{2}.+[*]{2}") {
+    x <- gsub("[*]{2}(.+?)[*]{2}", "', bold('\\1'), '", x, perl = TRUE)
   }
   
   # translate *italic*
-  while (out %like% "[*].+[*]") {
-    out <- gsub("[*](.+?)[*]", "', italic('\\1'), '", out, perl = TRUE)
+  while (x %like% "[*].+[*]") {
+    x <- gsub("[*](.+?)[*]", "', italic('\\1'), '", x, perl = TRUE)
   }
   
   # translate sub<sub>script</sub>
-  while (grepl("\\S+<sub>.+</sub>", out, ignore.case = FALSE)) {
-    out <- gsub("(\\S+?)<sub>(.+?)</sub>", "', \\1['\\2'], '", out, perl = TRUE)
+  while (grepl("\\S+<sub>.+</sub>", x, ignore.case = FALSE)) {
+    x <- gsub("(\\S+?)<sub>(.+?)</sub>", "', \\1['\\2'], '", x, perl = TRUE)
   }
   
   # translate super<sup>script</sup>
-  while (grepl("\\S+<sup>.+</sup>", out, ignore.case = FALSE)) {
-    out <- gsub("(\\S+?)<sup>(.+?)</sup>", "', \\1^'\\2', '", out, perl = TRUE)
+  while (grepl("\\S+<sup>.+</sup>", x, ignore.case = FALSE)) {
+    x <- gsub("(\\S+?)<sup>(.+?)</sup>", "', \\1^'\\2', '", x, perl = TRUE)
   }
   
   # translate sub_{script}
-  while (grepl("\\S+_[{].+[}]", out, ignore.case = FALSE)) {
-    out <- gsub("(\\S+?)_[{](.+?)[}]", "', \\1['\\2'], '", out, perl = TRUE)
+  while (grepl("\\S+_[{].+[}]", x, ignore.case = FALSE)) {
+    x <- gsub("(\\S+?)_[{](.+?)[}]", "', \\1['\\2'], '", x, perl = TRUE)
   }
   
   # translate super^{script}
-  out <- gsub("\\^([a-zA-Z0-9,._-]+)", "^{\\1}", out)
-  while (grepl("\\S+\\^[{].+[}]", out, ignore.case = FALSE)) {
-    out <- gsub("(\\S+?)\\^[{](.+?)[}]+?", "\\1'^'\\2', '", out, perl = TRUE)
+  x <- gsub("\\^([a-zA-Z0-9,._-]+)", "^{\\1}", x)
+  while (grepl("\\S+\\^[{].+[}]", x, ignore.case = FALSE)) {
+    x <- gsub("(\\S+?)\\^[{](.+?)[}]+?", "\\1'^'\\2', '", x, perl = TRUE)
   }
   
   # translate $plotmath$, such as $omega$
-  while (out %like% "[$].+[$]") {
-    out <- gsub("[$](.+?)[$]", "', \\1, '", out, perl = TRUE)
+  while (x %like% "[$].+[$]") {
+    x <- gsub("[$](.+?)[$]", "', \\1, '", x, perl = TRUE)
   }
   
   # clean up
-  out <- gsub("^', '?'?", "", out)
-  out <- gsub("^'', ", "", out)
-  out <- gsub(", ''$", "", out)
-  out <- gsub(", '$", "", out)
-  out <- gsub("''", "'", out, fixed = TRUE)
-  out <- gsub("), ', '^", ")^", out, fixed = TRUE)
-  out <- gsub(", '^", "^", out, fixed = TRUE)
-  out <- gsub("^, ", "", out)
+  x <- gsub("^', '?'?", "", x)
+  x <- gsub("^'', ", "", x)
+  x <- gsub(", ''$", "", x)
+  x <- gsub(", '$", "", x)
+  x <- gsub("''", "'", x, fixed = TRUE)
+  x <- gsub("), ', '^", ")^", x, fixed = TRUE)
+  x <- gsub(", '^", "^", x, fixed = TRUE)
+  x <- gsub("^, ", "", x)
   
-  tryCatch(parse(text = paste0("paste(", out, ")")),
+  tryCatch(parse(text = paste0("paste(", x, ")")),
            error = function(e) {
-             stop("This cannot be parsed by md_to_expression(): \"", out,
+             stop("This cannot be parsed by md_to_expression(): \"", x,
                   "\"\n\nFor more complex expressions, start and end with '$' to write in plotmath, or use parse(text = \"...\").",
                   call. = FALSE)
            })

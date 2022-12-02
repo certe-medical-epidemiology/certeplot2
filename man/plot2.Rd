@@ -429,7 +429,9 @@ iris |>
 
 # y can also be multiple (named) columns
 iris |> 
-  plot2(x = Sepal.Length, y = c(L = Petal.Length, W = Petal.Width))
+  plot2(x = Sepal.Length,
+        y = c(Length = Petal.Length, Width = Petal.Width),
+        category.title = "Petal property")
 iris |>
   # with included selection helpers such as where(), starts_with(), etc.:
   plot2(x = Species, y = where(is.double))

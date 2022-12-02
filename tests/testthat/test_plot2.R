@@ -128,6 +128,9 @@ test_that("general mapping works", {
   # remove x axis
   expect_s3_class(admitted_patients |> plot2(x = NULL, y = age), "gg")
   expect_s3_class(admitted_patients |> plot2(x = 1:250, y = age), "gg")
+  
+  # set category.labels = md_to_expression automatically
+  expect_s3_class(iris |> plot2(category = paste0("*", Species, "*")), "gg")
 })
 
 test_that("adding mapping works", {

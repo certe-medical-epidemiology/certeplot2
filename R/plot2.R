@@ -216,7 +216,9 @@
 #'
 #' # y can also be multiple (named) columns
 #' iris |> 
-#'   plot2(x = Sepal.Length, y = c(L = Petal.Length, W = Petal.Width))
+#'   plot2(x = Sepal.Length,
+#'         y = c(Length = Petal.Length, Width = Petal.Width),
+#'         category.title = "Petal property")
 #' iris |>
 #'   # with included selection helpers such as where(), starts_with(), etc.:
 #'   plot2(x = Species, y = where(is.double))
@@ -942,7 +944,7 @@ plot2_exec <- function(.data,
   
   # validate type ----
   type <- validate_type(type = type, df = df) # this will automatically determine the type if is.null(type)
-  if (geom_is_line_or_area(type) && !is.null(size)) {
+  if (geom_is_line_or_area(type) && type_backup != "linedot" && !is.null(size)) {
     plot2_caution("'size' has been replaced with 'linewidth' for line/area types, assuming ", font_blue("linewidth = ", size, collapse = NULL))
     linewidth <- size
   }
@@ -1207,6 +1209,18 @@ plot2_exec <- function(.data,
                               big.mark = big.mark,
                               font = font)
   } else if (type != "geom_sf") {
+    category_txt <- get_category(df)
+    if (is.null(category.labels) &&
+        any(category_txt %like% "[*]+.+[*]+" |
+            category_txt %like% "[a-zA-Z0-9,.-]_[{].+[}]" |
+            category_txt %like% "[a-zA-Z0-9,.-] ?\\^ ?[{].+[}]" |
+            category_txt %like% "[a-zA-Z0-9,.-] ?\\^ ?[a-zA-Z0-9,._-]" |
+            category_txt %like% "<sup>.+</sup>" |
+            category_txt %like% "<sub>.+</sub>" |
+            category_txt %like% "[$]", na.rm = TRUE)) {
+      plot2_message("The ", font_blue("category"), " seems to contain markdown, assuming ", font_blue("category.labels = md_to_expression"))
+      category.labels <- md_to_expression
+    }
     p <- p +
       scale_colour_manual(values = cols$colour,
                           labels = if (is.null(category.labels)) waiver() else category.labels,
@@ -1224,6 +1238,14 @@ plot2_exec <- function(.data,
                           # remove unneeded labels
                           base::force
                         })
+    # hack the possibility to print values as expressions
+    if (identical(category.labels, md_to_expression)) {
+      if (geom_has_only_colour(type)) {
+        p$mapping <- utils::modifyList(p$mapping, aes(fill = NULL))
+      } else {
+        p$mapping <- utils::modifyList(p$mapping, aes(colour = NULL))
+      }
+    }
   }
   if (!type %in% c("geom_sf", "geom_tile", "geom_raster", "geom_rect")) {
     if (has_x(df)) {
