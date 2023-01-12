@@ -911,8 +911,8 @@ validate_y_scale <- function(df,
       }
       if (!all(is.na(y.limits)) && (y.percent_break >= max(y.limits, na.rm = TRUE) || labels_n <= 3)) {
         y.percent_break.bak <- y.percent_break
-        y.percent_break <- max(y.limits, na.rm = TRUE) / 8
-        allowed <- c(1e6 / 10 ^ 1:18, 5e6 / 10 ^ 1:18)
+        y.percent_break <- max(y.limits, na.rm = TRUE) / 6.5
+        allowed <- c(1e6 / 10 ^ c(1:18), 5e6 / 10 ^ c(1:18))
         y.percent_break <- allowed[which.min(abs(allowed - y.percent_break))]
         plot2_message("Using ", font_blue("y.percent_break =", format(y.percent_break, scientific = FALSE)), 
                       " since the original setting (", font_blue(y.percent_break.bak), ")",
