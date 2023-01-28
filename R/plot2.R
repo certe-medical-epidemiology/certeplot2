@@ -817,6 +817,7 @@ plot2_exec <- function(.data,
                                 select({{ y }})),
                              error = function(e) FALSE)
       )
+
       has_multiple_cols <- is.data.frame(y_vector) && ncol(y_vector) > 1
       if (isTRUE(has_multiple_cols)) {
         # e.g. for: df |> plot2(y = c(var1, var2))  
@@ -836,7 +837,7 @@ plot2_exec <- function(.data,
           # no tibbles, data.tables, sf, etc. objects:
           as.data.frame(stringsAsFactors = FALSE) |> 
           bind_cols(y_vector[, colnames(y_vector)[which(!colnames(y_vector) %in% colnames(.data))], drop = FALSE]) |> 
-          pivot_longer(c({{ y }}, -matches("^_var_"), -get_x_name(.data)), names_to = "_var_category", values_to = "_var_y") |> 
+          pivot_longer(c(colnames(y_vector), -matches("^_var_"), -get_x_name(.data)), names_to = "_var_category", values_to = "_var_y") |>
           # apply summarise_function
           group_by(across(c(get_x_name(.data), get_category_name(.data), get_facet_name(.data),
                             matches("_var_(x|category|facet)")))) |> 
