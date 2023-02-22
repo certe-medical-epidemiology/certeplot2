@@ -21,26 +21,32 @@
 #' 
 #' This `ggplot2` theme provide even more white area and less clutter than [`theme_minimal()`][ggplot2::theme_minimal()].
 #' @param ... arguments passed on to [ggplot2::theme()]
+#' @param font_colour,font_colour2 defaults colours for the plot texts
 #' @importFrom ggplot2 element_text `%+replace%` theme_bw theme margin element_line element_blank unit element_rect
 #' @export
 #' @examples 
 #' plot2(iris)
 #' plot2(admitted_patients, x = hospital, category = gender)
-theme_minimal2 <- function(...) {
+theme_minimal2 <- function(...,
+                           font_colour = getOption("plot2.font_colour", "grey20"),
+                           font_colour2 = getOption("plot2.font_colour2", "grey35")) {
   t <- theme_bw(base_size = 11) %+replace%
     theme(
-      axis.text.x = element_text(margin = margin(3, 0, 0, 0)),
-      axis.title.x = element_text(margin = margin(14, 0, 0, 0)),
-      axis.title.y = element_text(margin = margin(0, 14, 0, 0), angle = 90),
+      axis.text.x = element_text(margin = margin(3, 0, 0, 0), colour = font_colour2),
+      axis.text.y = element_text(colour = font_colour2),
+      axis.title.x = element_text(margin = margin(14, 0, 0, 0), colour = font_colour),
+      axis.title.y = element_text(margin = margin(0, 14, 0, 0), angle = 90, colour = font_colour),
       axis.ticks.y = element_blank(),
       axis.ticks.x = element_line(size = 0.75, colour = "grey75"),
       axis.ticks.length = unit(2, "pt"),
       legend.background = element_blank(),
       legend.key = element_blank(),
       legend.key.size = unit(11, "pt"), # squares and lines left to legend text
-      legend.text = element_text(size = unit(9, "pt"), # text itself
+      # values in legend:
+      legend.text = element_text(size = unit(9, "pt"),
+                                 colour = font_colour2,
                                  margin = margin(l = 1, r = 6, unit = "pt")), # left and right of text
-      legend.title = element_text(face = "bold", size = unit(10, "pt")),
+      legend.title = element_text(face = "bold", size = unit(10, "pt"), colour = font_colour),
       panel.background = element_rect(fill = "white", linetype = 0),
       panel.border = element_blank(),
       panel.grid.major.x = element_blank(),
@@ -53,17 +59,19 @@ theme_minimal2 <- function(...) {
       plot.background = element_rect(fill = "white", linetype = 0),
       plot.subtitle = element_text(size = unit(11, "pt"),
                                    hjust = 0.5,
-                                   margin = margin(0, 0, 10, 0)),
+                                   margin = margin(0, 0, 10, 0),
+                                   colour = font_colour2),
       plot.title = element_text(size = unit(13, "pt"),
                                 hjust = 0.5,
-                                margin = margin(0, 0, 10, 0)),
-      plot.caption = element_text(colour = "grey50",
+                                margin = margin(0, 0, 10, 0),
+                                colour = font_colour),
+      plot.caption = element_text(colour = font_colour2,
                                   size = unit(10, "pt"),
                                   hjust = 1),
       plot.tag = element_text(size = unit(14, "pt"),
                               margin = margin(0, 0, 0, 0),
                               hjust = 0,
-                              colour = "black",
+                              colour = font_colour,
                               face = "bold"),
       # for facet (ggh4x::facet_wrap2):
       strip.background = element_rect(colour = "#FFFFFF00"),

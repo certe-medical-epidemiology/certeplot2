@@ -27,20 +27,16 @@
 #' @param .data data to plot
 #' @param x plotting 'direction' for the x axis. This can be:
 #' 
-#' - A single variable from `.data`, such as `category = column1`
+#' - A single variable from `.data`, such as `x = column1`
 #' 
 #' - A [function] to calculate over one or more variables from `.data`, such as `x = format(column1, "%Y")`, or `x = ifelse(column1 == "A", "Group A", "Other")`
 #' @param y values to use for plotting along the y axis. This can be:
 #' 
 #' - A single variable from `.data`, such as `y = column1`
 #' 
-#' - Multiple variables from `.data`, such as `y = c(column1, column2)` or `y = c(name1 = column1, "name 2" = column2)`
+#' - Multiple variables from `.data`, such as `y = c(column1, column2)` or `y = c(name1 = column1, "name 2" = column2)` *(only allowed if `category` is not set)*
 #'   
-#'   (only allowed if `category` is not set)
-#'   
-#' - One or more variables from `.data` using [selection helpers][tidyselect::language], such as `y = where(is.double)` or `y = starts_with("var_")`
-#' 
-#'   (multiple variables only allowed if `category` is not set)
+#' - One or more variables from `.data` using [selection helpers][tidyselect::language], such as `y = where(is.double)` or `y = starts_with("var_")` *(multiple variables only allowed if `category` is not set)*
 #' 
 #' - A [function] to calculate over `.data`, such as `y = `[n()] for the row count
 #' 
@@ -92,7 +88,13 @@
 #' @param x.date_breaks breaks to use when the x axis contains dates, will be determined automatically if left blank
 #' @param x.date_labels labels to use when the x axis contains dates, will be determined automatically if left blank
 #' @param category.focus a value of `category` that should be highlighted, meaning that all other values in `category` will be greyed out. This can also be a numeric value between 1 and the length of unique values of `category`, e.g. `category.focus = 2` to focus on the second legend item.
-#' @param colour colour(s) to set, will be evaluated with [`colourpicker()`][certestyle::colourpicker()] and defaults to Certe colours. This can also be one of the viridis colours for a continuous scale: `"viridis"`, `"magma"`, `"inferno"`, `"plasma"`, `"cividis"`, `"rocket"`, `"mako"` or `"turbo"`. This can also be a named vector to match values of `category`, see *Examples*. Using a named vector can also be used to manually sort the values of `category`.
+#' @param colour colour(s) to set, will be evaluated with [`colourpicker()`][certestyle::colourpicker()]. This can be:
+#' 
+#' - Left blank. This will then apply the default `ggplot2` colours.
+#' - One of the viridis colours for a continuous scale: `"viridis"`, `"magma"`, `"inferno"`, `"plasma"`, `"cividis"`, `"rocket"`, `"mako"` or `"turbo"`
+#' - A named vector to match values of `category` (see *Examples*). Using a named vector can also be used to manually sort the values of `category`.
+#' - A named list with colours to be evaluated with [`colourpicker()`][certestyle::colourpicker()] with names `"colour_discrete_1"`, `"colour_discrete_n"`, `"colour_continuous_1"`, `"colour_continuous_n"`, and `"colour_rsi"`.
+#' - Any of the above set in the [option][options()] `plot2.colour`.
 #' @param colour_fill colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
 #' @param colour_opacity amount of opacity for `colour`/`colour_fill` (0 = solid, 1 = transparent)
 #' @param x.lbl_angle angle to use for the x axis in a counter-clockwise direction (i.e., a value of `90` will orient the axis labels from bottom to top, a value of `270` will orient the axis labels from top to bottom)
@@ -163,7 +165,7 @@
 #' @param print a [logical] to indicate if the result should be [printed][print()] instead of just returned
 #' @param text_factor text factor to use, which will apply to all texts shown in the plot
 #' @param font font (family) to use, can be set with `options(plot2.font = "...")`. Can be any installed system font or any of the > 1400 font names from [Google Fonts](https://fonts.google.com).
-#' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`). The default is [theme_minimal2()], but can be set with `options(plot2.theme = "...")`.
+#' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`). The default is [theme_minimal2()], but can be set with `options(plot2.theme = "...")`. The default font colours of [theme_minimal2()] can be set with `options(plot2.font_colour = "...")` and  `options(plot2.font_colour2 = "...")`.
 #' @param background the background colour of the entire plot, can also be `NA` to remove it. Will be evaluated with [`colourpicker()`][certestyle::colourpicker()]. Only applies when `theme` is not `NULL`.
 #' @param markdown a [logical] to turn all labels and titles into [plotmath] expressions, by converting common markdown language using the [md_to_expression()] function (defaults to `TRUE`)
 #' @param ... arguments passed on to methods
@@ -371,9 +373,9 @@ plot2 <- function(.data,
                   caption = NULL,
                   tag = NULL,
                   title.linelength = 60,
-                  title.colour = "black",
+                  title.colour = NULL,
                   subtitle.linelength = 60,
-                  subtitle.colour = "grey35",
+                  subtitle.colour = NULL,
                   na.replace = "",
                   na.rm = FALSE,
                   facet.position = "top",
@@ -392,7 +394,7 @@ plot2 <- function(.data,
                   x.date_breaks = NULL,
                   x.date_labels = NULL,
                   category.focus = NULL,
-                  colour = "certe",
+                  colour = NULL,
                   colour_fill = NULL,
                   colour_opacity = 0,
                   x.lbl_angle = 0,
@@ -492,7 +494,7 @@ plot2 <- function(.data,
                   text_factor = 1,
                   font = getOption("plot2.font"),
                   theme = getOption("plot2.theme", "theme_minimal2"),
-                  background = "white",
+                  background = NULL,
                   markdown = TRUE,
                   ...) {
   
@@ -763,6 +765,18 @@ plot2_exec <- function(.data,
                 dots$`_label.facet`,
                 dots$`_label.y_secondary`)
   on.exit(clean_plot2_env())
+  if (is.list(colour)) {
+    if (all(c("colour_discrete_1", "colour_discrete_n", "colour_continuous_1", "colour_continuous_n", "colour_rsi") %in% names(colour))) {
+      plot2_env$colour <- colour
+    } else {
+      stop("If using a list in argument `colour`, this list must contain names \"colour_discrete_1\", \"colour_discrete_n\", \"colour_continuous_1\", \"colour_continuous_n\", and \"colour_rsi\".", call. = FALSE)
+    }
+  } else {
+    plot2_env$colour <- NULL
+  }
+  
+  print("COLOUR:")
+  print(plot2_env$colour)
   
   # get titles based on raw data ----
   # compute contents of title arguments

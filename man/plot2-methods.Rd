@@ -28,9 +28,9 @@
   caption = NULL,
   tag = NULL,
   title.linelength = 60,
-  title.colour = "black",
+  title.colour = NULL,
   subtitle.linelength = 60,
-  subtitle.colour = "grey35",
+  subtitle.colour = NULL,
   na.replace = "",
   na.rm = FALSE,
   facet.position = "top",
@@ -49,7 +49,7 @@
   x.date_breaks = NULL,
   x.date_labels = NULL,
   category.focus = NULL,
-  colour = "certe",
+  colour = getOption("plot2.colour", "ggplot2"),
   colour_fill = NULL,
   colour_opacity = 0,
   x.lbl_angle = 0,
@@ -149,7 +149,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -169,9 +169,9 @@
   caption = NULL,
   tag = NULL,
   title.linelength = 60,
-  title.colour = "black",
+  title.colour = NULL,
   subtitle.linelength = 60,
-  subtitle.colour = "grey35",
+  subtitle.colour = NULL,
   na.replace = "",
   na.rm = FALSE,
   facet.position = "top",
@@ -190,7 +190,7 @@
   x.date_breaks = NULL,
   x.date_labels = NULL,
   category.focus = NULL,
-  colour = "certe",
+  colour = getOption("plot2.colour", "ggplot2"),
   colour_fill = NULL,
   colour_opacity = 0,
   x.lbl_angle = 0,
@@ -290,7 +290,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -310,9 +310,9 @@
   caption = NULL,
   tag = NULL,
   title.linelength = 60,
-  title.colour = "black",
+  title.colour = NULL,
   subtitle.linelength = 60,
-  subtitle.colour = "grey35",
+  subtitle.colour = NULL,
   na.replace = "",
   na.rm = FALSE,
   facet.position = "top",
@@ -331,7 +331,7 @@
   x.date_breaks = NULL,
   x.date_labels = NULL,
   category.focus = NULL,
-  colour = "certe",
+  colour = getOption("plot2.colour", "ggplot2"),
   colour_fill = NULL,
   colour_opacity = 0,
   x.lbl_angle = 0,
@@ -431,7 +431,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -451,9 +451,9 @@
   caption = NULL,
   tag = NULL,
   title.linelength = 60,
-  title.colour = "black",
+  title.colour = NULL,
   subtitle.linelength = 60,
-  subtitle.colour = "grey35",
+  subtitle.colour = NULL,
   na.replace = "",
   na.rm = FALSE,
   facet.position = "top",
@@ -575,7 +575,7 @@
     element_blank(), panel.border = element_blank(), plot.margin = unit(c(5, 5, -15, 5),
     units = "pt"), axis.title = element_blank(), axis.text = element_blank(), axis.line =
     element_blank(), axis.ticks = element_blank()),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   crs = NULL,
   ...
@@ -596,9 +596,9 @@
   caption = NULL,
   tag = NULL,
   title.linelength = 60,
-  title.colour = "black",
+  title.colour = NULL,
   subtitle.linelength = 60,
-  subtitle.colour = "grey35",
+  subtitle.colour = NULL,
   na.replace = "",
   na.rm = FALSE,
   facet.position = "top",
@@ -617,7 +617,7 @@
   x.date_breaks = NULL,
   x.date_labels = NULL,
   category.focus = NULL,
-  colour = "certe",
+  colour = getOption("plot2.colour", "ggplot2"),
   colour_fill = NULL,
   colour_opacity = 0,
   x.lbl_angle = 0,
@@ -717,7 +717,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -737,9 +737,9 @@
   caption = NULL,
   tag = NULL,
   title.linelength = 60,
-  title.colour = "black",
+  title.colour = NULL,
   subtitle.linelength = 60,
-  subtitle.colour = "grey35",
+  subtitle.colour = NULL,
   na.replace = "",
   na.rm = FALSE,
   facet.position = "top",
@@ -758,7 +758,7 @@
   x.date_breaks = NULL,
   x.date_labels = NULL,
   category.focus = NULL,
-  colour = "certe",
+  colour = getOption("plot2.colour", "ggplot2"),
   colour_fill = NULL,
   colour_opacity = 0,
   x.lbl_angle = 0,
@@ -858,7 +858,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -878,9 +878,9 @@
   caption = NULL,
   tag = NULL,
   title.linelength = 60,
-  title.colour = "black",
+  title.colour = NULL,
   subtitle.linelength = 60,
-  subtitle.colour = "grey35",
+  subtitle.colour = NULL,
   na.replace = "",
   na.rm = FALSE,
   facet.position = "top",
@@ -899,7 +899,7 @@
   x.date_breaks = NULL,
   x.date_labels = NULL,
   category.focus = NULL,
-  colour = "certe_rsi2",
+  colour = getOption("plot2.colour_rsi", "ggplot2"),
   colour_fill = NULL,
   colour_opacity = 0,
   x.lbl_angle = ifelse(horizontal, 0, 90),
@@ -999,7 +999,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   minimum = 30,
   remove_intrinsic_resistant = TRUE,
@@ -1022,9 +1022,9 @@
   caption = NULL,
   tag = NULL,
   title.linelength = 60,
-  title.colour = "black",
+  title.colour = NULL,
   subtitle.linelength = 60,
-  subtitle.colour = "grey35",
+  subtitle.colour = NULL,
   na.replace = "",
   na.rm = FALSE,
   facet.position = "top",
@@ -1043,7 +1043,7 @@
   x.date_breaks = NULL,
   x.date_labels = NULL,
   category.focus = NULL,
-  colour = "certe_rsi2",
+  colour = getOption("plot2.colour_rsi", "ggplot2"),
   colour_fill = NULL,
   colour_opacity = 0,
   x.lbl_angle = 0,
@@ -1143,7 +1143,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -1163,9 +1163,9 @@
   caption = NULL,
   tag = NULL,
   title.linelength = 60,
-  title.colour = "black",
+  title.colour = NULL,
   subtitle.linelength = 60,
-  subtitle.colour = "grey35",
+  subtitle.colour = NULL,
   na.replace = "",
   na.rm = FALSE,
   facet.position = "top",
@@ -1286,7 +1286,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -1296,19 +1296,15 @@
 
 \item{x}{plotting 'direction' for the x axis. This can be:
 \itemize{
-\item A single variable from \code{.data}, such as \code{category = column1}
+\item A single variable from \code{.data}, such as \code{x = column1}
 \item A \link{function} to calculate over one or more variables from \code{.data}, such as \code{x = format(column1, "\%Y")}, or \code{x = ifelse(column1 == "A", "Group A", "Other")}
 }}
 
 \item{y}{values to use for plotting along the y axis. This can be:
 \itemize{
 \item A single variable from \code{.data}, such as \code{y = column1}
-\item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)} or \code{y = c(name1 = column1, "name 2" = column2)}
-
-(only allowed if \code{category} is not set)
-\item One or more variables from \code{.data} using \link[tidyselect:language]{selection helpers}, such as \code{y = where(is.double)} or \code{y = starts_with("var_")}
-
-(multiple variables only allowed if \code{category} is not set)
+\item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)} or \code{y = c(name1 = column1, "name 2" = column2)} \emph{(only allowed if \code{category} is not set)}
+\item One or more variables from \code{.data} using \link[tidyselect:language]{selection helpers}, such as \code{y = where(is.double)} or \code{y = starts_with("var_")} \emph{(multiple variables only allowed if \code{category} is not set)}
 \item A \link{function} to calculate over \code{.data}, such as \verb{y = }\code{\link[=n]{n()}} for the row count
 \item A \link{function} to calculate over one or more variables from \code{.data}, such as \code{y = n_distinct(person_id)}, \code{y = max(column1)}, or \code{y = median(column2) / column3}
 }}
@@ -1371,7 +1367,14 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{category.focus}{a value of \code{category} that should be highlighted, meaning that all other values in \code{category} will be greyed out. This can also be a numeric value between 1 and the length of unique values of \code{category}, e.g. \code{category.focus = 2} to focus on the second legend item.}
 
-\item{colour}{colour(s) to set, will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}} and defaults to Certe colours. This can also be one of the viridis colours for a continuous scale: \code{"viridis"}, \code{"magma"}, \code{"inferno"}, \code{"plasma"}, \code{"cividis"}, \code{"rocket"}, \code{"mako"} or \code{"turbo"}. This can also be a named vector to match values of \code{category}, see \emph{Examples}. Using a named vector can also be used to manually sort the values of \code{category}.}
+\item{colour}{colour(s) to set, will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}}. This can be:
+\itemize{
+\item Left blank. This will then apply the default \code{ggplot2} colours.
+\item One of the viridis colours for a continuous scale: \code{"viridis"}, \code{"magma"}, \code{"inferno"}, \code{"plasma"}, \code{"cividis"}, \code{"rocket"}, \code{"mako"} or \code{"turbo"}
+\item A named vector to match values of \code{category} (see \emph{Examples}). Using a named vector can also be used to manually sort the values of \code{category}.
+\item A named list with colours to be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}} with names \code{"colour_discrete_1"}, \code{"colour_discrete_n"}, \code{"colour_continuous_1"}, \code{"colour_continuous_n"}, and \code{"colour_rsi"}.
+\item Any of the above set in the \link[=options]{option} \code{plot2.colour}.
+}}
 
 \item{colour_fill}{colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}}}
 
@@ -1505,7 +1508,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{font}{font (family) to use, can be set with \code{options(plot2.font = "...")}. Can be any installed system font or any of the > 1400 font names from \href{https://fonts.google.com}{Google Fonts}.}
 
-\item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}. This argument accepts themes (e.g., \code{theme_bw()}), functions (e.g., \code{theme_bw}) and characters themes (e.g., \code{"theme_bw"}). The default is \code{\link[=theme_minimal2]{theme_minimal2()}}, but can be set with \code{options(plot2.theme = "...")}.}
+\item{theme}{a valid \code{ggplot2} \link[ggplot2:theme]{theme} to apply, or \code{NULL} to use the default \code{\link[ggplot2:ggtheme]{theme_grey()}}. This argument accepts themes (e.g., \code{theme_bw()}), functions (e.g., \code{theme_bw}) and characters themes (e.g., \code{"theme_bw"}). The default is \code{\link[=theme_minimal2]{theme_minimal2()}}, but can be set with \code{options(plot2.theme = "...")}. The default font colours of \code{\link[=theme_minimal2]{theme_minimal2()}} can be set with \code{options(plot2.font_colour = "...")} and  \code{options(plot2.font_colour2 = "...")}.}
 
 \item{background}{the background colour of the entire plot, can also be \code{NA} to remove it. Will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}}. Only applies when \code{theme} is not \code{NULL}.}
 

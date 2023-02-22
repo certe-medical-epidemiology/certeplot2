@@ -4,10 +4,16 @@
 \alias{theme_minimal2}
 \title{An Even More Minimal Theme}
 \usage{
-theme_minimal2(...)
+theme_minimal2(
+  ...,
+  font_colour = getOption("plot2.font_colour", "grey20"),
+  font_colour2 = getOption("plot2.font_colour2", "grey35")
+)
 }
 \arguments{
 \item{...}{arguments passed on to \code{\link[ggplot2:theme]{ggplot2::theme()}}}
+
+\item{font_colour, font_colour2}{defaults colours for the plot texts}
 }
 \description{
 This \code{ggplot2} theme provide even more white area and less clutter than \code{\link[ggplot2:ggtheme]{theme_minimal()}}.

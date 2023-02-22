@@ -1261,7 +1261,6 @@ validate_category_scale <- function(values,
                        args))
     } else {
       # 1 colour, start with white
-      aest[aest == "fill"] <- "colour_fill"
       plot2_message("Adding white to the ", font_blue("category"),
                     " scale - set two colours to ", font_blue("colour_fill"),
                     " to prevent this.")
@@ -1831,7 +1830,7 @@ validate_theme <- function(theme,
   }
   
   # set other properties to theme, that are set in plot2(...)
-  if (!isTRUE(orginally_empty)) {
+  if (!isTRUE(orginally_empty) && !is.null(background)) {
     theme$panel.background <- element_rect(fill = colourpicker(background),
                                            colour = theme$panel.background$colour,
                                            size = theme$panel.background$size,
@@ -1895,8 +1894,12 @@ validate_theme <- function(theme,
     theme$legend.text$face <- "italic"
   }
   
-  theme$plot.title$colour <- colourpicker(title.colour)
-  theme$plot.subtitle$colour <- colourpicker(subtitle.colour)
+  if (!is.null(title.colour)) {
+    theme$plot.title$colour <- colourpicker(title.colour)
+  }
+  if (!is.null(subtitle.colour)) {
+    theme$plot.subtitle$colour <- colourpicker(subtitle.colour)
+  }
   # facet
   theme$strip.background$fill <- facet.fill
   if (isTRUE(facet.bold) && isTRUE(facet.italic)) {
