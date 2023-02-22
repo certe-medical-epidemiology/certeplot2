@@ -27,20 +27,16 @@
 #' @param .data data to plot
 #' @param x plotting 'direction' for the x axis. This can be:
 #' 
-#' - A single variable from `.data`, such as `category = column1`
+#' - A single variable from `.data`, such as `x = column1`
 #' 
 #' - A [function] to calculate over one or more variables from `.data`, such as `x = format(column1, "%Y")`, or `x = ifelse(column1 == "A", "Group A", "Other")`
 #' @param y values to use for plotting along the y axis. This can be:
 #' 
 #' - A single variable from `.data`, such as `y = column1`
 #' 
-#' - Multiple variables from `.data`, such as `y = c(column1, column2)` or `y = c(name1 = column1, "name 2" = column2)`
+#' - Multiple variables from `.data`, such as `y = c(column1, column2)` or `y = c(name1 = column1, "name 2" = column2)` *(only allowed if `category` is not set)*
 #'   
-#'   (only allowed if `category` is not set)
-#'   
-#' - One or more variables from `.data` using [selection helpers][tidyselect::language], such as `y = where(is.double)` or `y = starts_with("var_")`
-#' 
-#'   (multiple variables only allowed if `category` is not set)
+#' - One or more variables from `.data` using [selection helpers][tidyselect::language], such as `y = where(is.double)` or `y = starts_with("var_")` *(multiple variables only allowed if `category` is not set)*
 #' 
 #' - A [function] to calculate over `.data`, such as `y = `[n()] for the row count
 #' 
@@ -469,7 +465,7 @@ plot2 <- function(.data,
                   smooth.formula = NULL,
                   smooth.se = TRUE,
                   smooth.level = 0.95,
-                  smooth.alpha = 0.1,
+                  smooth.alpha = 0.25,
                   smooth.linewidth = 0.75,
                   smooth.linetype = 3,
                   size = NULL,
@@ -492,7 +488,7 @@ plot2 <- function(.data,
                   text_factor = 1,
                   font = getOption("plot2.font"),
                   theme = getOption("plot2.theme", "theme_minimal2"),
-                  background = "white",
+                  background = NULL,
                   markdown = TRUE,
                   ...) {
   

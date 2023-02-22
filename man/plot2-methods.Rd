@@ -126,7 +126,7 @@
   smooth.formula = NULL,
   smooth.se = TRUE,
   smooth.level = 0.95,
-  smooth.alpha = 0.1,
+  smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
@@ -149,7 +149,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -267,7 +267,7 @@
   smooth.formula = NULL,
   smooth.se = TRUE,
   smooth.level = 0.95,
-  smooth.alpha = 0.1,
+  smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
@@ -290,7 +290,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -408,7 +408,7 @@
   smooth.formula = NULL,
   smooth.se = TRUE,
   smooth.level = 0.95,
-  smooth.alpha = 0.1,
+  smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
@@ -431,7 +431,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -549,7 +549,7 @@
   smooth.formula = NULL,
   smooth.se = TRUE,
   smooth.level = 0.95,
-  smooth.alpha = 0.1,
+  smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
@@ -575,7 +575,7 @@
     element_blank(), panel.border = element_blank(), plot.margin = unit(c(5, 5, -15, 5),
     units = "pt"), axis.title = element_blank(), axis.text = element_blank(), axis.line =
     element_blank(), axis.ticks = element_blank()),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   crs = NULL,
   ...
@@ -694,7 +694,7 @@
   smooth.formula = NULL,
   smooth.se = TRUE,
   smooth.level = 0.95,
-  smooth.alpha = 0.1,
+  smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
@@ -717,7 +717,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -835,7 +835,7 @@
   smooth.formula = NULL,
   smooth.se = TRUE,
   smooth.level = 0.95,
-  smooth.alpha = 0.1,
+  smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
@@ -858,7 +858,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -976,7 +976,7 @@
   smooth.formula = NULL,
   smooth.se = TRUE,
   smooth.level = 0.95,
-  smooth.alpha = 0.1,
+  smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
@@ -999,7 +999,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   minimum = 30,
   remove_intrinsic_resistant = TRUE,
@@ -1120,7 +1120,7 @@
   smooth.formula = NULL,
   smooth.se = TRUE,
   smooth.level = 0.95,
-  smooth.alpha = 0.1,
+  smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = NULL,
@@ -1143,7 +1143,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -1263,7 +1263,7 @@
   smooth.formula = NULL,
   smooth.se = TRUE,
   smooth.level = 0.95,
-  smooth.alpha = 0.1,
+  smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
   size = 2,
@@ -1286,7 +1286,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = getOption("plot2.theme", "theme_minimal2"),
-  background = "white",
+  background = NULL,
   markdown = TRUE,
   ...
 )
@@ -1296,19 +1296,15 @@
 
 \item{x}{plotting 'direction' for the x axis. This can be:
 \itemize{
-\item A single variable from \code{.data}, such as \code{category = column1}
+\item A single variable from \code{.data}, such as \code{x = column1}
 \item A \link{function} to calculate over one or more variables from \code{.data}, such as \code{x = format(column1, "\%Y")}, or \code{x = ifelse(column1 == "A", "Group A", "Other")}
 }}
 
 \item{y}{values to use for plotting along the y axis. This can be:
 \itemize{
 \item A single variable from \code{.data}, such as \code{y = column1}
-\item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)} or \code{y = c(name1 = column1, "name 2" = column2)}
-
-(only allowed if \code{category} is not set)
-\item One or more variables from \code{.data} using \link[tidyselect:language]{selection helpers}, such as \code{y = where(is.double)} or \code{y = starts_with("var_")}
-
-(multiple variables only allowed if \code{category} is not set)
+\item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)} or \code{y = c(name1 = column1, "name 2" = column2)} \emph{(only allowed if \code{category} is not set)}
+\item One or more variables from \code{.data} using \link[tidyselect:language]{selection helpers}, such as \code{y = where(is.double)} or \code{y = starts_with("var_")} \emph{(multiple variables only allowed if \code{category} is not set)}
 \item A \link{function} to calculate over \code{.data}, such as \verb{y = }\code{\link[=n]{n()}} for the row count
 \item A \link{function} to calculate over one or more variables from \code{.data}, such as \code{y = n_distinct(person_id)}, \code{y = max(column1)}, or \code{y = median(column2) / column3}
 }}
@@ -1527,7 +1523,7 @@ These are the implemented methods for different S3 classes to be used in \code{\
 \details{
 For geographic information system (GIS) analysis, use the \code{sf} package with a data set containing geometries. The result can be used as input for \code{\link[=plot2]{plot2()}}.
 
-For antimicrobial resistance (AMR) data analysis, use the \code{\link[AMR:bug_drug_combinations]{bug_drug_combinations()}} or the \code{\link[AMR:proportion]{rsi_df()}} function from the \code{AMR} package on a data set with antibiograms. The result can be used as input for \code{\link[=plot2]{plot2()}}.
+For antimicrobial resistance (AMR) data analysis, use the \code{\link[AMR:bug_drug_combinations]{bug_drug_combinations()}} or the \code{\link[AMR:AMR-deprecated]{rsi_df()}} function from the \code{AMR} package on a data set with antibiograms. The result can be used as input for \code{\link[=plot2]{plot2()}}.
 
 The QC-test can be acquired with \code{\link[certestats:qc_rules]{certestats::qc_test()}}. It applies the Nelson QC rules for a vector of values.
 }
