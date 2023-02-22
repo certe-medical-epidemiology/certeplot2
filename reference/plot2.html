@@ -19,7 +19,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.7</span>
       </span>
     </div>
 
@@ -200,7 +200,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span>  smooth.formula <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  smooth.se <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  smooth.level <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  smooth.alpha <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  smooth.alpha <span class="op">=</span> <span class="fl">0.25</span>,</span>
 <span>  smooth.linewidth <span class="op">=</span> <span class="fl">0.75</span>,</span>
 <span>  smooth.linetype <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  size <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -223,7 +223,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span>  text_factor <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  font <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.font"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.theme"</span>, <span class="st">"theme_minimal2"</span><span class="op">)</span>,</span>
-<span>  background <span class="op">=</span> <span class="st">"white"</span>,</span>
+<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  markdown <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -236,17 +236,15 @@ See plot2-methods for all implemented methods for different object classes."><me
 
 
 <dt>x</dt>
-<dd><p>plotting 'direction' for the x axis. This can be:</p><ul><li><p>A single variable from <code>.data</code>, such as <code>category = column1</code></p></li>
+<dd><p>plotting 'direction' for the x axis. This can be:</p><ul><li><p>A single variable from <code>.data</code>, such as <code>x = column1</code></p></li>
 <li><p>A <a href="https://rdrr.io/r/base/function.html" class="external-link">function</a> to calculate over one or more variables from <code>.data</code>, such as <code>x = format(column1, "%Y")</code>, or <code>x = ifelse(column1 == "A", "Group A", "Other")</code></p></li>
 </ul></dd>
 
 
 <dt>y</dt>
 <dd><p>values to use for plotting along the y axis. This can be:</p><ul><li><p>A single variable from <code>.data</code>, such as <code>y = column1</code></p></li>
-<li><p>Multiple variables from <code>.data</code>, such as <code>y = c(column1, column2)</code> or <code>y = c(name1 = column1, "name 2" = column2)</code></p>
-<p>(only allowed if <code>category</code> is not set)</p></li>
-<li><p>One or more variables from <code>.data</code> using <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">selection helpers</a>, such as <code>y = where(is.double)</code> or <code>y = starts_with("var_")</code></p>
-<p>(multiple variables only allowed if <code>category</code> is not set)</p></li>
+<li><p>Multiple variables from <code>.data</code>, such as <code>y = c(column1, column2)</code> or <code>y = c(name1 = column1, "name 2" = column2)</code> <em>(only allowed if <code>category</code> is not set)</em></p></li>
+<li><p>One or more variables from <code>.data</code> using <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">selection helpers</a>, such as <code>y = where(is.double)</code> or <code>y = starts_with("var_")</code> <em>(multiple variables only allowed if <code>category</code> is not set)</em></p></li>
 <li><p>A <a href="https://rdrr.io/r/base/function.html" class="external-link">function</a> to calculate over <code>.data</code>, such as <code>y = </code><code><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n()</a></code> for the row count</p></li>
 <li><p>A <a href="https://rdrr.io/r/base/function.html" class="external-link">function</a> to calculate over one or more variables from <code>.data</code>, such as <code>y = n_distinct(person_id)</code>, <code>y = max(column1)</code>, or <code>y = median(column2) / column3</code></p></li>
 </ul></dd>
