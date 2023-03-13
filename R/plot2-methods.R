@@ -1962,7 +1962,7 @@ plot2.matrix <- function(.data,
 #' @rdname plot2-methods
 #' @importFrom dplyr filter mutate select
 #' @importFrom tidyr pivot_longer
-#' @details For antimicrobial resistance (AMR) data analysis, use the [`bug_drug_combinations()`][AMR::bug_drug_combinations()] or the [`rsi_df()`][AMR::rsi_df()] function from the `AMR` package on a data set with antibiograms. The result can be used as input for [plot2()].
+#' @details For antimicrobial resistance (AMR) data analysis, use the [`bug_drug_combinations()`][AMR::bug_drug_combinations()] or the [`sir_df()`][AMR::sir_df()] function from the `AMR` package on a data set with antibiograms. The result can be used as input for [plot2()].
 #' @param minimum minimum number of results, defaults to `30`
 #' @param remove_intrinsic_resistant a [logical] to indicate that rows with 100% resistance must be removed from the data set before plotting
 #' @param language language to be used for antibiotic names
@@ -2002,7 +2002,7 @@ plot2.bug_drug_combinations <- function(.data,
                                         x.date_breaks = NULL,
                                         x.date_labels = NULL,
                                         category.focus = NULL,
-                                        colour = "certe_rsi2",
+                                        colour = "certe_sir2",
                                         colour_fill = NULL,
                                         colour_opacity = 0,
                                         x.lbl_angle = ifelse(horizontal, 0, 90),
@@ -2289,7 +2289,7 @@ plot2.bug_drug_combinations <- function(.data,
 
 #' @rdname plot2-methods
 #' @export
-plot2.rsi_df <- function(.data,
+plot2.sir_df <- function(.data,
                          x = NULL,
                          y = isolates,
                          category = interpretation,
@@ -2324,7 +2324,7 @@ plot2.rsi_df <- function(.data,
                          x.date_breaks = NULL,
                          x.date_labels = NULL,
                          category.focus = NULL,
-                         colour = "certe_rsi2",
+                         colour = "certe_sir2",
                          colour_fill = NULL,
                          colour_opacity = 0,
                          x.lbl_angle = 0,
@@ -2429,7 +2429,7 @@ plot2.rsi_df <- function(.data,
                          ...) {
   
   if (!"isolates" %in% colnames(.data) && !is.integer(.data$value)) {
-    stop("isolate count not available, use AMR::rsi_df() or AMR::count_df() before plotting", call. = FALSE)
+    stop("isolate count not available, use AMR::sir_df() or AMR::count_df() before plotting", call. = FALSE)
   } else if (is.integer(.data$value)) {
     .data$isolates <- .data$value
   }

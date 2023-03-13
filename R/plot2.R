@@ -343,7 +343,7 @@
 #'   example_isolates |>
 #'     select(date, NIT, FOS, AMC) |> 
 #'     group_by(year = format(date, "%Y")) |>
-#'     rsi_df() |>
+#'     sir_df() |>
 #'     filter(year >= 2015) |>
 #'     plot2(datalabels = paste0(round(value * 100), "%\nn = ", isolates),
 #'           y.percent_break = 0.125)
