@@ -9,7 +9,7 @@
 \alias{plot2.data.frame}
 \alias{plot2.matrix}
 \alias{plot2.bug_drug_combinations}
-\alias{plot2.rsi_df}
+\alias{plot2.sir_df}
 \alias{plot2.qc_test}
 \title{Methods for \code{\link[=plot2]{plot2()}}}
 \usage{
@@ -899,7 +899,7 @@
   x.date_breaks = NULL,
   x.date_labels = NULL,
   category.focus = NULL,
-  colour = "certe_rsi2",
+  colour = "certe_sir2",
   colour_fill = NULL,
   colour_opacity = 0,
   x.lbl_angle = ifelse(horizontal, 0, 90),
@@ -1007,7 +1007,7 @@
   ...
 )
 
-\method{plot2}{rsi_df}(
+\method{plot2}{sir_df}(
   .data,
   x = NULL,
   y = isolates,
@@ -1043,7 +1043,7 @@
   x.date_breaks = NULL,
   x.date_labels = NULL,
   category.focus = NULL,
-  colour = "certe_rsi2",
+  colour = "certe_sir2",
   colour_fill = NULL,
   colour_opacity = 0,
   x.lbl_angle = 0,
@@ -1523,7 +1523,7 @@ These are the implemented methods for different S3 classes to be used in \code{\
 \details{
 For geographic information system (GIS) analysis, use the \code{sf} package with a data set containing geometries. The result can be used as input for \code{\link[=plot2]{plot2()}}.
 
-For antimicrobial resistance (AMR) data analysis, use the \code{\link[AMR:bug_drug_combinations]{bug_drug_combinations()}} or the \code{\link[AMR:AMR-deprecated]{rsi_df()}} function from the \code{AMR} package on a data set with antibiograms. The result can be used as input for \code{\link[=plot2]{plot2()}}.
+For antimicrobial resistance (AMR) data analysis, use the \code{\link[AMR:bug_drug_combinations]{bug_drug_combinations()}} or the \code{\link[AMR:proportion]{sir_df()}} function from the \code{AMR} package on a data set with antibiograms. The result can be used as input for \code{\link[=plot2]{plot2()}}.
 
 The QC-test can be acquired with \code{\link[certestats:qc_rules]{certestats::qc_test()}}. It applies the Nelson QC rules for a vector of values.
 }
