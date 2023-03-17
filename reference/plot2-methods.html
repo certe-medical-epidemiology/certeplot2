@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.14.0</span>
       </span>
     </div>
 
@@ -976,7 +976,7 @@
 <span>  x.date_breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.date_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.focus <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colour <span class="op">=</span> <span class="st">"certe_rsi2"</span>,</span>
+<span>  colour <span class="op">=</span> <span class="st">"certe_sir2"</span>,</span>
 <span>  colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colour_opacity <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  x.lbl_angle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">horizontal</span>, <span class="fl">0</span>, <span class="fl">90</span><span class="op">)</span>,</span>
@@ -1084,7 +1084,7 @@
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for rsi_df</span></span>
+<span><span class="co"># S3 method for sir_df</span></span>
 <span><span class="fu"><a href="plot2.html">plot2</a></span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
 <span>  x <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -1121,7 +1121,7 @@
 <span>  x.date_breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.date_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.focus <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colour <span class="op">=</span> <span class="st">"certe_rsi2"</span>,</span>
+<span>  colour <span class="op">=</span> <span class="st">"certe_sir2"</span>,</span>
 <span>  colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colour_opacity <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -1750,7 +1750,7 @@
     <div id="details">
     <h2>Details</h2>
     <p>For geographic information system (GIS) analysis, use the <code>sf</code> package with a data set containing geometries. The result can be used as input for <code><a href="plot2.html">plot2()</a></code>.</p>
-<p>For antimicrobial resistance (AMR) data analysis, use the <code><a href="https://msberends.github.io/AMR/reference/bug_drug_combinations.html" class="external-link">bug_drug_combinations()</a></code> or the <code><a href="https://msberends.github.io/AMR/reference/AMR-deprecated.html" class="external-link">rsi_df()</a></code> function from the <code>AMR</code> package on a data set with antibiograms. The result can be used as input for <code><a href="plot2.html">plot2()</a></code>.</p>
+<p>For antimicrobial resistance (AMR) data analysis, use the <code><a href="https://msberends.github.io/AMR/reference/bug_drug_combinations.html" class="external-link">bug_drug_combinations()</a></code> or the <code><a href="https://msberends.github.io/AMR/reference/proportion.html" class="external-link">sir_df()</a></code> function from the <code>AMR</code> package on a data set with antibiograms. The result can be used as input for <code><a href="plot2.html">plot2()</a></code>.</p>
 <p>The QC-test can be acquired with <code><a href="https://certe-medical-epidemiology.github.io/certestats/reference/qc_rules.html" class="external-link">certestats::qc_test()</a></code>. It applies the Nelson QC rules for a vector of values.</p>
     </div>
 
