@@ -24,10 +24,6 @@
 #' @param type a `ggplot2` geom name, all geoms are supported. Full function names can be used (e.g., `"geom_line"`), but they can also be abbreviated (e.g., `"l"`, `"line"`). These geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), violin (`"v"`).
 #' @param mapping a mapping created with [`aes()`][ggplot2::aes()] to pass on to the geom
 #' @param group,linetype,linewidth,shape,size,width,... arguments passed on to the geom
-#' @details The function [add_line()] will add:
-#' * [`geom_hline()`][ggplot2::geom_hline()] if only `y` is provided and `y` contains one unique value;
-#' * [`geom_vline()`][ggplot2::geom_vline()] if only `x` is provided and `x` contains one unique value;
-#' * [`geom_line()`][ggplot2::geom_line()] in all other cases.
 #' @importFrom ggplot2 is.ggplot aes
 #' @rdname add_type
 #' @export
@@ -46,7 +42,22 @@
 #'   add_col(y = var_2 / 5,
 #'           width = 0.25,
 #'           colour = "certeroze")
-#'    
+#'        
+#' if (require("dplyr", warn.conflicts = FALSE)) {   
+#'   df2 <- df |> 
+#'     as_tibble() |> 
+#'     filter(var_1 <= 50) |> 
+#'     mutate(error1 = var_2 * 0.9,
+#'            error2 = var_2 * 1.1)
+#'   
+#'   print(df2)
+#'   
+#'   df2 |> 
+#'     plot2(type = "c", colour = "certeroze4") |> 
+#'     # add the error bars, simply by referencing the lower and upper values
+#'     add_errorbar(error1, error2)
+#' }
+#' 
 #' if (require("certestats", warn.conflicts = FALSE)) {
 #'    df |>
 #'      plot2() |> 
@@ -97,8 +108,12 @@ add_type <- function(plot, type = NULL, mapping = aes(), ...) {
 #' @param colour,colour_fill colour of the line or column, will be evaluated with [certestyle::colourpicker()]. If `colour_fill` is missing but `colour` is given, `colour_fill` will inherit the colour set with `colour`.
 #' @param inherit.aes a [logical] to indicate whether the default aesthetics should be inherited, rather than combining with them
 #' @importFrom dplyr mutate
-#' @importFrom ggplot2 aes_string
+#' @importFrom ggplot2 aes
 #' @importFrom certestyle colourpicker
+#' @details The function [add_line()] will add:
+#' * [`geom_hline()`][ggplot2::geom_hline()] if only `y` is provided and `y` contains one unique value;
+#' * [`geom_vline()`][ggplot2::geom_vline()] if only `x` is provided and `x` contains one unique value;
+#' * [`geom_line()`][ggplot2::geom_line()] in all other cases.
 #' @export
 add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw", linetype, linewidth, ..., inherit.aes = TRUE) {
   if (!is.ggplot(plot)) {
@@ -118,17 +133,17 @@ add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw",
   # build mapping
   if (missing(group) && !"group" %in% names(plot$mapping) && "colour" %in% names(plot$mapping)) {
     # be sure to add the group as the category
-    mapping <- aes_string(group = gsub("^~", "", deparse(plot$mapping$colour)))
+    mapping <- update_aes(group = gsub("^~", "", deparse(plot$mapping$colour)))
   } else if (!missing(group) || !isTRUE(inherit.aes) || !"group" %in% names(plot$mapping)) {
-    mapping <- aes_string(group = group)
+    mapping <- update_aes(group = group)
   } else {
     mapping <- aes()
   }
   if (label_line_y != "") {
-    mapping <- utils::modifyList(mapping, aes_string(y = label_line_y))
+    mapping <- update_aes(mapping, y = label_line_y)
   }
   if (label_line_x != "") {
-    mapping <- utils::modifyList(mapping, aes_string(x = label_line_x))
+    mapping <- update_aes(mapping, x = label_line_x)
   }
   
   # build additional parameters
@@ -146,13 +161,12 @@ add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw",
     params <- c(params, list(...))
   }
   
-  
   if (is.null(values_x) && length(unique(values_y)) == 1) {
     # check if y are all 1 value, then make it hline
     plot2_message("Adding type ", font_blue("hline"))
     add_type(plot = plot,
              type = "hline",
-             mapping = utils::modifyList(mapping, aes_string(y = NULL, yintercept = mapping$y)),
+             mapping = update_aes(mapping, y = NULL, yintercept = mapping$y),
              utils::modifyList(params, list(inherit.aes = NULL)))
     
   } else if (is.null(values_y) && length(unique(values_x)) == 1) {
@@ -160,7 +174,7 @@ add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw",
     plot2_message("Adding type ", font_blue("vline"))
     add_type(plot = plot,
              type = "vline",
-             mapping = utils::modifyList(mapping, aes_string(x = NULL, xintercept = mapping$x)),
+             mapping = update_aes(mapping, x = NULL, xintercept = mapping$x),
              utils::modifyList(params, list(inherit.aes = NULL)))
   } else {
     # add the geom
@@ -189,17 +203,17 @@ add_point <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw"
   # build mapping
   if (missing(group) && !"group" %in% names(plot$mapping) && "colour" %in% names(plot$mapping)) {
     # be sure to add the group as the category
-    mapping <- aes_string(group = gsub("^~", "", deparse(plot$mapping$colour)))
+    mapping <- aes(group = gsub("^~", "", deparse(plot$mapping$colour)))
   } else if (!missing(group) || !isTRUE(inherit.aes) || !"group" %in% names(plot$mapping)) {
-    mapping <- aes_string(group = group)
+    mapping <- aes(group = group)
   } else {
     mapping <- aes()
   }
   if (label_line_y != "") {
-    mapping <- utils::modifyList(mapping, aes_string(y = label_line_y))
+    mapping <- update_aes(mapping, y = label_line_y)
   }
   if (label_line_x != "") {
-    mapping <- utils::modifyList(mapping, aes_string(x = label_line_x))
+    mapping <- update_aes(mapping, x = label_line_x)
   }
   
   # build additional parameters
@@ -226,7 +240,7 @@ add_point <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw"
 
 #' @rdname add_type
 #' @importFrom dplyr mutate
-#' @importFrom ggplot2 aes_string
+#' @importFrom ggplot2 aes
 #' @importFrom certestyle colourpicker
 #' @export
 add_col <- function(plot, y = NULL, x = NULL, colour = "certeblauw", colour_fill = "certeblauw", width, ..., inherit.aes = TRUE) {
@@ -243,12 +257,12 @@ add_col <- function(plot, y = NULL, x = NULL, colour = "certeblauw", colour_fill
   colnames(df)[colnames(df) == "_var_line_x"] <- label_col_x
   
   # build mapping
-  mapping <- aes_string()
+  mapping <- aes()
   if (label_col_y != "") {
-    mapping <- utils::modifyList(mapping, aes_string(y = label_col_y))
+    mapping <- update_aes(mapping, y = label_col_y)
   }
   if (label_col_x != "") {
-    mapping <- utils::modifyList(mapping, aes_string(x = label_col_x))
+    mapping <- update_aes(mapping, x = label_col_x)
   }
   
   if (!missing(colour) && missing(colour_fill)) {
@@ -272,6 +286,62 @@ add_col <- function(plot, y = NULL, x = NULL, colour = "certeblauw", colour_fill
   # add the geom
   add_type(plot = plot,
            type = "column",
+           mapping = mapping,
+           params)
+}
+
+#' @rdname add_type
+#' @param min,max minimum (lower) and maximum (upper) values of the error bars
+#' @importFrom dplyr mutate
+#' @importFrom ggplot2 aes
+#' @importFrom certestyle colourpicker
+#' @details
+#' The function [add_errorbar()] only adds error bars to the `y` values, see *Examples*.
+#' @export
+add_errorbar <- function(plot, min = NULL, max = NULL, y = NULL, x = NULL, colour = "certeroze", width = 0.5, ..., inherit.aes = TRUE) {
+  if (!is.ggplot(plot)) {
+    stop("`plot` must be a ggplot2 model.", call. = FALSE)
+  }
+  label_col_min <- deparse(substitute(min))
+  label_col_max <- deparse(substitute(max))
+  label_col_y <- deparse(substitute(y))
+  label_col_x <- deparse(substitute(x))
+  
+  
+  df <- plot$data |> 
+    mutate(`_var_line_y` = {{ y }},
+           `_var_line_x` = {{ x }})
+  colnames(df)[colnames(df) == "_var_line_y"] <- label_col_y
+  colnames(df)[colnames(df) == "_var_line_x"] <- label_col_x
+  
+  # build mapping
+  mapping <- aes()
+  if (label_col_min != "") {
+    mapping <- update_aes(mapping, ymin = label_col_min)
+  }
+  if (label_col_max != "") {
+    mapping <- update_aes(mapping, ymax = label_col_max)
+  }
+  if (label_col_y != "") {
+    mapping <- update_aes(mapping, y = label_col_y)
+  }
+  if (label_col_x != "") {
+    mapping <- update_aes(mapping, x = label_col_x)
+  }
+  
+  # build additional parameters
+  params <- list(inherit.aes = inherit.aes)
+  if (!missing(colour) || !isTRUE(inherit.aes) || !"colour" %in% names(plot$mapping)) {
+    params <- c(params, list(colour = colourpicker(colour)))
+  }
+  params <- c(params, list(width = width))
+  if (length(list(...)) > 0) {
+    params <- c(params, list(...))
+  }
+  
+  # add the geom
+  add_type(plot = plot,
+           type = "errorbar",
            mapping = mapping,
            params)
 }

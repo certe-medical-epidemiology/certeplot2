@@ -5,6 +5,7 @@
 \alias{add_line}
 \alias{add_point}
 \alias{add_col}
+\alias{add_errorbar}
 \alias{add_sf}
 \title{Add Plot Element}
 \usage{
@@ -45,6 +46,18 @@ add_col(
   inherit.aes = TRUE
 )
 
+add_errorbar(
+  plot,
+  min = NULL,
+  max = NULL,
+  y = NULL,
+  x = NULL,
+  colour = "certeroze",
+  width = 0.5,
+  ...,
+  inherit.aes = TRUE
+)
+
 add_sf(
   plot,
   sf_data,
@@ -77,6 +90,8 @@ add_sf(
 
 \item{inherit.aes}{a \link{logical} to indicate whether the default aesthetics should be inherited, rather than combining with them}
 
+\item{min, max}{minimum (lower) and maximum (upper) values of the error bars}
+
 \item{sf_data}{an 'sf' \link{data.frame}, such as the outcome of \code{\link[certegis:geocoding]{certegis::geocode()}}}
 
 \item{datalabels}{a column of \code{sf_data} to add as label below the points}
@@ -95,6 +110,8 @@ The function \code{\link[=add_line]{add_line()}} will add:
 \item \code{\link[ggplot2:geom_abline]{geom_vline()}} if only \code{x} is provided and \code{x} contains one unique value;
 \item \code{\link[ggplot2:geom_path]{geom_line()}} in all other cases.
 }
+
+The function \code{\link[=add_errorbar]{add_errorbar()}} only adds error bars to the \code{y} values, see \emph{Examples}.
 }
 \examples{
 df <- data.frame(var_1 = c(1:100),
@@ -111,7 +128,22 @@ df |>
   add_col(y = var_2 / 5,
           width = 0.25,
           colour = "certeroze")
-   
+       
+if (require("dplyr", warn.conflicts = FALSE)) {   
+  df2 <- df |> 
+    as_tibble() |> 
+    filter(var_1 <= 50) |> 
+    mutate(error1 = var_2 * 0.9,
+           error2 = var_2 * 1.1)
+  
+  print(df2)
+  
+  df2 |> 
+    plot2(type = "c", colour = "certeroze4") |> 
+    # add the error bars, simply by referencing the lower and upper values
+    add_errorbar(error1, error2)
+}
+
 if (require("certestats", warn.conflicts = FALSE)) {
    df |>
      plot2() |> 

@@ -1433,7 +1433,7 @@ generate_geom <- function(type,
       plot2_message("Using ", font_blue("binwidth =", format(binwidth, scientific = FALSE)), " based on data")
     }
     do.call(geom_fn,
-            args = c(list(size = size,
+            args = c(list(linetype = linetype,
                           linewidth = linewidth,
                           binwidth = binwidth,
                           na.rm = na.rm),
@@ -1770,7 +1770,7 @@ validate_title <- function(x, markdown, df = NULL, max_length = NULL) {
   out
 }
 
-#' @importFrom ggplot2 theme_grey element_blank margin
+#' @importFrom ggplot2 theme_grey element_blank margin rel
 #' @importFrom certestyle colourpicker
 validate_theme <- function(theme,
                            type,
@@ -1920,9 +1920,14 @@ validate_theme <- function(theme,
     if (inherits(el, "element_text")) {
       el$family <- font
       if (text_factor != 1 && !is.null(el$size) && is.numeric(el$size)) {
-        attr_el_bak <- attributes(el$size)
-        el$size <- as.double(el$size) * text_factor
-        attributes(el$size) <- attr_el_bak
+        if (inherits(el$size, "rel")) {
+          el$size <- rel(as.double(el$size) * 0.5 * text_factor)
+        } else {
+          attr_el_bak <- attributes(el$size)
+          el$size <- as.double(el$size) * text_factor
+          attributes(el$size) <- attr_el_bak
+        }
+        
       }
     }
     el
@@ -2036,7 +2041,7 @@ set_datalabels <- function(p,
                            misses_datalabels,
                            markdown) {
   
-  if (isTRUE(misses_datalabels) && nrow(df) > 50) {
+  if (isTRUE(misses_datalabels) && nrow(df) > 25) {
     plot2_caution("Omitting printing of ", nrow(df), " datalabels - use ",
                   font_blue("datalabels = TRUE"), " to force printing")
     return(p)

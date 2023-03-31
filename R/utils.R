@@ -400,6 +400,32 @@ group_sizes <- function(df) {
   }
 }
 
+# this replaces ggplot2::aes_string(), which was deprecated in 3.4.0
+#' @importFrom ggplot2 aes
+#' @importFrom rlang is_quosure as_label new_quosure
+update_aes <- function(current = aes(), ..., as_symbol = FALSE) {
+  mapping <- list(...)
+  caller_env <- parent.frame()
+  mapping <- lapply(mapping, function(x) {
+    if (tryCatch(is.null(x) || identical(x, "") || identical(x, "NULL"), error = function(e) FALSE)) {
+      return(NULL)
+    }
+    if (is_quosure(x)) {
+      x <- as_label(x)
+    }  
+    if (isFALSE(as_symbol)) {
+      # use str2lang() to get a `call` type:
+      new_quosure(str2lang(x), env = caller_env)
+    } else {
+      # this is required for restore_mapping()
+      new_quosure(as.symbol(x), env = caller_env)
+    }
+  })
+  out <- structure(mapping, class = class(aes()))
+  out <- utils::modifyList(current, out)
+  out
+}
+
 restore_mapping <- function(p, df) {
   # help function
   new_mapping <- function(mapping, df) {
@@ -410,15 +436,15 @@ restore_mapping <- function(p, df) {
     new_mapping <- lapply(mapping,
                           function(map) {
                             if (any(deparse(map) %like% "_var_x")) {
-                              aes_string(as.name(get_x_name(df)))[[1]] 
+                              update_aes(x = get_x_name(df), as_symbol = TRUE)[[1]] 
                             } else if (any(deparse(map) %like% "_var_y_secondary")) {
-                              aes_string(as.name(get_y_secondary_name(df)))[[1]] 
+                              update_aes(x = get_y_secondary_name(df), as_symbol = TRUE)[[1]]
                             } else if (any(deparse(map) %like% "_var_y")) {
-                              aes_string(as.name(get_y_name(df)))[[1]] 
+                              update_aes(x = get_y_name(df), as_symbol = TRUE)[[1]]
                             } else if (any(deparse(map) %like% "_var_category")) {
-                              aes_string(as.name(get_category_name(df)))[[1]] 
+                              update_aes(x = get_category_name(df), as_symbol = TRUE)[[1]]
                             } else if (any(deparse(map) %like% "_var_facet")) {
-                              aes_string(as.name(get_facet_name(df)))[[1]] 
+                              update_aes(x = get_facet_name(df), as_symbol = TRUE)[[1]]
                             } else {
                               map
                             }})
@@ -435,15 +461,15 @@ restore_mapping <- function(p, df) {
   
   # facet mapping
   if (has_facet(df)) {
-    p$facet$params$facets[[1]] <- aes_string(as.name(get_facet_name(df)))[[1]]
+    p$facet$params$facets[[1]] <- update_aes(x = get_facet_name(df), as_symbol = TRUE)[[1]]
     names(p$facet$params$facets)[1] <- get_facet_name(df)
     # required for ggplot2::facet_grid(), which is used when facet.relative = TRUE:
     if (length(p$facet$params$rows) > 0) {
-      p$facet$params$rows[[1]] <- aes_string(as.name(get_facet_name(df)))[[1]]
+      p$facet$params$rows[[1]] <- update_aes(x = get_facet_name(df), as_symbol = TRUE)[[1]]
       names(p$facet$params$rows)[1] <- get_facet_name(df)
     }
     if (length(p$facet$params$cols) > 0) {
-      p$facet$params$cols[[1]] <- aes_string(as.name(get_facet_name(df)))[[1]]
+      p$facet$params$cols[[1]] <- update_aes(x = get_facet_name(df), as_symbol = TRUE)[[1]]
       names(p$facet$params$cols)[1] <- get_facet_name(df)
     }
   }

@@ -99,11 +99,11 @@ test_that("S3 implementations work", {
                     AMR::bug_drug_combinations(FUN = AMR::mo_gramstain) |>
                     plot2(),
                   "gg")
-  # rsi_df
+  # sir_df
   expect_s3_class(AMR::example_isolates |>
                     dplyr::select(date, NIT, CIP, IPM, MEM) |>
                     dplyr::group_by(yr = format(date, "%Y")) |>
-                    AMR::rsi_df() |>
+                    AMR::sir_df() |>
                     dplyr::filter(yr >= 2015) |>
                     plot2(),
                   "gg")
@@ -528,4 +528,15 @@ test_that("matrices works", {
                     stats::cor() |>
                     plot2(colour = c("certeblauw", "white", "certeroze"),
                                                   category.limits = c(-1, 1)), "gg")
+})
+
+test_that("errorbars work", {
+  expect_s3_class(plotdata |>
+                    dplyr::mutate(error1 = n * 0.9, error2 = n * 1.1) |> 
+                    plot2(type = "c", colour = "certeroze4") |>
+                    add_errorbar(error1, error2), "gg")
+  expect_s3_class(mtcars |>
+                    stats::cor() |>
+                    plot2(colour = c("certeblauw", "white", "certeroze"),
+                          category.limits = c(-1, 1)), "gg")
 })

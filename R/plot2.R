@@ -548,7 +548,7 @@ plot2 <- function(.data,
 
 #' @importFrom dplyr mutate vars group_by across summarise select bind_cols
 #' @importFrom forcats fct_relabel
-#' @importFrom ggplot2 ggplot aes aes_string labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build after_stat
+#' @importFrom ggplot2 ggplot aes labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build after_stat
 #' @importFrom tidyr pivot_longer
 #' @importFrom certestyle format2 font_magenta font_black font_blue
 plot2_exec <- function(.data,
@@ -740,7 +740,7 @@ plot2_exec <- function(.data,
       type <- "col"
       horizontal <- TRUE
     }
-    if (type %like% "^(linedot|linepoint|dotline|pointline|ld|lp|dl|pl)$") {
+    if (type %like% "^(linedot|linepoint|dotline|pointline|ld|lp|dl|pl)s?$") {
       # set line for here, dots will be added in the end
       type_backup <- "linedot"
       type <- "line"
@@ -1056,7 +1056,7 @@ plot2_exec <- function(.data,
       # no colour in sf's
       mapping <- utils::modifyList(mapping, aes(colour = NULL))
       # # and set sf column
-      # mapping <- utils::modifyList(mapping, aes_string(geometry = dots$`_sf.column`))
+      # mapping <- update_aes(mapping, geometry = dots$`_sf.column`)
     }
   }
   if (geom_is_continuous(type) && !geom_is_line_or_area(type) && has_category(df)) {
@@ -1477,7 +1477,7 @@ plot2_exec <- function(.data,
   # set linedot type if required ----
   if (type_backup == "linedot") {
     p <- p |> 
-      add_point(colour = background, size = size * 5) |> 
+      add_point(colour = ifelse(!is.null(background), background, "white"), size = size * 5) |> 
       add_point(size = size * 2)
   }
   

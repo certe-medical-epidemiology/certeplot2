@@ -26,6 +26,16 @@
 #' @examples 
 #' plot2(iris)
 #' plot2(admitted_patients, x = hospital, category = gender)
+#' 
+#' if (require("ggplot2")) {
+#'   ggplot2(mtcars, aes(hp, mpg)) +
+#'     geom_point()
+#' }
+#' if (require("ggplot2")) {
+#'   ggplot2(mtcars, aes(hp, mpg)) +
+#'     geom_point() +
+#'     theme_minimal2()
+#' }
 theme_minimal2 <- function(...) {
   t <- theme_bw(base_size = 11) %+replace%
     theme(
@@ -33,7 +43,7 @@ theme_minimal2 <- function(...) {
       axis.title.x = element_text(margin = margin(14, 0, 0, 0)),
       axis.title.y = element_text(margin = margin(0, 14, 0, 0), angle = 90),
       axis.ticks.y = element_blank(),
-      axis.ticks.x = element_line(size = 0.75, colour = "grey75"),
+      axis.ticks.x = element_line(linewidth = 0.75, colour = "grey75"),
       axis.ticks.length = unit(2, "pt"),
       legend.background = element_blank(),
       legend.key = element_blank(),
@@ -44,10 +54,10 @@ theme_minimal2 <- function(...) {
       panel.background = element_rect(fill = "white", linetype = 0),
       panel.border = element_blank(),
       panel.grid.major.x = element_blank(),
-      panel.grid.major.y = element_line(size = 0.375, colour = "grey75"),
+      panel.grid.major.y = element_line(linewidth = 0.375, colour = "grey75"),
       panel.grid.minor.x = element_blank(),
-      panel.grid.minor.y = element_line(size = 0.25, colour = "grey85"),
-      axis.line = element_line(size = 0.375, colour = "grey75"),
+      panel.grid.minor.y = element_line(linewidth = 0.25, colour = "grey85"),
+      axis.line = element_line(linewidth = 0.375, colour = "grey75"),
       axis.line.y = element_blank(),
       plot.margin = unit(c(5, 12, 5, 5), units = "pt"),
       plot.background = element_rect(fill = "white", linetype = 0),
