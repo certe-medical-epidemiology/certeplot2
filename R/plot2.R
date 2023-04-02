@@ -51,6 +51,8 @@
 #'   
 #' - One or more variables from `.data` using [selection helpers][tidyselect::language], such as `category = where(is.double)` or `facet = starts_with("var_")`
 #' 
+#'  The `category` can also be a date (class `Date` or `POSIXt`).
+#' 
 #' @param y_secondary values to use for plotting along the secondary y axis. This functionality is poorly supported by `ggplot2` and might give unexpected results. Setting the secondary y axis will set the colour to the axis titles.
 #' @param y_secondary.colour,y_secondary.colour_fill colours to set for the secondary y axis, will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
 #' @param type,y_secondary.type type of visualisation to use. This can be:
@@ -85,8 +87,8 @@
 #' @param facet.fixed_y a [logical] to indicate whether all y scales should have the same limits. Defaults to `TRUE` only if the [coefficient of variation][certestats::cv()] (sd divided by mean) of the maximum values of y is less than 15%.
 #' @param facet.fixed_x a [logical] to indicate whether all x scales should have the same breaks. This acts like the inverse of `x.drop`.
 #' @param facet.position,facet.fill,facet.bold,facet.italic,facet.size,facet.margin,facet.repeat_lbls_x,facet.repeat_lbls_y,facet.drop,facet.nrow,facet.relative additional settings for the plotting direction `facet`
-#' @param x.date_breaks breaks to use when the x axis contains dates, will be determined automatically if left blank
-#' @param x.date_labels labels to use when the x axis contains dates, will be determined automatically if left blank
+#' @param x.date_breaks breaks to use when the x axis contains dates, will be determined automatically if left blank. This accepts values such as `"1 day"` and `"2 years"`.
+#' @param x.date_labels labels to use when the x axis contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as `"d mmmm yyyy"`.
 #' @param category.focus a value of `category` that should be highlighted, meaning that all other values in `category` will be greyed out. This can also be a numeric value between 1 and the length of unique values of `category`, e.g. `category.focus = 2` to focus on the second legend item.
 #' @param colour colour(s) to set, will be evaluated with [`colourpicker()`][certestyle::colourpicker()] and defaults to Certe colours. This can also be one of the viridis colours for a continuous scale: `"viridis"`, `"magma"`, `"inferno"`, `"plasma"`, `"cividis"`, `"rocket"`, `"mako"` or `"turbo"`. This can also be a named vector to match values of `category`, see *Examples*. Using a named vector can also be used to manually sort the values of `category`.
 #' @param colour_fill colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
@@ -114,6 +116,8 @@
 #' @param x.zoom,y.zoom a [logical] to indicate if the axis should be zoomed on the data, by setting `x.limits = c(NA, NA)` and `x.expand = 0` for the x axis, or `y.limits = c(NA, NA)` and `y.expand = 0` for the y axis
 #' @param category.labels,category.percent,category.breaks,category.expand,category.midpoint,category.trans settings for the plotting direction `category`.
 #' @param category.limits limits to use for a numeric category, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `category.limits = c(0, NA)` to have the scale start at zero.
+#' @param category.date_breaks breaks to use when the category contains dates, will be determined automatically if left blank. This will be passed on to [`seq.Date(by = ...)`][seq.Date()] and thus can be: a number, taken to be in days, or a character string containing one of "day", "week", "month", "quarter" or "year" (optionally preceded by an integer and a space, and/or followed by "s").
+#' @param category.date_labels labels to use when the category contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as `"d mmmm yyyy"`.
 #' @param category.character a [logical] to indicate whether the values of the category should be forced to [character]. The default is `FALSE`, except for years (values between 2000 and 2050) and months (values from 1 to 12).
 #' @param x.max_items,category.max_items,facet.max_items number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the `summarise_function` function. **Please note:** the sorting will be applied first, allowing to e.g. plot the top *n* most frequent values of the x axis by combining `x.sort = "freq-desc"` with `x.max_items =` *n*.
 #' @param x.max_txt,category.max_txt,facet.max_txt the text to use of values not included number of `*.max_items`. The placeholder `%n` will be replaced with the outcome of the `summarise_function` function, the placeholder `%p` will be replaced with the percentage.
@@ -130,7 +134,7 @@
 #' - `"freq-asc"`: sort ascending according to the frequencies of `y` computed by `summarise_function` (lowest value first)
 #' @param datalabels values to show as datalabels, see also `datalabels.format`. This can be:
 #' 
-#' - Left blank. This will default to the values of `y` in column-type plots, or when plotting spatial 'sf' data, the values of the first column. It will print a maximum of 50 labels unless `datalabels = TRUE`.
+#' - Left blank. This will default to the values of `y` in column-type plots, or when plotting spatial 'sf' data, the values of the first column. It will print a maximum of 25 labels unless `datalabels = TRUE`.
 #' - `TRUE` or `FALSE` to force or remove datalabels
 #' - A function to calculate over `.data`, such as `datalabels = paste(round(column1), "\n", column2)`
 #' @param datalabels.round number of digits to round the datalabels, applies to both `"%n"` and `"%p"` for replacement (see `datalabels.format`)
@@ -442,6 +446,8 @@ plot2 <- function(.data,
                   category.expand = 0,
                   category.midpoint = NULL,
                   category.trans = "identity",
+                  category.date_breaks = NULL,
+                  category.date_labels = NULL,
                   category.character = NULL,
                   x.sort = NULL,
                   category.sort = TRUE,
@@ -640,6 +646,8 @@ plot2_exec <- function(.data,
                        category.expand,
                        category.midpoint,
                        category.trans,
+                       category.date_breaks,
+                       category.date_labels,
                        category.character,
                        x.sort,
                        category.sort,
@@ -1184,7 +1192,7 @@ plot2_exec <- function(.data,
   
   # add the right scales ----
   font <- validate_font(font)
-  if (has_category(df) && is.numeric(get_category(df))) {
+  if (has_category(df) && (is.numeric(get_category(df)) || is_date(get_category(df)))) {
     p <- p +
       validate_category_scale(values = get_category(df),
                               type = type,
@@ -1196,6 +1204,8 @@ plot2_exec <- function(.data,
                               category.expand = category.expand,
                               category.midpoint = category.midpoint,
                               category.trans = category.trans,
+                              category.date_breaks = category.date_breaks,
+                              category.date_labels = category.date_labels,
                               stackedpercent = stackedpercent,
                               legend.nbin = legend.nbin,
                               legend.barheight = legend.barheight,

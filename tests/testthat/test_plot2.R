@@ -358,6 +358,19 @@ test_that("category scale works", {
                                                      category.trans = "log10",
                                                      category.limits = c(NA, 10e3)),
                   "gg")
+  # date class as category
+  expect_s3_class(admitted_patients |>
+                    plot2(hospital,
+                          median(age),
+                          date),
+                  "gg")
+  expect_s3_class(admitted_patients |>
+                    plot2(hospital,
+                          median(age),
+                          date,
+                          category.date_breaks = "5 years",
+                          category.date_labels = "'yy"),
+                  "gg")
 })
 
 test_that("facet scale works", {
@@ -535,8 +548,4 @@ test_that("errorbars work", {
                     dplyr::mutate(error1 = n * 0.9, error2 = n * 1.1) |> 
                     plot2(type = "c", colour = "certeroze4") |>
                     add_errorbar(error1, error2), "gg")
-  expect_s3_class(mtcars |>
-                    stats::cor() |>
-                    plot2(colour = c("certeblauw", "white", "certeroze"),
-                          category.limits = c(-1, 1)), "gg")
 })

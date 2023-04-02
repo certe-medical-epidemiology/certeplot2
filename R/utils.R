@@ -408,13 +408,15 @@ update_aes <- function(current = aes(), ..., as_symbol = FALSE) {
   caller_env <- parent.frame()
   mapping <- lapply(mapping, function(x) {
     if (tryCatch(is.null(x) || identical(x, "") || identical(x, "NULL"), error = function(e) FALSE)) {
+      # this will remove the aesthetic from the list
       return(NULL)
     }
     if (is_quosure(x)) {
+      # send as regular text
       x <- as_label(x)
     }  
     if (isFALSE(as_symbol)) {
-      # use str2lang() to get a `call` type:
+      # default, use str2lang() to get a `call` type:
       new_quosure(str2lang(x), env = caller_env)
     } else {
       # this is required for restore_mapping()
@@ -427,7 +429,7 @@ update_aes <- function(current = aes(), ..., as_symbol = FALSE) {
 }
 
 restore_mapping <- function(p, df) {
-  # help function
+  # helper function
   new_mapping <- function(mapping, df) {
     if (is.null(mapping)) {
       return(mapping)
@@ -435,6 +437,7 @@ restore_mapping <- function(p, df) {
     att <- attributes(mapping)
     new_mapping <- lapply(mapping,
                           function(map) {
+                            # deparse(map) has a value such as "~`_var_y`"
                             if (any(deparse(map) %like% "_var_x")) {
                               update_aes(x = get_x_name(df), as_symbol = TRUE)[[1]] 
                             } else if (any(deparse(map) %like% "_var_y_secondary")) {
@@ -474,7 +477,7 @@ restore_mapping <- function(p, df) {
     }
   }
   
-  # now remove anonymous these `_var_*` columns from the data
+  # now remove these anonymous`_var_*` columns from the data
   p$data <- p$data[, colnames(p$data)[colnames(p$data) %unlike% "^_var_(x|y|category|facet)$"], drop = FALSE]
   
   # return the plot object
@@ -523,6 +526,10 @@ sigfigs <- function(x) {
       nchar(gsub(".*[.]([0-9]+)$", "\\1", frm))
     }
   })
+}
+
+is_date <- function(x) {
+  inherits(x, c("Date", "POSIXt"))
 }
 
 data_is_numeric <- function(x) {

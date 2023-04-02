@@ -94,6 +94,8 @@ plot2(
   category.expand = 0,
   category.midpoint = NULL,
   category.trans = "identity",
+  category.date_breaks = NULL,
+  category.date_labels = NULL,
   category.character = NULL,
   x.sort = NULL,
   category.sort = TRUE,
@@ -169,7 +171,9 @@ plot2(
 \item A \link{function} to calculate over one or more variables from \code{.data}, such as \code{category = median(column2) / column3}, or \code{facet = ifelse(column1 == "A", "Group A", "Other")}
 \item Multiple variables from \code{.data}, such as \code{facet = c(column1, column2)} (use \code{sep} to control the separator character)
 \item One or more variables from \code{.data} using \link[tidyselect:language]{selection helpers}, such as \code{category = where(is.double)} or \code{facet = starts_with("var_")}
-}}
+}
+
+The \code{category} can also be a date (class \code{Date} or \code{POSIXt}).}
 
 \item{type, y_secondary.type}{type of visualisation to use. This can be:
 \itemize{
@@ -215,9 +219,9 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{facet.fixed_x}{a \link{logical} to indicate whether all x scales should have the same breaks. This acts like the inverse of \code{x.drop}.}
 
-\item{x.date_breaks}{breaks to use when the x axis contains dates, will be determined automatically if left blank}
+\item{x.date_breaks}{breaks to use when the x axis contains dates, will be determined automatically if left blank. This accepts values such as \code{"1 day"} and \code{"2 years"}.}
 
-\item{x.date_labels}{labels to use when the x axis contains dates, will be determined automatically if left blank}
+\item{x.date_labels}{labels to use when the x axis contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as \code{"d mmmm yyyy"}.}
 
 \item{category.focus}{a value of \code{category} that should be highlighted, meaning that all other values in \code{category} will be greyed out. This can also be a numeric value between 1 and the length of unique values of \code{category}, e.g. \code{category.focus = 2} to focus on the second legend item.}
 
@@ -281,6 +285,10 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{category.limits}{limits to use for a numeric category, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{category.limits = c(0, NA)} to have the scale start at zero.}
 
+\item{category.date_breaks}{breaks to use when the category contains dates, will be determined automatically if left blank. This will be passed on to \code{\link[=seq.Date]{seq.Date(by = ...)}} and thus can be: a number, taken to be in days, or a character string containing one of "day", "week", "month", "quarter" or "year" (optionally preceded by an integer and a space, and/or followed by "s").}
+
+\item{category.date_labels}{labels to use when the category contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as \code{"d mmmm yyyy"}.}
+
 \item{category.character}{a \link{logical} to indicate whether the values of the category should be forced to \link{character}. The default is \code{FALSE}, except for years (values between 2000 and 2050) and months (values from 1 to 12).}
 
 \item{x.sort, category.sort, facet.sort}{sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
@@ -298,7 +306,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{datalabels}{values to show as datalabels, see also \code{datalabels.format}. This can be:
 \itemize{
-\item Left blank. This will default to the values of \code{y} in column-type plots, or when plotting spatial 'sf' data, the values of the first column. It will print a maximum of 50 labels unless \code{datalabels = TRUE}.
+\item Left blank. This will default to the values of \code{y} in column-type plots, or when plotting spatial 'sf' data, the values of the first column. It will print a maximum of 25 labels unless \code{datalabels = TRUE}.
 \item \code{TRUE} or \code{FALSE} to force or remove datalabels
 \item A function to calculate over \code{.data}, such as \code{datalabels = paste(round(column1), "\\n", column2)}
 }}
@@ -395,7 +403,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 137 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 139 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 head(iris)

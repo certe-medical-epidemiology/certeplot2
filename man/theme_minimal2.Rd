@@ -17,11 +17,11 @@ plot2(iris)
 plot2(admitted_patients, x = hospital, category = gender)
 
 if (require("ggplot2")) {
-  ggplot2(mtcars, aes(hp, mpg)) +
+  ggplot(mtcars, aes(hp, mpg)) +
     geom_point()
 }
 if (require("ggplot2")) {
-  ggplot2(mtcars, aes(hp, mpg)) +
+  ggplot(mtcars, aes(hp, mpg)) +
     geom_point() +
     theme_minimal2()
 }

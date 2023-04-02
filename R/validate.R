@@ -413,7 +413,7 @@ validate_data <- function(df,
       }
       if (!geom_is_continuous(type_prelim)) {
         plot2_message("Assuming ", font_blue("category.character = TRUE"),
-                      " for discrete plot type (", font_blue(type), ")",
+                      " for discrete plot type (", font_blue(type_prelim), ")",
                       " since ", font_blue(get_category_name(df)), " is numeric")
         dots$category.character <- TRUE
       }
@@ -1118,6 +1118,8 @@ validate_category_scale <- function(values,
                                     category.expand,
                                     category.midpoint,
                                     category.trans,
+                                    category.date_breaks,
+                                    category.date_labels,
                                     stackedpercent,
                                     legend.nbin,
                                     legend.barheight,
@@ -1128,7 +1130,7 @@ validate_category_scale <- function(values,
                                     big.mark,
                                     font,
                                     ...) {
-  # only for a numeric category scale
+  # only for a numeric and date category scale
   
   if (is.null(category.trans)) {
     category.trans <- "identity"
@@ -1139,16 +1141,24 @@ validate_category_scale <- function(values,
     legend.position <- validate_legend.position(legend.position)
   }
   
-  labels_fn <- function(values, category.labels, category.percent, stackedpercent, decimal.mark, big.mark) {
+  labels_fn <- function(values, category.labels, category.percent, category.date_labels, stackedpercent, decimal.mark, big.mark) {
     if (!is.null(category.labels)) {
       category.labels
     } else if (isTRUE(category.percent) || isTRUE(stackedpercent)) {
       function(x, dec = decimal.mark, big = big.mark, ...) format2(as.percentage(x), decimal.mark = dec, big.mark = big)
+    } else if (is_date(values)) {
+      if (is.null(category.date_labels)) {
+        lbls <- determine_date_breaks_labels(values)$labels
+        plot2_message("Assuming ", font_blue("category.date_labels = \"", lbls, "\"", collapse = ""))
+      } else {
+        lbls <- category.date_labels
+      }
+      function(x, format = lbls, ...) format2(as.Date(as.numeric(x), origin = "1970-01-01"), format = format)
     } else {
       function(x, dec = decimal.mark, big = big.mark, ...) format2(x, decimal.mark = dec, big.mark = big)
     }
   }
-  breaks_fn <- function(values, category.breaks, category.percent, category.trans, waiver) {
+  breaks_fn <- function(values, category.breaks, category.percent, category.trans, category.date_breaks, waiver) {
     if (category.trans != "identity") {
       if (!is.null(category.breaks)) {
         plot2_caution("Ignoring ", font_blue("category.breaks"), " since ",
@@ -1156,6 +1166,9 @@ validate_category_scale <- function(values,
       }
       return(waiver)
     } else if (!is.null(category.breaks)) {
+      if (is_date(values) && is.null(category.date_breaks)) {
+        plot2_caution("Setting ", font_blue("category.breaks"), " is not useful for dates. Did you mean ", font_blue("category.date_breaks"), "?")
+      }
       category.breaks
     } else if (isTRUE(category.percent)) {
       if (max(c(1, values), na.rm = TRUE) == 1) {
@@ -1164,6 +1177,17 @@ validate_category_scale <- function(values,
         # print 5 labels nicely
         pretty_breaks(n = 5)
       }
+    } else if (is_date(values)) {
+      if (is.null(category.date_breaks)) {
+        breaks <- determine_date_breaks_labels(values)$breaks
+        plot2_message("Assuming ", font_blue("category.date_breaks = \"", breaks, "\"", collapse = ""))
+      } else {
+        breaks <- category.date_breaks
+      }
+      seq.Date(from = min(values, na.rm = TRUE),
+               to = max(values, na.rm = TRUE),
+               by = breaks)
+      # pretty_breaks(n = 5)(values)
     } else if (all(values %% 1 == 0, na.rm = TRUE) && max(values, na.rm = TRUE) < 5) {
       # whole numbers - only strip decimal numbers if total y range is low
       if (diff(range(values)) < 5 && 0 %in% values) {
@@ -1176,7 +1200,7 @@ validate_category_scale <- function(values,
       pretty_breaks(n = 5)
     }
   }
-  limits_fn <- function(category.limits, category.percent, category.trans, waiver) {
+  limits_fn <- function(values, category.limits, category.percent, category.trans, category.date_breaks, waiver) {
     if (category.trans != "identity") {
       # in certain transformations, such as log, 0 is not allowed
       if (!is.null(category.limits)) {
@@ -1188,6 +1212,9 @@ validate_category_scale <- function(values,
       category.limits
     } else if (isTRUE(category.percent)) {
       function(x, ...) c(min(0, x, na.rm = TRUE), max(1, x, na.rm = TRUE))
+    } else if (is_date(values)) {
+      # for dates, take the outer range
+      c(min(values, na.rm = TRUE) - 1, max(values, na.rm = TRUE) + 1)
     } else {
       # now determine if we should start at zero:
       # x will be the lower and upper limit - if zero under lower minus fifth of upper then start at zero
@@ -1222,6 +1249,7 @@ validate_category_scale <- function(values,
     aest <- "fill"
     cols_category <- cols$colour_fill
   }
+  
   # general arguments for any scale function below (they are called with do.call())
   args <- list(aesthetics = aest,
                na.value = "white",
@@ -1239,6 +1267,7 @@ validate_category_scale <- function(values,
                labels = labels_fn(values = values,
                                   category.labels = category.labels,
                                   category.percent = category.percent,
+                                  category.date_labels = category.date_labels,
                                   stackedpercent = stackedpercent,
                                   decimal.mark = decimal.mark,
                                   big.mark = big.mark),
@@ -1246,10 +1275,13 @@ validate_category_scale <- function(values,
                                   category.breaks = category.breaks,
                                   category.percent = category.percent,
                                   category.trans = category.trans,
+                                  category.date_breaks = category.date_breaks,
                                   waiver = waiver()),
-               limits = limits_fn(category.limits = category.limits,
+               limits = limits_fn(values = values,
+                                  category.limits = category.limits,
                                   category.percent = category.percent,
-                                  category.trans = category.trans),
+                                  category.trans = category.trans,
+                                  category.date_breaks = category.date_breaks),
                trans = category.trans)
   
   if (length(cols_category) == 1) {
@@ -1494,7 +1526,7 @@ validate_colour <- function(df,
                             misses_colour_fill,
                             horizontal) {
   
-  if (is.numeric(get_category(df))) {
+  if (is.numeric(get_category(df)) || is_date(get_category(df))) {
     viridis_colours <- c("viridis", "magma", "inferno", "plasma", "cividis", "rocket", "mako", "turbo")
     colour.bak <- colour
     # this is for validate_category_scale()
@@ -2285,6 +2317,7 @@ sort_data <- function(values,
                       argument) {
   if (is.null(sort_method) ||
       is.numeric(values) ||
+      is_date(values) ||
       ((isTRUE(sort_method) && is.factor(values) && !isTRUE(horizontal)))) {
     # don't sort at all
     return(values)
@@ -2335,10 +2368,8 @@ sort_data <- function(values,
     levels <- levels(values)
   }
   
-  if (!is.numeric(values)) {
-    # force characters for anything else than numbers
-    values <- as.character(values)
-  }
+  # force characters
+  values <- as.character(values)
   
   # start the sorting
   numeric_sort <- any(values %like% "[0-9]", na.rm = TRUE)
