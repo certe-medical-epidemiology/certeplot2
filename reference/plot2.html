@@ -19,7 +19,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.1</span>
       </span>
     </div>
 
@@ -177,6 +177,8 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span>  category.expand <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  category.midpoint <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.trans <span class="op">=</span> <span class="st">"identity"</span>,</span>
+<span>  category.date_breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  category.date_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.character <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.sort <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.sort <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -255,7 +257,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <li><p>A <a href="https://rdrr.io/r/base/function.html" class="external-link">function</a> to calculate over one or more variables from <code>.data</code>, such as <code>category = median(column2) / column3</code>, or <code>facet = ifelse(column1 == "A", "Group A", "Other")</code></p></li>
 <li><p>Multiple variables from <code>.data</code>, such as <code>facet = c(column1, column2)</code> (use <code>sep</code> to control the separator character)</p></li>
 <li><p>One or more variables from <code>.data</code> using <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">selection helpers</a>, such as <code>category = where(is.double)</code> or <code>facet = starts_with("var_")</code></p></li>
-</ul></dd>
+</ul><p>The <code>category</code> can also be a date (class <code>Date</code> or <code>POSIXt</code>).</p></dd>
 
 
 <dt>type, y_secondary.type</dt>
@@ -314,11 +316,11 @@ See plot2-methods for all implemented methods for different object classes."><me
 
 
 <dt>x.date_breaks</dt>
-<dd><p>breaks to use when the x axis contains dates, will be determined automatically if left blank</p></dd>
+<dd><p>breaks to use when the x axis contains dates, will be determined automatically if left blank. This accepts values such as <code>"1 day"</code> and <code>"2 years"</code>.</p></dd>
 
 
 <dt>x.date_labels</dt>
-<dd><p>labels to use when the x axis contains dates, will be determined automatically if left blank</p></dd>
+<dd><p>labels to use when the x axis contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as <code>"d mmmm yyyy"</code>.</p></dd>
 
 
 <dt>category.focus</dt>
@@ -445,6 +447,14 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>limits to use for a numeric category, can be length 1 or 2. Use <code>NA</code> for the highest or lowest value in the data, e.g. <code>category.limits = c(0, NA)</code> to have the scale start at zero.</p></dd>
 
 
+<dt>category.date_breaks</dt>
+<dd><p>breaks to use when the category contains dates, will be determined automatically if left blank. This will be passed on to <code><a href="https://rdrr.io/r/base/seq.Date.html" class="external-link">seq.Date(by = ...)</a></code> and thus can be: a number, taken to be in days, or a character string containing one of "day", "week", "month", "quarter" or "year" (optionally preceded by an integer and a space, and/or followed by "s").</p></dd>
+
+
+<dt>category.date_labels</dt>
+<dd><p>labels to use when the category contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as <code>"d mmmm yyyy"</code>.</p></dd>
+
+
 <dt>category.character</dt>
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to indicate whether the values of the category should be forced to <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>. The default is <code>FALSE</code>, except for years (values between 2000 and 2050) and months (values from 1 to 12).</p></dd>
 
@@ -463,7 +473,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 
 
 <dt>datalabels</dt>
-<dd><p>values to show as datalabels, see also <code>datalabels.format</code>. This can be:</p><ul><li><p>Left blank. This will default to the values of <code>y</code> in column-type plots, or when plotting spatial 'sf' data, the values of the first column. It will print a maximum of 50 labels unless <code>datalabels = TRUE</code>.</p></li>
+<dd><p>values to show as datalabels, see also <code>datalabels.format</code>. This can be:</p><ul><li><p>Left blank. This will default to the values of <code>y</code> in column-type plots, or when plotting spatial 'sf' data, the values of the first column. It will print a maximum of 25 labels unless <code>datalabels = TRUE</code>.</p></li>
 <li><p><code>TRUE</code> or <code>FALSE</code> to force or remove datalabels</p></li>
 <li><p>A function to calculate over <code>.data</code>, such as <code>datalabels = paste(round(column1), "\n", column2)</code></p></li>
 </ul></dd>
@@ -612,7 +622,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <li><p>Labels with data values can easily be printed and are automatically determined</p></li>
 </ul></li>
 <li><p>Support for any <code>ggplot2</code> extension based on <code><a href="https://ggplot2.tidyverse.org/reference/fortify.html" class="external-link">ggplot2::fortify()</a></code></p></li>
-</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 137 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
+</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 139 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
     </div>
 
     <div id="ref-examples">
