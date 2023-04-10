@@ -408,20 +408,21 @@ update_aes <- function(current = aes(), ..., as_symbol = FALSE) {
   caller_env <- parent.frame()
   mapping <- lapply(mapping, function(x) {
     if (tryCatch(is.null(x) || identical(x, "") || identical(x, "NULL"), error = function(e) FALSE)) {
-      # this will remove the aesthetic from the list
+      # this will ultimately remove the aesthetic from the list, by running utils::modifyList()
       return(NULL)
     }
     if (is_quosure(x)) {
       # send as regular text
       x <- as_label(x)
-    }  
-    if (isFALSE(as_symbol)) {
-      # default, use str2lang() to get a `call` type:
-      new_quosure(str2lang(x), env = caller_env)
-    } else {
-      # this is required for restore_mapping()
-      new_quosure(as.symbol(x), env = caller_env)
     }
+    if (isTRUE(as_symbol)) {
+      # this is required for restore_mapping()
+      x <- as.symbol(x)
+    } else {
+      # use str2lang() to get a `call` type:
+      x <- str2lang(as.character(x))
+    }
+    new_quosure(x, env = caller_env)
   })
   out <- structure(mapping, class = class(aes()))
   out <- utils::modifyList(current, out)
