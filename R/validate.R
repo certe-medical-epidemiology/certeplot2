@@ -110,7 +110,7 @@ validate_legend.position <- function(legend.position) {
   legend.position
 }
 
-#' @importFrom dplyr select pull mutate arrange across if_all cur_column
+#' @importFrom dplyr select pull mutate arrange across if_all cur_column filter
 #' @importFrom certestyle font_bold font_blue font_magenta font_black
 validate_data <- function(df,
                           misses_x,
@@ -207,14 +207,21 @@ validate_data <- function(df,
   }
   
   # this is required to plot e.g. difftime
-  # integers and doubles both return TRUE for is.numeric() 
-  if (has_y(df) && requires_numeric_coercion(get_y(df))) {
+  # integers and doubles both return FALSE for requires_numeric_coercion()
+  if (has_y(df) &&
+      (requires_numeric_coercion(get_y(df)) ||
+       "AMR" %in% rownames(utils::installed.packages()) && AMR::is.mic(get_y(df)))) {
+    plot2_message(paste0("Coercing values of ", font_blue("y"),
+                         font_black(" from class "), font_blue(paste(class(get_y(df)), collapse = "/")),
+                         font_black(" to class "), font_blue("double")))
     df <- df |> 
       mutate(`_var_y` = as.double(`_var_y`))
+    df[, get_y_name(df)] <- df$`_var_y`
   }
   if (has_x(df) && requires_numeric_coercion(get_x(df))) {
     df <- df |> 
       mutate(`_var_x` = as.double(`_var_x`))
+    df[, get_x_name(df)] <- df$`_var_x`
   }
   
   if (misses_x && !has_x(df) && ncol(df) > 1) {
@@ -481,6 +488,13 @@ validate_data <- function(df,
                       " using ", font_blue(paste0("na.replace = \"", dots$na.replace, "\"")))
       }
     }
+  }
+  if (anyNA(df$`_var_y`)) {
+    plot2_caution(paste0("Unable to plot ", sum(is.na(df$`_var_y`)),
+                         " value", ifelse(sum(is.na(df$`_var_y`)) > 1, "s", ""),
+                         " where ", get_y_name(df), " = NA"))
+    df <- df |> 
+      filter(!is.na(`_var_y`))
   }
   
   if (has_x(df) && isTRUE(dots$x.mic)) {
@@ -1626,15 +1640,24 @@ validate_colour <- function(df,
     }
     
     # expand the range
-    grp_sizes <- group_sizes(df)
+    df_nonempty <- df |> 
+      filter(!is.na(`_var_category`) & !is.na(`_var_y`))
+    if (has_x(df)) {
+      df_nonempty <- df_nonempty |> 
+        filter(!is.na(`_var_x`))
+    }
+    if (has_facet(df)) {
+      df_nonempty <- df_nonempty |> 
+        filter(!is.na(`_var_facet`))
+    }
+    grp_sizes <- group_sizes(df_nonempty)
+    grp_sizes <- grp_sizes[grp_sizes != 0]
     n_categories <- length(grp_sizes)
     # TODO this very hacky... since ggplot2 3.4.0 manual values in scale_*_manual work differently
     if (any(grp_sizes > 1, na.rm = TRUE) && n_categories * n_distinct(get_category(df)) < nrow(df)) {
       if (length(colour) < n_categories) {
         # expand colour for all categories, except when all colours were named
         colour <- c(colour, rep(colour, n_categories)[seq_len(n_categories - length(colour))])
-        # remove empty groups
-        colour <- colour[grp_sizes != 0]
       }
       if (length(colour_fill) < n_categories) {
         # expand colour_fill for all categories, except when all colours were named

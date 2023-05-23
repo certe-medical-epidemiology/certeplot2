@@ -1415,7 +1415,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{x.trans, y.trans}{a transformation function to use for the axis, e.g. \code{"log2"}}
 
-\item{x.expand, y.expand}{\href{ggplot2::expansion()}{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to \code{0.25}, except for sf objects (then both default to 0).}
+\item{x.expand, y.expand}{\link[ggplot2:expansion]{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to \code{0.25}, except for sf objects (then both default to 0).}
 
 \item{x.limits, y.limits}{limits to use for the axis, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{y.limits = c(0, NA)} to have the y scale start at zero.}
 

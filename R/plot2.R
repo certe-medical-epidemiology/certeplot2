@@ -110,7 +110,7 @@
 #' @param x.n_breaks,y.n_breaks number of breaks, only useful if `x.breaks` cq. `y.breaks` is `NULL`
 #' @param x.limits,y.limits limits to use for the axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `y.limits = c(0, NA)` to have the y scale start at zero.
 #' @param x.labels,y.labels,y_secondary.labels a labels function or character vector to use for the axis
-#' @param x.expand,y.expand [expansion](ggplot2::expansion()) to use for the axis, can be length 1 or 2. `x.expand` defaults to 0.5 and `y.expand` defaults to `0.25`, except for sf objects (then both default to 0).
+#' @param x.expand,y.expand [expansion][ggplot2::expansion] to use for the axis, can be length 1 or 2. `x.expand` defaults to 0.5 and `y.expand` defaults to `0.25`, except for sf objects (then both default to 0).
 #' @param x.trans,y.trans a transformation function to use for the axis, e.g. `"log2"`
 #' @param x.position,y.position position of the axis
 #' @param x.zoom,y.zoom a [logical] to indicate if the axis should be zoomed on the data, by setting `x.limits = c(NA, NA)` and `x.expand = 0` for the x axis, or `y.limits = c(NA, NA)` and `y.expand = 0` for the y axis
