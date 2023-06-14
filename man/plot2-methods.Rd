@@ -1413,7 +1413,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{x.n_breaks, y.n_breaks}{number of breaks, only useful if \code{x.breaks} cq. \code{y.breaks} is \code{NULL}}
 
-\item{x.trans, y.trans}{a transformation function to use for the axis, e.g. \code{"log2"}}
+\item{x.trans, y.trans, category.trans}{a transformation function to use, e.g. \code{"log2"}. This can be: \code{"asn"}, \code{"atanh"}, \code{"boxcox"}, \code{"compose"}, \code{"date"}, \code{"exp"}, \code{"hms"}, \code{"identity"}, \code{"log10"}, \code{"log1p"}, \code{"log2"}, \code{"log"}, \code{"logit"}, \code{"modulus"}, \code{"probability"}, \code{"probit"}, \code{"pseudo_log"}, \code{"reciprocal"}, \code{"reverse"}, \code{"seealso"}, \code{"sqrt"}, \code{"time"}, \code{"yj"}.}
 
 \item{x.expand, y.expand}{\link[ggplot2:expansion]{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to \code{0.25}, except for sf objects (then both default to 0).}
 
@@ -1443,7 +1443,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{y_secondary.colour, y_secondary.colour_fill}{colours to set for the secondary y axis, will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}}}
 
-\item{category.labels, category.percent, category.breaks, category.expand, category.midpoint, category.trans}{settings for the plotting direction \code{category}.}
+\item{category.labels, category.percent, category.breaks, category.expand, category.midpoint}{settings for the plotting direction \code{category}.}
 
 \item{category.limits}{limits to use for a numeric category, can be length 1 or 2. Use \code{NA} for the highest or lowest value in the data, e.g. \code{category.limits = c(0, NA)} to have the scale start at zero.}
 
