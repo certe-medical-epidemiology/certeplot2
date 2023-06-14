@@ -19,7 +19,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.4</span>
       </span>
     </div>
 
@@ -379,8 +379,8 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>number of breaks, only useful if <code>x.breaks</code> cq. <code>y.breaks</code> is <code>NULL</code></p></dd>
 
 
-<dt>x.trans, y.trans</dt>
-<dd><p>a transformation function to use for the axis, e.g. <code>"log2"</code></p></dd>
+<dt>x.trans, y.trans, category.trans</dt>
+<dd><p>a transformation function to use, e.g. <code>"log2"</code>. This can be: <code>"asn"</code>, <code>"atanh"</code>, <code>"boxcox"</code>, <code>"compose"</code>, <code>"date"</code>, <code>"exp"</code>, <code>"hms"</code>, <code>"identity"</code>, <code>"log10"</code>, <code>"log1p"</code>, <code>"log2"</code>, <code>"log"</code>, <code>"logit"</code>, <code>"modulus"</code>, <code>"probability"</code>, <code>"probit"</code>, <code>"pseudo_log"</code>, <code>"reciprocal"</code>, <code>"reverse"</code>, <code>"seealso"</code>, <code>"sqrt"</code>, <code>"time"</code>, <code>"yj"</code>.</p></dd>
 
 
 <dt>x.expand, y.expand</dt>
@@ -439,7 +439,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>colours to set for the secondary y axis, will be evaluated with <code><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/colourpicker.html" class="external-link">colourpicker()</a></code></p></dd>
 
 
-<dt>category.labels, category.percent, category.breaks, category.expand, category.midpoint, category.trans</dt>
+<dt>category.labels, category.percent, category.breaks, category.expand, category.midpoint</dt>
 <dd><p>settings for the plotting direction <code>category</code>.</p></dd>
 
 
