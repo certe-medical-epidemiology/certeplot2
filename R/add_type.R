@@ -119,8 +119,8 @@ add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw",
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
   }
-  label_line_y <- deparse(substitute(y))
-  label_line_x <- deparse(substitute(x))
+  label_line_y <- paste(trimws(deparse(substitute(y))), collapse = " ")
+  label_line_x <- paste(trimws(deparse(substitute(x))), collapse = " ")
   
   df <- plot$data |> 
     mutate(`_var_line_y` = {{ y }},
@@ -191,8 +191,8 @@ add_point <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw"
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
   }
-  label_line_y <- deparse(substitute(y))
-  label_line_x <- deparse(substitute(x))
+  label_line_y <- paste(trimws(deparse(substitute(y))), collapse = " ")
+  label_line_x <- paste(trimws(deparse(substitute(x))), collapse = " ")
   
   df <- plot$data |> 
     mutate(`_var_line_y` = {{ y }},
@@ -247,8 +247,8 @@ add_col <- function(plot, y = NULL, x = NULL, colour = "certeblauw", colour_fill
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
   }
-  label_col_y <- deparse(substitute(y))
-  label_col_x <- deparse(substitute(x))
+  label_col_y <- paste(trimws(deparse(substitute(y))), collapse = " ")
+  label_col_x <- paste(trimws(deparse(substitute(x))), collapse = " ")
   
   df <- plot$data |> 
     mutate(`_var_line_y` = {{ y }},
@@ -302,10 +302,10 @@ add_errorbar <- function(plot, min = NULL, max = NULL, y = NULL, x = NULL, colou
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
   }
-  label_col_min <- deparse(substitute(min))
-  label_col_max <- deparse(substitute(max))
-  label_col_y <- deparse(substitute(y))
-  label_col_x <- deparse(substitute(x))
+  label_col_min <- paste(trimws(deparse(substitute(min))), collapse = " ")
+  label_col_max <- paste(trimws(deparse(substitute(max))), collapse = " ")
+  label_col_y <- paste(trimws(deparse(substitute(y))), collapse = " ")
+  label_col_x <- paste(trimws(deparse(substitute(x))), collapse = " ")
   
   
   df <- plot$data |> 
