@@ -1971,18 +1971,18 @@ validate_theme <- function(theme,
   
   # set the font family and font size, taking text_factor into account
   attr_bak <- attributes(theme)
+  base_size <- theme$text$size
   theme <- lapply(theme, function(el) {
     if (inherits(el, "element_text")) {
       el$family <- font
       if (text_factor != 1 && !is.null(el$size) && is.numeric(el$size)) {
         if (inherits(el$size, "rel")) {
-          el$size <- rel(as.double(el$size) * 0.5 * text_factor)
+          # in theme_minimal2, these are the x and y axis labels, not their titles
+          # in thme_bw, a lot of element have class 'rel'
+          el$size <- base_size * text_factor * as.double(el$size)
         } else {
-          attr_el_bak <- attributes(el$size)
-          el$size <- as.double(el$size) * text_factor
-          attributes(el$size) <- attr_el_bak
+          el$size <- base_size * text_factor * (as.double(el$size) / base_size)
         }
-        
       }
     }
     el

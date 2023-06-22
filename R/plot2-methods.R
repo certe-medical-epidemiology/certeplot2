@@ -2316,6 +2316,269 @@ plot2.bug_drug_combinations <- function(.data,
 }
 
 #' @rdname plot2-methods
+#' @importFrom ggplot2 aes facet_wrap geom_col ggplot labs position_dodge2
+#' @importFrom certestyle colourpicker
+#' @export
+#' @examples
+#' if (require("AMR")) {
+#'   example_isolates[, c("mo", "AMX", "AMC", "ward")] |>
+#'     antibiogram(mo_transform = "gramstain",
+#'                 language = "nl") |>
+#'     plot2()
+#' }
+#' 
+#' if (require("AMR")) {
+#'   example_isolates[, c("mo", "AMX", "AMC", "ward")] |>
+#'     antibiogram(mo_transform = "gramstain",
+#'                 language = "nl",
+#'                 syndromic_group = "ward") |>
+#'     plot2()
+#' }
+plot2.antibiogram <- function(.data,
+                              x = NULL,
+                              y = NULL,
+                              category = NULL,
+                              facet = NULL,
+                              type = NULL,
+                              x.title = NULL,
+                              y.title = NULL,
+                              category.title = NULL,
+                              title = NULL,
+                              subtitle = NULL,
+                              caption = NULL,
+                              tag = NULL,
+                              title.linelength = 60,
+                              title.colour = "black",
+                              subtitle.linelength = 60,
+                              subtitle.colour = "grey35",
+                              na.replace = "",
+                              na.rm = FALSE,
+                              facet.position = "top",
+                              facet.fill = NULL,
+                              facet.bold = TRUE,
+                              facet.italic = FALSE,
+                              facet.size = 10,
+                              facet.margin = 8,
+                              facet.repeat_lbls_x = TRUE,
+                              facet.repeat_lbls_y = TRUE,
+                              facet.fixed_y = NULL,
+                              facet.fixed_x = TRUE,
+                              facet.drop = FALSE,
+                              facet.nrow = NULL,
+                              facet.relative = FALSE,
+                              x.date_breaks = NULL,
+                              x.date_labels = NULL,
+                              category.focus = NULL,
+                              colour = "certe",
+                              colour_fill = NULL,
+                              colour_opacity = 0,
+                              x.lbl_angle = 0,
+                              x.lbl_align = NULL,
+                              x.lbl_italic = FALSE,
+                              x.lbl_taxonomy = FALSE,
+                              x.remove = FALSE,
+                              x.position = "bottom",
+                              x.max_items = Inf,
+                              x.max_txt = "(rest, x%n)",
+                              category.max_items = Inf,
+                              category.max_txt = "(rest, x%n)",
+                              facet.max_items = Inf,
+                              facet.max_txt = "(rest, x%n)",
+                              x.breaks = NULL,
+                              x.n_breaks = NULL,
+                              x.trans = "identity",
+                              x.expand = NULL,
+                              x.limits = NULL,
+                              x.labels = NULL,
+                              x.character = NULL,
+                              x.drop = FALSE,
+                              x.mic = FALSE,
+                              x.zoom = FALSE,
+                              y.remove = FALSE,
+                              y.24h = FALSE,
+                              y.age = FALSE,
+                              y.scientific = NULL,
+                              y.percent = FALSE,
+                              y.percent_break = 0.1,
+                              y.breaks = NULL,
+                              y.n_breaks = NULL,
+                              y.limits = NULL,
+                              y.labels = NULL,
+                              y.expand = NULL,
+                              y.trans = "identity",
+                              y.position = "left",
+                              y.zoom = FALSE,
+                              y_secondary = NULL,
+                              y_secondary.type = type,
+                              y_secondary.title = TRUE,
+                              y_secondary.colour = "certeroze",
+                              y_secondary.colour_fill = "certeroze6",
+                              y_secondary.scientific = NULL,
+                              y_secondary.percent = FALSE,
+                              y_secondary.labels = NULL,
+                              category.labels = NULL,
+                              category.percent = FALSE,
+                              category.breaks = NULL,
+                              category.limits = NULL,
+                              category.expand = 0,
+                              category.midpoint = NULL,
+                              category.trans = "identity",
+                              category.date_breaks = NULL,
+                              category.date_labels = NULL,
+                              category.character = NULL,
+                              x.sort = NULL,
+                              category.sort = TRUE,
+                              facet.sort = TRUE,
+                              datalabels = TRUE,
+                              datalabels.round = ifelse(y.percent, 2, 1),
+                              datalabels.format = "%n",
+                              datalabels.colour = "grey25",
+                              datalabels.colour_fill = NULL,
+                              datalabels.size = (3 * text_factor),
+                              datalabels.angle = 0,
+                              decimal.mark = dec_mark(),
+                              big.mark = big_mark(),
+                              summarise_function = base::sum,
+                              stacked = FALSE,
+                              stackedpercent = FALSE,
+                              horizontal = FALSE,
+                              reverse = horizontal,
+                              smooth = NULL,
+                              smooth.method = NULL,
+                              smooth.formula = NULL,
+                              smooth.se = TRUE,
+                              smooth.level = 0.95,
+                              smooth.alpha = 0.25,
+                              smooth.linewidth = 0.75,
+                              smooth.linetype = 3,
+                              size = NULL,
+                              linetype = 1,
+                              linewidth = NULL,
+                              binwidth = NULL,
+                              width = NULL,
+                              jitter_seed = NA,
+                              violin_scale = "count",
+                              legend.position = NULL,
+                              legend.title = NULL, # will become TRUE in numeric categories if left NULL
+                              legend.reverse = FALSE,
+                              legend.barheight = 6,
+                              legend.barwidth = 1.5,
+                              legend.nbin = 300,
+                              legend.italic = FALSE,
+                              zoom = FALSE,
+                              sep = " / ",
+                              print = FALSE,
+                              text_factor = 1,
+                              font = getOption("plot2.font"),
+                              theme = getOption("plot2.theme", "theme_minimal2"),
+                              background = NULL,
+                              markdown = TRUE,
+                              ...) {
+  
+  df <- attributes(.data)$long
+  
+  if ("syndromic_group" %in% colnames(df)) {
+    geom <- geom_col(
+      aes(
+        x = ab,
+        y = SI * 100,
+        fill = if ("syndromic_group" %in% colnames(df)) {
+          syndromic_group
+        } else {
+          NULL
+        }
+      ),
+      position = position_dodge2(preserve = "single"))
+  } else {
+    geom <- geom_col(
+      aes(
+        x = ab,
+        y = SI * 100,
+      ),
+      fill = colourpicker(colour, length = 1),
+      position = position_dodge2(preserve = "single"))
+  }
+  
+  p <- ggplot(df) +
+    geom +
+    facet_wrap("mo") +
+    labs(
+      y = ifelse(isTRUE(attributes(.data)$combine_SI), "%SI", "%S"),
+      x = NULL,
+      fill = if ("syndromic_group" %in% colnames(df)) {
+        colnames(.data)[1]
+      } else {
+        NULL
+      }
+    )
+  
+  theme <- validate_theme(theme = theme,
+                          type = "geom_col",
+                          background = background,
+                          text_factor = text_factor,
+                          font = font,
+                          horizontal = FALSE,
+                          x.remove = NULL,
+                          y.remove = NULL,
+                          x.lbl_angle = 0,
+                          x.lbl_align = NULL,
+                          x.lbl_italic = NULL,
+                          facet.fill = NULL,
+                          facet.bold = NULL,
+                          facet.italic = NULL,
+                          facet.size = 10,
+                          facet.margin = 8,
+                          legend.italic = NULL,
+                          title.colour = NULL,
+                          subtitle.colour = NULL,
+                          has_y_secondary = NULL,
+                          has_category = NULL,
+                          col_y_primary = NULL,
+                          col_y_secondary = NULL)
+  
+  y_scale <- validate_y_scale(df = p$data |> mutate(`_var_y` = SI),
+                              type = "geom_col",
+                              y.24h = FALSE,
+                              y.age = FALSE,
+                              y.scientific = NULL,
+                              y.breaks = NULL,
+                              y.n_breaks = NULL,
+                              y.expand = NULL,
+                              y.labels = NULL,
+                              y.limits = NULL,
+                              y.percent = FALSE,
+                              y.percent_break = 0.1,
+                              misses_y.percent_break = TRUE,
+                              y.position = "left",
+                              y.trans = "identity",
+                              y.zoom = FALSE,
+                              stacked = FALSE,
+                              stackedpercent = FALSE,
+                              facet.fixed_y = FALSE,
+                              decimal.mark = dec_mark(),
+                              big.mark = big_mark(),
+                              add_y_secondary = FALSE)
+  
+  p <- p +
+    theme +
+    scale_fill_certe_d(colour = colour) +
+    y_scale
+  
+  if (!missing(x.title)) p <- p + labs(x = validate_title(x.title, markdown = markdown))
+  if (!missing(y.title)) p <- p + labs(y = validate_title(y.title, markdown = markdown))
+  if (!missing(title)) p <- p + labs(title = validate_title(title, markdown = markdown, max_length = title.linelength))
+  if (!missing(subtitle)) p <- p + labs(subtitle = validate_title(subtitle, markdown = markdown, max_length = subtitle.linelength))
+  if (!missing(tag)) p <- p + labs(tag = validate_title(tag, markdown = markdown))
+  if (!missing(caption)) p <- p + labs(caption = validate_title(caption, markdown = markdown))
+  
+  if (isTRUE(print)) {
+    print(p)
+  } else {
+    p
+  }
+}
+
+#' @rdname plot2-methods
 #' @export
 plot2.sir_df <- function(.data,
                          x = NULL,

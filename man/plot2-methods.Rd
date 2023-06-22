@@ -9,6 +9,7 @@
 \alias{plot2.data.frame}
 \alias{plot2.matrix}
 \alias{plot2.bug_drug_combinations}
+\alias{plot2.antibiogram}
 \alias{plot2.sir_df}
 \alias{plot2.qc_test}
 \title{Methods for \code{\link[=plot2]{plot2()}}}
@@ -1021,6 +1022,149 @@
   ...
 )
 
+\method{plot2}{antibiogram}(
+  .data,
+  x = NULL,
+  y = NULL,
+  category = NULL,
+  facet = NULL,
+  type = NULL,
+  x.title = NULL,
+  y.title = NULL,
+  category.title = NULL,
+  title = NULL,
+  subtitle = NULL,
+  caption = NULL,
+  tag = NULL,
+  title.linelength = 60,
+  title.colour = "black",
+  subtitle.linelength = 60,
+  subtitle.colour = "grey35",
+  na.replace = "",
+  na.rm = FALSE,
+  facet.position = "top",
+  facet.fill = NULL,
+  facet.bold = TRUE,
+  facet.italic = FALSE,
+  facet.size = 10,
+  facet.margin = 8,
+  facet.repeat_lbls_x = TRUE,
+  facet.repeat_lbls_y = TRUE,
+  facet.fixed_y = NULL,
+  facet.fixed_x = TRUE,
+  facet.drop = FALSE,
+  facet.nrow = NULL,
+  facet.relative = FALSE,
+  x.date_breaks = NULL,
+  x.date_labels = NULL,
+  category.focus = NULL,
+  colour = "certe",
+  colour_fill = NULL,
+  colour_opacity = 0,
+  x.lbl_angle = 0,
+  x.lbl_align = NULL,
+  x.lbl_italic = FALSE,
+  x.lbl_taxonomy = FALSE,
+  x.remove = FALSE,
+  x.position = "bottom",
+  x.max_items = Inf,
+  x.max_txt = "(rest, x\%n)",
+  category.max_items = Inf,
+  category.max_txt = "(rest, x\%n)",
+  facet.max_items = Inf,
+  facet.max_txt = "(rest, x\%n)",
+  x.breaks = NULL,
+  x.n_breaks = NULL,
+  x.trans = "identity",
+  x.expand = NULL,
+  x.limits = NULL,
+  x.labels = NULL,
+  x.character = NULL,
+  x.drop = FALSE,
+  x.mic = FALSE,
+  x.zoom = FALSE,
+  y.remove = FALSE,
+  y.24h = FALSE,
+  y.age = FALSE,
+  y.scientific = NULL,
+  y.percent = FALSE,
+  y.percent_break = 0.1,
+  y.breaks = NULL,
+  y.n_breaks = NULL,
+  y.limits = NULL,
+  y.labels = NULL,
+  y.expand = NULL,
+  y.trans = "identity",
+  y.position = "left",
+  y.zoom = FALSE,
+  y_secondary = NULL,
+  y_secondary.type = type,
+  y_secondary.title = TRUE,
+  y_secondary.colour = "certeroze",
+  y_secondary.colour_fill = "certeroze6",
+  y_secondary.scientific = NULL,
+  y_secondary.percent = FALSE,
+  y_secondary.labels = NULL,
+  category.labels = NULL,
+  category.percent = FALSE,
+  category.breaks = NULL,
+  category.limits = NULL,
+  category.expand = 0,
+  category.midpoint = NULL,
+  category.trans = "identity",
+  category.date_breaks = NULL,
+  category.date_labels = NULL,
+  category.character = NULL,
+  x.sort = NULL,
+  category.sort = TRUE,
+  facet.sort = TRUE,
+  datalabels = TRUE,
+  datalabels.round = ifelse(y.percent, 2, 1),
+  datalabels.format = "\%n",
+  datalabels.colour = "grey25",
+  datalabels.colour_fill = NULL,
+  datalabels.size = (3 * text_factor),
+  datalabels.angle = 0,
+  decimal.mark = dec_mark(),
+  big.mark = big_mark(),
+  summarise_function = base::sum,
+  stacked = FALSE,
+  stackedpercent = FALSE,
+  horizontal = FALSE,
+  reverse = horizontal,
+  smooth = NULL,
+  smooth.method = NULL,
+  smooth.formula = NULL,
+  smooth.se = TRUE,
+  smooth.level = 0.95,
+  smooth.alpha = 0.25,
+  smooth.linewidth = 0.75,
+  smooth.linetype = 3,
+  size = NULL,
+  linetype = 1,
+  linewidth = NULL,
+  binwidth = NULL,
+  width = NULL,
+  jitter_seed = NA,
+  violin_scale = "count",
+  legend.position = NULL,
+  legend.title = NULL,
+  legend.reverse = FALSE,
+  legend.barheight = 6,
+  legend.barwidth = 1.5,
+  legend.nbin = 300,
+  legend.italic = FALSE,
+  zoom = FALSE,
+  sep = " / ",
+  print = FALSE,
+  text_factor = 1,
+  font = getOption("plot2.font"),
+  theme = getOption("plot2.theme", "theme_minimal2"),
+  background = NULL,
+  markdown = TRUE,
+  ...
+)
+
 \method{plot2}{sir_df}(
   .data,
   x = NULL,
@@ -1550,4 +1694,20 @@ For geographic information system (GIS) analysis, use the \code{sf} package with
 For antimicrobial resistance (AMR) data analysis, use the \code{\link[AMR:bug_drug_combinations]{bug_drug_combinations()}} or the \code{\link[AMR:proportion]{sir_df()}} function from the \code{AMR} package on a data set with antibiograms. The result can be used as input for \code{\link[=plot2]{plot2()}}.
 
 The QC-test can be acquired with \code{\link[certestats:qc_rules]{certestats::qc_test()}}. It applies the Nelson QC rules for a vector of values.
+}
+\examples{
+if (require("AMR")) {
+  example_isolates[, c("mo", "AMX", "AMC", "ward")] |>
+    antibiogram(mo_transform = "gramstain",
+                language = "nl") |>
+    plot2()
+}
+
+if (require("AMR")) {
+  example_isolates[, c("mo", "AMX", "AMC", "ward")] |>
+    antibiogram(mo_transform = "gramstain",
+                language = "nl",
+                syndromic_group = "ward") |>
+    plot2()
+}
 }

@@ -37,6 +37,8 @@ globalVariables(c("_new_title",
                   "name",
                   "R",
                   "rowname",
+                  "syndromic_group",
+                  "SI",
                   "total",
                   "value",
                   "where"))
