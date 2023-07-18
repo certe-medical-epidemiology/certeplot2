@@ -19,7 +19,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.16.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.16.1</span>
       </span>
     </div>
 
@@ -102,9 +102,9 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span>  caption <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  title.colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  title.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_primary"</span>, <span class="st">"black"</span><span class="op">)</span>,</span>
 <span>  subtitle.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  subtitle.colour <span class="op">=</span> <span class="st">"grey35"</span>,</span>
+<span>  subtitle.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_secondary"</span>, <span class="st">"grey35"</span><span class="op">)</span>,</span>
 <span>  na.replace <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  facet.position <span class="op">=</span> <span class="st">"top"</span>,</span>
@@ -123,7 +123,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span>  x.date_breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.date_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.focus <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colour <span class="op">=</span> <span class="st">"certe"</span>,</span>
+<span>  colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour"</span>, <span class="st">"ggplot2"</span><span class="op">)</span>,</span>
 <span>  colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colour_opacity <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -225,7 +225,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span>  text_factor <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  font <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.font"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.theme"</span>, <span class="st">"theme_minimal2"</span><span class="op">)</span>,</span>
-<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  background <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_background"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  markdown <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -889,11 +889,11 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span class="r-in"><span>    <span class="fu"><a href="https://msberends.github.io/AMR/reference/bug_drug_combinations.html" class="external-link">bug_drug_combinations</a></span><span class="op">(</span>FUN <span class="op">=</span> <span class="va">mo_gramstain</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>    <span class="fu">plot2</span><span class="op">(</span>y.percent_break <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ℹ For penicillins() using columns 'PEN' (benzylpenicillin), 'OXA'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   (oxacillin), 'FLC' (flucloxacillin), 'AMX' (amoxicillin), 'AMC'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   (amoxicillin/clavulanic acid), 'AMP' (ampicillin), and 'TZP'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   (piperacillin/tazobactam)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ℹ Using column 'mo' as input for col_mo.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> i For penicillins() using columns 'PEN' (benzylpenicillin), 'OXA'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> (oxacillin), 'FLC' (flucloxacillin), 'AMX' (amoxicillin), 'AMC'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> (amoxicillin/clavulanic acid), 'AMP' (ampicillin), and 'TZP'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> (piperacillin/tazobactam)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> i Using column 'mo' as input for col_mo.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #FF5FAF;">!</span> <span style="color: #FF5FAF;">Omitting printing of 36 datalabels - use </span><span style="color: #008787;">datalabels = TRUE</span><span style="color: #FF5FAF;"> to force printing</span></span>
 <span class="r-plt img"><img src="plot2-28.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://msberends.github.io/AMR/" class="external-link">"AMR"</a></span><span class="op">)</span> <span class="op">&amp;</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org" class="external-link">"dplyr"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>

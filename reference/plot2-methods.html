@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.16.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.16.1</span>
       </span>
     </div>
 
@@ -99,9 +99,9 @@
 <span>  caption <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  title.colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  title.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_primary"</span>, <span class="st">"black"</span><span class="op">)</span>,</span>
 <span>  subtitle.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  subtitle.colour <span class="op">=</span> <span class="st">"grey35"</span>,</span>
+<span>  subtitle.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_secondary"</span>, <span class="st">"grey35"</span><span class="op">)</span>,</span>
 <span>  na.replace <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  facet.position <span class="op">=</span> <span class="st">"top"</span>,</span>
@@ -120,7 +120,7 @@
 <span>  x.date_breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.date_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.focus <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colour <span class="op">=</span> <span class="st">"certe"</span>,</span>
+<span>  colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour"</span>, <span class="st">"ggplot2"</span><span class="op">)</span>,</span>
 <span>  colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colour_opacity <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -222,7 +222,7 @@
 <span>  text_factor <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  font <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.font"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.theme"</span>, <span class="st">"theme_minimal2"</span><span class="op">)</span>,</span>
-<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  background <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_background"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  markdown <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -243,9 +243,9 @@
 <span>  caption <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  title.colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  title.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_primary"</span>, <span class="st">"black"</span><span class="op">)</span>,</span>
 <span>  subtitle.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  subtitle.colour <span class="op">=</span> <span class="st">"grey35"</span>,</span>
+<span>  subtitle.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_secondary"</span>, <span class="st">"grey35"</span><span class="op">)</span>,</span>
 <span>  na.replace <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  facet.position <span class="op">=</span> <span class="st">"top"</span>,</span>
@@ -264,7 +264,7 @@
 <span>  x.date_breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.date_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.focus <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colour <span class="op">=</span> <span class="st">"certe"</span>,</span>
+<span>  colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour"</span>, <span class="st">"ggplot2"</span><span class="op">)</span>,</span>
 <span>  colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colour_opacity <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -366,7 +366,7 @@
 <span>  text_factor <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  font <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.font"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.theme"</span>, <span class="st">"theme_minimal2"</span><span class="op">)</span>,</span>
-<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  background <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_background"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  markdown <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -387,9 +387,9 @@
 <span>  caption <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  title.colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  title.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_primary"</span>, <span class="st">"black"</span><span class="op">)</span>,</span>
 <span>  subtitle.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  subtitle.colour <span class="op">=</span> <span class="st">"grey35"</span>,</span>
+<span>  subtitle.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_secondary"</span>, <span class="st">"grey35"</span><span class="op">)</span>,</span>
 <span>  na.replace <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  facet.position <span class="op">=</span> <span class="st">"top"</span>,</span>
@@ -408,7 +408,7 @@
 <span>  x.date_breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.date_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.focus <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colour <span class="op">=</span> <span class="st">"certe"</span>,</span>
+<span>  colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour"</span>, <span class="st">"ggplot2"</span><span class="op">)</span>,</span>
 <span>  colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colour_opacity <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -510,7 +510,7 @@
 <span>  text_factor <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  font <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.font"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.theme"</span>, <span class="st">"theme_minimal2"</span><span class="op">)</span>,</span>
-<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  background <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_background"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  markdown <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -531,9 +531,9 @@
 <span>  caption <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  title.colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  title.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_primary"</span>, <span class="st">"black"</span><span class="op">)</span>,</span>
 <span>  subtitle.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  subtitle.colour <span class="op">=</span> <span class="st">"grey35"</span>,</span>
+<span>  subtitle.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_secondary"</span>, <span class="st">"grey35"</span><span class="op">)</span>,</span>
 <span>  na.replace <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  facet.position <span class="op">=</span> <span class="st">"top"</span>,</span>
@@ -657,7 +657,7 @@
 <span>    <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, panel.border <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, plot.margin <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span>, <span class="op">-</span><span class="fl">15</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"pt"</span><span class="op">)</span>, axis.title <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, axis.text <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, axis.line <span class="op">=</span></span>
 <span>    <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, axis.ticks <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  background <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_background"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  markdown <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  crs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -679,9 +679,9 @@
 <span>  caption <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  title.colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  title.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_primary"</span>, <span class="st">"black"</span><span class="op">)</span>,</span>
 <span>  subtitle.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  subtitle.colour <span class="op">=</span> <span class="st">"grey35"</span>,</span>
+<span>  subtitle.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_secondary"</span>, <span class="st">"grey35"</span><span class="op">)</span>,</span>
 <span>  na.replace <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  facet.position <span class="op">=</span> <span class="st">"top"</span>,</span>
@@ -700,7 +700,7 @@
 <span>  x.date_breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.date_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.focus <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colour <span class="op">=</span> <span class="st">"certe"</span>,</span>
+<span>  colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour"</span>, <span class="st">"ggplot2"</span><span class="op">)</span>,</span>
 <span>  colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colour_opacity <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -802,7 +802,7 @@
 <span>  text_factor <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  font <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.font"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.theme"</span>, <span class="st">"theme_minimal2"</span><span class="op">)</span>,</span>
-<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  background <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_background"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  markdown <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -823,9 +823,9 @@
 <span>  caption <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  title.colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  title.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_primary"</span>, <span class="st">"black"</span><span class="op">)</span>,</span>
 <span>  subtitle.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  subtitle.colour <span class="op">=</span> <span class="st">"grey35"</span>,</span>
+<span>  subtitle.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_secondary"</span>, <span class="st">"grey35"</span><span class="op">)</span>,</span>
 <span>  na.replace <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  facet.position <span class="op">=</span> <span class="st">"top"</span>,</span>
@@ -844,7 +844,7 @@
 <span>  x.date_breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.date_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.focus <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colour <span class="op">=</span> <span class="st">"certe"</span>,</span>
+<span>  colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour"</span>, <span class="st">"ggplot2"</span><span class="op">)</span>,</span>
 <span>  colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colour_opacity <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -946,7 +946,7 @@
 <span>  text_factor <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  font <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.font"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.theme"</span>, <span class="st">"theme_minimal2"</span><span class="op">)</span>,</span>
-<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  background <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_background"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  markdown <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -967,9 +967,9 @@
 <span>  caption <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  title.colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  title.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_primary"</span>, <span class="st">"black"</span><span class="op">)</span>,</span>
 <span>  subtitle.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  subtitle.colour <span class="op">=</span> <span class="st">"grey35"</span>,</span>
+<span>  subtitle.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_secondary"</span>, <span class="st">"grey35"</span><span class="op">)</span>,</span>
 <span>  na.replace <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  facet.position <span class="op">=</span> <span class="st">"top"</span>,</span>
@@ -1090,7 +1090,7 @@
 <span>  text_factor <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  font <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.font"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.theme"</span>, <span class="st">"theme_minimal2"</span><span class="op">)</span>,</span>
-<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  background <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_background"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  markdown <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  minimum <span class="op">=</span> <span class="fl">30</span>,</span>
 <span>  remove_intrinsic_resistant <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -1114,9 +1114,9 @@
 <span>  caption <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  title.colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  title.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_primary"</span>, <span class="st">"black"</span><span class="op">)</span>,</span>
 <span>  subtitle.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  subtitle.colour <span class="op">=</span> <span class="st">"grey35"</span>,</span>
+<span>  subtitle.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_secondary"</span>, <span class="st">"grey35"</span><span class="op">)</span>,</span>
 <span>  na.replace <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  facet.position <span class="op">=</span> <span class="st">"top"</span>,</span>
@@ -1135,7 +1135,7 @@
 <span>  x.date_breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.date_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.focus <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colour <span class="op">=</span> <span class="st">"certe"</span>,</span>
+<span>  colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour"</span>, <span class="st">"ggplot2"</span><span class="op">)</span>,</span>
 <span>  colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colour_opacity <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -1237,7 +1237,7 @@
 <span>  text_factor <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  font <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.font"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.theme"</span>, <span class="st">"theme_minimal2"</span><span class="op">)</span>,</span>
-<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  background <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_background"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  markdown <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -1258,9 +1258,9 @@
 <span>  caption <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  title.colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  title.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_primary"</span>, <span class="st">"black"</span><span class="op">)</span>,</span>
 <span>  subtitle.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  subtitle.colour <span class="op">=</span> <span class="st">"grey35"</span>,</span>
+<span>  subtitle.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_secondary"</span>, <span class="st">"grey35"</span><span class="op">)</span>,</span>
 <span>  na.replace <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  facet.position <span class="op">=</span> <span class="st">"top"</span>,</span>
@@ -1381,7 +1381,7 @@
 <span>  text_factor <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  font <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.font"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.theme"</span>, <span class="st">"theme_minimal2"</span><span class="op">)</span>,</span>
-<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  background <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_background"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  markdown <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -1402,9 +1402,9 @@
 <span>  caption <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  title.colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  title.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_primary"</span>, <span class="st">"black"</span><span class="op">)</span>,</span>
 <span>  subtitle.linelength <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  subtitle.colour <span class="op">=</span> <span class="st">"grey35"</span>,</span>
+<span>  subtitle.colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_font_secondary"</span>, <span class="st">"grey35"</span><span class="op">)</span>,</span>
 <span>  na.replace <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  facet.position <span class="op">=</span> <span class="st">"top"</span>,</span>
@@ -1527,7 +1527,7 @@
 <span>  text_factor <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  font <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.font"</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.theme"</span>, <span class="st">"theme_minimal2"</span><span class="op">)</span>,</span>
-<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  background <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_background"</span>, <span class="st">"white"</span><span class="op">)</span>,</span>
 <span>  markdown <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -1933,6 +1933,7 @@
 <span class="r-in"><span>    <span class="fu"><a href="plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: AMR</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Colour palette expanded using grDevices::colorRampPalette()</span>
 <span class="r-plt img"><img src="plot2-methods-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://msberends.github.io/AMR/" class="external-link">"AMR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -1942,6 +1943,7 @@
 <span class="r-in"><span>                syndromic_group <span class="op">=</span> <span class="st">"ward"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Colour palette expanded using grDevices::colorRampPalette()</span>
 <span class="r-plt img"><img src="plot2-methods-2.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
