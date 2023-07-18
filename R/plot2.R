@@ -371,9 +371,9 @@ plot2 <- function(.data,
                   caption = NULL,
                   tag = NULL,
                   title.linelength = 60,
-                  title.colour = "black",
+                  title.colour = getOption("plot2.colour_font_primary", "black"),
                   subtitle.linelength = 60,
-                  subtitle.colour = "grey35",
+                  subtitle.colour = getOption("plot2.colour_font_secondary", "grey35"),
                   na.replace = "",
                   na.rm = FALSE,
                   facet.position = "top",
@@ -392,7 +392,7 @@ plot2 <- function(.data,
                   x.date_breaks = NULL,
                   x.date_labels = NULL,
                   category.focus = NULL,
-                  colour = "certe",
+                  colour = getOption("plot2.colour", "ggplot2"),
                   colour_fill = NULL,
                   colour_opacity = 0,
                   x.lbl_angle = 0,
@@ -494,7 +494,7 @@ plot2 <- function(.data,
                   text_factor = 1,
                   font = getOption("plot2.font"),
                   theme = getOption("plot2.theme", "theme_minimal2"),
-                  background = NULL,
+                  background = getOption("plot2.colour_background", "white"),
                   markdown = TRUE,
                   ...) {
   
@@ -554,7 +554,7 @@ plot2 <- function(.data,
 
 #' @importFrom dplyr mutate vars group_by across summarise select bind_cols
 #' @importFrom forcats fct_relabel
-#' @importFrom ggplot2 ggplot aes labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build after_stat
+#' @importFrom ggplot2 ggplot aes labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build after_stat scale_fill_continuous scale_fill_date scale_fill_datetime scale_fill_continuous scale_colour_date scale_colour_datetime scale_colour_continuous
 #' @importFrom tidyr pivot_longer
 #' @importFrom certestyle format2 font_magenta font_black font_blue
 plot2_exec <- function(.data,
@@ -1030,6 +1030,7 @@ plot2_exec <- function(.data,
     y_secondary.colour <- colourpicker(y_secondary.colour)[1L]
     y_secondary.colour_fill <- colourpicker(y_secondary.colour_fill)[1L]
   }
+  # Note that this will be overwritten if colour == "ggplot2" or colour_fill == "ggplot2", see at the end of this function
   cols <- validate_colour(df = df,
                           type = type,
                           colour = colour,
@@ -1214,7 +1215,8 @@ plot2_exec <- function(.data,
                               legend.position = legend.position,
                               decimal.mark = decimal.mark,
                               big.mark = big.mark,
-                              font = font)
+                              font = font,
+                              colour_fill = colour_fill)
   } else if (type != "geom_sf") {
     category_txt <- get_category(df)
     if (is.null(category.labels) &&
@@ -1471,6 +1473,36 @@ plot2_exec <- function(.data,
   # such as switching some x and y axis properties of the theme
   if (isTRUE(horizontal)) {
     p <- p + coord_flip()
+  }
+  
+  # set ggplot2 original colours if this was set ----
+  if (has_category(df)) {
+    if (identical(colour, "ggplot2") && !is.null(p$mapping$colour)) {
+      suppressMessages(
+        if (mode(df$`_var_category`) == "character" || is.factor(df$`_var_category`)) {
+          p <- p + scale_colour_discrete()
+        } else if (mode(df$`_var_category`) == "numeric" && inherits(df$`_var_category`, "Date")) {
+          p <- p + scale_colour_date()
+        } else if (mode(df$`_var_category`) == "numeric" && inherits(df$`_var_category`, "POSIXt")) {
+          p <- p + scale_colour_datetime()
+        } else if (mode(df$`_var_category`) == "numeric") {
+          p <- p + scale_colour_continuous()
+        }
+      )
+    }
+    if (identical(colour_fill, "ggplot2") && !is.null(p$mapping$fill)) {
+      suppressMessages(
+        if (mode(df$`_var_category`) == "character" || is.factor(df$`_var_category`)) {
+          p <- p + scale_fill_discrete()
+        } else if (mode(df$`_var_category`) == "numeric" && inherits(df$`_var_category`, "Date")) {
+          p <- p + scale_fill_date()
+        } else if (mode(df$`_var_category`) == "numeric" && inherits(df$`_var_category`, "POSIXt")) {
+          p <- p + scale_fill_datetime()
+        } else if (mode(df$`_var_category`) == "numeric") {
+          p <- p + scale_fill_continuous()
+        }
+      )
+    }
   }
   
   # restore mapping to original names ----

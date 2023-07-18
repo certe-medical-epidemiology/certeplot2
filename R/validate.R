@@ -698,7 +698,11 @@ validate_x_scale <- function(values,
   
   if (!is.null(x.limits)) {
     if (length(x.limits) != 2) {
-      stop("`x.limits` must be of length 2", call. = FALSE)
+      if (length(x.limits) == 1) {
+        x.limits <- rep(x.limits, 2)
+      } else {
+        stop("`x.limits` must be of length 1 or 2", call. = FALSE)
+      }
     }
     if (inherits(values, "Date")) {
       x.limits <- as.Date(x.limits, origin = "1970-01-01")
@@ -845,6 +849,13 @@ validate_y_scale <- function(df,
     } else {
       plot2_message("Assuming ", font_blue("y.expand = 0"), " since ", font_blue("y.limits"), " is set")
       y.expand <- 0
+    }
+  }
+  if (!is.null(y.limits) && length(y.limits) != 2) {
+    if (length(y.limits) == 1) {
+      y.limits <- rep(y.limits, 2)
+    } else {
+      stop("`y.limits` must be of length 1 or 2", call. = FALSE)
     }
   }
   
@@ -1143,6 +1154,7 @@ validate_category_scale <- function(values,
                                     decimal.mark,
                                     big.mark,
                                     font,
+                                    colour_fill,
                                     ...) {
   # only for a numeric and date category scale
   
@@ -1307,9 +1319,11 @@ validate_category_scale <- function(values,
                        args))
     } else {
       # 1 colour, start with white
-      plot2_message("Adding white to the ", font_blue("category"),
-                    " scale - set two colours to ", font_blue("colour_fill"),
-                    " to prevent this.")
+      if (!identical(colour_fill, "ggplot2") && !is.null(colour_fill)) {
+        plot2_message("Adding white to the ", font_blue("category"),
+                      " scale - set two colours to ", font_blue("colour_fill"),
+                      " to prevent this.")
+      }
       do.call(scale_colour_gradient,
               args = c(list(low = "white",
                             high = cols_category),
@@ -1606,6 +1620,13 @@ validate_colour <- function(df,
       # take only the first
       colour <- colour[1]
       colour_fill <- colour_fill[1]
+      # take the official ggplot2 colour
+      if (identical(colour, "ggplot2")) {
+        colour <- "#595959"
+      }
+      if (identical(colour_fill, "ggplot2")) {
+        colour_fill <- "#595959"
+      }
     }
     colour <- colourpicker(colour, opacity = colour_opacity)
     if (geom_is_continuous(type) && is.null(colour_fill)) {
@@ -1650,10 +1671,10 @@ validate_colour <- function(df,
       df_nonempty <- df_nonempty |> 
         filter(!is.na(`_var_facet`))
     }
+    # TODO this very hacky... since ggplot2 3.4.0 manual values in scale_*_manual work differently
     grp_sizes <- group_sizes(df_nonempty)
     grp_sizes <- grp_sizes[grp_sizes != 0]
     n_categories <- length(grp_sizes)
-    # TODO this very hacky... since ggplot2 3.4.0 manual values in scale_*_manual work differently
     if (any(grp_sizes > 1, na.rm = TRUE) && n_categories * n_distinct(get_category(df)) < nrow(df)) {
       if (length(colour) < n_categories) {
         # expand colour for all categories, except when all colours were named

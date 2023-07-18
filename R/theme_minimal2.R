@@ -19,9 +19,14 @@
 
 #' An Even More Minimal Theme
 #' 
-#' This `ggplot2` theme provide even more white area and less clutter than [`theme_minimal()`][ggplot2::theme_minimal()].
+#' This `ggplot2` theme provides even more white area and less clutter than [`theme_minimal()`][ggplot2::theme_minimal()].
 #' @param ... arguments passed on to [ggplot2::theme()]
+#' @param colour_font_primary colour to set for the plot title and tag
+#' @param colour_font_secondary colour to set for the plot subtitle and caption
+#' @param colour_font_axis colour to set for the axis titles on both x and y
+#' @param colour_background colour to set for the background
 #' @importFrom ggplot2 element_text `%+replace%` theme_bw theme margin element_line element_blank unit element_rect
+#' @importFrom certestyle colourpicker
 #' @export
 #' @examples 
 #' plot2(iris)
@@ -36,12 +41,22 @@
 #'     geom_point() +
 #'     theme_minimal2()
 #' }
-theme_minimal2 <- function(...) {
+theme_minimal2 <- function(...,
+                           colour_font_primary = getOption("plot2.colour_font_primary", "black"),
+                           colour_font_secondary = getOption("plot2.colour_font_secondary", "grey35"),
+                           colour_font_axis = getOption("plot2.colour_font_axis", "grey25"),
+                           colour_background = getOption("plot2.colour_background", "white")) {
+  
+  colour_font_primary <- colourpicker(colour_font_primary, length = 1)
+  colour_font_secondary <- colourpicker(colour_font_secondary, length = 1)
+  colour_font_axis <- colourpicker(colour_font_axis, length = 1)
+  colour_background <- colourpicker(colour_background, length = 1)
+  
   t <- theme_bw(base_size = 11) %+replace%
     theme(
       axis.text.x = element_text(margin = margin(3, 0, 0, 0)),
-      axis.title.x = element_text(margin = margin(14, 0, 0, 0)),
-      axis.title.y = element_text(margin = margin(0, 14, 0, 0), angle = 90),
+      axis.title.x = element_text(margin = margin(14, 0, 0, 0), colour = colour_font_axis),
+      axis.title.y = element_text(margin = margin(0, 14, 0, 0), angle = 90, colour = colour_font_axis),
       axis.ticks.y = element_blank(),
       axis.ticks.x = element_line(linewidth = 0.75, colour = "grey75"),
       axis.ticks.length = unit(2, "pt"),
@@ -51,7 +66,7 @@ theme_minimal2 <- function(...) {
       legend.text = element_text(size = unit(9, "pt"), # text itself
                                  margin = margin(l = 1, r = 6, unit = "pt")), # left and right of text
       legend.title = element_text(face = "bold", size = unit(10, "pt")),
-      panel.background = element_rect(fill = "white", linetype = 0),
+      panel.background = element_rect(fill = colour_background, linetype = 0),
       panel.border = element_blank(),
       panel.grid.major.x = element_blank(),
       panel.grid.major.y = element_line(linewidth = 0.375, colour = "grey75"),
@@ -60,23 +75,24 @@ theme_minimal2 <- function(...) {
       axis.line = element_line(linewidth = 0.375, colour = "grey75"),
       axis.line.y = element_blank(),
       plot.margin = unit(c(5, 12, 5, 5), units = "pt"),
-      plot.background = element_rect(fill = "white", linetype = 0),
+      plot.background = element_rect(fill = colour_background, linetype = 0),
       plot.subtitle = element_text(size = unit(11, "pt"),
                                    hjust = 0.5,
+                                   colour = colour_font_secondary,
                                    margin = margin(0, 0, 10, 0)),
       plot.title = element_text(size = unit(13, "pt"),
                                 hjust = 0.5,
+                                colour = colour_font_primary,
                                 margin = margin(0, 0, 10, 0)),
-      plot.caption = element_text(colour = "grey50",
-                                  size = unit(10, "pt"),
-                                  hjust = 1),
+      plot.caption = element_text(size = unit(10, "pt"),
+                                  hjust = 1,
+                                  colour = colour_font_secondary),
       plot.tag = element_text(size = unit(14, "pt"),
-                              margin = margin(0, 0, 0, 0),
                               hjust = 0,
-                              colour = "black",
+                              colour = colour_font_primary,
+                              margin = margin(0, 0, 0, 0),
                               face = "bold"),
-      # for facet (ggh4x::facet_wrap2):
-      strip.background = element_rect(colour = "#FFFFFF00"),
+      strip.background = element_rect(colour = colour_background),
       strip.switch.pad.wrap = unit(10, "pt"),
       strip.placement = "outside",
       complete = TRUE)
