@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.16.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.0</span>
       </span>
     </div>
 
@@ -552,8 +552,8 @@
 <span>  x.date_breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.date_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.focus <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colour <span class="op">=</span> <span class="st">"grey50"</span>,</span>
-<span>  colour_fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"certeblauw"</span><span class="op">)</span>,</span>
+<span>  colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_sf"</span>, <span class="st">"grey50"</span><span class="op">)</span>,</span>
+<span>  colour_fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour_sf_fill"</span>, <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"plot2.colour"</span>, <span class="st">"ggplot2"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  colour_opacity <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  x.lbl_angle <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  x.lbl_align <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -1423,7 +1423,7 @@
 <span>  x.date_breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.date_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.focus <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colour <span class="op">=</span> <span class="fu">colourpicker</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Observation <span class="op">=</span> <span class="st">"grey75"</span>, `Rule 1` <span class="op">=</span> <span class="st">"certeblauw"</span>, `Rule 2` <span class="op">=</span></span>
+<span>  colour <span class="op">=</span> <span class="fu"><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/colourpicker.html" class="external-link">colourpicker</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Observation <span class="op">=</span> <span class="st">"grey75"</span>, `Rule 1` <span class="op">=</span> <span class="st">"certeblauw"</span>, `Rule 2` <span class="op">=</span></span>
 <span>    <span class="st">"certegroen"</span>, `Rule 3` <span class="op">=</span> <span class="st">"certeroze"</span>, `Rule 4` <span class="op">=</span> <span class="st">"certegeel"</span>, `Rule 5` <span class="op">=</span> <span class="st">"certelila"</span>,</span>
 <span>    `Rule 6` <span class="op">=</span> <span class="st">"certezachtlila"</span>, `Rule 7` <span class="op">=</span> <span class="st">"certeblauw2"</span>, `Rule 8` <span class="op">=</span> <span class="st">"certegroen2"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  colour_fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -1630,7 +1630,7 @@
 
 
 <dt>colour</dt>
-<dd><p>colour(s) to set, will be evaluated with <code><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/colourpicker.html" class="external-link">colourpicker()</a></code> and defaults to Certe colours. This can also be one of the viridis colours for a continuous scale: <code>"viridis"</code>, <code>"magma"</code>, <code>"inferno"</code>, <code>"plasma"</code>, <code>"cividis"</code>, <code>"rocket"</code>, <code>"mako"</code> or <code>"turbo"</code>. This can also be a named vector to match values of <code>category</code>, see <em>Examples</em>. Using a named vector can also be used to manually sort the values of <code>category</code>.</p></dd>
+<dd><p>colour(s) to set, will be evaluated with <code><a href="https://certe-medical-epidemiology.github.io/certestyle/reference/colourpicker.html" class="external-link">colourpicker()</a></code> if set. This can also be one of the viridis colours with automatic implementation for any plot: <code>"viridis"</code>, <code>"magma"</code>, <code>"inferno"</code>, <code>"plasma"</code>, <code>"cividis"</code>, <code>"rocket"</code>, <code>"mako"</code> or <code>"turbo"</code>. Also, this can also be a named vector to match values of <code>category</code>, see <em>Examples</em>. Using a named vector can also be used to manually sort the values of <code>category</code>.</p></dd>
 
 
 <dt>colour_fill</dt>
@@ -1838,7 +1838,7 @@
 
 
 <dt>linewidth</dt>
-<dd><p>linewidth of the geom, only suitable for geoms that draw lines. Defaults to <code>0.5</code> for geoms that have no area (such as <a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">line</a>), to <code>0.1</code> for <a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">sf</a>, and to <code>0.25</code> otherwise (such as <a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">boxplot</a>, <a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">histogram</a> and <a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">area</a>).</p></dd>
+<dd><p>linewidth of the geom, only suitable for geoms that draw lines. Defaults to <code>0.5</code> for geoms that have no area (such as <a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">line</a>), to <code>0.1</code> for <a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">sf</a>, to <code>0.5</code> for <a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">boxplot</a>/<a href="https://ggplot2.tidyverse.org/reference/geom_violin.html" class="external-link">violin</a>, to <code>0.25</code> for geoms that are continous and have fills (such as <a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">area</a>), and to <code>0.5</code> otherwise (such as <a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">histogram</a> and <a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">area</a>).</p></dd>
 
 
 <dt>binwidth</dt>
