@@ -514,8 +514,6 @@ plot2.numeric <- function(.data,
   
   if (is.null(type)) {
     type <- getOption("plot2.default_type", "geom_col")
-    plot2_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL), 
-                  font_black(" as the default"))
   }
   
   plot2_exec(df,
@@ -1031,8 +1029,8 @@ plot2.sf <- function(.data,
                      x.date_breaks = NULL,
                      x.date_labels = NULL,
                      category.focus = NULL,
-                     colour = "grey50",
-                     colour_fill = c("white", "certeblauw"),
+                     colour = getOption("plot2.colour_sf", "grey50"),
+                     colour_fill = getOption("plot2.colour_sf_fill", getOption("plot2.colour", "ggplot2")),
                      colour_opacity = 0,
                      x.lbl_angle = 0,
                      x.lbl_align = NULL,

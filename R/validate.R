@@ -51,8 +51,6 @@ validate_type <- function(type, df = NULL) {
       } else {
         # otherwise: the default
         type <- getOption("plot2.default_type", "geom_col")
-        plot2_message("Using ", font_blue("type = \"", gsub("geom_", "", type), "\"", collapse = NULL), 
-                      font_black(" as the default"))
       }
     }
   } else if (type_unset && is.null(df)) {
@@ -443,7 +441,19 @@ validate_data <- function(df,
                          paste0(font_black(" ("), font_blue(get_y_name(df)), font_black(")")),
                          ""))
   }
-  
+  # replace int64 values
+  if (has_y(df) && inherits(get_y(df), "integer64")) {
+    df <- df |> 
+      mutate(`_var_y` = as.integer(`_var_y`))
+    df[, get_y_name(df)] <- df$`_var_y`
+    plot2_message("Replaced integer64 values of ",
+                  font_blue("y"), 
+                  ifelse(get_y_name(df) != "y",
+                         paste0(font_black(" ("), font_blue(get_y_name(df)), font_black(")")),
+                         ""),
+                  " with regular integers")
+  }
+    
   # remove or replace NAs
   rows_with_NA <- df |>
     select(c(get_x_name(df), get_category_name(df), get_facet_name(df),
@@ -1155,6 +1165,7 @@ validate_category_scale <- function(values,
                                     big.mark,
                                     font,
                                     colour_fill,
+                                    original_colours,
                                     ...) {
   # only for a numeric and date category scale
   
@@ -1310,13 +1321,16 @@ validate_category_scale <- function(values,
                                   category.date_breaks = category.date_breaks),
                trans = category.trans)
   
+  if (isTRUE(original_colours)) {
+    # original ggplot2 colours chosen, so just return scale without setting manual colours
+    return(do.call(scale_colour_gradient, args = args))
+  }
+  
   if (length(cols_category) == 1) {
     if (is.na(cols_category) || cols_category %like% "[A-F0-9]{6}00$") {
-      # invisible, so don't return a scale
+      # invisible, so don't return a scale in which colours are manually set, just the rest of the options
       do.call(scale_colour_gradient,
-              args = c(list(low = cols_category,
-                            high =  cols_category),
-                       args))
+              args = args)
     } else {
       # 1 colour, start with white
       if (!identical(colour_fill, "ggplot2") && !is.null(colour_fill)) {
@@ -1388,6 +1402,7 @@ generate_geom <- function(type,
                           jitter_seed,
                           binwidth,
                           cols,
+                          original_colours = original_colours,
                           mapping = NULL) {
   
   if (type == "geom_col") {
@@ -1412,8 +1427,8 @@ generate_geom <- function(type,
                           stat = "identity",
                           position = position,
                           na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
                      list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_area") {
@@ -1423,8 +1438,8 @@ generate_geom <- function(type,
                           stat = "identity",
                           position = position,
                           na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
                      list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type %in% c("geom_line", "geom_path")) {
@@ -1433,14 +1448,14 @@ generate_geom <- function(type,
                           linetype = linetype,
                           linewidth = linewidth,
                           na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)],
+                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
                      list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_point") {
     do.call(geom_fn,
             args = c(list(size = size,
                           na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)],
+                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
                      list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_jitter") {
@@ -1448,7 +1463,7 @@ generate_geom <- function(type,
             args = c(list(size = size,
                           position = position_jitter(seed = jitter_seed),
                           na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)],
+                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
                      list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_boxplot") {
@@ -1459,8 +1474,9 @@ generate_geom <- function(type,
                           linewidth = linewidth, # line width of whole box
                           fatten = ifelse(linewidth < 1, 1.5, linewidth + 0.5), # factor to make median thicker compared to lwd
                           na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
+                     list(fill = "white")[has_category(df) & isTRUE(original_colours)],
                      list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_violin") {
@@ -1471,8 +1487,9 @@ generate_geom <- function(type,
                           trim = TRUE,
                           draw_quantiles = c(0.25, 0.5, 0.75),
                           na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
+                     list(fill = "white")[has_category(df) & isTRUE(original_colours)],
                      list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_histogram") {
@@ -1497,8 +1514,8 @@ generate_geom <- function(type,
                           linewidth = linewidth,
                           binwidth = binwidth,
                           na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
                      list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_density") {
@@ -1506,8 +1523,8 @@ generate_geom <- function(type,
             args = c(list(linetype = linetype,
                           linewidth = linewidth,
                           na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
                      list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_sf") {
@@ -1515,8 +1532,8 @@ generate_geom <- function(type,
             args = c(list(linetype = linetype,
                           linewidth = linewidth,
                           na.rm = na.rm),
-                     list(colour = cols$colour)[length(cols$colour) == 1],
-                     list(fill = cols$colour_fill)[!has_category(df)]))
+                     list(colour = cols$colour)[length(cols$colour) == 1 & !isTRUE(original_colours)],
+                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)]))
     
   } else if (type == "geom_blank") {
     do.call(geom_fn,
@@ -1539,8 +1556,8 @@ generate_geom <- function(type,
             args = c(list(width = width,
                           size = size,
                           na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df)],
-                     list(fill = cols$colour_fill)[!has_category(df)],
+                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
                      list(mapping = mapping)[!is.null(mapping)]))
   }
 }
@@ -1631,7 +1648,8 @@ validate_colour <- function(df,
     colour <- colourpicker(colour, opacity = colour_opacity)
     if (geom_is_continuous(type) && is.null(colour_fill)) {
       # specific treatment for continuous geoms (such as boxplots/violins/histograms/...)
-      colour_fill <- add_white(colour, white = 0.35)
+      # note: for "certe" there is an exception earlier in this function
+      colour_fill <- add_white(colour, white = 0.75)
     } else {
       colour_fill <- colourpicker(colour_fill, opacity = colour_opacity)
     }
@@ -1644,7 +1662,8 @@ validate_colour <- function(df,
                            opacity = colour_opacity)
     if (geom_is_continuous(type) && is.null(colour_fill)) {
       # specific treatment for continuous geoms (such as boxplots/violins/histograms/...)
-      colour_fill <- add_white(colour, white = 0.35)
+      # note: for "certe" there is an exception earlier in this function
+      colour_fill <- add_white(colour, white = 0.75)
     } else {
       colour_fill <- colourpicker(colour_fill,
                                   length = ifelse(length(colour_fill) == 1, n_unique, 1),
@@ -1693,8 +1712,8 @@ validate_colour <- function(df,
     colour_fill <- colour_fill[1]
   }
   
-  list(colour = colour,
-       colour_fill = colour_fill)
+  list(colour = colourpicker(colour),
+       colour_fill = colourpicker(colour_fill))
 }
 
 validate_size <- function(size, type) {
@@ -1723,6 +1742,8 @@ validate_linewidth <- function(linewidth, type) {
   if (is.null(linewidth)) {
     if (type == "geom_sf") {
       linewidth <- 0.1
+    } else if (type %in% c("geom_boxplot", "geom_violin")) {
+      linewidth <- 0.5
     } else if (geom_is_continuous(type) && !geom_has_only_colour(type)) {
       linewidth <- 0.25
     } else {

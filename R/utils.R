@@ -95,6 +95,10 @@ certestyle::dec_mark
 #' @export
 certestyle::big_mark
 
+#' @importFrom certestyle colourpicker
+#' @export
+certestyle::colourpicker
+
 #' @importFrom certestyle font_black font_blue font_magenta font_white font_bold
 plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "", type = "info") {
   # at default, only prints in interactive mode and for the website generation

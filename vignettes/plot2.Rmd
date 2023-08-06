@@ -18,7 +18,8 @@ knitr::opts_chunk$set(
 ) 
 library(certeplot2)
 # load this as well, so function names will get tidyverse links on the website
-library(ggplot2) 
+library(ggplot2)
+library(patchwork)
 library(dplyr, warn.conflicts = FALSE)
 args <- names(formals(plot2))
 x_settings <- args[grepl("^x[.]", args)]
@@ -71,17 +72,13 @@ If the `certeplot2` package is loaded, these tidyverse functions are available t
 
 `plot2()` was designed to help you with creating plots by doing non-intrusive suggestions, much to the contrary of `ggplot2`, where every detail has to be defined manually.
 
-To start with, the plot **type** will be determined automatically if left blank. For example, it will be numeric if both the x and y axes are numeric:
+To start with, the plot **type** will be determined automatically if left blank.
 
 ```{r}
 data.frame(x = c(1:10),
            y = c(11:20)) |> 
   plot2()
-```
 
-If the x axis is of class `factor` or `character`, the type will be column:
-
-```{r}
 data.frame(x = letters[1:10],
            y = c(11:20)) |> 
   plot2()
@@ -417,6 +414,49 @@ admitted_patients |>
           x.max_txt = "%n other hospitals (%p)")
 ```
 
+# Setting colours
+
+At default, `plot2()` sets no colours, meaning that it uses ggplot2 colours. With some simple R options, it is very easy to switch to another colour set.
+
+```{r, echo = FALSE}
+plots <- function() {
+  p1 <- iris |> plot2(title = "", y.title = "", x.title = "")
+  p2 <- admitted_patients |> plot2(gender, n(), title = "", y.title = "", x.title = "")
+  p3 <- admitted_patients |> plot2(gender, n(), ward, title = "", y.title = "", x.title = "")
+  p4 <- admitted_patients |> plot2(gender, age, type = "boxplot", title = "", y.title = "", x.title = "")
+  p5 <- admitted_patients |> plot2(gender, n(), age, category.character = FALSE, title = "", y.title = "", x.title = "")
+  p6 <- netherlands |> plot2(datalabels = FALSE, title = "", y.title = "", x.title = "")
+  p7 <- admitted_patients |> plot2(gender, age, hospital, type = "boxplot", title = "", y.title = "", x.title = "")
+  p8 <- admitted_patients |> plot2(age, type = "histogram", title = "", y.title = "", x.title = "")
+  (p1 + p2) / (p3 + p4) / (p5 + p6) / (p7 + p8)
+}
+```
+
+Default:
+
+```{r, echo = FALSE, fig.height = 7}
+options(plot2.colour = NULL, plot2.colour_sf_fill = NULL)
+plots()
+```
+
+Using any [viridis colour palette](https://sjmgarnier.github.io/viridis/articles/intro-to-viridis.html):
+
+```{r}
+options(plot2.colour = "viridis")
+```
+
+```{r, echo = FALSE, fig.height = 7}
+plots()
+```
+
+```{r}
+options(plot2.colour = "magma")
+```
+
+```{r, echo = FALSE, fig.height = 7}
+plots()
+```
+
 # Adding calculations to titles
 
 All titles support in-line calculations as well, which is very convenient for describing part of the data in plot titles:
@@ -531,6 +571,19 @@ plot2(netherlands,
       # datalabels support tidy evaluation too:
       datalabels = paste0(province, "\n", round(area_km2)))
 ```
+
+Use the R option Use `plot2.colour_sf_fill` with a single colour to set one specific colour for sf plots:
+
+```{r}
+# this uses the whole viridis colour scale:
+options(plot2.colour_sf_fill = "viridis")
+plot2(netherlands)
+
+# but this uses only the first viridis colour:
+options(plot2.colour_sf_fill = colourpicker("viridis", length = 1))
+plot2(netherlands)
+```
+
 
 # Support for any font, including all Google Fonts
 

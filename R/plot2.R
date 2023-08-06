@@ -90,7 +90,7 @@
 #' @param x.date_breaks breaks to use when the x axis contains dates, will be determined automatically if left blank. This accepts values such as `"1 day"` and `"2 years"`.
 #' @param x.date_labels labels to use when the x axis contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as `"d mmmm yyyy"`.
 #' @param category.focus a value of `category` that should be highlighted, meaning that all other values in `category` will be greyed out. This can also be a numeric value between 1 and the length of unique values of `category`, e.g. `category.focus = 2` to focus on the second legend item.
-#' @param colour colour(s) to set, will be evaluated with [`colourpicker()`][certestyle::colourpicker()] and defaults to Certe colours. This can also be one of the viridis colours for a continuous scale: `"viridis"`, `"magma"`, `"inferno"`, `"plasma"`, `"cividis"`, `"rocket"`, `"mako"` or `"turbo"`. This can also be a named vector to match values of `category`, see *Examples*. Using a named vector can also be used to manually sort the values of `category`.
+#' @param colour colour(s) to set, will be evaluated with [`colourpicker()`][certestyle::colourpicker()] if set. This can also be one of the viridis colours with automatic implementation for any plot: `"viridis"`, `"magma"`, `"inferno"`, `"plasma"`, `"cividis"`, `"rocket"`, `"mako"` or `"turbo"`. Also, this can also be a named vector to match values of `category`, see *Examples*. Using a named vector can also be used to manually sort the values of `category`.
 #' @param colour_fill colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
 #' @param colour_opacity amount of opacity for `colour`/`colour_fill` (0 = solid, 1 = transparent)
 #' @param x.lbl_angle angle to use for the x axis in a counter-clockwise direction (i.e., a value of `90` will orient the axis labels from bottom to top, a value of `270` will orient the axis labels from top to bottom)
@@ -151,7 +151,7 @@
 #' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.linewidth,smooth.linetype settings for `smooth`
 #' @param size size of the geom. Defaults to `2` for geoms [point][ggplot2::geom_point()] and [jitter][ggplot2::geom_jitter()], and to `0.75` otherwise.
 #' @param linetype linetype of the geom, only suitable for geoms that draw lines. Defaults to 1.
-#' @param linewidth linewidth of the geom, only suitable for geoms that draw lines. Defaults to `0.5` for geoms that have no area (such as [line][ggplot2::geom_line()]), to `0.1` for [sf][ggplot2::geom_sf()], and to `0.25` otherwise (such as [boxplot][ggplot2::geom_boxplot()], [histogram][ggplot2::geom_histogram()] and [area][ggplot2::geom_area()]).
+#' @param linewidth linewidth of the geom, only suitable for geoms that draw lines. Defaults to `0.5` for geoms that have no area (such as [line][ggplot2::geom_line()]), to `0.1` for [sf][ggplot2::geom_sf()], to `0.5` for [boxplot][ggplot2::geom_boxplot()]/[violin][ggplot2::geom_violin()], to `0.25` for geoms that are continous and have fills (such as [area][ggplot2::geom_area()]), and to `0.5` otherwise (such as [histogram][ggplot2::geom_histogram()] and [area][ggplot2::geom_area()]).
 #' @param binwidth width of bins (only useful for `geom = "histogram"`), can be specified as a numeric value or as a function that calculates width from `x`, see [`geom_histogram()`][ggplot2::geom_histogram()]. It defaults to approx. `diff(range(x))` divided by 12 to 22 based on the data.
 #' @param width width of the geom. Defaults to `0.75` for geoms [boxplot][ggplot2::geom_boxplot()], [violin][ggplot2::geom_violin()] and [jitter][ggplot2::geom_jitter()], and to `0.5` otherwise.
 #' @param jitter_seed seed (randomisation factor) to be set when using `type = "jitter"`
@@ -795,6 +795,7 @@ plot2_exec <- function(.data,
     big.mark <- " "
   }
   
+  
   # prepare data ----
   # IMPORTANT: in this part, the data for mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
   # this is done for convenience - this is restored before returning the `ggplot` object in the end
@@ -1009,6 +1010,15 @@ plot2_exec <- function(.data,
   linewidth <- validate_linewidth(linewidth = linewidth, type = type)
   
   # generate colour vectors ----
+  
+  # keep original ggplot2 colours if they have not been set ----
+  if (type == "geom_sf") {
+    original_colours <- identical(colour_fill, "ggplot2") || is.null(colour_fill)
+  } else {
+    original_colours <- (is.null(colour) || identical(colour, "ggplot2")) &&
+      (identical(colour_fill, "ggplot2") || (is.null(colour_fill) && (is.null(colour) || identical(colour, "ggplot2"))))
+  }
+  
   if (has_category(df) && !is.null(category.focus)) {
     category.focus <- category.focus[1L]
     # check if value is actually in category
@@ -1030,7 +1040,7 @@ plot2_exec <- function(.data,
     y_secondary.colour <- colourpicker(y_secondary.colour)[1L]
     y_secondary.colour_fill <- colourpicker(y_secondary.colour_fill)[1L]
   }
-  # Note that this will be overwritten if colour == "ggplot2" or colour_fill == "ggplot2", see at the end of this function
+  # Note that this will be not be used if colour == "ggplot2" or colour_fill == "ggplot2"
   cols <- validate_colour(df = df,
                           type = type,
                           colour = colour,
@@ -1076,19 +1086,30 @@ plot2_exec <- function(.data,
     # exception for line plots without colour/fill, force group = 1
     mapping <- utils::modifyList(mapping, aes(group = 1))
   }
-
-  # generate ggplot ----
-  p <- ggplot(data = df, mapping = mapping, colour = cols$colour, fill = cols$colour_fill)
   
+  # generate ggplot ----
+  if (isTRUE(original_colours)) {
+    p <- ggplot(data = df, mapping = mapping)
+  } else {
+    p <- ggplot(data = df, mapping = mapping, colour = cols$colour, fill = cols$colour_fill)
+  }
   # generate geom ----
   if (type == "geom_boxplot") {
     # first add the whiskers
-    p <- p +
-      stat_boxplot(geom = "errorbar",
-                   coef = 1.5, # 1.5 * IQR
-                   width = width * ifelse(has_category(df), 1, 0.75),
-                   linewidth = linewidth,
-                   colour = cols$colour)
+    if (isTRUE(original_colours)) {
+      p <- p +
+        stat_boxplot(geom = "errorbar",
+                     coef = 1.5, # 1.5 * IQR
+                     width = width * ifelse(has_category(df), 1, 0.75),
+                     linewidth = linewidth)
+    } else {
+      p <- p +
+        stat_boxplot(geom = "errorbar",
+                     coef = 1.5, # 1.5 * IQR
+                     width = width * ifelse(has_category(df), 1, 0.75),
+                     linewidth = linewidth,
+                     colour = cols$colour)
+    }
   }
   p <- p +
     generate_geom(type = type,
@@ -1105,7 +1126,9 @@ plot2_exec <- function(.data,
                   violin_scale = violin_scale,
                   jitter_seed = jitter_seed,
                   binwidth = binwidth,
-                  cols = cols)
+                  cols = cols,
+                  original_colours = original_colours)
+  
   # add secondary y axis if available
   if (has_y_secondary(df)) {
     if (y_secondary.type == "geom_boxplot") {
@@ -1135,6 +1158,7 @@ plot2_exec <- function(.data,
                     binwidth = binwidth,
                     cols = list(colour = y_secondary.colour,
                                 colour_fill = y_secondary.colour_fill),
+                    original_colours = original_colours,
                     mapping = utils::modifyList(mapping, aes(y = `_var_y_secondary`)))
   }
 
@@ -1153,7 +1177,7 @@ plot2_exec <- function(.data,
                        linetype = smooth.linetype,
                        linewidth = smooth.linewidth,
                        na.rm = na.rm),
-                  list(colour = cols$colour[1L])[!has_category(df)]))
+                  list(colour = cols$colour[1L])[!has_category(df) & !isTRUE(original_colours)]))
     } else {
       # add smooth with geom_smooth()
       p <- p +
@@ -1167,8 +1191,8 @@ plot2_exec <- function(.data,
                        linetype = smooth.linetype,
                        linewidth = smooth.linewidth,
                        na.rm = na.rm),
-                  list(colour = cols$colour[1L])[!has_category(df)],
-                  list(fill = cols$colour[1L])[!has_category(df)]))
+                  list(colour = cols$colour[1L])[!has_category(df) & !isTRUE(original_colours)],
+                  list(fill = cols$colour[1L])[!has_category(df) & !isTRUE(original_colours)]))
     }
   }
   
@@ -1216,7 +1240,8 @@ plot2_exec <- function(.data,
                               decimal.mark = decimal.mark,
                               big.mark = big.mark,
                               font = font,
-                              colour_fill = colour_fill)
+                              colour_fill = colour_fill,
+                              original_colours = original_colours)
   } else if (type != "geom_sf") {
     category_txt <- get_category(df)
     if (is.null(category.labels) &&
@@ -1230,23 +1255,42 @@ plot2_exec <- function(.data,
       plot2_message("The ", font_blue("category"), " seems to contain markdown, assuming ", font_blue("category.labels = md_to_expression"))
       category.labels <- md_to_expression
     }
-    p <- p +
-      scale_colour_manual(values = cols$colour,
+    if (original_colours == TRUE) {
+      # these scale functions do not have 'values' set
+      p <- p +
+        scale_colour_discrete(labels = if (is.null(category.labels)) waiver() else category.labels,
+                              limits = if (is.null(names(cols$colour))) {
+                                NULL
+                              } else {
+                                # remove unneeded labels
+                                base::force
+                              }) +
+        scale_fill_discrete(labels = if (is.null(category.labels)) waiver() else category.labels,
+                            limits = if (is.null(names(cols$colour))) {
+                              NULL
+                            } else {
+                              # remove unneeded labels
+                              base::force
+                            })
+    } else {
+      p <- p +
+        scale_colour_manual(values = cols$colour,
+                            labels = if (is.null(category.labels)) waiver() else category.labels,
+                            limits = if (is.null(names(cols$colour))) {
+                              NULL
+                            } else {
+                              # remove unneeded labels
+                              base::force
+                            }) +
+        scale_fill_manual(values = cols$colour_fill,
                           labels = if (is.null(category.labels)) waiver() else category.labels,
                           limits = if (is.null(names(cols$colour))) {
                             NULL
                           } else {
                             # remove unneeded labels
                             base::force
-                          }) +
-      scale_fill_manual(values = cols$colour_fill,
-                        labels = if (is.null(category.labels)) waiver() else category.labels,
-                        limits = if (is.null(names(cols$colour))) {
-                          NULL
-                        } else {
-                          # remove unneeded labels
-                          base::force
-                        })
+                          })
+    }
     # hack the possibility to print values as expressions
     if (identical(category.labels, md_to_expression)) {
       if (geom_has_only_colour(type)) {
@@ -1473,36 +1517,6 @@ plot2_exec <- function(.data,
   # such as switching some x and y axis properties of the theme
   if (isTRUE(horizontal)) {
     p <- p + coord_flip()
-  }
-  
-  # set ggplot2 original colours if this was set ----
-  if (has_category(df)) {
-    if (identical(colour, "ggplot2") && !is.null(p$mapping$colour)) {
-      suppressMessages(
-        if (mode(df$`_var_category`) == "character" || is.factor(df$`_var_category`)) {
-          p <- p + scale_colour_discrete()
-        } else if (mode(df$`_var_category`) == "numeric" && inherits(df$`_var_category`, "Date")) {
-          p <- p + scale_colour_date()
-        } else if (mode(df$`_var_category`) == "numeric" && inherits(df$`_var_category`, "POSIXt")) {
-          p <- p + scale_colour_datetime()
-        } else if (mode(df$`_var_category`) == "numeric") {
-          p <- p + scale_colour_continuous()
-        }
-      )
-    }
-    if (identical(colour_fill, "ggplot2") && !is.null(p$mapping$fill)) {
-      suppressMessages(
-        if (mode(df$`_var_category`) == "character" || is.factor(df$`_var_category`)) {
-          p <- p + scale_fill_discrete()
-        } else if (mode(df$`_var_category`) == "numeric" && inherits(df$`_var_category`, "Date")) {
-          p <- p + scale_fill_date()
-        } else if (mode(df$`_var_category`) == "numeric" && inherits(df$`_var_category`, "POSIXt")) {
-          p <- p + scale_fill_datetime()
-        } else if (mode(df$`_var_category`) == "numeric") {
-          p <- p + scale_fill_continuous()
-        }
-      )
-    }
   }
   
   # restore mapping to original names ----

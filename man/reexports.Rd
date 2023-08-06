@@ -16,6 +16,7 @@
 \alias{any_of}
 \alias{dec_mark}
 \alias{big_mark}
+\alias{colourpicker}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -23,7 +24,7 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{certestyle}{\code{\link[certestyle:dec_mark]{big_mark}}, \code{\link[certestyle]{dec_mark}}}
+  \item{certestyle}{\code{\link[certestyle:dec_mark]{big_mark}}, \code{\link[certestyle]{colourpicker}}, \code{\link[certestyle]{dec_mark}}}
 
   \item{dplyr}{\code{\link[dplyr:reexports]{all_of}}, \code{\link[dplyr:reexports]{any_of}}, \code{\link[dplyr:nth]{first}}, \code{\link[dplyr:nth]{last}}, \code{\link[dplyr:context]{n}}, \code{\link[dplyr]{n_distinct}}}
 

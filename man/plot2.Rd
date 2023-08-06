@@ -225,7 +225,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{category.focus}{a value of \code{category} that should be highlighted, meaning that all other values in \code{category} will be greyed out. This can also be a numeric value between 1 and the length of unique values of \code{category}, e.g. \code{category.focus = 2} to focus on the second legend item.}
 
-\item{colour}{colour(s) to set, will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}} and defaults to Certe colours. This can also be one of the viridis colours for a continuous scale: \code{"viridis"}, \code{"magma"}, \code{"inferno"}, \code{"plasma"}, \code{"cividis"}, \code{"rocket"}, \code{"mako"} or \code{"turbo"}. This can also be a named vector to match values of \code{category}, see \emph{Examples}. Using a named vector can also be used to manually sort the values of \code{category}.}
+\item{colour}{colour(s) to set, will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}} if set. This can also be one of the viridis colours with automatic implementation for any plot: \code{"viridis"}, \code{"magma"}, \code{"inferno"}, \code{"plasma"}, \code{"cividis"}, \code{"rocket"}, \code{"mako"} or \code{"turbo"}. Also, this can also be a named vector to match values of \code{category}, see \emph{Examples}. Using a named vector can also be used to manually sort the values of \code{category}.}
 
 \item{colour_fill}{colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with \code{\link[certestyle:colourpicker]{colourpicker()}}}
 
@@ -339,7 +339,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{linetype}{linetype of the geom, only suitable for geoms that draw lines. Defaults to 1.}
 
-\item{linewidth}{linewidth of the geom, only suitable for geoms that draw lines. Defaults to \code{0.5} for geoms that have no area (such as \link[ggplot2:geom_path]{line}), to \code{0.1} for \link[ggplot2:ggsf]{sf}, and to \code{0.25} otherwise (such as \link[ggplot2:geom_boxplot]{boxplot}, \link[ggplot2:geom_histogram]{histogram} and \link[ggplot2:geom_ribbon]{area}).}
+\item{linewidth}{linewidth of the geom, only suitable for geoms that draw lines. Defaults to \code{0.5} for geoms that have no area (such as \link[ggplot2:geom_path]{line}), to \code{0.1} for \link[ggplot2:ggsf]{sf}, to \code{0.5} for \link[ggplot2:geom_boxplot]{boxplot}/\link[ggplot2:geom_violin]{violin}, to \code{0.25} for geoms that are continous and have fills (such as \link[ggplot2:geom_ribbon]{area}), and to \code{0.5} otherwise (such as \link[ggplot2:geom_histogram]{histogram} and \link[ggplot2:geom_ribbon]{area}).}
 
 \item{binwidth}{width of bins (only useful for \code{geom = "histogram"}), can be specified as a numeric value or as a function that calculates width from \code{x}, see \code{\link[ggplot2:geom_histogram]{geom_histogram()}}. It defaults to approx. \code{diff(range(x))} divided by 12 to 22 based on the data.}
 
