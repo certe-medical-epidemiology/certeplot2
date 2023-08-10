@@ -457,6 +457,11 @@ options(plot2.colour = "magma")
 plots()
 ```
 
+```{r, echo = FALSE}
+# reset again
+options(plot2.colour = NULL, plot2.colour_sf_fill = NULL)
+```
+
 # Adding calculations to titles
 
 All titles support in-line calculations as well, which is very convenient for describing part of the data in plot titles:
@@ -464,7 +469,6 @@ All titles support in-line calculations as well, which is very convenient for de
 ```{r}
 admitted_patients |>
   plot2(age, type = "hist")
-
 admitted_patients |>
   plot2(age, type = "hist",
         title = paste("Based on n =", n_distinct(patient_id), "patients"),
@@ -578,7 +582,6 @@ Use the R option Use `plot2.colour_sf_fill` with a single colour to set one spec
 # this uses the whole viridis colour scale:
 options(plot2.colour_sf_fill = "viridis")
 plot2(netherlands)
-
 # but this uses only the first viridis colour:
 options(plot2.colour_sf_fill = colourpicker("viridis", length = 1))
 plot2(netherlands)

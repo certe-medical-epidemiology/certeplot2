@@ -406,6 +406,8 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 139 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
+options(plot2.colour = NULL, plot2.colour_sf_fill = NULL)
+
 head(iris)
 
 # no variables determined, so plot2() will try for itself -

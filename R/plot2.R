@@ -189,6 +189,8 @@
 #' @importFrom ggplot2 ggplot labs
 #' @export
 #' @examples
+#' options(plot2.colour = NULL, plot2.colour_sf_fill = NULL)
+#' 
 #' head(iris)
 #' 
 #' # no variables determined, so plot2() will try for itself -

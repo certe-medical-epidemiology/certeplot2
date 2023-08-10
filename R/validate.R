@@ -1227,8 +1227,8 @@ validate_category_scale <- function(values,
       # pretty_breaks(n = 5)(values)
     } else if (all(values %% 1 == 0, na.rm = TRUE) && max(values, na.rm = TRUE) < 5) {
       # whole numbers - only strip decimal numbers if total y range is low
-      if (diff(range(values)) < 5 && 0 %in% values) {
-        sort(unique(values))
+      if (diff(range(values, na.rm = TRUE)) < 5 && 0 %in% values[!is.na(values)]) {
+        sort(unique(values[!is.na(values)]))
       } else {
         function(x, ...) unique(floor(pretty(seq(0, (max(x, na.rm = TRUE) + 1) * 3))))
       }
