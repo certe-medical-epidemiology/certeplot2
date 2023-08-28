@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.18.0</span>
       </span>
     </div>
 
@@ -1566,8 +1566,9 @@
 <dd><p>type of visualisation to use. This can be:</p><ul><li><p>A <code>ggplot2</code> geom name or their abbreviation such as <code>"col"</code> and <code>"point"</code>. All geoms are supported (including <code><a href="https://ggplot2.tidyverse.org/reference/geom_blank.html" class="external-link">geom_blank()</a></code>).</p>
 <p>Full function names can be used (e.g., <code>"geom_histogram"</code>), but they can also be abbreviated (e.g., <code>"h"</code>, <code>"hist"</code>). The following geoms can be abbreviated by their first character: area (<code>"a"</code>), boxplot (<code>"b"</code>), column (<code>"c"</code>), histogram (<code>"h"</code>), jitter (<code>"j"</code>), line (<code>"l"</code>), point (<code>"p"</code>), ribbon (<code>"r"</code>), and violin (<code>"v"</code>).</p>
 <p>Please note: in <code>ggplot2</code>, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, <code>type = "bar"</code> will set <code>type = "col"</code> and <code>horizontal = TRUE</code>.</p></li>
-<li><p>A shortcut. There are currently two supported shortcuts:</p><ul><li><p><code>"barpercent"</code>, which will set <code>type = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc"</code> and <code>datalabels.format = "%n (%p)"</code>.</p></li>
-<li><p><code>"linedot"</code>, which will set <code>type = "line"</code> and adds two point geoms using <code><a href="add_type.html">add_point()</a></code>; one with large white dots and one with smaller dots using the colours set in <code>colour</code>. This is essentially equal to base <span style="R">R</span> <code>plot(..., type = "b")</code> but with closed shapes.</p></li>
+<li><p>A shortcut. There are currently three supported shortcuts:</p><ul><li><p><code>"barpercent"</code> (short: <code>"bp"</code>), which will set <code>type = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc"</code> and <code>datalabels.format = "%n (%p)"</code>.</p></li>
+<li><p><code>"linedot"</code> (short: <code>"ld"</code>), which will set <code>type = "line"</code> and adds two point geoms using <code><a href="add_type.html">add_point()</a></code>; one with large white dots and one with smaller dots using the colours set in <code>colour</code>. This is essentially equal to base <span style="R">R</span> <code>plot(..., type = "b")</code> but with closed shapes.</p></li>
+<li><p><code>"dumbbell"</code> (short: <code>"d"</code>), which will set <code>type = "point"</code> and <code>horizontal = TRUE</code>, and adds a line between the point (using <code>geom_segment()</code>). The line colour cannot be changed. This plot type is only possible when the <code>category</code> has two distinct values.</p></li>
 </ul></li>
 <li><p>Left blank. In this case, the type will be determined automatically: <code>"boxplot"</code> if there is no x axis or if the length of unique values per x axis item is at least 3, <code>"point"</code> if both the y and x axes are numeric, and the <a href="https://rdrr.io/r/base/options.html" class="external-link">option</a> <code>"plot2.default_type"</code> otherwise (which defaults to <code>"col"</code>). Use <code>type = "blank"</code> or <code>type = "geom_blank"</code> to <em>not</em> add a geom.</p></li>
 </ul></dd>
@@ -1830,7 +1831,7 @@
 
 
 <dt>size</dt>
-<dd><p>size of the geom. Defaults to <code>2</code> for geoms <a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">point</a> and <a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html" class="external-link">jitter</a>, and to <code>0.75</code> otherwise.</p></dd>
+<dd><p>size of the geom. Defaults to <code>2</code> for geoms <a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">point</a> and <a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html" class="external-link">jitter</a>, <code>5</code> for a dumbbell plots (using <code>type = "dumbbell"</code>), and to <code>0.75</code> otherwise.</p></dd>
 
 
 <dt>linetype</dt>
@@ -1838,7 +1839,12 @@
 
 
 <dt>linewidth</dt>
-<dd><p>linewidth of the geom, only suitable for geoms that draw lines. Defaults to <code>0.5</code> for geoms that have no area (such as <a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">line</a>), to <code>0.1</code> for <a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">sf</a>, to <code>0.5</code> for <a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">boxplot</a>/<a href="https://ggplot2.tidyverse.org/reference/geom_violin.html" class="external-link">violin</a>, to <code>0.25</code> for geoms that are continous and have fills (such as <a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">area</a>), and to <code>0.5</code> otherwise (such as <a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">histogram</a> and <a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">area</a>).</p></dd>
+<dd><p>linewidth of the geom, only suitable for geoms that draw lines. Defaults to:</p><ul><li><p><code>0.5</code> for geoms that have no area (such as <a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">line</a>), and for geoms <a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">boxplot</a>/<a href="https://ggplot2.tidyverse.org/reference/geom_violin.html" class="external-link">violin</a></p></li>
+<li><p><code>0.1</code> for <a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">sf</a></p></li>
+<li><p><code>0.25</code> for geoms that are continous and have fills (such as <a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">area</a>)</p></li>
+<li><p><code>1.0</code> for dumbbell plots (using <code>type = "dumbbell"</code>)</p></li>
+<li><p><code>0.5</code> otherwise (such as <a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">histogram</a> and <a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">area</a>)</p></li>
+</ul></dd>
 
 
 <dt>binwidth</dt>
