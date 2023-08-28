@@ -58,6 +58,9 @@ test_that("general types work", {
   expect_s3_class(admitted_patients |> plot2(hospital, n(), c(gender, ward)), "gg")
   
   expect_s3_class(plotdata |> plot2(y.trans = "log2"), "gg")
+  # dumbbell:
+  expect_s3_class(admitted_patients |> plot2(age_group, n_distinct(patient_id), ward, type = "d"), "gg")
+  expect_s3_class(admitted_patients |> plot2(age_group, n_distinct(patient_id), ward, gender, type = "d"), "gg")
 })
 
 test_that("na.rm works", {

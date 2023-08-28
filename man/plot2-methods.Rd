@@ -1488,10 +1488,11 @@ The \code{category} can also be a date (class \code{Date} or \code{POSIXt}).}
 Full function names can be used (e.g., \code{"geom_histogram"}), but they can also be abbreviated (e.g., \code{"h"}, \code{"hist"}). The following geoms can be abbreviated by their first character: area (\code{"a"}), boxplot (\code{"b"}), column (\code{"c"}), histogram (\code{"h"}), jitter (\code{"j"}), line (\code{"l"}), point (\code{"p"}), ribbon (\code{"r"}), and violin (\code{"v"}).
 
 Please note: in \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{type = "bar"} will set \code{type = "col"} and \code{horizontal = TRUE}.
-\item A shortcut. There are currently two supported shortcuts:
+\item A shortcut. There are currently three supported shortcuts:
 \itemize{
-\item \code{"barpercent"}, which will set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
-\item \code{"linedot"}, which will set \code{type = "line"} and adds two point geoms using \code{\link[=add_point]{add_point()}}; one with large white dots and one with smaller dots using the colours set in \code{colour}. This is essentially equal to base \R \code{plot(..., type = "b")} but with closed shapes.
+\item \code{"barpercent"} (short: \code{"bp"}), which will set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
+\item \code{"linedot"} (short: \code{"ld"}), which will set \code{type = "line"} and adds two point geoms using \code{\link[=add_point]{add_point()}}; one with large white dots and one with smaller dots using the colours set in \code{colour}. This is essentially equal to base \R \code{plot(..., type = "b")} but with closed shapes.
+\item \code{"dumbbell"} (short: \code{"d"}), which will set \code{type = "point"} and \code{horizontal = TRUE}, and adds a line between the point (using \code{\link[=geom_segment]{geom_segment()}}). The line colour cannot be changed. This plot type is only possible when the \code{category} has two distinct values.
 }
 \item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no x axis or if the length of unique values per x axis item is at least 3, \code{"point"} if both the y and x axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} add a geom.
 }}
@@ -1641,11 +1642,18 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{smooth.method, smooth.formula, smooth.se, smooth.level, smooth.alpha, smooth.linewidth, smooth.linetype}{settings for \code{smooth}}
 
-\item{size}{size of the geom. Defaults to \code{2} for geoms \link[ggplot2:geom_point]{point} and \link[ggplot2:geom_jitter]{jitter}, and to \code{0.75} otherwise.}
+\item{size}{size of the geom. Defaults to \code{2} for geoms \link[ggplot2:geom_point]{point} and \link[ggplot2:geom_jitter]{jitter}, \code{5} for a dumbbell plots (using \code{type = "dumbbell"}), and to \code{0.75} otherwise.}
 
 \item{linetype}{linetype of the geom, only suitable for geoms that draw lines. Defaults to 1.}
 
-\item{linewidth}{linewidth of the geom, only suitable for geoms that draw lines. Defaults to \code{0.5} for geoms that have no area (such as \link[ggplot2:geom_path]{line}), to \code{0.1} for \link[ggplot2:ggsf]{sf}, to \code{0.5} for \link[ggplot2:geom_boxplot]{boxplot}/\link[ggplot2:geom_violin]{violin}, to \code{0.25} for geoms that are continous and have fills (such as \link[ggplot2:geom_ribbon]{area}), and to \code{0.5} otherwise (such as \link[ggplot2:geom_histogram]{histogram} and \link[ggplot2:geom_ribbon]{area}).}
+\item{linewidth}{linewidth of the geom, only suitable for geoms that draw lines. Defaults to:
+\itemize{
+\item \code{0.5} for geoms that have no area (such as \link[ggplot2:geom_path]{line}), and for geoms \link[ggplot2:geom_boxplot]{boxplot}/\link[ggplot2:geom_violin]{violin}
+\item \code{0.1} for \link[ggplot2:ggsf]{sf}
+\item \code{0.25} for geoms that are continous and have fills (such as \link[ggplot2:geom_ribbon]{area})
+\item \code{1.0} for dumbbell plots (using \code{type = "dumbbell"})
+\item \code{0.5} otherwise (such as \link[ggplot2:geom_histogram]{histogram} and \link[ggplot2:geom_ribbon]{area})
+}}
 
 \item{binwidth}{width of bins (only useful for \code{geom = "histogram"}), can be specified as a numeric value or as a function that calculates width from \code{x}, see \code{\link[ggplot2:geom_histogram]{geom_histogram()}}. It defaults to approx. \code{diff(range(x))} divided by 12 to 22 based on the data.}
 

@@ -23,9 +23,9 @@ globalVariables(c("_new_title",
                   "_var_category",
                   "_var_datalabels",
                   "_var_facet",
-                  "_var_y_secondary",
                   "_var_x",
                   "_var_y",
+                  "_var_y_secondary",
                   "ab",
                   "antibiotic", 
                   "count",
@@ -37,11 +37,14 @@ globalVariables(c("_new_title",
                   "name",
                   "R",
                   "rowname",
-                  "syndromic_group",
                   "SI",
+                  "syndromic_group",
                   "total",
                   "value",
-                  "where"))
+                  "where",
+                  "x_axis",
+                  "y_max",
+                  "y_min"))
 
 #' @importFrom dplyr n
 #' @export
@@ -150,7 +153,7 @@ summarise_variable <- function(df, var, sep) {
 #' @importFrom dplyr select mutate across
 add_direction <- function(df, direction, var_name, var_label, sep) {
   tryCatch({
-    # this for using Tidyverse selectors, such as `facet = where(is.character)`
+    # this for using tidyverse selectors, such as `facet = where(is.character)`
     selected_cols <- df |>
       as.data.frame(stringsAsFactors = FALSE) |> # for sf data
       select({{ direction }}) |> 
@@ -563,7 +566,7 @@ digit_to_text <- function(x) {
 
 format_error <- function(e, replace = character(0), by = character(0)) {
   if (is.null(e$bullets)) {
-    txt <- c(e$message, e$parent$message)
+    txt <- c(e$message, e$parent$message, e$parent$parent$message, e$parent$parent$parent$message)
   } else {
     txt <- e$bullets
   }

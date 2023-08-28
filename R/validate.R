@@ -17,7 +17,8 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-#' @importFrom certestyle font_blue font_black  
+#' @importFrom certestyle font_blue font_black
+#' @importFrom dplyr group_by across summarise n_distinct n
 validate_type <- function(type, df = NULL) {
   type.bak <- type
   type_unset <- (is.null(type) || identical(type, ""))
@@ -51,6 +52,15 @@ validate_type <- function(type, df = NULL) {
       } else {
         # otherwise: the default
         type <- getOption("plot2.default_type", "geom_col")
+        if (!is.null(df) && has_x(df) && has_category(df) && n_distinct(get_category(df)) == 2) {
+          count_nrs <- df |>
+            group_by(across(c(get_x_name(df), get_category_name(df)))) |>
+            summarise(n = n())
+          if (all(count_nrs$n, na.rm = TRUE) == 1) {
+            plot2_message("To compare single values in two categories (", font_blue(get_category_name(df)), "), a dumbbell plot can be used (",
+                          font_blue("type = \"dumbbell\""), " or ", font_blue("type = \"d\""), ")")
+          }
+        }
       }
     }
   } else if (type_unset && is.null(df)) {
@@ -71,7 +81,7 @@ validate_type <- function(type, df = NULL) {
     if (type == "p") type <- "point"
     if (type == "r") type <- "ribbon"
     if (type == "v") type <- "violin"
-    if (type == "column") {
+    if (type %like% "column") { # don't catch "bar" here - we consider that a horizontal "col" like Excel
       type <- "col"
     }
     if (type %unlike% "^geom_") {
@@ -1716,9 +1726,11 @@ validate_colour <- function(df,
        colour_fill = colourpicker(colour_fill))
 }
 
-validate_size <- function(size, type) {
+validate_size <- function(size, type, type_backup) {
   if (is.null(size)) {
-    if (type %in% c("geom_point", "geom_jitter")) {
+    if (type_backup == "dumbbell") {
+      size <- 5
+    } else if (type %in% c("geom_point", "geom_jitter")) {
       size <- 2
     } else {
       size <- 0.75
@@ -1738,12 +1750,14 @@ validate_width <- function(width, type) {
   width
 }
 
-validate_linewidth <- function(linewidth, type) {
+validate_linewidth <- function(linewidth, type, type_backup) {
   if (is.null(linewidth)) {
     if (type == "geom_sf") {
       linewidth <- 0.1
     } else if (type %in% c("geom_boxplot", "geom_violin")) {
       linewidth <- 0.5
+    } else if (type_backup == "dumbbell") {
+      linewidth <- 1
     } else if (geom_is_continuous(type) && !geom_has_only_colour(type)) {
       linewidth <- 0.25
     } else {
@@ -2305,7 +2319,7 @@ validate_font <- function(font) {
   if (NROW(fonts) == 0) {
     # font does not exist yet - try to download from Google Fonts
     tryCatch({
-      plot2_message("Downloading font \"", font.bak, "\" from Google Fonts")
+      plot2_message("Downloading font ", font_blue(paste0("\033]8;;https://fonts.google.com/specimen/", gsub(" ", "+", font.bak), "\a", font.bak, "\033]8;;\a")), " from Google Fonts")
       font_urls <- showtextdb::google_fonts(font.bak)
       # install and register using showtextdb
       suppressMessages(showtextdb::font_install(font_urls, quiet = TRUE))

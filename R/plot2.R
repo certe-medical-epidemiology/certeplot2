@@ -63,10 +63,11 @@
 #' 
 #'   Please note: in `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `type = "bar"` will set `type = "col"` and `horizontal = TRUE`.
 #' 
-#' - A shortcut. There are currently two supported shortcuts:
+#' - A shortcut. There are currently three supported shortcuts:
 #' 
-#'   - `"barpercent"`, which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
-#'   - `"linedot"`, which will set `type = "line"` and adds two point geoms using [add_point()]; one with large white dots and one with smaller dots using the colours set in `colour`. This is essentially equal to base \R `plot(..., type = "b")` but with closed shapes.
+#'   - `"barpercent"` (short: `"bp"`), which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
+#'   - `"linedot"` (short: `"ld"`), which will set `type = "line"` and adds two point geoms using [add_point()]; one with large white dots and one with smaller dots using the colours set in `colour`. This is essentially equal to base \R `plot(..., type = "b")` but with closed shapes.
+#'   - `"dumbbell"` (short: `"d"`), which will set `type = "point"` and `horizontal = TRUE`, and adds a line between the point (using [geom_segment()]). The line colour cannot be changed. This plot type is only possible when the `category` has two distinct values.
 #' 
 #' - Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no x axis or if the length of unique values per x axis item is at least 3, `"point"` if both the y and x axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* add a geom.
 #' @param title,subtitle,caption,tag,x.title,y.title,category.title,legend.title,y_secondary.title a title to use. This can be:
@@ -149,9 +150,14 @@
 #' @param reverse a [logical] to reverse the *values* of `category`. Use `legend.reverse` to reverse the *legend* of `category`.
 #' @param smooth a [logical] to add a smooth. In histograms, this will add the density count as an overlaying line (default: `TRUE`). In all other cases, a smooth will be added using [`geom_smooth()`][ggplot2::geom_smooth()] (default: `FALSE`).
 #' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.linewidth,smooth.linetype settings for `smooth`
-#' @param size size of the geom. Defaults to `2` for geoms [point][ggplot2::geom_point()] and [jitter][ggplot2::geom_jitter()], and to `0.75` otherwise.
+#' @param size size of the geom. Defaults to `2` for geoms [point][ggplot2::geom_point()] and [jitter][ggplot2::geom_jitter()], `5` for a dumbbell plots (using `type = "dumbbell"`), and to `0.75` otherwise.
 #' @param linetype linetype of the geom, only suitable for geoms that draw lines. Defaults to 1.
-#' @param linewidth linewidth of the geom, only suitable for geoms that draw lines. Defaults to `0.5` for geoms that have no area (such as [line][ggplot2::geom_line()]), to `0.1` for [sf][ggplot2::geom_sf()], to `0.5` for [boxplot][ggplot2::geom_boxplot()]/[violin][ggplot2::geom_violin()], to `0.25` for geoms that are continous and have fills (such as [area][ggplot2::geom_area()]), and to `0.5` otherwise (such as [histogram][ggplot2::geom_histogram()] and [area][ggplot2::geom_area()]).
+#' @param linewidth linewidth of the geom, only suitable for geoms that draw lines. Defaults to:
+#' - `0.5` for geoms that have no area (such as [line][ggplot2::geom_line()]), and for geoms [boxplot][ggplot2::geom_boxplot()]/[violin][ggplot2::geom_violin()]
+#' - `0.1` for [sf][ggplot2::geom_sf()]
+#' - `0.25` for geoms that are continous and have fills (such as [area][ggplot2::geom_area()])
+#' - `1.0` for dumbbell plots (using `type = "dumbbell"`)
+#' - `0.5` otherwise (such as [histogram][ggplot2::geom_histogram()] and [area][ggplot2::geom_area()])
 #' @param binwidth width of bins (only useful for `geom = "histogram"`), can be specified as a numeric value or as a function that calculates width from `x`, see [`geom_histogram()`][ggplot2::geom_histogram()]. It defaults to approx. `diff(range(x))` divided by 12 to 22 based on the data.
 #' @param width width of the geom. Defaults to `0.75` for geoms [boxplot][ggplot2::geom_boxplot()], [violin][ggplot2::geom_violin()] and [jitter][ggplot2::geom_jitter()], and to `0.5` otherwise.
 #' @param jitter_seed seed (randomisation factor) to be set when using `type = "jitter"`
@@ -284,6 +290,10 @@
 #' admitted_patients |> 
 #'   plot2(hospital, n(), gender,
 #'         stackedpercent = TRUE)
+#' 
+#' # two categories might benefit from a dumbbell plot:
+#' admitted_patients |> 
+#'   plot2(hospital, median(age), gender, type = "dumbbell")
 #'  
 #' # sort on any direction:
 #' admitted_patients |> 
@@ -554,9 +564,9 @@ plot2 <- function(.data,
   }
 }
 
-#' @importFrom dplyr mutate vars group_by across summarise select bind_cols
+#' @importFrom dplyr mutate vars group_by across summarise select bind_cols filter
 #' @importFrom forcats fct_relabel
-#' @importFrom ggplot2 ggplot aes labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build after_stat scale_fill_continuous scale_fill_date scale_fill_datetime scale_fill_continuous scale_colour_date scale_colour_datetime scale_colour_continuous
+#' @importFrom ggplot2 ggplot aes labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build after_stat scale_fill_continuous scale_fill_date scale_fill_datetime scale_fill_continuous scale_colour_date scale_colour_datetime scale_colour_continuous geom_segment
 #' @importFrom tidyr pivot_longer
 #' @importFrom certestyle format2 font_magenta font_black font_blue
 plot2_exec <- function(.data,
@@ -750,10 +760,16 @@ plot2_exec <- function(.data,
       type <- "col"
       horizontal <- TRUE
     }
-    if (type %like% "^(linedot|linepoint|dotline|pointline|ld|lp|dl|pl)s?$") {
+    if (type %like% "^(line.*dot|line.*point|dot.*line|point.*line|ld|lp|dl|pl)s?$") {
       # set line for here, dots will be added in the end
       type_backup <- "linedot"
       type <- "line"
+    }
+    if (type %like% "^(dumbb?ell?|d|db)$") {
+      # set point for here, segments will be added in the end
+      type_backup <- "dumbbell"
+      type <- "point"
+      horizontal <- TRUE
     }
     if (type %like% "bar") {
       type <- "col"
@@ -1007,9 +1023,9 @@ plot2_exec <- function(.data,
   }
   
   # set default size and width ----
-  size <- validate_size(size = size, type = type)
+  size <- validate_size(size = size, type = type, type_backup = type_backup)
   width <- validate_width(width = width, type = type)
-  linewidth <- validate_linewidth(linewidth = linewidth, type = type)
+  linewidth <- validate_linewidth(linewidth = linewidth, type = type, type_backup = type_backup)
   
   # generate colour vectors ----
   
@@ -1521,6 +1537,48 @@ plot2_exec <- function(.data,
     p <- p + coord_flip()
   }
   
+  # additional geoms for certain types ----
+  # linedot
+  if (type_backup == "linedot") {
+    p <- p |> 
+      add_point(colour = ifelse(!is.null(background), background, "white"), size = size * 5) |> 
+      add_point(size = size * 2)
+  }
+  # dumbbell
+  if (type_backup == "dumbbell") {
+    if (!has_category(df) || n_distinct(get_category(df)) != 2) {
+      stop("Dumbbell plots can only be used if the category ",
+           ifelse(has_category(df), paste0("(", get_category_name(df), ") "), "") ,
+           "is set with two distinct values",
+           ifelse(has_category(df), paste0(" - it now has ", digit_to_text(n_distinct(get_category(df))), "."), ""),
+           call. = FALSE)
+    }
+    dumbbell_segment <- df |> 
+      group_by(across(c(
+        # x must get a name to be used in geom_segment(aes(...))
+        x_axis = get_x_name(df),
+        # facet must not be named here so that it will be identical to the current facet name,
+        # which is required to make facets work with dumbbell plots
+        get_facet_name(df))),
+        .drop = FALSE) |>
+      summarise(y_min = suppressWarnings(min(`_var_y`, na.rm = TRUE)),
+                y_max = suppressWarnings(max(`_var_y`, na.rm = TRUE)),
+                .groups = "drop") |> 
+      filter(!is.infinite(abs(y_min)) & !is.infinite(abs(y_max)))
+    
+    p <- p +
+      geom_segment(data = dumbbell_segment,
+                   mapping = aes(x = x_axis, xend = x_axis,
+                                 y = y_min, yend = y_max),
+                   linewidth = linewidth,
+                   linetype = linetype,
+                   colour = "grey80",
+                   inherit.aes = FALSE)
+    # move the segment one layer down, so geom_point will be on top
+    p <- p |> 
+      move_layer(layer = length(p$layers), move = -1)
+  }
+  
   # restore mapping to original names ----
   # this will replace e.g. `_var_x` and `_var_category` in the mapping and remove them from the data
   p <- restore_mapping(p = p,
@@ -1530,13 +1588,6 @@ plot2_exec <- function(.data,
   if (isTRUE(misses_title) && is.null(title)) {
     p <- p + labs(title = validate_title(get_plot_title(p, valid_filename = FALSE),
                                          markdown = isTRUE(markdown), df = df))
-  }
-  
-  # set linedot type if required ----
-  if (type_backup == "linedot") {
-    p <- p |> 
-      add_point(colour = ifelse(!is.null(background), background, "white"), size = size * 5) |> 
-      add_point(size = size * 2)
   }
   
   # return plot ----

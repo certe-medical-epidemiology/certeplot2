@@ -133,8 +133,9 @@ All plotting directions in `plot2()` support tidy evaluation. This means that pr
 ```{r}
 #    this is x <-|    |-> this is y
 mtcars |> plot2(mpg, hp)
-# y can contain multiple variables, and even supports Tidyverse selection helpers:
+# y can contain multiple variables:
 mtcars |> plot2(mpg, c(hp, disp))
+# and even supports tidyverse selection helpers:
 mtcars |> plot2(mpg, everything())
 ```
 
@@ -163,9 +164,6 @@ data.frame(x = rdate(100, min = "2016-01-01", max = "2021-12-31"),
 data.frame(x = rdate(100, min = "2021-01-01", max = "2021-05-31"),
            y = rnorm(100, mean = 10)) |> 
   plot2(type = "p")
-data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
-           y = rnorm(100, mean = 10)) |> 
-  plot2(type = "p")
 ```
 
 If you have crowded x labels, it's easy to turn them:
@@ -181,7 +179,7 @@ data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
            y = rnorm(100, mean = 10)) |> 
   plot2(x.date_breaks = "1 day",
         x.date_labels = "ddd d mmm yyyy",
-        x.lbl_angle = 90, # <- only requires this argument
+        x.lbl_angle = 90,        # <- only requires this argument
         type = "p",
         title = "... into this:")
 ```
@@ -204,11 +202,6 @@ library(AMR)
 example_isolates$mo |> 
   mo_name() |> 
   table() |>
-  plot2(type = "barpercent")
-
-example_isolates$mo |> 
-  mo_name() |> 
-  table() |>
   plot2(type = "barpercent",
         x.lbl_taxonomy = TRUE,
         x.title = "Microorganism")
@@ -226,7 +219,7 @@ The scale for the `category` is also something that can be determined automatica
 character_z <- data.frame(x = rep(letters[1:5], 10),
                           y = rnorm(50, 5),
                           # these are 5 letters:
-                          z = rep(letters[6:10], 10),
+                          z = rep(c("K", "L"), 25),
                           stringsAsFactors = FALSE)
 head(character_z)
 
@@ -258,8 +251,35 @@ numeric_z |>
     plot2(x, y, z,
           type = "jitter",
           colour = c("red", "green", "blue"),
-          category.midpoint = 2.5,
-          category.title = "*New* midpoint!")
+          category.midpoint = 6,
+          category.title = "*New* midpoint for green!")
+```
+
+### Dumbbell plots for comparing two categories
+
+When comparing two categories with single values without setting a type, `plot2()` suggests that a dumbbell plot might be a better solution:
+
+```{r}
+character_z |> 
+    plot2(x, min(y), z)
+character_z |> 
+    plot2(x, min(y), z, type = "dumbbell")
+```
+
+Another example showing the potential of dumbbell plots:
+
+```{r, fig.height = 5}
+admitted_patients |>
+  plot2(x = age_group,
+        y = n_distinct(patient_id),
+        category = ward,
+        facet = ifelse(gender == "M", "Males", "Females"),
+        type = "d",
+        # this is all just for styling:
+        facet.nrow = 2,
+        facet.fixed_y = TRUE,
+        x.title = "Age Group",
+        y.title = "Number of Unique Patients During Study")
 ```
 
 ### Focus on one category
@@ -272,22 +292,16 @@ numeric_z |>
         y = mean(z), 
         category = x,
         type = "l",
-        zoom = TRUE)
+        zoom = TRUE,
+        colour = "viridis")
 numeric_z |>
   plot2(x = y,
         y = mean(z), 
         category = x,
         type = "l",
         zoom = TRUE,
+        colour = "viridis",
         category.focus = "b")
-numeric_z |>
-  plot2(x = y,
-        y = mean(z), 
-        category = x,
-        type = "l",
-        zoom = TRUE,
-        category.focus = "b",
-        colour = "red")
 ```
 
 This input for `category.focus` can be the name of the value (in this case `"b"`) or the index number (in this case `2`).
@@ -298,7 +312,7 @@ The `facet` plotting direction splits the plot into multiple plots. Several sett
 
 For controlling the `y` axis, `facet.repeat_lbls_y` (defaults to `TRUE`) makes sure that all plots have their own y axis (also notice that the `y` argument is set to the number of rows with `n()`):
 
-```{r}
+```{r, fig.height = 5}
 admitted_patients
 
 admitted_patients |>
@@ -312,7 +326,7 @@ admitted_patients |>
 
 You can omit repeated x labels as well with `facet.repeat_lbls_x`, and let all y axes be the same with `facet.fixed_y`:
 
-```{r}
+```{r, fig.height = 5}
 admitted_patients |>
   plot2(x = age_group, y = n(), facet = hospital,
         facet.repeat_lbls_x = FALSE,
@@ -434,7 +448,7 @@ plots <- function() {
 
 Default:
 
-```{r, echo = FALSE, fig.height = 7}
+```{r, echo = FALSE, message = FALSE, fig.height = 7.5, fig.width = 7}
 options(plot2.colour = NULL, plot2.colour_sf_fill = NULL)
 plots()
 ```
@@ -445,7 +459,7 @@ Using any [viridis colour palette](https://sjmgarnier.github.io/viridis/articles
 options(plot2.colour = "viridis")
 ```
 
-```{r, echo = FALSE, fig.height = 7}
+```{r, echo = FALSE, message = FALSE, fig.height = 7.5, fig.width = 7}
 plots()
 ```
 
@@ -453,7 +467,15 @@ plots()
 options(plot2.colour = "magma")
 ```
 
-```{r, echo = FALSE, fig.height = 7}
+```{r, echo = FALSE, message = FALSE, fig.height = 7.5, fig.width = 7}
+plots()
+```
+
+```{r}
+options(plot2.colour = "certe")
+```
+
+```{r, echo = FALSE, message = FALSE, fig.height = 7.5, fig.width = 7}
 plots()
 ```
 
@@ -519,16 +541,13 @@ admitted_patients |>
   geom_col(position = "dodge",
            width = 0.5) +
   # this part is just for styling:
-  scale_fill_manual(values = c("ICU" = "#01617E",
-                               "Non-ICU" = "#8B9934"),
-                    name = "") +
   scale_y_continuous(expand = expansion(mult = c(NA, 0.25)),
                      breaks = seq(0, 100, 10),
                      labels = function(x) paste(x, "yrs")) +
   theme_minimal2(legend.position = "top")
 ```
 
-Now, we had to use 14 functions to get the plot - while defining all variables twice - written in 17 lines of code using the same common code style as above. Even the bare functional part (until `geom_col()`) took 7 functions. Aside from it being a lot of redundant code, using all of these functions requires users to know them *and* their arguments. How many users would know `expansion()`, or that colours can be named in `scale_fill_manual()`? The obligations on the user side are quite insane.
+Now, we had to use 13 functions to get the plot - while defining all variables twice - written in 14 lines of code using the same common code style as above. Even the bare functional part (until `geom_col()`) took 7 functions. Aside from it being a lot of redundant code, using all of these functions requires users to know them *and* their arguments. How many users would know `expansion()` to add some extra margin to an axis? The obligations on the user side are quite insane.
 
 And why is 2014 still so wide?? Look at it like this: if you know the solution, you're way deeper into `ggplot2` than should ever be necessary for an R package. 
 
@@ -557,7 +576,7 @@ mtcars |>
 
 # Plotting geometries (`sf` objects)
 
-Objects of class `sf` (*simple feature*) are treated specially by the `ggplot2` package, although `plot2()` handles these objects like any other data set. 
+Objects of class `sf` (*simple feature*) are treated specially by the `ggplot2` package, although `plot2()` handles these objects like any other data set.
 
 The included `netherlands` data set is such an `sf` object:
 
@@ -571,6 +590,7 @@ These objects can be used with `plot2()` in the same way as any other data set -
 ```{r}
 plot2(netherlands)
 plot2(netherlands,
+      # this used the full viridis colour set:
       colour_fill = "viridis",
       # datalabels support tidy evaluation too:
       datalabels = paste0(province, "\n", round(area_km2)))
@@ -579,21 +599,30 @@ plot2(netherlands,
 Use the R option Use `plot2.colour_sf_fill` with a single colour to set one specific colour for sf plots:
 
 ```{r}
-# this uses the whole viridis colour scale:
-options(plot2.colour_sf_fill = "viridis")
-plot2(netherlands)
-# but this uses only the first viridis colour:
-options(plot2.colour_sf_fill = colourpicker("viridis", length = 1))
-plot2(netherlands)
+plot2(netherlands,
+      # but this uses only the first viridis colour:
+      colour_fill = colourpicker("viridis", length = 1),
+      datalabels = paste0(province, "\n", round(area_km2)))
 ```
 
 
 # Support for any font, including all Google Fonts
 
-Any installed font and any of the [over 1400 Google Fonts](https://fonts.google.com) is supported in `plot2()`. Missing fonts will be downloaded automatically and the required DPI will be set automatically as well, even in R Markdown such as this page:
+Any installed font and all of the [over 1400 Google Fonts](https://fonts.google.com) are supported in `plot2()`. Missing fonts will be downloaded automatically and the required DPI will be set automatically as well, even in R Markdown such as this page:
 
 ```{r}
 mtcars |>
   plot2(mpg, hp, font = "Rock Salt",
-        title = "This plot uses a Google Font")
+        title = "This plot uses a Google Font",
+        text_factor = 1.5)
+iris |>
+  plot2(x = Sepal.Length,
+        x.limits = c(4, 8),
+        y = Sepal.Width,
+        category = Petal.Length,
+        facet = Petal.Width |> cut(0:3),
+        facet.repeat_lbls_y = FALSE,
+        title = "Flower Species of the 'iris' Data Set",
+        font = "Send Flowers",
+        text_factor = 1.5)
 ```

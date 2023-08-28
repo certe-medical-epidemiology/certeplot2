@@ -23,16 +23,16 @@ iris |>
 admitted_patients |>
   plot2(age_group, n_distinct(patient_id), ward, gender)
 
-p <- plot2(mtcars, title = "Plotting **mpg** vs. **cyl**!")
-get_plot_title(p)
+without_title <- plot2(mtcars)
+with_title <- plot2(mtcars, title = "Plotting **mpg** vs. **cyl**!")
 
-get_plot_title(p, valid_filename = FALSE)
-
-p <- plot2(mtcars)
 # default is a guess:
-get_plot_title(p)
+get_plot_title(without_title)
+get_plot_title(without_title, valid_filename = FALSE)
+get_plot_title(with_title)
+get_plot_title(with_title, valid_filename = FALSE)
 
-# unless 'default' is set:
-get_plot_title(p, default = NA)
-get_plot_title(p, default = "title")
+# unless 'default' is set (only affects plots without title):
+get_plot_title(without_title, default = "title")
+get_plot_title(with_title, default = "title")
 }
