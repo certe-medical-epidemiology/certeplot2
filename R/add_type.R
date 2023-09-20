@@ -105,6 +105,7 @@ add_type <- function(plot, type = NULL, mapping = aes(), ...) {
 
 #' @rdname add_type
 #' @param x,y aesthetic arguments
+#' @param geom_type type of line, can be "vline" or "hline" to force the type of line
 #' @param colour,colour_fill colour of the line or column, will be evaluated with [certestyle::colourpicker()]. If `colour_fill` is missing but `colour` is given, `colour_fill` will inherit the colour set with `colour`.
 #' @param inherit.aes a [logical] to indicate whether the default aesthetics should be inherited, rather than combining with them
 #' @importFrom dplyr mutate
@@ -115,7 +116,7 @@ add_type <- function(plot, type = NULL, mapping = aes(), ...) {
 #' * [`geom_vline()`][ggplot2::geom_vline()] if only `x` is provided and `x` contains one unique value;
 #' * [`geom_line()`][ggplot2::geom_line()] in all other cases.
 #' @export
-add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw", linetype, linewidth, ..., inherit.aes = TRUE) {
+add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw", geom_type = NULL, linetype, linewidth, ..., inherit.aes = TRUE) {
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
   }
@@ -161,17 +162,21 @@ add_line <- function(plot, y = NULL, x = NULL, group = 1, colour = "certeblauw",
     params <- c(params, list(...))
   }
   
-  if (is.null(values_x) && length(unique(values_y)) == 1) {
+  if (identical(geom_type, "hline") || (is.null(geom_type) && is.null(values_x) && length(unique(values_y)) == 1)) {
     # check if y are all 1 value, then make it hline
-    plot2_message("Adding type ", font_blue("hline"))
+    if (is.null(geom_type)) {
+      plot2_message("Adding type ", font_blue("hline"))
+    }
     add_type(plot = plot,
              type = "hline",
              mapping = update_aes(mapping, y = NULL, yintercept = mapping$y),
              utils::modifyList(params, list(inherit.aes = NULL)))
     
-  } else if (is.null(values_y) && length(unique(values_x)) == 1) {
+  } else if (identical(geom_type, "vline") || (is.null(geom_type) && is.null(values_y) && length(unique(values_x)) == 1)) {
     # check if x are all 1 value, then make it vline
-    plot2_message("Adding type ", font_blue("vline"))
+    if (is.null(geom_type)) {
+      plot2_message("Adding type ", font_blue("vline"))
+    }
     add_type(plot = plot,
              type = "vline",
              mapping = update_aes(mapping, x = NULL, xintercept = mapping$x),

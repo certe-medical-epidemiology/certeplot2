@@ -341,8 +341,10 @@ has_datalabels <- function(df) {
   "_var_datalabels" %in% colnames(df)
 }
 
+#' @importFrom dplyr n_distinct
 determine_date_breaks_labels <- function(x) {
   diff_range <- diff(range(x, na.rm = TRUE))
+  unique_years <- suppressWarnings(n_distinct(format(x[!is.na(x)], "%Y")))
   if (diff_range < 30) {
     # 1 month
     out <- list(breaks = "1 day",
@@ -355,10 +357,14 @@ determine_date_breaks_labels <- function(x) {
     # half year
     out <- list(breaks = "2 weeks",
                 labels = "d mmm")
-  } else if (diff_range < 365) {
-    # years
+  } else if (diff_range < 365 && unique_years == 1) {
+    # year within 1 year
     out <- list(breaks = "1 month",
-                labels = "mmmm yyyy")
+                labels = "mmm")
+  } else if (diff_range < 365) {
+    # year crossing 1 Jan
+    out <- list(breaks = "1 month",
+                labels = "mmm yyyy")
   } else if (diff_range < 730) {
     # 2 years
     out <- list(breaks = "3 months",

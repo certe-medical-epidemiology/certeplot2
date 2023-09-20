@@ -192,6 +192,30 @@ knitr::include_graphics("x_elements.png")
 
 This means that users no longer need to memorise many `ggplot2` functions *and* their arguments to actually make one tiny adjustment. So, this 'library' with all settings and options is constantly available for all who code, lowering the bar for beginners as well.
 
+### Dates on `x`
+
+Besides using `x.date_breaks` and `x.date_labels`, the x axis has an option `x.date_remove_years` that can be set to `TRUE` to remove years from the `x` values. This allows to categorise by year:
+
+```{r}
+df <- data.frame(date = seq(as.Date("2021-01-01"), as.Date("2023-12-31"), "1 day"),
+                 value = c(rep(1, 365), rep(2, 365), rep(3, 365)))
+# with keeping years
+df |>
+  plot2(date, value,
+        type = "line",
+        category = format(date, "%Y"),
+        category.title = "year",
+        linewidth = 2)
+# with removing years
+df |>
+  plot2(date, value,
+        type = "line",
+        category = format(date, "%Y"),
+        category.title = "year",
+        linewidth = 2,
+        x.date_remove_years = TRUE)
+```
+
 ### Microbiological taxonomy
 
 Aside from the argument `x.lbl_italic` (which transforms all x labels to italics), `plot2()` also provides a wrapper around the `AMR` package for antimicrobial resistance (AMR) data analysis. If taxonomic names appear on the x axis, they can be transformed to italics using the scientific convention:

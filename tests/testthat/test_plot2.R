@@ -302,6 +302,18 @@ test_that("x scale works", {
                    plotdata2 |> plot2(facet = z, x.drop = FALSE) |> get_range_x())
   expect_identical(plotdata2 |> plot2(facet = z, facet.fixed_x = FALSE) |> get_range_x(),
                    plotdata2 |> plot2(facet = z, x.drop = TRUE) |> get_range_x())
+  
+  # removed years on x axis
+  expect_s3_class(
+    data.frame(date = seq(as.Date("2021-01-01"), as.Date("2023-12-31"), "1 day"),
+               value = c(rep(1, 365), rep(2, 365), rep(3, 365))) |>
+      plot2(date, value,
+            type = "line",
+            category = format(date, "%Y"),
+            category.title = "year",
+            linewidth = 2,
+            x.date_remove_years = TRUE),
+    "gg")
 })
 
 test_that("y scale works", {
@@ -483,7 +495,7 @@ test_that("date labels work", {
   expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 183 - 1)),
                list(breaks = "2 weeks", labels = "d mmm"))
   expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 365 - 1)),
-               list(breaks = "1 month", labels = "mmmm yyyy"))
+               list(breaks = "1 month", labels = "mmm yyyy"))
   expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 730 - 1)),
                list(breaks = "3 months", labels = "mmm yyyy"))
   expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 1095 - 1)),

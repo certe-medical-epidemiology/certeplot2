@@ -39,6 +39,7 @@ plot2(
   facet.relative = FALSE,
   x.date_breaks = NULL,
   x.date_labels = NULL,
+  x.date_remove_years = FALSE,
   category.focus = NULL,
   colour = getOption("plot2.colour", "ggplot2"),
   colour_fill = NULL,
@@ -223,6 +224,8 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 \item{x.date_breaks}{breaks to use when the x axis contains dates, will be determined automatically if left blank. This accepts values such as \code{"1 day"} and \code{"2 years"}.}
 
 \item{x.date_labels}{labels to use when the x axis contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as \code{"d mmmm yyyy"}.}
+
+\item{x.date_remove_years}{a \link{logical} to indicate whether the years of all \code{x} values must be removed, i.e., set \href{https://en.wikipedia.org/wiki/Unix_time}{to 1970}. This allows to plot years on the \code{category} while maintaining a date range on \code{x}.}
 
 \item{category.focus}{a value of \code{category} that should be highlighted, meaning that all other values in \code{category} will be greyed out. This can also be a numeric value between 1 and the length of unique values of \code{category}, e.g. \code{category.focus = 2} to focus on the second legend item.}
 
@@ -411,7 +414,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 139 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 140 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 options(plot2.colour = NULL, plot2.colour_sf_fill = NULL)

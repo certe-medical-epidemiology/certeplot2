@@ -90,6 +90,7 @@
 #' @param facet.position,facet.fill,facet.bold,facet.italic,facet.size,facet.margin,facet.repeat_lbls_x,facet.repeat_lbls_y,facet.drop,facet.nrow,facet.relative additional settings for the plotting direction `facet`
 #' @param x.date_breaks breaks to use when the x axis contains dates, will be determined automatically if left blank. This accepts values such as `"1 day"` and `"2 years"`.
 #' @param x.date_labels labels to use when the x axis contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as `"d mmmm yyyy"`.
+#' @param x.date_remove_years a [logical] to indicate whether the years of all `x` values must be removed, i.e., set [to 1970](https://en.wikipedia.org/wiki/Unix_time). This allows to plot years on the `category` while maintaining a date range on `x`.
 #' @param category.focus a value of `category` that should be highlighted, meaning that all other values in `category` will be greyed out. This can also be a numeric value between 1 and the length of unique values of `category`, e.g. `category.focus = 2` to focus on the second legend item.
 #' @param colour colour(s) to set, will be evaluated with [`colourpicker()`][certestyle::colourpicker()] if set. This can also be one of the viridis colours with automatic implementation for any plot: `"viridis"`, `"magma"`, `"inferno"`, `"plasma"`, `"cividis"`, `"rocket"`, `"mako"` or `"turbo"`. Also, this can also be a named vector to match values of `category`, see *Examples*. Using a named vector can also be used to manually sort the values of `category`.
 #' @param colour_fill colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
@@ -403,6 +404,7 @@ plot2 <- function(.data,
                   facet.relative = FALSE,
                   x.date_breaks = NULL,
                   x.date_labels = NULL,
+                  x.date_remove_years = FALSE,
                   category.focus = NULL,
                   colour = getOption("plot2.colour", "ggplot2"),
                   colour_fill = NULL,
@@ -603,6 +605,7 @@ plot2_exec <- function(.data,
                        facet.relative,
                        x.date_breaks,
                        x.date_labels,
+                       x.date_remove_years,
                        category.focus,
                        colour,
                        colour_fill,
@@ -813,7 +816,6 @@ plot2_exec <- function(.data,
     big.mark <- " "
   }
   
-  
   # prepare data ----
   # IMPORTANT: in this part, the data for mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
   # this is done for convenience - this is restored before returning the `ggplot` object in the end
@@ -945,6 +947,7 @@ plot2_exec <- function(.data,
                   x.character = x.character,
                   x.drop = x.drop,
                   x.mic = x.mic,
+                  x.date_remove_years = x.date_remove_years,
                   category.max_items = category.max_items,
                   category.max_txt = category.max_txt,
                   category.character = category.character,

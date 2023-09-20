@@ -17,6 +17,7 @@ add_line(
   x = NULL,
   group = 1,
   colour = "certeblauw",
+  geom_type = NULL,
   linetype,
   linewidth,
   ...,
@@ -87,6 +88,8 @@ add_sf(
 \item{group, linetype, linewidth, shape, size, width, ...}{arguments passed on to the geom}
 
 \item{colour, colour_fill}{colour of the line or column, will be evaluated with \code{\link[certestyle:colourpicker]{certestyle::colourpicker()}}. If \code{colour_fill} is missing but \code{colour} is given, \code{colour_fill} will inherit the colour set with \code{colour}.}
+
+\item{geom_type}{type of line, can be "vline" or "hline" to force the type of line}
 
 \item{inherit.aes}{a \link{logical} to indicate whether the default aesthetics should be inherited, rather than combining with them}
 

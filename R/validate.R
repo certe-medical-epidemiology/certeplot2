@@ -517,6 +517,27 @@ validate_data <- function(df,
       filter(!is.na(`_var_y`))
   }
   
+  # check if years on x should be removed
+  if (is.null(dots$x.date_remove_years) && 
+      has_category(df) &&
+      has_x(df) &&
+      inherits(get_x(df), c("Date", "POSIXt")) &&
+      all(format(get_x(df), "%Y") == get_category(df), na.rm = TRUE)) {
+    plot2_message("Assuming ", font_blue("x.date_remove_years = TRUE"),
+                  " since ", font_blue("category"), " contains the years of ", font_blue(get_x_name(df)))
+    dots$x.date_remove_years <- TRUE
+  }
+  if (isTRUE(dots$x.date_remove_years) && has_x(df) && inherits(get_x(df), c("Date", "POSIXt"))) {
+    if (inherits(get_x(df), "Date")) {
+      df <- df |>
+        mutate(`_var_x` = as.Date(paste0("1970", get_x(df) |> format() |> substr(5, 10))))
+    } else {
+      df <- df |>
+        mutate(`_var_x` = as.POSIXct(paste0("1970", get_x(df) |> format() |> substr(5, 99))))
+    }
+    df[, get_x_name(df)] <- df$`_var_x`
+  }
+  
   if (has_x(df) && isTRUE(dots$x.mic)) {
     if (!"AMR" %in% rownames(utils::installed.packages())) {
       stop("x.mic requires the AMR package to be installed", call. = FALSE)
@@ -771,7 +792,8 @@ validate_x_scale <- function(values,
                      date_labels = format_datetime(x.date_labels),
                      expand = x.expand,
                      limits = x.limits, 
-                     labels = if (is.null(x.labels)) waiver() else x.labels)
+                     labels = if (is.null(x.labels)) waiver() else x.labels
+                     )
   } else {
     if (!is.numeric(values)) {
       scale_x_discrete(position = x.position,
@@ -784,9 +806,9 @@ validate_x_scale <- function(values,
       if (is.null(x.limits)) {
         x.limits <- c(ifelse(min(values) < 0, NA_real_, 0), NA_real_)
       }
-      if (x.trans != "identity") {
+      if (tryCatch(x.trans != "identity", error = function(x) FALSE)) {
         # some transformations, such as log, do not allow 0
-        x.limits[x.limits == 0] <- NA_real_
+        x.limits[x.limits == 0] <- NA_real_ 
       }
       if (is.null(x.labels)) {
         x.labels <- function(x, dec_mark = decimal.mark, big_mark = big.mark, ...) {

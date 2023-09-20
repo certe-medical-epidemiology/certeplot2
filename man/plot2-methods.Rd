@@ -49,6 +49,7 @@
   facet.relative = FALSE,
   x.date_breaks = NULL,
   x.date_labels = NULL,
+  x.date_remove_years = FALSE,
   category.focus = NULL,
   colour = getOption("plot2.colour", "ggplot2"),
   colour_fill = NULL,
@@ -192,6 +193,7 @@
   facet.relative = FALSE,
   x.date_breaks = NULL,
   x.date_labels = NULL,
+  x.date_remove_years = FALSE,
   category.focus = NULL,
   colour = getOption("plot2.colour", "ggplot2"),
   colour_fill = NULL,
@@ -335,6 +337,7 @@
   facet.relative = FALSE,
   x.date_breaks = NULL,
   x.date_labels = NULL,
+  x.date_remove_years = FALSE,
   category.focus = NULL,
   colour = getOption("plot2.colour", "ggplot2"),
   colour_fill = NULL,
@@ -478,6 +481,7 @@
   facet.relative = FALSE,
   x.date_breaks = NULL,
   x.date_labels = NULL,
+  x.date_remove_years = FALSE,
   category.focus = NULL,
   colour = getOption("plot2.colour_sf", "grey50"),
   colour_fill = getOption("plot2.colour_sf_fill", getOption("plot2.colour", "ggplot2")),
@@ -625,6 +629,7 @@
   facet.relative = FALSE,
   x.date_breaks = NULL,
   x.date_labels = NULL,
+  x.date_remove_years = FALSE,
   category.focus = NULL,
   colour = getOption("plot2.colour", "ggplot2"),
   colour_fill = NULL,
@@ -768,6 +773,7 @@
   facet.relative = FALSE,
   x.date_breaks = NULL,
   x.date_labels = NULL,
+  x.date_remove_years = FALSE,
   category.focus = NULL,
   colour = getOption("plot2.colour", "ggplot2"),
   colour_fill = NULL,
@@ -911,6 +917,7 @@
   facet.relative = FALSE,
   x.date_breaks = NULL,
   x.date_labels = NULL,
+  x.date_remove_years = FALSE,
   category.focus = NULL,
   colour = "certe_sir2",
   colour_fill = NULL,
@@ -1057,6 +1064,7 @@
   facet.relative = FALSE,
   x.date_breaks = NULL,
   x.date_labels = NULL,
+  x.date_remove_years = FALSE,
   category.focus = NULL,
   colour = getOption("plot2.colour", "ggplot2"),
   colour_fill = NULL,
@@ -1200,6 +1208,7 @@
   facet.relative = FALSE,
   x.date_breaks = NULL,
   x.date_labels = NULL,
+  x.date_remove_years = FALSE,
   category.focus = NULL,
   colour = "certe_sir2",
   colour_fill = NULL,
@@ -1343,6 +1352,7 @@
   facet.relative = FALSE,
   x.date_breaks = NULL,
   x.date_labels = NULL,
+  x.date_remove_years = FALSE,
   category.focus = NULL,
   colour = colourpicker(c(Observation = "grey75", `Rule 1` = "certeblauw", `Rule 2` =
     "certegroen", `Rule 3` = "certeroze", `Rule 4` = "certegeel", `Rule 5` = "certelila",
@@ -1529,6 +1539,8 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 \item{x.date_breaks}{breaks to use when the x axis contains dates, will be determined automatically if left blank. This accepts values such as \code{"1 day"} and \code{"2 years"}.}
 
 \item{x.date_labels}{labels to use when the x axis contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as \code{"d mmmm yyyy"}.}
+
+\item{x.date_remove_years}{a \link{logical} to indicate whether the years of all \code{x} values must be removed, i.e., set \href{https://en.wikipedia.org/wiki/Unix_time}{to 1970}. This allows to plot years on the \code{category} while maintaining a date range on \code{x}.}
 
 \item{category.focus}{a value of \code{category} that should be highlighted, meaning that all other values in \code{category} will be greyed out. This can also be a numeric value between 1 and the length of unique values of \code{category}, e.g. \code{category.focus = 2} to focus on the second legend item.}
 
