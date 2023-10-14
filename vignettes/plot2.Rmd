@@ -647,5 +647,5 @@ iris |>
         facet.repeat_lbls_y = FALSE,
         title = "Flower Species of the 'iris' Data Set",
         font = "Send Flowers",
-        text_factor = 1.5)
+        text_factor = 3)
 ```

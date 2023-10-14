@@ -597,6 +597,29 @@ validate_data <- function(df,
     df[, get_facet_name(df)] <- df$`_var_facet` # required to keep sorting after summarising
   }
   
+  # very last part before setting max items - everything has been transformed as needed
+  # are the data distinct, were tidyverse language selectors used in the right way?
+  type_validated <- suppressMessages(validate_type(dots$type, df))
+  if ((!geom_is_continuous(type_validated) || geom_is_line_or_area(type_validated)) &&
+      !is.null(dots$summarise_function) &&
+      (df |> select(starts_with("_var")) |> distinct() |> nrow()) < nrow(df)) {
+    y_name <- get_y_name(df)
+    df <- df |> 
+      group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df),
+                        matches("_var_(x|category|facet)")))) |> 
+      summarise(`_var_y` = dots$summarise_function(`_var_y`),
+                .groups = "drop")
+    df[, y_name] <- df$`_var_y`
+    
+    plot2_warning("Values in ", font_blue("y"), " were not summarised, now using ",
+                  font_blue(paste0("y = ", dots$summarise_fn_name, "(", get_y_name(df), ")")), " since ",
+                  font_blue(paste0("summarise_function = ", dots$summarise_fn_name)), " was set.\n",
+                  "  When using a transformation function on ", font_blue("x"), 
+                  ifelse(has_category(df), paste0(" or ", font_blue("category")), ""),
+                  ifelse(has_facet(df), paste0(" or ", font_blue("facet")), ""),
+                  ", also use a summarising function on ", font_blue("y"), ".")
+  }
+  
   if (type != "geom_sf") {
     # apply limitations (have to been after sorting, e.g. on frequency)
     df <- set_max_items(df = df,
@@ -622,29 +645,6 @@ validate_data <- function(df,
       df <- df |> 
         arrange(across(`_var_x`))
     }
-  }
-  
-  # very last part - everything has been transformed as needed
-  # are the data distinct, were tidyverse language selectors used in the right way?
-  type_validated <- suppressMessages(validate_type(dots$type, df))
-  if ((!geom_is_continuous(type_validated) || geom_is_line_or_area(type_validated)) &&
-      !is.null(dots$summarise_function) &&
-      (df |> select(starts_with("_var")) |> distinct() |> nrow()) < nrow(df)) {
-    y_name <- get_y_name(df)
-    df <- df |> 
-      group_by(across(c(get_x_name(df), get_category_name(df), get_facet_name(df),
-                        matches("_var_(x|category|facet)")))) |> 
-      summarise(`_var_y` = dots$summarise_function(`_var_y`),
-                .groups = "drop")
-    df[, y_name] <- df$`_var_y`
-    
-    plot2_warning("Values in ", font_blue("y"), " were not summarised, now using ",
-                  font_blue(paste0("y = ", dots$summarise_fn_name, "(", get_y_name(df), ")")), " since ",
-                  font_blue(paste0("summarise_function = ", dots$summarise_fn_name)), " was set.\n",
-                  "  When using a transformation function on ", font_blue("x"), 
-                  ifelse(has_category(df), paste0(" or ", font_blue("category")), ""),
-                  ifelse(has_facet(df), paste0(" or ", font_blue("facet")), ""),
-                  ", also use a summarising function on ", font_blue("y"), ".")
   }
   
   # return output
