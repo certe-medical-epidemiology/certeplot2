@@ -90,7 +90,7 @@
 #' @param facet.position,facet.fill,facet.bold,facet.italic,facet.size,facet.margin,facet.repeat_lbls_x,facet.repeat_lbls_y,facet.drop,facet.nrow,facet.relative additional settings for the plotting direction `facet`
 #' @param x.date_breaks breaks to use when the x axis contains dates, will be determined automatically if left blank. This accepts values such as `"1 day"` and `"2 years"`.
 #' @param x.date_labels labels to use when the x axis contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as `"d mmmm yyyy"`.
-#' @param x.date_remove_years a [logical] to indicate whether the years of all `x` values must be removed, i.e., set [to 1970](https://en.wikipedia.org/wiki/Unix_time). This allows to plot years on the `category` while maintaining a date range on `x`.
+#' @param x.date_remove_years a [logical] to indicate whether the years of all `x` values must be unified. This will set the years of all `x` values [to 1970](https://en.wikipedia.org/wiki/Unix_time) if the data does not contain a leap year, and to 1972 otherwise. This allows to plot years on the `category` while maintaining a date range on `x`. The default is `FALSE`, unless `category` contains all years present in `x`.
 #' @param category.focus a value of `category` that should be highlighted, meaning that all other values in `category` will be greyed out. This can also be a numeric value between 1 and the length of unique values of `category`, e.g. `category.focus = 2` to focus on the second legend item.
 #' @param colour colour(s) to set, will be evaluated with [`colourpicker()`][certestyle::colourpicker()] if set. This can also be one of the viridis colours with automatic implementation for any plot: `"viridis"`, `"magma"`, `"inferno"`, `"plasma"`, `"cividis"`, `"rocket"`, `"mako"` or `"turbo"`. Also, this can also be a named vector to match values of `category`, see *Examples*. Using a named vector can also be used to manually sort the values of `category`.
 #' @param colour_fill colour(s) to be used for filling, will be determined automatically if left blank and will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
@@ -404,7 +404,7 @@ plot2 <- function(.data,
                   facet.relative = FALSE,
                   x.date_breaks = NULL,
                   x.date_labels = NULL,
-                  x.date_remove_years = FALSE,
+                  x.date_remove_years = NULL,
                   category.focus = NULL,
                   colour = getOption("plot2.colour", "ggplot2"),
                   colour_fill = NULL,
@@ -516,7 +516,7 @@ plot2 <- function(.data,
   if (tryCatch(NROW(.data) == 0, error = function(e) stop(format_error(e), call. = FALSE))) {
     # check if markdown is required
     markdown <- validate_markdown(markdown, x.title, y.title, c(category.title, legend.title), title, subtitle, tag, caption)
-    plot2_caution("No observations, returning an empty plot")
+    plot2_warning("No observations, returning an empty plot")
     p <- ggplot() +
       validate_theme(theme = theme,
                      type = "",
@@ -716,7 +716,7 @@ plot2_exec <- function(.data,
   dots <- list(...)
   dots_unknown <- names(dots) %unlike% "^_(label[.]|misses[.]|sf.column|summarise_fn_name)"
   if (any(dots_unknown)) {
-    plot2_caution(ifelse(sum(dots_unknown) == 1,
+    plot2_warning(ifelse(sum(dots_unknown) == 1,
                          "This argument is unknown and was ignored: ",
                          "These arguments are unknown and were ignored: "),
                   paste0(font_magenta(names(dots[dots_unknown]), collapse = NULL), collapse = font_black(", ")))
@@ -811,6 +811,7 @@ plot2_exec <- function(.data,
   } else if (!is.function(summarise_function)) {
     stop("'summarise_function' must be a function")
   }
+  dots$`_summarise_fn_name` <- gsub("^base::", "", dots$`_summarise_fn_name`)
   
   if (decimal.mark == big.mark) {
     big.mark <- " "
@@ -836,14 +837,14 @@ plot2_exec <- function(.data,
     # add y (this will end in an ungrouped data.frame)
     { function(.data) {
       suppressWarnings(
-        y_vector <- tryCatch((.data |>
+        y_select <- tryCatch((.data |>
                                 # no tibbles, data.tables, sf, etc. objects:
                                 as.data.frame(stringsAsFactors = FALSE) |> 
                                 select({{ y }})),
                              error = function(e) FALSE)
       )
 
-      has_multiple_cols <- is.data.frame(y_vector) && ncol(y_vector) > 1
+      has_multiple_cols <- is.data.frame(y_select) && ncol(y_select) > 1
       if (isTRUE(has_multiple_cols)) {
         # e.g. for: df |> plot2(y = c(var1, var2))  
         if (has_category(.data)) {
@@ -861,8 +862,8 @@ plot2_exec <- function(.data,
         new_df <- .data |>
           # no tibbles, data.tables, sf, etc. objects:
           as.data.frame(stringsAsFactors = FALSE) |> 
-          bind_cols(y_vector[, colnames(y_vector)[which(!colnames(y_vector) %in% colnames(.data))], drop = FALSE]) |> 
-          pivot_longer(c(colnames(y_vector), -matches("^_var_"), -get_x_name(.data)), names_to = "_var_category", values_to = "_var_y") |>
+          bind_cols(y_select[, colnames(y_select)[which(!colnames(y_select) %in% colnames(.data))], drop = FALSE]) |> 
+          pivot_longer(c(colnames(y_select), -matches("^_var_"), -get_x_name(.data)), names_to = "_var_category", values_to = "_var_y") |>
           # apply summarise_function
           group_by(across(c(get_x_name(.data), get_category_name(.data), get_facet_name(.data),
                             matches("_var_(x|category|facet)")))) |> 
@@ -901,6 +902,7 @@ plot2_exec <- function(.data,
         )
         
         y_precalc <- y_precalc$val # will be NULL if y is missing
+        
         if (length(y_precalc) == 1) {
           # outcome of y is a single calculated value (by using e.g. mean(...) or n_distinct(...)),
           # so calculate it over all groups that are available
@@ -941,6 +943,7 @@ plot2_exec <- function(.data,
                   facet.sort = facet.sort,
                   summarise_function = summarise_function,
                   summarise_fn_name = dots$`_summarise_fn_name`,
+                  misses_summarise_function = misses_summarise_function,
                   horizontal = horizontal,
                   x.max_items = x.max_items,
                   x.max_txt = x.max_txt,
@@ -963,7 +966,7 @@ plot2_exec <- function(.data,
     if (all(get_x(df) %like% "^paste\\(")) {
       # so x has taxonomic values
       if (!is.null(x.labels)) {
-        plot2_caution("Ignoring ", font_blue("x.labels"), " since ", font_blue("x.lbl_taxonomy = TRUE"))
+        plot2_warning("Ignoring ", font_blue("x.labels"), " since ", font_blue("x.lbl_taxonomy = TRUE"))
       }
       x.labels <- function(l) parse(text = l)
     }
@@ -972,7 +975,7 @@ plot2_exec <- function(.data,
   # validate type ----
   type <- validate_type(type = type, df = df) # this will automatically determine the type if is.null(type)
   if (geom_is_line_or_area(type) && type_backup != "linedot" && !is.null(size)) {
-    plot2_caution("'size' has been replaced with 'linewidth' for line/area types, assuming ", font_blue("linewidth = ", size, collapse = NULL))
+    plot2_warning("'size' has been replaced with 'linewidth' for line/area types, assuming ", font_blue("linewidth = ", size, collapse = NULL))
     linewidth <- size
   }
   if (has_y_secondary(df)) {
@@ -1021,7 +1024,7 @@ plot2_exec <- function(.data,
   
   # keep only one of `stacked` and `stackedpercent`
   if (isTRUE(stacked) && isTRUE(stackedpercent)) {
-    plot2_caution("Ignoring ", font_blue("stacked = TRUE"), ", since ", font_blue("stackedpercent = TRUE"))
+    plot2_warning("Ignoring ", font_blue("stacked = TRUE"), ", since ", font_blue("stackedpercent = TRUE"))
     stacked <- FALSE
   }
   
@@ -1044,7 +1047,7 @@ plot2_exec <- function(.data,
     category.focus <- category.focus[1L]
     # check if value is actually in category
     if (!category.focus %in% get_category(df) && !is.numeric(category.focus)) {
-      plot2_caution("Value \"", category.focus, "\" not found in ", font_blue("category"))
+      plot2_warning("Value \"", category.focus, "\" not found in ", font_blue("category"))
     } else {
       category_unique <- sort(unique(get_category(df)))
       if (is.numeric(category.focus)) {

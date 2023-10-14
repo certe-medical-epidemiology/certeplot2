@@ -194,26 +194,25 @@ This means that users no longer need to memorise many `ggplot2` functions *and* 
 
 ### Dates on `x`
 
-Besides using `x.date_breaks` and `x.date_labels`, the x axis has an option `x.date_remove_years` that can be set to `TRUE` to remove years from the `x` values. This allows to categorise by year:
+Besides using `x.date_breaks` and `x.date_labels`, plotting dates of multiple years can be unified on the `x` axis. Use `x.date_remove_years` to remove the years (i.e., set years of the `x` values to 1970). This allows to use a regular date scale on `x`, while categorising on years:
 
 ```{r}
-df <- data.frame(date = seq(as.Date("2021-01-01"), as.Date("2023-12-31"), "1 day"),
-                 value = c(rep(1, 365), rep(2, 365), rep(3, 365)))
-# with keeping years
-df |>
-  plot2(date, value,
-        type = "line",
-        category = format(date, "%Y"),
-        category.title = "year",
-        linewidth = 2)
-# with removing years
-df |>
-  plot2(date, value,
-        type = "line",
-        category = format(date, "%Y"),
-        category.title = "year",
-        linewidth = 2,
-        x.date_remove_years = TRUE)
+library(tibble)
+sample_df <- tibble(x = seq.Date(as.Date("2020-01-01"),
+                                 as.Date("2023-12-31"),
+                                 by = "1 day"),
+                    y = rnorm(length(x),
+                              mean = as.integer(format(x, "%Y")) - 2019,
+                              sd = 0.1))
+sample_df
+sample_df |> 
+  plot2(x, y, type = "l",
+        caption = "With keeping years")
+sample_df |> 
+  plot2(x, y, type = "l",
+        caption = "With removing years",
+        category = format(x, "%Y"),
+        x.date_remove_years = TRUE) # <- not even necessary, will be set automatically
 ```
 
 ### Microbiological taxonomy

@@ -19,7 +19,8 @@
 
 plot2_env <- new.env(hash = FALSE)
 
-globalVariables(c("_new_title",
+globalVariables(c(".",
+                  "_new_title",
                   "_var_category",
                   "_var_datalabels",
                   "_var_facet",
@@ -28,11 +29,17 @@ globalVariables(c("_new_title",
                   "_var_y_secondary",
                   "ab",
                   "antibiotic", 
+                  "cluster",
                   "count",
                   "geom",
+                  "in_scope",
                   "interpretation",
                   "isolates",
+                  "ma_5c",
+                  "ma_5c_pct_outscope",
+                  "max_ma_5c",
                   "mo",
+                  "month_day",
                   "n",
                   "name",
                   "R",
@@ -43,8 +50,10 @@ globalVariables(c("_new_title",
                   "value",
                   "where",
                   "x_axis",
+                  "xmin",
                   "y_max",
-                  "y_min"))
+                  "y_min",
+                  "year"))
 
 #' @importFrom dplyr n
 #' @export
@@ -121,11 +130,19 @@ plot2_message <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") 
       icon <- font_magenta("!")
     }
     msg <- paste0(fn(c(...), collapse = NULL), collapse = "")
-    message(paste(icon, fn(msg)))
+    if (type %in% c("info", "caution")) {
+      message(paste(icon, fn(msg)))
+    } else if (type == "warning") {
+      warning("\n", paste(icon, fn(msg)), call. = FALSE, immediate. = TRUE)
+    }
   }
 }
 
 plot2_caution <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "") {
+  plot2_message(..., print = print, type = "caution")
+}
+
+plot2_warning <- function(..., print = interactive() | Sys.getenv("IN_PKGDOWN") != "") {
   plot2_message(..., print = print, type = "warning")
 }
 
@@ -345,44 +362,60 @@ has_datalabels <- function(df) {
 determine_date_breaks_labels <- function(x) {
   diff_range <- diff(range(x, na.rm = TRUE))
   unique_years <- suppressWarnings(n_distinct(format(x[!is.na(x)], "%Y")))
-  if (diff_range < 30) {
+  n_years <- suppressWarnings(n_distinct(format(seq(from = min(x, na.rm = TRUE), to = max(x, na.rm = TRUE), by = "1 day"), "%Y")))
+  unique_months <- suppressWarnings(n_distinct(format(x[!is.na(x)], "%m")))
+  if (diff_range <= 31 && unique_months == 1) {
     # 1 month
     out <- list(breaks = "1 day",
                 labels = "d mmm")
-  } else if (diff_range < 92) {
+  } else if (diff_range < 100 && unique_months <= 3) {
     # quarter
     out <- list(breaks = "4 days",
                 labels = "d mmm")
-  } else if (diff_range < 183) {
+  } else if (diff_range < 190 && unique_months <= 6) {
     # half year
     out <- list(breaks = "2 weeks",
                 labels = "d mmm")
-  } else if (diff_range < 365 && unique_years == 1) {
+  } else if (diff_range <= 366 && unique_years == 1) {
     # year within 1 year
     out <- list(breaks = "1 month",
                 labels = "mmm")
-  } else if (diff_range < 365) {
-    # year crossing 1 Jan
+  } else if (diff_range <= 366 && unique_years == 2) {
+    # max 1 year, but crossing 1 Jan
     out <- list(breaks = "1 month",
                 labels = "mmm yyyy")
-  } else if (diff_range < 730) {
-    # 2 years
+  } else if (n_years == 2) {
     out <- list(breaks = "3 months",
                 labels = "mmm yyyy")
-  } else if (diff_range < 1095) {
-    # 3 years
+  } else if (n_years == 3) {
     out <- list(breaks = "6 months",
                 labels = "mmm yyyy")
-  } else if (diff_range < 2556) {
-    # 7 years
+  } else if (n_years <= 5) {
     out <- list(breaks = "1 year",
                 labels = "mmm yyyy")
+  } else if (n_years < 10) {
+    out <- list(breaks = "1 year",
+                labels = "yyyy")
+  } else if (n_years < 25) {
+    out <- list(breaks = "2 years",
+                labels = "yyyy")
   } else {
     # even longer, all other cases
-    out <- list(breaks = "2 years",
+    out <- list(breaks = "5 years",
                 labels = "yyyy")
   }
   out
+}
+
+unify_years <- function(x, as_leap_year = NULL) {
+  if (is.null(as_leap_year)) {
+    as_leap_year <- any(x |> format() |> substr(6, 10) == "02-29", na.rm = TRUE)
+  }
+  if (inherits(x, "Date")) {
+    as.Date(paste0(ifelse(as_leap_year, "1972", "1970"), x |> format() |> substr(5, 10)))
+  } else {
+    as.POSIXct(paste0(ifelse(as_leap_year, "1972", "1970"), x |> format() |> substr(5, 99)))
+  }
 }
 
 is_empty <- function(x) {

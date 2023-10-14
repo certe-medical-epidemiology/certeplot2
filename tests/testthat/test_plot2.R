@@ -17,10 +17,10 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-plotdata <- data.frame(x = seq_len(10) + 10,
-                       x_char = letters[1:10],
-                       x_date = Sys.Date() - seq_len(10),
-                       n = seq_len(10),
+plotdata <- data.frame(x = seq_len(8) + 10,
+                       x_char = letters[1:8],
+                       x_date = Sys.Date() - seq_len(8),
+                       n = seq_len(8),
                        stringsAsFactors = FALSE)
 
 `%or%` <- function(a, b) if (is.null(a)) b else a
@@ -112,6 +112,17 @@ test_that("S3 implementations work", {
                   "gg")
   # qc_test
   expect_s3_class(certestats::qc_test(rnorm(1000)) |> plot2(), "gg")
+  # disease clusters
+  expect_s3_class(data.frame(date = sample(seq(as.Date("2018-01-01"),
+                                               as.Date("2022-12-31"),
+                                               "1 day"),
+                                           size = 300),
+                             patient = sample(LETTERS, size = 300, replace = TRUE)) |> 
+                    certestats::early_warning_cluster(date >= "2022-01-01",
+                                                      threshold_percentile = 0.75) |>
+                    plot2(),
+                  "gg")
+  
   # type should become boxplot here
   expect_s3_class(admitted_patients |> plot2(x = hospital, y = certestats::z_score(age)), "gg")
   # this uses the certestyle::format2_scientific function for the y axis
@@ -276,7 +287,7 @@ test_that("x scale works", {
   expect_s3_class(plotdata |> plot2(n, type = "hist"), "gg")
   expect_s3_class(plotdata |> plot2(n, type = "density"), "gg")
   expect_s3_class(plotdata |> plot2(n, type = "jitter"), "gg")
-  expect_s3_class(plotdata |> plot2(type = "line"), "gg")
+  expect_s3_class(plotdata |> plot2(type = "line", category = NULL), "gg")
   expect_s3_class(plotdata |> plot2(type = "barpercent"), "gg")
   expect_s3_class(plotdata |> plot2(type = "linedot", category = NULL), "gg")
   expect_s3_class(plotdata |> plot2(x.trans = "log2"), "gg")
@@ -485,23 +496,34 @@ test_that("moving layer works", {
 test_that("messaging works", {
   expect_message(plot2_message("test", print = TRUE))
   expect_message(plot2_caution("test", print = TRUE))
+  expect_warning(plot2_warning("test", print = TRUE))
 })
 
 test_that("date labels work", {
-  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 30 - 1)),
+  expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2023-01-31"))),
                list(breaks = "1 day", labels = "d mmm"))
-  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 92 - 1)),
+  expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2023-02-28"))),
                list(breaks = "4 days", labels = "d mmm"))
-  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 183 - 1)),
+  expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2023-06-30"))),
                list(breaks = "2 weeks", labels = "d mmm"))
-  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 365 - 1)),
+  expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2023-12-31"))),
+               list(breaks = "1 month", labels = "mmm"))
+  expect_equal(determine_date_breaks_labels(c(as.Date("2023-03-01"), as.Date("2024-01-31"))),
                list(breaks = "1 month", labels = "mmm yyyy"))
-  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 730 - 1)),
+  expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2024-12-31"))),
                list(breaks = "3 months", labels = "mmm yyyy"))
-  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 1095 - 1)),
+  expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2025-12-31"))),
                list(breaks = "6 months", labels = "mmm yyyy"))
-  expect_equal(determine_date_breaks_labels(c(Sys.Date(), Sys.Date() + 2556 - 1)),
+  expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2026-12-31"))),
                list(breaks = "1 year", labels = "mmm yyyy"))
+  expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2027-12-31"))),
+               list(breaks = "1 year", labels = "mmm yyyy"))
+  expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2030-12-31"))),
+               list(breaks = "1 year", labels = "yyyy"))
+  expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2035-12-31"))),
+               list(breaks = "2 years", labels = "yyyy"))
+  expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2050-12-31"))),
+               list(breaks = "5 years", labels = "yyyy"))
 })
 
 test_that("manual fonts work", {

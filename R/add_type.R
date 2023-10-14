@@ -390,7 +390,7 @@ add_sf <- function(plot,
   crs <- c(plot = as.character(sf::st_crs(plot$data$geometry))[1],
            add = as.character(sf::st_crs(sf_data))[1])
   if (n_distinct(crs) > 1) {
-    plot2_caution("The coordinate reference system (CRS) of `plot` and `sf_data` are different, transforming `sf_data` to ", crs[1])
+    plot2_warning("The coordinate reference system (CRS) of `plot` and `sf_data` are different, transforming `sf_data` to ", crs[1])
     sf_data <- sf::st_transform(sf_data, crs = crs[1])
   }
   crs <- crs[1]

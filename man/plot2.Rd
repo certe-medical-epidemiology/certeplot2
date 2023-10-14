@@ -39,7 +39,7 @@ plot2(
   facet.relative = FALSE,
   x.date_breaks = NULL,
   x.date_labels = NULL,
-  x.date_remove_years = FALSE,
+  x.date_remove_years = NULL,
   category.focus = NULL,
   colour = getOption("plot2.colour", "ggplot2"),
   colour_fill = NULL,
@@ -225,7 +225,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{x.date_labels}{labels to use when the x axis contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as \code{"d mmmm yyyy"}.}
 
-\item{x.date_remove_years}{a \link{logical} to indicate whether the years of all \code{x} values must be removed, i.e., set \href{https://en.wikipedia.org/wiki/Unix_time}{to 1970}. This allows to plot years on the \code{category} while maintaining a date range on \code{x}.}
+\item{x.date_remove_years}{a \link{logical} to indicate whether the years of all \code{x} values must be unified. This will set the years of all \code{x} values \href{https://en.wikipedia.org/wiki/Unix_time}{to 1970} if the data does not contain a leap year, and to 1972 otherwise. This allows to plot years on the \code{category} while maintaining a date range on \code{x}. The default is \code{FALSE}, unless \code{category} contains all years present in \code{x}.}
 
 \item{category.focus}{a value of \code{category} that should be highlighted, meaning that all other values in \code{category} will be greyed out. This can also be a numeric value between 1 and the length of unique values of \code{category}, e.g. \code{category.focus = 2} to focus on the second legend item.}
 
