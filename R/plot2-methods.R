@@ -3494,8 +3494,8 @@ plot2.early_warning_cluster <- function(.data,
   is_leap <- any(format(.data$details$month_day, "%Y") == "1972")
   clusters <- .data$clusters |>
     group_by(cluster) |>
-    summarise(xmin = unify_years(min(date), as_leap_year = is_leap),
-              xmax = unify_years(max(date), as_leap_year = is_leap))
+    summarise(xmin = unify_years(as.Date(min(as.Date(date))), as_leap_year = is_leap),
+              xmax = unify_years(as.Date(max(as.Date(date))), as_leap_year = is_leap))
   
   if (identical(colour, "certe")) {
     colour <- c("certeblauw", colourpicker("greyscale", n_distinct(.data$details$year) - 1))
