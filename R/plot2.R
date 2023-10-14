@@ -513,7 +513,7 @@ plot2 <- function(.data,
                   ...) {
   
   # no observations, return empty plot immediately
-  if (tryCatch(NROW(.data) == 0, error = function(e) stop(format_error(e), call. = FALSE))) {
+  if (NROW(.data) == 0) {
     # check if markdown is required
     markdown <- validate_markdown(markdown, x.title, y.title, c(category.title, legend.title), title, subtitle, tag, caption)
     plot2_warning("No observations, returning an empty plot")
