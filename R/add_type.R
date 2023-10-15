@@ -374,11 +374,8 @@ add_sf <- function(plot,
                    datalabels.nudge_y = 2500,
                    ...,
                    inherit.aes = FALSE) {
-  if (!"sf" %in% rownames(utils::installed.packages())) {
-    stop("plotting 'sf' objects with plot2() requires the 'sf' package", call. = FALSE)
-  } else {
-    loadNamespace("sf")
-  }
+  
+  loadNamespace("sf") # will throw an error if not installed
   
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)

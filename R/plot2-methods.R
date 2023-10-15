@@ -1149,11 +1149,8 @@ plot2.sf <- function(.data,
                      markdown = TRUE,
                      crs = NULL,
                      ...) {
-  if (!"sf" %in% rownames(utils::installed.packages())) {
-    stop("plotting 'sf' objects with plot2() requires the 'sf' package", call. = FALSE)
-  } else {
-    loadNamespace("sf")
-  }
+  
+  loadNamespace("sf") # will throw an error if not installed
   
   if (!inherits(.data, "sf")) {
     plot2_caution("Transforming plot data to an sf model using ", font_blue("sf::st_as_sf()"))
@@ -3067,7 +3064,7 @@ plot2.qc_test <- function(.data,
                           markdown = TRUE,
                           ...) {
   
-  loadNamespace("certestats")
+  loadNamespace("certestats") # will throw an error if not installed
   
   att <- attributes(.data)
   df <- data.frame(x = seq_len(length(att$values)),
@@ -3341,7 +3338,7 @@ plot2.qc_test <- function(.data,
 #' @rdname plot2-methods
 #' @importFrom dplyr group_by summarise n_distinct `%>%`
 #' @importFrom ggplot2 geom_point aes
-#' @importFrom certestyle colourpicker add_white
+#' @importFrom certestyle colourpicker add_white format2
 #' @details The detection of [disease clusters](https://en.wikipedia.org/wiki/Disease_cluster) can be done using [certestats::early_warning_cluster()]. Use `size` to alter the size of the triangles that indicate clusters.
 #' @export
 plot2.early_warning_cluster <- function(.data,
@@ -3350,14 +3347,14 @@ plot2.early_warning_cluster <- function(.data,
                                         category = NULL,
                                         facet = NULL,
                                         type = "line",
-                                        x.title = "Month",
-                                        y.title = paste0("Cases (", attributes(.data)$moving_average_days, "-Day Moving Average)"),
-                                        category.title = "Year",
-                                        title = paste0(n_distinct(.data$clusters$cluster), " Disease Cluster(s)"),
-                                        subtitle = paste0("Based on outlier-free history (coeff = ",
-                                                          format(attributes(.data)$remove_outliers_coefficient),
-                                                          ") with pct = ",
-                                                          format(attributes(.data)$threshold_percentile)),
+                                        x.title = "Maand",
+                                        y.title = paste0("Cases (", attributes(.data)$moving_average_days, "-daags zwevend gemiddelde)"),
+                                        category.title = "Jaar",
+                                        title = paste0(n_distinct(.data$clusters$cluster), " cluster(s)"),
+                                        subtitle = paste0("O.b.v. uitbijter-vrije geschiedenis (coeff = ",
+                                                         format2(attributes(.data)$remove_outliers_coefficient),
+                                                         ") met pct = ",
+                                                         format2(attributes(.data)$threshold_percentile)),
                                         caption = NULL,
                                         tag = NULL,
                                         title.linelength = 60,
@@ -3489,29 +3486,73 @@ plot2.early_warning_cluster <- function(.data,
                                         markdown = TRUE,
                                         ...) {
   
-  loadNamespace("certestats")
+  loadNamespace("certestats") # will throw an error if not installed
   
-  is_leap <- any(format(.data$details$month_day, "%Y") == "1972")
-  clusters <- .data$clusters |>
-    group_by(cluster) |>
-    summarise(xmin = unify_years(as.Date(min(as.Date(date))), as_leap_year = is_leap),
-              xmax = unify_years(as.Date(max(as.Date(date))), as_leap_year = is_leap))
+  cluster_data <- .data
+  
+  if (NROW(cluster_data$details) == 0) {
+    # check if markdown is required
+    markdown <- validate_markdown(markdown, x.title, y.title, c(category.title, legend.title), title, subtitle, tag, caption)
+    plot2_warning("No observations, returning an empty plot")
+    p <- ggplot() +
+      validate_theme(theme = theme,
+                     type = "",
+                     background = background,
+                     text_factor = text_factor,
+                     font = font,
+                     horizontal = horizontal,
+                     x.remove = x.remove,
+                     y.remove = y.remove,
+                     x.lbl_angle = x.lbl_angle,
+                     x.lbl_align = x.lbl_align,
+                     x.lbl_italic = x.lbl_italic,
+                     facet.fill = facet.fill,
+                     facet.bold = facet.bold,
+                     facet.italic = facet.italic,
+                     facet.size = facet.size,
+                     facet.margin = facet.margin,
+                     legend.italic = legend.italic,
+                     title.colour = title.colour,
+                     subtitle.colour = subtitle.colour,
+                     has_y_secondary = FALSE,
+                     col_y_primary = NULL,
+                     col_y_secondary = NULL)
+    if (!missing(x.title)) p <- p + labs(x = validate_title(x.title, markdown = markdown))
+    if (!missing(y.title)) p <- p + labs(y = validate_title(y.title, markdown = markdown))
+    if (!missing(title)) p <- p + labs(title = validate_title(title, markdown = markdown, max_length = title.linelength))
+    if (!missing(subtitle)) p <- p + labs(subtitle = validate_title(subtitle, markdown = markdown, max_length = subtitle.linelength))
+    if (!missing(tag)) p <- p + labs(tag = validate_title(tag, markdown = markdown))
+    if (!missing(caption)) p <- p + labs(caption = validate_title(caption, markdown = markdown))
+    if (isTRUE(print)) {
+      print(p)
+    } else {
+      return(p)
+    }
+  }
+  
+  if (NROW(cluster_data$clusters) == 0) {
+    clusters <- data.frame(cluster = integer(0), xmin = Sys.Date()[0], xmax = Sys.Date()[0])
+  } else {
+    is_leap <- any(format(cluster_data$details$month_day, "%Y") == "1972")
+    clusters <- cluster_data$clusters |>
+      group_by(cluster) |>
+      summarise(xmin = unify_years(min(date), as_leap_year = is_leap),
+                xmax = unify_years(max(date), as_leap_year = is_leap))
+  }
   
   if (identical(colour, "certe")) {
-    colour <- c("certeblauw", colourpicker("greyscale", n_distinct(.data$details$year) - 1))
-    if (isTRUE(attributes(.data)$based_on_historic_maximum)) {
+    colour <- c("certeblauw", colourpicker("greyscale", n_distinct(cluster_data$details$year) - 1))
+    if (isTRUE(attributes(cluster_data)$based_on_historic_maximum)) {
       colour <- c(colour, "certeroze2")
     }
   } else {
     # set number of colours needed
-    if (isTRUE(attributes(.data)$based_on_historic_maximum)) {
-      colour <- colourpicker(colour, n_distinct(.data$details$year) + 1)
+    if (isTRUE(attributes(cluster_data)$based_on_historic_maximum)) {
+      colour <- colourpicker(colour, n_distinct(cluster_data$details$year) + 1)
     } else {
-      colour <- colourpicker(colour, n_distinct(.data$details$year))
+      colour <- colourpicker(colour, n_distinct(cluster_data$details$year))
     }
   }
-  
-  cluster_data <- .data
   
   p <- cluster_data$details |> 
     plot2(x = month_day,

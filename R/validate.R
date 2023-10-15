@@ -534,10 +534,7 @@ validate_data <- function(df,
   }
   
   if (has_x(df) && isTRUE(dots$x.mic)) {
-    if (!"AMR" %in% rownames(utils::installed.packages())) {
-      stop("x.mic requires the AMR package to be installed", call. = FALSE)
-    }
-    loadNamespace("AMR")
+    loadNamespace("AMR") # will throw an error if not installed
     # fix x axis for MIC values
     vals <- sort(unique(AMR::as.mic(get_x(df))))
     vals <- vals[!is.na(vals)]
