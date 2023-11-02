@@ -19,7 +19,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.4</span>
       </span>
     </div>
 
@@ -206,6 +206,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <span>  smooth.alpha <span class="op">=</span> <span class="fl">0.25</span>,</span>
 <span>  smooth.linewidth <span class="op">=</span> <span class="fl">0.75</span>,</span>
 <span>  smooth.linetype <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  smooth.colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  linetype <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  linewidth <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -529,7 +530,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <dd><p>a <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> to add a smooth. In histograms, this will add the density count as an overlaying line (default: <code>TRUE</code>). In all other cases, a smooth will be added using <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth()</a></code> (default: <code>FALSE</code>).</p></dd>
 
 
-<dt>smooth.method, smooth.formula, smooth.se, smooth.level, smooth.alpha, smooth.linewidth, smooth.linetype</dt>
+<dt>smooth.method, smooth.formula, smooth.se, smooth.level, smooth.alpha, smooth.linewidth, smooth.linetype, smooth.colour</dt>
 <dd><p>settings for <code>smooth</code></p></dd>
 
 
@@ -633,7 +634,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 <li><p>Labels with data values can easily be printed and are automatically determined</p></li>
 </ul></li>
 <li><p>Support for any <code>ggplot2</code> extension based on <code><a href="https://ggplot2.tidyverse.org/reference/fortify.html" class="external-link">ggplot2::fortify()</a></code></p></li>
-</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 140 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
+</ul><p>The <code>ggplot2</code> package in conjunction with the <code>tidyr</code>, <code>forcats</code> and <code>cleaner</code> packages can provide above functionalities, but the goal of the <code>plot2()</code> function is to generalise this into one function. The generic <code>plot2()</code> function currently has 141 arguments, all with a default value. <strong>Less typing, faster coding.</strong></p>
     </div>
 
     <div id="ref-examples">
