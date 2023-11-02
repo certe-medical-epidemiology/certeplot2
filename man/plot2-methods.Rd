@@ -134,6 +134,7 @@
   smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
+  smooth.colour = NULL,
   size = NULL,
   linetype = 1,
   linewidth = NULL,
@@ -278,6 +279,7 @@
   smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
+  smooth.colour = NULL,
   size = NULL,
   linetype = 1,
   linewidth = NULL,
@@ -422,6 +424,7 @@
   smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
+  smooth.colour = NULL,
   size = NULL,
   linetype = 1,
   linewidth = NULL,
@@ -566,6 +569,7 @@
   smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
+  smooth.colour = NULL,
   size = NULL,
   linetype = 1,
   linewidth = NULL,
@@ -714,6 +718,7 @@
   smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
+  smooth.colour = NULL,
   size = NULL,
   linetype = 1,
   linewidth = NULL,
@@ -858,6 +863,7 @@
   smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
+  smooth.colour = NULL,
   size = NULL,
   linetype = 1,
   linewidth = NULL,
@@ -1002,6 +1008,7 @@
   smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
+  smooth.colour = NULL,
   size = NULL,
   linetype = 1,
   linewidth = NULL,
@@ -1149,6 +1156,7 @@
   smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
+  smooth.colour = NULL,
   size = NULL,
   linetype = 1,
   linewidth = NULL,
@@ -1293,6 +1301,7 @@
   smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
+  smooth.colour = NULL,
   size = NULL,
   linetype = 1,
   linewidth = NULL,
@@ -1439,6 +1448,7 @@
   smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
+  smooth.colour = NULL,
   size = 2,
   linetype = 1,
   linewidth = NULL,
@@ -1586,6 +1596,7 @@
   smooth.alpha = 0.25,
   smooth.linewidth = 0.75,
   smooth.linetype = 3,
+  smooth.colour = NULL,
   size = NULL,
   linetype = 1,
   linewidth = NULL,
@@ -1800,7 +1811,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{smooth}{a \link{logical} to add a smooth. In histograms, this will add the density count as an overlaying line (default: \code{TRUE}). In all other cases, a smooth will be added using \code{\link[ggplot2:geom_smooth]{geom_smooth()}} (default: \code{FALSE}).}
 
-\item{smooth.method, smooth.formula, smooth.se, smooth.level, smooth.alpha, smooth.linewidth, smooth.linetype}{settings for \code{smooth}}
+\item{smooth.method, smooth.formula, smooth.se, smooth.level, smooth.alpha, smooth.linewidth, smooth.linetype, smooth.colour}{settings for \code{smooth}}
 
 \item{size}{size of the geom. Defaults to \code{2} for geoms \link[ggplot2:geom_point]{point} and \link[ggplot2:geom_jitter]{jitter}, \code{5} for a dumbbell plots (using \code{type = "dumbbell"}), and to \code{0.75} otherwise.}
 

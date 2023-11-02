@@ -150,7 +150,7 @@
 #' @param horizontal a [logical] to turn the plot 90 degrees using [`coord_flip()`][ggplot2::coord_flip()]. This option also updates some theme options, so that e.g., `x.lbl_italic` will still apply to the original x axis.
 #' @param reverse a [logical] to reverse the *values* of `category`. Use `legend.reverse` to reverse the *legend* of `category`.
 #' @param smooth a [logical] to add a smooth. In histograms, this will add the density count as an overlaying line (default: `TRUE`). In all other cases, a smooth will be added using [`geom_smooth()`][ggplot2::geom_smooth()] (default: `FALSE`).
-#' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.linewidth,smooth.linetype settings for `smooth`
+#' @param smooth.method,smooth.formula,smooth.se,smooth.level,smooth.alpha,smooth.linewidth,smooth.linetype,smooth.colour settings for `smooth`
 #' @param size size of the geom. Defaults to `2` for geoms [point][ggplot2::geom_point()] and [jitter][ggplot2::geom_jitter()], `5` for a dumbbell plots (using `type = "dumbbell"`), and to `0.75` otherwise.
 #' @param linetype linetype of the geom, only suitable for geoms that draw lines. Defaults to 1.
 #' @param linewidth linewidth of the geom, only suitable for geoms that draw lines. Defaults to:
@@ -488,6 +488,7 @@ plot2 <- function(.data,
                   smooth.alpha = 0.25,
                   smooth.linewidth = 0.75,
                   smooth.linetype = 3,
+                  smooth.colour = NULL,
                   size = NULL,
                   linetype = 1,
                   linewidth = NULL,
@@ -689,6 +690,7 @@ plot2_exec <- function(.data,
                        smooth.alpha,
                        smooth.linewidth,
                        smooth.linetype,
+                       smooth.colour,
                        size,
                        linetype,
                        linewidth,
@@ -1191,6 +1193,13 @@ plot2_exec <- function(.data,
     smooth <- TRUE
   }
   if (isTRUE(smooth)) {
+    if (is.null(smooth.colour)) {
+      smooth.colour <- cols$colour[1L]
+      has_smooth.colour <- FALSE
+    } else {
+      smooth.colour <- colourpicker(smooth.colour)
+      has_smooth.colour <- TRUE
+    }
     if (type == "geom_histogram") {
       # add a density count
       set_binwidth <- p$layers[[1]]$stat_params$binwidth
@@ -1201,12 +1210,12 @@ plot2_exec <- function(.data,
                        linetype = smooth.linetype,
                        linewidth = smooth.linewidth,
                        na.rm = na.rm),
-                  list(colour = cols$colour[1L])[!has_category(df) & !isTRUE(original_colours)]))
+                  list(colour = smooth.colour)[(!has_category(df) | has_smooth.colour) & !isTRUE(original_colours)]))
     } else {
       # add smooth with geom_smooth()
       p <- p +
         do.call(geom_smooth,
-                c(list(mapping = mapping,
+                c(list(mapping = utils::modifyList(mapping, aes(group = 1)),
                        formula = smooth.formula,
                        se = smooth.se,
                        method = smooth.method,
@@ -1215,8 +1224,8 @@ plot2_exec <- function(.data,
                        linetype = smooth.linetype,
                        linewidth = smooth.linewidth,
                        na.rm = na.rm),
-                  list(colour = cols$colour[1L])[!has_category(df) & !isTRUE(original_colours)],
-                  list(fill = cols$colour[1L])[!has_category(df) & !isTRUE(original_colours)]))
+                  list(colour = smooth.colour)[(!has_category(df) | has_smooth.colour) & !isTRUE(original_colours)],
+                  list(fill = smooth.colour)[(!has_category(df) | has_smooth.colour) & !isTRUE(original_colours)]))
     }
   }
   
