@@ -1450,6 +1450,7 @@ generate_geom <- function(type,
                           binwidth,
                           cols,
                           original_colours = original_colours,
+                          dots_geom,
                           mapping = NULL) {
   
   if (type == "geom_col") {
@@ -1467,77 +1468,82 @@ generate_geom <- function(type,
     position <- position_dodge2(width = width * 1.05, preserve = "single")
   }
   
+  set_arguments <- function(..., dots = dots_geom) {
+    arguments <- c(...)
+    c(arguments[!names(arguments) %in% names(dots)], dots)
+  }
+  
   # set geoms - do.call() applies all arguments to the geom_fn function
   if (type == "geom_bar") {
     do.call(geom_fn,
-            args = c(list(width = width,
-                          stat = "identity",
-                          position = position,
-                          na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
-                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
-                     list(mapping = mapping)[!is.null(mapping)]))
+            args = set_arguments(list(width = width,
+                                      stat = "identity",
+                                      position = position,
+                                      na.rm = na.rm),
+                                 list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_area") {
     do.call(geom_fn,
-            args = c(list(linetype = linetype,
-                          linewidth = linewidth,
-                          stat = "identity",
-                          position = position,
-                          na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
-                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
-                     list(mapping = mapping)[!is.null(mapping)]))
+            args = set_arguments(list(linetype = linetype,
+                                      linewidth = linewidth,
+                                      stat = "identity",
+                                      position = position,
+                                      na.rm = na.rm),
+                                 list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type %in% c("geom_line", "geom_path")) {
     do.call(geom_fn,
-            args = c(list(lineend = "round",
-                          linetype = linetype,
-                          linewidth = linewidth,
-                          na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
-                     list(mapping = mapping)[!is.null(mapping)]))
+            args = set_arguments(list(lineend = "round",
+                                      linetype = linetype,
+                                      linewidth = linewidth,
+                                      na.rm = na.rm),
+                                 list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_point") {
     do.call(geom_fn,
-            args = c(list(size = size,
-                          na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
-                     list(mapping = mapping)[!is.null(mapping)]))
+            args = set_arguments(list(size = size,
+                                      na.rm = na.rm),
+                                 list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_jitter") {
     do.call(geom_fn,
-            args = c(list(size = size,
-                          position = position_jitter(seed = jitter_seed),
-                          na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
-                     list(mapping = mapping)[!is.null(mapping)]))
+            args = set_arguments(list(size = size,
+                                      position = position_jitter(seed = jitter_seed),
+                                      na.rm = na.rm),
+                                 list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_boxplot") {
     do.call(geom_fn,
-            args = c(list(outlier.size = size * 3,
-                          outlier.alpha = 0.75,
-                          width = width,
-                          linewidth = linewidth, # line width of whole box
-                          fatten = ifelse(linewidth < 1, 1.5, linewidth + 0.5), # factor to make median thicker compared to lwd
-                          na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
-                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
-                     list(fill = "white")[has_category(df) & isTRUE(original_colours)],
-                     list(mapping = mapping)[!is.null(mapping)]))
+            args = set_arguments(list(outlier.size = size * 3,
+                                      outlier.alpha = 0.75,
+                                      width = width,
+                                      linewidth = linewidth, # line width of whole box
+                                      fatten = ifelse(linewidth < 1, 1.5, linewidth + 0.5), # factor to make median thicker compared to lwd
+                                      na.rm = na.rm),
+                                 list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(fill = "white")[has_category(df) & isTRUE(original_colours)],
+                                 list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_violin") {
     do.call(geom_fn,
-            args = c(list(width = width,
-                          linewidth = linewidth, # line width, of whole violin
-                          scale = violin_scale,
-                          trim = TRUE,
-                          draw_quantiles = c(0.25, 0.5, 0.75),
-                          na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
-                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
-                     list(fill = "white")[has_category(df) & isTRUE(original_colours)],
-                     list(mapping = mapping)[!is.null(mapping)]))
+            args = set_arguments(list(width = width,
+                                      linewidth = linewidth, # line width, of whole violin
+                                      scale = violin_scale,
+                                      trim = TRUE,
+                                      draw_quantiles = c(0.25, 0.5, 0.75),
+                                      na.rm = na.rm),
+                                 list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(fill = "white")[has_category(df) & isTRUE(original_colours)],
+                                 list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_histogram") {
     if (is.null(binwidth)) {
@@ -1557,55 +1563,55 @@ generate_geom <- function(type,
       plot2_message("Using ", font_blue("binwidth =", format(binwidth, scientific = FALSE)), " based on data")
     }
     do.call(geom_fn,
-            args = c(list(linetype = linetype,
-                          linewidth = linewidth,
-                          binwidth = binwidth,
-                          na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
-                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
-                     list(mapping = mapping)[!is.null(mapping)]))
+            args = set_arguments(list(linetype = linetype,
+                                      linewidth = linewidth,
+                                      binwidth = binwidth,
+                                      na.rm = na.rm),
+                                 list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_density") {
     do.call(geom_fn,
-            args = c(list(linetype = linetype,
-                          linewidth = linewidth,
-                          na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
-                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
-                     list(mapping = mapping)[!is.null(mapping)]))
+            args = set_arguments(list(linetype = linetype,
+                                      linewidth = linewidth,
+                                      na.rm = na.rm),
+                                 list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(mapping = mapping)[!is.null(mapping)]))
     
   } else if (type == "geom_sf") {
     do.call(geom_fn,
-            args = c(list(linetype = linetype,
-                          linewidth = linewidth,
-                          na.rm = na.rm),
-                     list(colour = cols$colour)[length(cols$colour) == 1 & !isTRUE(original_colours)],
-                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)]))
+            args = set_arguments(list(linetype = linetype,
+                                      linewidth = linewidth,
+                                      na.rm = na.rm),
+                                 list(colour = cols$colour)[length(cols$colour) == 1 & !isTRUE(original_colours)],
+                                 list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)]))
     
   } else if (type == "geom_blank") {
     do.call(geom_fn,
-            args = list(na.rm = na.rm))
+            args = set_arguments(list(na.rm = na.rm)))
     
   } else if (type == "geom_tile") {
     do.call(geom_fn,
-            args = c(list(linetype = linetype,
-                          linewidth = linewidth,
-                          na.rm = na.rm)))
+            args = set_arguments(list(linetype = linetype,
+                                      linewidth = linewidth,
+                                      na.rm = na.rm)))
     
   } else if (type == "geom_raster") {
     do.call(geom_fn,
-            args = c(list(na.rm = na.rm)))
+            args = set_arguments(list(na.rm = na.rm)))
     
   } else {
     # try to put some arguments into the requested geom
     plot2_warning(font_blue("type = \"", type, "\"", collapse = ""), " is currently only loosely supported")
     do.call(geom_fn,
-            args = c(list(width = width,
-                          size = size,
-                          na.rm = na.rm),
-                     list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
-                     list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
-                     list(mapping = mapping)[!is.null(mapping)]))
+            args = set_arguments(list(width = width,
+                                      size = size,
+                                      na.rm = na.rm),
+                                 list(colour = cols$colour)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(fill = cols$colour_fill)[!has_category(df) & !isTRUE(original_colours)],
+                                 list(mapping = mapping)[!is.null(mapping)]))
   }
 }
 

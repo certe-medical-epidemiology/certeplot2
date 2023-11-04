@@ -83,8 +83,8 @@ plot2(
   y_secondary = NULL,
   y_secondary.type = type,
   y_secondary.title = TRUE,
-  y_secondary.colour = "certeroze",
-  y_secondary.colour_fill = "certeroze6",
+  y_secondary.colour = colour,
+  y_secondary.colour_fill = colour_fill,
   y_secondary.scientific = NULL,
   y_secondary.percent = FALSE,
   y_secondary.labels = NULL,
@@ -381,7 +381,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{markdown}{a \link{logical} to turn all labels and titles into \link{plotmath} expressions, by converting common markdown language using the \code{\link[=md_to_expression]{md_to_expression()}} function (defaults to \code{TRUE})}
 
-\item{...}{arguments passed on to methods}
+\item{...}{any argument to give to the geom. This will override automatically-set settings for the geom.}
 }
 \value{
 a \code{ggplot} object

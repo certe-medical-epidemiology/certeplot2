@@ -18,7 +18,6 @@ knitr::opts_chunk$set(
 ) 
 library(certeplot2)
 # load this as well, so function names will get tidyverse links on the website
-library(ggplot2)
 library(patchwork)
 library(dplyr, warn.conflicts = FALSE)
 args <- names(formals(plot2))
@@ -64,7 +63,7 @@ To start, load the package:
 library(certeplot2)
 ```
 
-The `ggplot2` package must (of course) be installed, but it does not need to be loaded using `library()`. The same goes for other tidyverse packages, such as `dplyr`, `forcats` and `stringr`. They are only used internally and not required to load before using the `plot2()` function.
+The `ggplot2` package must (of course) be installed, but it does not need to be loaded using `library()` as that will happen automatically. For other tidyverse packages, such as `dplyr`, `forcats` and `stringr`, they are only used internally and not required to load before using the `plot2()` function.
 
 If the `certeplot2` package is loaded, these tidyverse functions are available to use inside `plot2()` without loading other packages: `r paste0("\u0060", reexported, "()\u0060", collapse = ", ")`.
 

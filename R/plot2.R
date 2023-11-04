@@ -173,7 +173,7 @@
 #' @param theme a valid `ggplot2` [theme][ggplot2::theme()] to apply, or `NULL` to use the default [`theme_grey()`][ggplot2::theme_grey()]. This argument accepts themes (e.g., `theme_bw()`), functions (e.g., `theme_bw`) and characters themes (e.g., `"theme_bw"`). The default is [theme_minimal2()], but can be set with `options(plot2.theme = "...")`.
 #' @param background the background colour of the entire plot, can also be `NA` to remove it. Will be evaluated with [`colourpicker()`][certestyle::colourpicker()]. Only applies when `theme` is not `NULL`.
 #' @param markdown a [logical] to turn all labels and titles into [plotmath] expressions, by converting common markdown language using the [md_to_expression()] function (defaults to `TRUE`)
-#' @param ... arguments passed on to methods
+#' @param ... any argument to give to the geom. This will override automatically-set settings for the geom.
 #' @details The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions such as [`ggplot()`][ggplot2::ggplot()], [`aes()`][ggplot2::aes()], [`geom_col()`][ggplot2::geom_col()], [`facet_wrap()`][ggplot2::facet_wrap()], [`labs()`][ggplot2::labs()], etc., and provides:
 #'   - Writing as few lines of codes as possible
 #'   - Easy plotting in three 'directions': `x` (the regular x axis), `category` (replaces 'fill' and 'colour') and `facet`
@@ -448,8 +448,8 @@ plot2 <- function(.data,
                   y_secondary = NULL,
                   y_secondary.type = type,
                   y_secondary.title = TRUE,
-                  y_secondary.colour = "certeroze",
-                  y_secondary.colour_fill = "certeroze6",
+                  y_secondary.colour = colour,
+                  y_secondary.colour_fill = colour_fill,
                   y_secondary.scientific = NULL,
                   y_secondary.percent = FALSE,
                   y_secondary.labels = NULL,
@@ -716,12 +716,12 @@ plot2_exec <- function(.data,
                        ...) {
   
   dots <- list(...)
-  dots_unknown <- names(dots) %unlike% "^_(label[.]|misses[.]|sf.column|summarise_fn_name)"
-  if (any(dots_unknown)) {
-    plot2_warning(ifelse(sum(dots_unknown) == 1,
-                         "This argument is unknown and was ignored: ",
-                         "These arguments are unknown and were ignored: "),
-                  paste0(font_magenta(names(dots[dots_unknown]), collapse = NULL), collapse = font_black(", ")))
+  dots_geom <- dots[names(dots) %unlike% "^_(label[.]|misses[.]|sf.column|summarise_fn_name)"]
+  if (length(dots_geom) > 0) {
+    plot2_message(ifelse(length(dots_geom) == 1,
+                         "This additional argument is given to the geom: ",
+                         "These additional arguments are given to the geom: "),
+                  paste0(font_blue(names(dots_geom), collapse = NULL), collapse = font_black(", ")))
   }
   
   # record missing arguments ----
@@ -905,7 +905,7 @@ plot2_exec <- function(.data,
         
         y_precalc <- y_precalc$val # will be NULL if y is missing
         
-        if (length(y_precalc) == 1) {
+        if (isTRUE(length(y_precalc) == 1)) {
           # outcome of y is a single calculated value (by using e.g. mean(...) or n_distinct(...)),
           # so calculate it over all groups that are available
           # this will support e.g. `data |> plot2(y = n_distinct(id))`
@@ -1121,7 +1121,7 @@ plot2_exec <- function(.data,
   }
   # generate geom ----
   if (type == "geom_boxplot") {
-    # first add the whiskers
+    # first add the whiskers, the actual boxplot will be added with `generate_geom()` below
     if (isTRUE(original_colours)) {
       p <- p +
         stat_boxplot(geom = "errorbar",
@@ -1153,7 +1153,8 @@ plot2_exec <- function(.data,
                   jitter_seed = jitter_seed,
                   binwidth = binwidth,
                   cols = cols,
-                  original_colours = original_colours)
+                  original_colours = original_colours,
+                  dots_geom = dots_geom)
   
   # add secondary y axis if available
   if (has_y_secondary(df)) {
@@ -1185,6 +1186,7 @@ plot2_exec <- function(.data,
                     cols = list(colour = y_secondary.colour,
                                 colour_fill = y_secondary.colour_fill),
                     original_colours = original_colours,
+                    dots_geom = dots_geom,
                     mapping = utils::modifyList(mapping, aes(y = `_var_y_secondary`)))
   }
 
