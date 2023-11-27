@@ -384,6 +384,9 @@ add_sf <- function(plot,
     stop("`plot` must be a ggplot2 model based on geographic data.", call. = FALSE)
   }
   
+  # force sf type
+  sf_data <- sf::st_as_sf(sf_data)
+  
   crs <- c(plot = as.character(sf::st_crs(plot$data$geometry))[1],
            add = as.character(sf::st_crs(sf_data))[1])
   if (n_distinct(crs) > 1) {
