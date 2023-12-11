@@ -364,7 +364,20 @@ determine_date_breaks_labels <- function(x) {
   unique_years <- suppressWarnings(n_distinct(format(x[!is.na(x)], "%Y")))
   n_years <- suppressWarnings(n_distinct(format(seq(from = min(x, na.rm = TRUE), to = max(x, na.rm = TRUE), by = "1 day"), "%Y")))
   unique_months <- suppressWarnings(n_distinct(format(x[!is.na(x)], "%m")))
-  if (diff_range <= 31 && unique_months == 1) {
+  if (diff_range <= 1) {
+    # 1 day
+    n_hours <- suppressWarnings(n_distinct(format(x[!is.na(x)], "%H")))
+    if (n_hours <= 6) {
+      out <- list(breaks = "30 minutes",
+                  labels = "HH:MM")
+    } else if (n_hours <= 12) {
+      out <- list(breaks = "1 hour",
+                  labels = "HH")
+    } else {
+      out <- list(breaks = "2 hours",
+                  labels = "HH")
+    }
+  } else if (diff_range <= 31 && unique_months == 1) {
     # 1 month
     out <- list(breaks = "1 day",
                 labels = "d mmm")
@@ -382,7 +395,7 @@ determine_date_breaks_labels <- function(x) {
                 labels = "mmm")
   } else if (diff_range <= 366 && unique_years == 2) {
     # max 1 year, but crossing 1 Jan
-    out <- list(breaks = "1 month",
+    out <- list(breaks = "2 months",
                 labels = "mmm yyyy")
   } else if (n_years == 2) {
     out <- list(breaks = "3 months",
