@@ -19,7 +19,7 @@ See plot2-methods for all implemented methods for different object classes."><me
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.20.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.0</span>
       </span>
     </div>
 
@@ -387,7 +387,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 
 
 <dt>x.trans, y.trans, category.trans</dt>
-<dd><p>a transformation function to use, e.g. <code>"log2"</code>. This can be: <code>"asn"</code>, <code>"atanh"</code>, <code>"boxcox"</code>, <code>"compose"</code>, <code>"date"</code>, <code>"exp"</code>, <code>"hms"</code>, <code>"identity"</code>, <code>"log10"</code>, <code>"log1p"</code>, <code>"log2"</code>, <code>"log"</code>, <code>"logit"</code>, <code>"modulus"</code>, <code>"probability"</code>, <code>"probit"</code>, <code>"pseudo_log"</code>, <code>"reciprocal"</code>, <code>"reverse"</code>, <code>"seealso"</code>, <code>"sqrt"</code>, <code>"time"</code>, <code>"yj"</code>.</p></dd>
+<dd><p>a transformation function to use, e.g. <code>"log2"</code>. This can be: <code>"asinh"</code>, <code>"asn"</code>, <code>"atanh"</code>, <code>"boxcox"</code>, <code>"compose"</code>, <code>"date"</code>, <code>"exp"</code>, <code>"hms"</code>, <code>"identity"</code>, <code>"log"</code>, <code>"log10"</code>, <code>"log1p"</code>, <code>"log2"</code>, <code>"logit"</code>, <code>"modulus"</code>, <code>"probability"</code>, <code>"probit"</code>, <code>"pseudo_log"</code>, <code>"reciprocal"</code>, <code>"reverse"</code>, <code>"sqrt"</code>, <code>"time"</code>, <code>"timespan"</code>, <code>"yj"</code>.</p></dd>
 
 
 <dt>x.expand, y.expand</dt>
@@ -491,7 +491,7 @@ See plot2-methods for all implemented methods for different object classes."><me
 
 
 <dt>datalabels.format</dt>
-<dd><p>format to use for datalabels - <code>"%n"</code> will be replaced by the count number, <code>"%p"</code> will be replaced by the percentage of the total count. Use <code>datalabels.format = NULL</code> to <em>not</em> transform the datalabels.</p></dd>
+<dd><p>format to use for datalabels. This can be a function (such as <code><a href="labellers.html">euros()</a></code>) or a text. For the text, <code>"%n"</code> will be replaced by the count number, and <code>"%p"</code> will be replaced by the percentage of the total count. Use <code>datalabels.format = NULL</code> to <em>not</em> transform the datalabels.</p></dd>
 
 
 <dt>datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle</dt>
