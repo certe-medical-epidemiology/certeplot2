@@ -2,43 +2,35 @@
 % Please edit documentation in R/labellers.R
 \name{labellers}
 \alias{labellers}
-\alias{label_euro}
+\alias{euros}
+\alias{dollars}
 \title{Label Euro currencies}
 \usage{
-label_euro(
-  accuracy = NULL,
-  scale = 1,
-  prefix = "€",
-  suffix = "",
-  big.mark = big_mark(),
-  decimal.mark = dec_mark(),
-  trim = TRUE,
-  largest_with_cents = 1e+05,
-  ...
-)
+euros(x, big.mark = big_mark(), decimal.mark = dec_mark(), ...)
+
+dollars(x, big.mark = big_mark(), decimal.mark = dec_mark(), ...)
 }
 \arguments{
-\item{accuracy, largest_with_cents}{Number to round to. If \code{NULL}, the default,
-values will be rounded to the nearest integer, unless any of the
-values has non-zero fractional component (e.g. cents) and the largest
-value is less than \code{largest_with_cents} which by default is 100,000.}
+\item{x}{values}
 
-\item{scale}{A scaling factor: \code{x} will be multiplied by \code{scale} before
-formatting. This is useful if the underlying data is very small or very
-large.}
+\item{big.mark}{thousands separator, defaults to \code{\link[=big_mark]{big_mark()}}}
 
-\item{prefix, suffix}{Symbols to display before and after value.}
+\item{decimal.mark}{decimal mark, defaults to \code{\link[=dec_mark]{dec_mark()}}}
 
-\item{big.mark}{Character used between every 3 digits to separate thousands.}
-
-\item{decimal.mark}{The character to be used to indicate the numeric
-decimal point.}
-
-\item{trim}{Logical, if \code{FALSE}, values are right-justified to a common
-width (see \code{\link[base:format]{base::format()}}).}
-
-\item{...}{Other arguments passed on to \code{\link[base:format]{base::format()}}.}
+\item{...}{any argument to give to the geom. This will override automatically-set settings for the geom.}
 }
 \description{
-Format numbers as currency, rounding values to dollars or cents using a convenient heuristic. This function is similar to \code{\link[=label_dollar]{label_dollar()}} from the \code{scales} package.
+Format numbers as currency, rounding values to dollars or cents using a convenient heuristic.
+}
+\examples{
+profit <- data.frame(group = LETTERS[1:4],
+                     profit = runif(4, 10000, 25000))
+
+profit |>
+  plot2(y.labels = euros,
+        datalabels = FALSE)
+        
+profit |>
+  plot2(y.labels = euros,
+        datalabels.format = euros)
 }

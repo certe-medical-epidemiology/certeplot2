@@ -500,6 +500,12 @@ test_that("messaging works", {
 })
 
 test_that("date labels work", {
+  expect_equal(determine_date_breaks_labels(c(as.POSIXct("2023-01-01 10:00:00"), as.POSIXct("2023-01-01 10:50:00"))),
+               list(breaks = "10 min", labels = "HH:MM"))
+  expect_equal(determine_date_breaks_labels(c(as.POSIXct("2023-01-01 10:00:00"), as.POSIXct("2023-01-01 15:00:00"))),
+               list(breaks = "1 hour", labels = "HH:MM"))
+  expect_equal(determine_date_breaks_labels(c(as.POSIXct("2023-01-01 10:00:00"), as.POSIXct("2023-01-02 10:00:00"))),
+               list(breaks = "2 hours", labels = "HH"))
   expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2023-01-31"))),
                list(breaks = "1 day", labels = "d mmm"))
   expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2023-02-28"))),
@@ -509,7 +515,7 @@ test_that("date labels work", {
   expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2023-12-31"))),
                list(breaks = "1 month", labels = "mmm"))
   expect_equal(determine_date_breaks_labels(c(as.Date("2023-03-01"), as.Date("2024-01-31"))),
-               list(breaks = "1 month", labels = "mmm yyyy"))
+               list(breaks = "2 months", labels = "mmm yyyy"))
   expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2024-12-31"))),
                list(breaks = "3 months", labels = "mmm yyyy"))
   expect_equal(determine_date_breaks_labels(c(as.Date("2023-01-01"), as.Date("2025-12-31"))),

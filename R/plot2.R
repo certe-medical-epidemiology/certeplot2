@@ -113,7 +113,7 @@
 #' @param x.limits,y.limits limits to use for the axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `y.limits = c(0, NA)` to have the y scale start at zero.
 #' @param x.labels,y.labels,y_secondary.labels a labels function or character vector to use for the axis
 #' @param x.expand,y.expand [expansion][ggplot2::expansion] to use for the axis, can be length 1 or 2. `x.expand` defaults to 0.5 and `y.expand` defaults to `0.25`, except for sf objects (then both default to 0).
-#' @param x.trans,y.trans,category.trans a transformation function to use, e.g. `"log2"`. This can be: `r paste0('\u0060"', gsub("_trans$", "", ls(envir = asNamespace("scales"))[grepl("_trans$", ls(envir = asNamespace("scales")))]), '"\u0060', collapse = ", ")`.
+#' @param x.trans,y.trans,category.trans a transformation function to use, e.g. `"log2"`. This can be: `r paste0('\u0060"', sort(gsub("_trans$", "", ls(envir = asNamespace("scales"))[grepl("_trans$", ls(envir = asNamespace("scales")))])), '"\u0060', collapse = ", ")`.
 #' @param x.position,y.position position of the axis
 #' @param x.zoom,y.zoom a [logical] to indicate if the axis should be zoomed on the data, by setting `x.limits = c(NA, NA)` and `x.expand = 0` for the x axis, or `y.limits = c(NA, NA)` and `y.expand = 0` for the y axis
 #' @param category.labels,category.percent,category.breaks,category.expand,category.midpoint settings for the plotting direction `category`.
@@ -140,7 +140,7 @@
 #' - `TRUE` or `FALSE` to force or remove datalabels
 #' - A function to calculate over `.data`, such as `datalabels = paste(round(column1), "\n", column2)`
 #' @param datalabels.round number of digits to round the datalabels, applies to both `"%n"` and `"%p"` for replacement (see `datalabels.format`)
-#' @param datalabels.format format to use for datalabels - `"%n"` will be replaced by the count number, `"%p"` will be replaced by the percentage of the total count. Use `datalabels.format = NULL` to *not* transform the datalabels.
+#' @param datalabels.format format to use for datalabels. This can be a function (such as [euros()]) or a text. For the text, `"%n"` will be replaced by the count number, and `"%p"` will be replaced by the percentage of the total count. Use `datalabels.format = NULL` to *not* transform the datalabels.
 #' @param datalabels.colour,datalabels.colour_fill,datalabels.size,datalabels.angle settings for the datalabels
 #' @param decimal.mark decimal mark, defaults to [dec_mark()]
 #' @param big.mark thousands separator, defaults to [big_mark()]

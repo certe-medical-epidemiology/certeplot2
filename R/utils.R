@@ -360,56 +360,82 @@ has_datalabels <- function(df) {
 
 #' @importFrom dplyr n_distinct
 determine_date_breaks_labels <- function(x) {
-  diff_range <- diff(range(x, na.rm = TRUE))
-  unique_years <- suppressWarnings(n_distinct(format(x[!is.na(x)], "%Y")))
-  n_years <- suppressWarnings(n_distinct(format(seq(from = min(x, na.rm = TRUE), to = max(x, na.rm = TRUE), by = "1 day"), "%Y")))
-  unique_months <- suppressWarnings(n_distinct(format(x[!is.na(x)], "%m")))
-  if (diff_range <= 1) {
-    # 1 day
-    n_hours <- suppressWarnings(n_distinct(format(x[!is.na(x)], "%H")))
-    if (n_hours <= 6) {
-      out <- list(breaks = "30 minutes",
+  rng <- range(x, na.rm = TRUE)
+  range_in_days <- as.double(difftime(rng[2], rng[1], units = "days"))
+  range_in_months <- diff(as.double(format(rng, "%m"))) + 1
+  range_in_years <- diff(as.double(format(rng, "%Y"))) + 1
+  if (range_in_days <= 1) {
+    range_in_hours <- as.double(difftime(rng[2], rng[1], units = "hours"))
+    range_in_minutes <- as.double(difftime(rng[2], rng[1], units = "mins"))
+    if (range_in_hours <= 1) {
+      if (range_in_minutes <= 10) {
+        out <- list(breaks = "1 min",
+                    labels = "HH:MM")
+      } else if (range_in_minutes <= 30) {
+        out <- list(breaks = "5 min",
+                    labels = "HH:MM")
+      } else {
+        out <- list(breaks = "10 min",
+                    labels = "HH:MM")
+      }
+    } else if (range_in_hours <= 2) {
+      if (range_in_minutes <= 30) {
+        out <- list(breaks = "10 min",
+                    labels = "HH:MM")
+      } else {
+        out <- list(breaks = "15 mins",
+                    labels = "HH:MM")
+      }
+    } else if (range_in_hours <= 4) {
+      out <- list(breaks = "30 mins",
                   labels = "HH:MM")
-    } else if (n_hours <= 12) {
+    } else if (range_in_hours <= 6) {
+      out <- list(breaks = "1 hour",
+                  labels = "HH:MM")
+    } else if (range_in_hours <= 12) {
       out <- list(breaks = "1 hour",
                   labels = "HH")
     } else {
       out <- list(breaks = "2 hours",
                   labels = "HH")
     }
-  } else if (diff_range <= 31 && unique_months == 1) {
+  } else if (range_in_days <= 7 && range_in_months == 1) {
+    # 1 week
+    out <- list(breaks = "1 day",
+                labels = "ddd")
+  } else if (range_in_days <= 31 && range_in_months == 1) {
     # 1 month
     out <- list(breaks = "1 day",
                 labels = "d mmm")
-  } else if (diff_range < 100 && unique_months <= 3) {
+  } else if (range_in_days < 100 && range_in_months <= 3) {
     # quarter
     out <- list(breaks = "4 days",
                 labels = "d mmm")
-  } else if (diff_range < 190 && unique_months <= 6) {
+  } else if (range_in_days < 190 && range_in_months <= 6) {
     # half year
     out <- list(breaks = "2 weeks",
                 labels = "d mmm")
-  } else if (diff_range <= 366 && unique_years == 1) {
+  } else if (range_in_days <= 366 && range_in_years == 1) {
     # year within 1 year
     out <- list(breaks = "1 month",
                 labels = "mmm")
-  } else if (diff_range <= 366 && unique_years == 2) {
+  } else if (range_in_days <= 366 && range_in_years == 2) {
     # max 1 year, but crossing 1 Jan
     out <- list(breaks = "2 months",
                 labels = "mmm yyyy")
-  } else if (n_years == 2) {
+  } else if (range_in_years == 2) {
     out <- list(breaks = "3 months",
                 labels = "mmm yyyy")
-  } else if (n_years == 3) {
+  } else if (range_in_years == 3) {
     out <- list(breaks = "6 months",
                 labels = "mmm yyyy")
-  } else if (n_years <= 5) {
+  } else if (range_in_years <= 5) {
     out <- list(breaks = "1 year",
                 labels = "mmm yyyy")
-  } else if (n_years < 10) {
+  } else if (range_in_years < 10) {
     out <- list(breaks = "1 year",
                 labels = "yyyy")
-  } else if (n_years < 25) {
+  } else if (range_in_years < 25) {
     out <- list(breaks = "2 years",
                 labels = "yyyy")
   } else {
@@ -469,11 +495,11 @@ update_aes <- function(current = aes(), ..., as_symbol = FALSE) {
   caller_env <- parent.frame()
   mapping <- lapply(mapping, function(x) {
     if (tryCatch(is.null(x) || identical(x, "") || identical(x, "NULL"), error = function(e) FALSE)) {
-      # this will ultimately remove the aesthetic from the list, by running utils::modifyList()
+      # this will ultimately remove the aesthetic from the list, after running utils::modifyList()
       return(NULL)
     }
     if (is_quosure(x)) {
-      # send as regular text
+      # as regular text
       x <- as_label(x)
     }
     if (isTRUE(as_symbol)) {
@@ -486,8 +512,7 @@ update_aes <- function(current = aes(), ..., as_symbol = FALSE) {
     new_quosure(x, env = caller_env)
   })
   out <- structure(mapping, class = class(aes()))
-  out <- utils::modifyList(current, out)
-  out
+  utils::modifyList(current, out)
 }
 
 restore_mapping <- function(p, df) {

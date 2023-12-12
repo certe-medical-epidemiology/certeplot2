@@ -256,7 +256,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{x.n_breaks, y.n_breaks}{number of breaks, only useful if \code{x.breaks} cq. \code{y.breaks} is \code{NULL}}
 
-\item{x.trans, y.trans, category.trans}{a transformation function to use, e.g. \code{"log2"}. This can be: \code{"asn"}, \code{"atanh"}, \code{"boxcox"}, \code{"compose"}, \code{"date"}, \code{"exp"}, \code{"hms"}, \code{"identity"}, \code{"log10"}, \code{"log1p"}, \code{"log2"}, \code{"log"}, \code{"logit"}, \code{"modulus"}, \code{"probability"}, \code{"probit"}, \code{"pseudo_log"}, \code{"reciprocal"}, \code{"reverse"}, \code{"seealso"}, \code{"sqrt"}, \code{"time"}, \code{"yj"}.}
+\item{x.trans, y.trans, category.trans}{a transformation function to use, e.g. \code{"log2"}. This can be: \code{"asinh"}, \code{"asn"}, \code{"atanh"}, \code{"boxcox"}, \code{"compose"}, \code{"date"}, \code{"exp"}, \code{"hms"}, \code{"identity"}, \code{"log"}, \code{"log10"}, \code{"log1p"}, \code{"log2"}, \code{"logit"}, \code{"modulus"}, \code{"probability"}, \code{"probit"}, \code{"pseudo_log"}, \code{"reciprocal"}, \code{"reverse"}, \code{"sqrt"}, \code{"time"}, \code{"timespan"}, \code{"yj"}.}
 
 \item{x.expand, y.expand}{\link[ggplot2:expansion]{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to \code{0.25}, except for sf objects (then both default to 0).}
 
@@ -318,7 +318,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{datalabels.round}{number of digits to round the datalabels, applies to both \code{"\%n"} and \code{"\%p"} for replacement (see \code{datalabels.format})}
 
-\item{datalabels.format}{format to use for datalabels - \code{"\%n"} will be replaced by the count number, \code{"\%p"} will be replaced by the percentage of the total count. Use \code{datalabels.format = NULL} to \emph{not} transform the datalabels.}
+\item{datalabels.format}{format to use for datalabels. This can be a function (such as \code{\link[=euros]{euros()}}) or a text. For the text, \code{"\%n"} will be replaced by the count number, and \code{"\%p"} will be replaced by the percentage of the total count. Use \code{datalabels.format = NULL} to \emph{not} transform the datalabels.}
 
 \item{datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle}{settings for the datalabels}
 

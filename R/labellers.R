@@ -19,31 +19,35 @@
 
 #' Label Euro currencies
 #' 
-#' Format numbers as currency, rounding values to dollars or cents using a convenient heuristic. This function is similar to [label_dollar()] from the `scales` package.
-#' @inheritParams scales::label_dollar
-#' @importFrom scales label_dollar
+#' Format numbers as currency, rounding values to dollars or cents using a convenient heuristic.
+#' @param x values
+#' @inheritParams plot2
 #' @name labellers
 #' @rdname labellers
 #' @export
-label_euro <- function(accuracy = NULL,
-                       scale = 1,
-                       prefix = "\u20ac",
-                       suffix = "", 
-                       big.mark = big_mark(),
-                       decimal.mark = dec_mark(),
-                       trim = TRUE,
-                       largest_with_cents = 1e+05,
-                       ...) {
-  label_dollar(accuracy = accuracy,
-               scale = scale,
-               prefix = prefix, suffix = suffix,
-               big.mark = big.mark,
-               decimal.mark = decimal.mark,
-               trim = trim,
-               largest_with_cents = largest_with_cents,
-               ...)
+#' @examples
+#' profit <- data.frame(group = LETTERS[1:4],
+#'                      profit = runif(4, 10000, 25000))
+#' 
+#' profit |>
+#'   plot2(y.labels = euros,
+#'         datalabels = FALSE)
+#'         
+#' profit |>
+#'   plot2(y.labels = euros,
+#'         datalabels.format = euros)
+euros <- function(x,
+                  big.mark = big_mark(),
+                  decimal.mark = dec_mark(),
+                  ...) {
+  trimws(paste0("\u20ac ", trimws(format(x, decimal.mark = decimal.mark, big.mark = big.mark))))
 }
 
-#' @importFrom scales label_dollar
+#' @rdname labellers
 #' @export
-scales::label_dollar
+dollars <- function(x,
+                    big.mark = big_mark(),
+                    decimal.mark = dec_mark(),
+                    ...) {
+  trimws(paste0("$", format(trimws(x), decimal.mark = decimal.mark, big.mark = big.mark)))
+}

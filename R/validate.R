@@ -775,12 +775,15 @@ validate_x_scale <- function(values,
       }
     }
   }
+  
   if (!is.function(x.expand)) {
     if (length(x.expand) == 1) {
       x.expand <- c(x.expand, x.expand)
     }
-    x.expand <- expansion(add = x.expand)
+    x.expand <- expansion(mult = ifelse(inherits(values, c("Date", "POSIXt")), 0.05, 0),
+                          add = x.expand)
   }
+  
   if (inherits(values, c("Date", "POSIXt"))) {
     auto_breaks_labels <- determine_date_breaks_labels(values)
     if (is.null(x.date_breaks)) {
@@ -807,8 +810,7 @@ validate_x_scale <- function(values,
                      date_labels = format_datetime(x.date_labels),
                      expand = x.expand,
                      limits = x.limits, 
-                     labels = if (is.null(x.labels)) waiver() else x.labels
-                     )
+                     labels = if (is.null(x.labels)) waiver() else x.labels)
   } else {
     if (!is.numeric(values)) {
       scale_x_discrete(position = x.position,
@@ -2687,6 +2689,11 @@ format_datalabels <- function(datalabels,
                               y.percent) {
   datalabels[as.character(datalabels) %in% c("", "0")] <- NA
   datalabels_out <- datalabels
+  
+  if (is.function(datalabels.format)) {
+    return(datalabels.format(datalabels_out))
+  }
+  
   if (isTRUE(y.percent)) {
     if (!is.null(datalabels.format)) {
       datalabels_out <- trimws(format2(datalabels,
