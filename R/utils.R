@@ -364,7 +364,7 @@ determine_date_breaks_labels <- function(x) {
   range_in_days <- as.double(difftime(rng[2], rng[1], units = "days"))
   range_in_months <- diff(as.double(format(rng, "%m"))) + 1
   range_in_years <- diff(as.double(format(rng, "%Y"))) + 1
-  if (range_in_days <= 1) {
+  if (range_in_days <= 2) {
     range_in_hours <- as.double(difftime(rng[2], rng[1], units = "hours"))
     range_in_minutes <- as.double(difftime(rng[2], rng[1], units = "mins"))
     if (range_in_hours <= 1) {
@@ -399,11 +399,11 @@ determine_date_breaks_labels <- function(x) {
       out <- list(breaks = "2 hours",
                   labels = "HH")
     }
-  } else if (range_in_days <= 7 && range_in_months == 1) {
+  } else if (range_in_days <= 7) {
     # 1 week
     out <- list(breaks = "1 day",
                 labels = "ddd")
-  } else if (range_in_days <= 31 && range_in_months == 1) {
+  } else if (range_in_days <= 31) {
     # 1 month
     out <- list(breaks = "1 day",
                 labels = "d mmm")
