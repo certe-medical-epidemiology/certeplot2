@@ -19,9 +19,9 @@
 
 #' Conveniently Create a New `ggplot`
 #'
-#' @description  The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions. By design, the `ggplot2` package requires users to use a lot of functions, while the [plot2()] function auto-determines needs and only requires to define arguments in one single function.
+#' @description  The [plot2()] function is a convenient wrapper around many [`ggplot2`][ggplot2::ggplot()] functions. By design, the `ggplot2` package requires users to use a lot of functions and manual settings, while the [plot2()] function does all the heavy lifting automatically and only requires users to define some arguments in one single function, greatly increases convenience.
 #'
-#' Moreover, [plot2()] allows for in-place calculation of `y`, all axes, and all axis labels.
+#' Moreover, [plot2()] allows for in-place calculation of `y`, all axes, and all axis labels, often preventing the need to use [group_by()], [count()], [mutate()], or [summarise()].
 #' 
 #' See [plot2-methods] for all implemented methods for different object classes.
 #' @param .data data to plot
@@ -30,17 +30,15 @@
 #' - A single variable from `.data`, such as `x = column1`
 #' 
 #' - A [function] to calculate over one or more variables from `.data`, such as `x = format(column1, "%Y")`, or `x = ifelse(column1 == "A", "Group A", "Other")`
+#' 
+#' - Multiple variables from `.data`, such as `x = c(column1, column2, column2)`, or using [selection helpers][tidyselect::language] such as `x = where(is.charaacter)` or `x = starts_with("var_")` *(only allowed and required for Sankey plots using `type = "sankey"`)*
 #' @param y values to use for plotting along the y axis. This can be:
 #' 
 #' - A single variable from `.data`, such as `y = column1`
 #' 
-#' - Multiple variables from `.data`, such as `y = c(column1, column2)` or `y = c(name1 = column1, "name 2" = column2)` *(only allowed if `category` is not set)*
-#'   
-#' - One or more variables from `.data` using [selection helpers][tidyselect::language], such as `y = where(is.double)` or `y = starts_with("var_")` *(multiple variables only allowed if `category` is not set)*
+#' - Multiple variables from `.data`, such as `y = c(column1, column2)` or `y = c(name1 = column1, "name 2" = column2)`, or using [selection helpers][tidyselect::language] such as `y = where(is.double)` or `y = starts_with("var_")` *(multiple variables only allowed if `category` is not set)*
 #' 
-#' - A [function] to calculate over `.data`, such as `y = `[n()] for the row count
-#' 
-#' - A [function] to calculate over one or more variables from `.data`, such as `y = n_distinct(person_id)`, `y = max(column1)`, or `y = median(column2) / column3`
+#' - A [function] to calculate over `.data`, such as `y = n()` for the row count, or based on other variables such as `y = n_distinct(person_id)`, `y = max(column1)`, or `y = median(column2) / column3`
 #' @param category,facet plotting 'direction' (`category` is called 'fill' and 'colour' in `ggplot2`). This can be:
 #' 
 #' - A single variable from `.data`, such as `category = column1`
@@ -51,7 +49,7 @@
 #'   
 #' - One or more variables from `.data` using [selection helpers][tidyselect::language], such as `category = where(is.double)` or `facet = starts_with("var_")`
 #' 
-#'  The `category` can also be a date (class `Date` or `POSIXt`).
+#'  The `category` can also be a date or date/time (class `Date` or `POSIXt`).
 #' 
 #' @param y_secondary values to use for plotting along the secondary y axis. This functionality is poorly supported by `ggplot2` and might give unexpected results. Setting the secondary y axis will set the colour to the axis titles.
 #' @param y_secondary.colour,y_secondary.colour_fill colours to set for the secondary y axis, will be evaluated with [`colourpicker()`][certestyle::colourpicker()]
@@ -61,13 +59,14 @@
 #' 
 #'   Full function names can be used (e.g., `"geom_histogram"`), but they can also be abbreviated (e.g., `"h"`, `"hist"`). The following geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), and violin (`"v"`).
 #' 
-#'   Please note: in `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, `type = "bar"` will set `type = "col"` and `horizontal = TRUE`.
+#'   Please note: in `ggplot2`, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically since Microsoft Excel has been using these terms this way for many years. For this reason, `type = "bar"` will set `type = "col"` and `horizontal = TRUE`.
 #' 
-#' - A shortcut. There are currently three supported shortcuts:
+#' - One of these additional types:
 #' 
-#'   - `"barpercent"` (short: `"bp"`), which will set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
-#'   - `"linedot"` (short: `"ld"`), which will set `type = "line"` and adds two point geoms using [add_point()]; one with large white dots and one with smaller dots using the colours set in `colour`. This is essentially equal to base \R `plot(..., type = "b")` but with closed shapes.
-#'   - `"dumbbell"` (short: `"d"`), which will set `type = "point"` and `horizontal = TRUE`, and adds a line between the point (using [geom_segment()]). The line colour cannot be changed. This plot type is only possible when the `category` has two distinct values.
+#'   - `"barpercent"` (short: `"bp"`), which is effectively a shortcut to set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
+#'   - `"linedot"` (short: `"ld"`), which sets `type = "line"` and adds two point geoms using [add_point()]; one with large white dots and one with smaller dots using the colours set in `colour`. This is essentially equal to base \R `plot(..., type = "b")` but with closed shapes.
+#'   - `"dumbbell"` (short: `"d"`), which sets `type = "point"` and `horizontal = TRUE`, and adds a line between the points (using [geom_segment()]). The line colour cannot be changed. This plot type is only possible when the `category` has two distinct values.
+#'   = `"sankey"` (short: `"s"`), which requires `x` to contain multiple variables from `.data` to create a Sankey plot.
 #' 
 #' - Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no x axis or if the length of unique values per x axis item is at least 3, `"point"` if both the y and x axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* add a geom.
 #' @param title,subtitle,caption,tag,x.title,y.title,category.title,legend.title,y_secondary.title a title to use. This can be:
@@ -165,6 +164,12 @@
 #' @param violin_scale scale to be set when using `type = "violin"`, can also be set to `"area"`
 #' @param legend.position position of the legend, must be `"top"`, `"right"`, `"bottom"`, `"left"` or `"none"` (or `NA` or `NULL`), can be abbreviated. Defaults to `"right"` for numeric `category` values and 'sf' plots, and `"top"` otherwise.
 #' @param legend.reverse,legend.barheight,legend.barwidth,legend.nbin,legend.italic other settings for the legend
+#' @param sankey.node_width width of the vertical nodes in a Sankey plot (i.e., when `type = "sankey"`)
+#' @param sankey.node_fill fill colour of the vertical nodes in a Sankey plot (i.e., when `type = "sankey"`)
+#' @param sankey.node_border border colour of the vertical nodes in a Sankey plot (i.e., when `type = "sankey"`)
+#' @param sankey.labels_colour colour of the text in the nodes in a Sankey plot (i.e., when `type = "sankey"`)
+#' @param sankey.alpha alpha of the flows in a Sankey plot (i.e., when `type = "sankey"`)
+#' @param sankey.remove_axes logical to indicate whether all axes must be removed in a Sankey plot (i.e., when `type = "sankey"`)
 #' @param zoom a [logical] to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0. This will set `x.zoom = TRUE` and `y.zoom = TRUE`.
 #' @param sep separator character to use if multiple columns are given to either of the three directions: `x`, `category` and `facet`, e.g. `facet = c(column1, column2)`
 #' @param print a [logical] to indicate if the result should be [printed][print()] instead of just returned
@@ -307,6 +312,11 @@
 #'         x.sort = c("B", "D", "A"), # missing values ("C") will be added
 #'         category.sort = "alpha-desc",
 #'         stacked = TRUE)
+#'         
+#' # support for Sankey plots
+#' Titanic |> # a table from base R
+#'   tibble::as_tibble() |>
+#'   plot2(x = c(Age, Class, Survived), n, category = Sex, type = "sankey")
 #'
 #' # matrix support, such as for cor()
 #' correlation_matrix <- cor(mtcars)
@@ -503,6 +513,12 @@ plot2 <- function(.data,
                   legend.barwidth = 1.5,
                   legend.nbin = 300,
                   legend.italic = FALSE,
+                  sankey.node_width = 0.15,
+                  sankey.node_fill = "white",
+                  sankey.node_border = "grey40",
+                  sankey.labels_colour = "grey40",
+                  sankey.alpha = 1,
+                  sankey.remove_axes = NULL,
                   zoom = FALSE,
                   sep = " / ",
                   print = FALSE,
@@ -536,6 +552,7 @@ plot2 <- function(.data,
                      facet.size = facet.size,
                      facet.margin = facet.margin,
                      legend.italic = legend.italic,
+                     sankey.remove_axes = sankey.remove_axes,
                      title.colour = title.colour,
                      subtitle.colour = subtitle.colour,
                      has_y_secondary = FALSE,
@@ -572,6 +589,7 @@ plot2 <- function(.data,
 #' @importFrom ggplot2 ggplot aes labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build after_stat scale_fill_continuous scale_fill_date scale_fill_datetime scale_fill_continuous scale_colour_date scale_colour_datetime scale_colour_continuous geom_segment
 #' @importFrom tidyr pivot_longer
 #' @importFrom certestyle format2 font_magenta font_black font_blue
+#' @importFrom ggforce geom_parallel_sets geom_parallel_sets_axes geom_parallel_sets_labels
 plot2_exec <- function(.data,
                        x,
                        y,
@@ -705,6 +723,12 @@ plot2_exec <- function(.data,
                        legend.barwidth,
                        legend.nbin,
                        legend.italic,
+                       sankey.node_width,
+                       sankey.node_fill,
+                       sankey.node_border,
+                       sankey.labels_colour,
+                       sankey.alpha,
+                       sankey.remove_axes,
                        zoom,
                        sep,
                        print,
@@ -775,6 +799,14 @@ plot2_exec <- function(.data,
       type_backup <- "dumbbell"
       type <- "point"
       horizontal <- TRUE
+    }
+    if (type %like% "^(sankey|s)$") {
+      type <- "line"
+      type_backup <- "sankey"
+      horizontal <- FALSE
+      datalabels <- FALSE
+      x.title = ""
+      plot2_env$sankey_x_names <- tryCatch(.data |> select({{ x }}) |> colnames(), error = function(e) NULL)
     }
     if (type %like% "bar") {
       type <- "col"
@@ -867,7 +899,7 @@ plot2_exec <- function(.data,
           bind_cols(y_select[, colnames(y_select)[which(!colnames(y_select) %in% colnames(.data))], drop = FALSE]) |> 
           pivot_longer(c(colnames(y_select), -matches("^_var_"), -get_x_name(.data)), names_to = "_var_category", values_to = "_var_y") |>
           # apply summarise_function
-          group_by(across(c(get_x_name(.data), get_category_name(.data), get_facet_name(.data),
+          group_by(across(c(plot2_env$sankey_x_names, get_x_name(.data), get_category_name(.data), get_facet_name(.data),
                             matches("_var_(x|category|facet)")))) |> 
           summarise(`_var_y` = summarise_function(`_var_y`),
                     .groups = "drop") |> 
@@ -911,7 +943,7 @@ plot2_exec <- function(.data,
           # this will support e.g. `data |> plot2(y = n_distinct(id))`
           suppressWarnings(
             tryCatch(.data |> 
-                       group_by(across(c(get_x_name(.data), get_category_name(.data), get_facet_name(.data),
+                       group_by(across(c(plot2_env$sankey_x_names, get_x_name(.data), get_category_name(.data), get_facet_name(.data),
                                          matches("_var_(x|category|facet)")))) |>
                        summarise(`_var_y` = {{ y }},
                                  .groups = "drop"),
@@ -938,6 +970,7 @@ plot2_exec <- function(.data,
                   big.mark = big.mark,
                   y.percent = y.percent,
                   type = type,
+                  type_backup = type_backup,
                   datalabels.round = datalabels.round,
                   datalabels.format = datalabels.format,
                   x.sort = x.sort,
@@ -1024,6 +1057,19 @@ plot2_exec <- function(.data,
     df <- df |> select(-`_var_x`)
   }
   
+  # check requirements for Sankey plots
+  if (type_backup == "sankey") {
+    if (isTRUE(misses_x) || (.data |> select({{ x }}) |> NCOL()) < 2 ) {
+      stop("Sankey plots require an x axis of at least two variables", call. = FALSE)
+    }
+    if (!has_y(df)) {
+      stop("Sankey plots require `y`", call. = FALSE)
+    }
+    if (!has_category(df)) {
+      stop("Sankey plots require `category`, as that will indicate the flows", call. = FALSE)
+    }
+  }
+  
   # keep only one of `stacked` and `stackedpercent`
   if (isTRUE(stacked) && isTRUE(stackedpercent)) {
     plot2_warning("Ignoring ", font_blue("stacked = TRUE"), ", since ", font_blue("stackedpercent = TRUE"))
@@ -1069,6 +1115,7 @@ plot2_exec <- function(.data,
   # Note that this will be not be used if colour == "ggplot2" or colour_fill == "ggplot2"
   cols <- validate_colour(df = df,
                           type = type,
+                          type_backup = type_backup,
                           colour = colour,
                           colour_fill = colour_fill,
                           colour_opacity = colour_opacity,
@@ -1112,6 +1159,13 @@ plot2_exec <- function(.data,
     # exception for line plots without colour/fill, force group = 1
     mapping <- utils::modifyList(mapping, aes(group = 1))
   }
+  # manual setting for Sankey plots
+  if (type_backup == "sankey") {
+    mapping <- aes(x = `_sankey_x`,
+                   id = `_sankey_id`,
+                   split = `_sankey_split`,
+                   value = `_var_y`)
+  }
   
   # generate ggplot ----
   if (isTRUE(original_colours)) {
@@ -1137,39 +1191,28 @@ plot2_exec <- function(.data,
                      colour = cols$colour)
     }
   }
-  p <- p +
-    generate_geom(type = type,
-                  df = df,
-                  stacked = stacked,
-                  stackedpercent = stackedpercent,
-                  horizontal = horizontal,
-                  width = width,
-                  size = size,
-                  linetype = linetype,
-                  linewidth = linewidth,
-                  reverse = reverse,
-                  na.rm = na.rm,
-                  violin_scale = violin_scale,
-                  jitter_seed = jitter_seed,
-                  binwidth = binwidth,
-                  cols = cols,
-                  original_colours = original_colours,
-                  dots_geom = dots_geom)
-  
-  # add secondary y axis if available
-  if (has_y_secondary(df)) {
-    if (y_secondary.type == "geom_boxplot") {
-      # first add the whiskers
-      p <- p +
-        stat_boxplot(geom = "errorbar",
-                     mapping = utils::modifyList(mapping, aes(y = `_var_y_secondary`)),
-                     coef = 1.5, # 1.5 * IQR
-                     width = width * ifelse(has_category(df), 1, 0.75),
-                     lwd = size,
-                     colour = y_secondary.colour)
-    }
+  if (type_backup == "sankey") {
     p <- p +
-      generate_geom(type = y_secondary.type,
+      geom_parallel_sets(aes(fill = `_var_category`),
+                         alpha = sankey.alpha,
+                         axis.width = sankey.node_width) +
+      geom_parallel_sets_axes(axis.width = sankey.node_width,
+                              fill = colourpicker(sankey.node_fill),
+                              colour = colourpicker(sankey.node_border)) +
+      geom_parallel_sets_labels(colour = colourpicker(sankey.labels_colour))
+    if (is.null(sankey.remove_axes)) {
+      # make the default TRUE, but give message so users will know which argument to set
+      sankey.remove_axes <- TRUE
+      plot2_message("Assuming ", font_blue("sankey.remove_axes = TRUE"))
+    }
+    if (isTRUE(sankey.remove_axes)) {
+      # set y range here, rest will be done in validate_theme() later on
+      y.limits <- c(NA, NA)
+      y.expand <- c(0, 0.01)
+    }
+  } else {
+    p <- p +
+      generate_geom(type = type,
                     df = df,
                     stacked = stacked,
                     stackedpercent = stackedpercent,
@@ -1183,11 +1226,43 @@ plot2_exec <- function(.data,
                     violin_scale = violin_scale,
                     jitter_seed = jitter_seed,
                     binwidth = binwidth,
-                    cols = list(colour = y_secondary.colour,
-                                colour_fill = y_secondary.colour_fill),
+                    cols = cols,
                     original_colours = original_colours,
-                    dots_geom = dots_geom,
-                    mapping = utils::modifyList(mapping, aes(y = `_var_y_secondary`)))
+                    dots_geom = dots_geom)
+    
+    # add secondary y axis if available
+    if (has_y_secondary(df)) {
+      if (y_secondary.type == "geom_boxplot") {
+        # first add the whiskers
+        p <- p +
+          stat_boxplot(geom = "errorbar",
+                       mapping = utils::modifyList(mapping, aes(y = `_var_y_secondary`)),
+                       coef = 1.5, # 1.5 * IQR
+                       width = width * ifelse(has_category(df), 1, 0.75),
+                       lwd = size,
+                       colour = y_secondary.colour)
+      }
+      p <- p +
+        generate_geom(type = y_secondary.type,
+                      df = df,
+                      stacked = stacked,
+                      stackedpercent = stackedpercent,
+                      horizontal = horizontal,
+                      width = width,
+                      size = size,
+                      linetype = linetype,
+                      linewidth = linewidth,
+                      reverse = reverse,
+                      na.rm = na.rm,
+                      violin_scale = violin_scale,
+                      jitter_seed = jitter_seed,
+                      binwidth = binwidth,
+                      cols = list(colour = y_secondary.colour,
+                                  colour_fill = y_secondary.colour_fill),
+                      original_colours = original_colours,
+                      dots_geom = dots_geom,
+                      mapping = utils::modifyList(mapping, aes(y = `_var_y_secondary`)))
+    }
   }
 
   if (is.null(smooth) && type == "geom_histogram") {
@@ -1448,7 +1523,8 @@ plot2_exec <- function(.data,
                    has_y_secondary = has_y_secondary(df),
                    has_category = has_category(df),
                    col_y_primary = cols$colour[1L],
-                   col_y_secondary = y_secondary.colour)
+                   col_y_secondary = y_secondary.colour,
+                   sankey.remove_axes = sankey.remove_axes)
   
   # add titles ----
   if (!misses_title) p <- p + labs(title = title)
@@ -1600,6 +1676,9 @@ plot2_exec <- function(.data,
   # this will replace e.g. `_var_x` and `_var_category` in the mapping and remove them from the data
   p <- restore_mapping(p = p,
                        df = df)
+  if (type_backup == "sankey") {
+    p$data <- p$data |> select(-get_x_name(df))
+  }
   
   # add plot title if missing
   if (isTRUE(misses_title) && is.null(title)) {

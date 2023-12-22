@@ -1,6 +1,6 @@
 Package: certeplot2
 Title: A Certe R Package for Convenient Plotting
-Version: 1.21.1
+Version: 1.22.0
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
          family = "Berends",
@@ -25,6 +25,7 @@ Imports:
   cleaner (>= 1.5.1),
   dplyr (>= 1.0.0),
   forcats (>= 0.5.1),
+  ggforce (>= 0.4.0),
   rlang (>= 1.0.2),
   scales (>= 1.2.0),
   stringr (>= 1.4.0),

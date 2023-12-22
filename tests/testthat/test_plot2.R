@@ -61,6 +61,14 @@ test_that("general types work", {
   # dumbbell:
   expect_s3_class(admitted_patients |> plot2(age_group, n_distinct(patient_id), ward, type = "d"), "gg")
   expect_s3_class(admitted_patients |> plot2(age_group, n_distinct(patient_id), ward, gender, type = "d"), "gg")
+  # sankey:
+  expect_s3_class(admitted_patients |>
+                    plot2(x = c(hospital, ward),
+                          y = n_distinct(patient_id),
+                          category = age_group,
+                          facet = gender,
+                          type = "sankey"),
+                  "gg")
 })
 
 test_that("na.rm works", {

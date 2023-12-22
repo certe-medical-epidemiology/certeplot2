@@ -118,7 +118,7 @@ validate_legend.position <- function(legend.position) {
   legend.position
 }
 
-#' @importFrom dplyr select pull mutate arrange across if_all cur_column filter distinct group_by summarise
+#' @importFrom dplyr select pull mutate arrange across if_all cur_column filter distinct group_by summarise bind_rows
 #' @importFrom tidyselect starts_with matches
 #' @importFrom certestyle font_bold font_blue font_magenta font_black
 validate_data <- function(df,
@@ -551,21 +551,23 @@ validate_data <- function(df,
   # apply sorting
   df.bak <- df
   if (has_x(df) && type != "geom_sf") {
-    if (is.null(dots$x.sort) && inherits(get_x(df), c("character", "factor"))) {
-      dots$x.sort <- TRUE
+    if (dots$type_backup != "sankey") {
+      if (is.null(dots$x.sort) && inherits(get_x(df), c("character", "factor"))) {
+        dots$x.sort <- TRUE
+      }
+      df <- df |> 
+        mutate(`_var_x` = sort_data(values = get_x(df),
+                                    original_values = get_x(df.bak),
+                                    sort_method = dots$x.sort,
+                                    datapoints = get_y(df),
+                                    summarise_function = dots$summarise_function,
+                                    summarise_fn_name = dots$summarise_fn_name,
+                                    horizontal = dots$horizontal,
+                                    drop = dots$x.drop,
+                                    argument = "x.sort")) |>
+        arrange(across(`_var_x`))
+      df[, get_x_name(df)] <- df$`_var_x` # required to keep sorting after summarising
     }
-    df <- df |> 
-      mutate(`_var_x` = sort_data(values = get_x(df),
-                                  original_values = get_x(df.bak),
-                                  sort_method = dots$x.sort,
-                                  datapoints = get_y(df),
-                                  summarise_function = dots$summarise_function,
-                                  summarise_fn_name = dots$summarise_fn_name,
-                                  horizontal = dots$horizontal,
-                                  drop = dots$x.drop,
-                                  argument = "x.sort")) |>
-      arrange(across(`_var_x`))
-    df[, get_x_name(df)] <- df$`_var_x` # required to keep sorting after summarising
   }
   if (has_category(df)) {
     df <- df |> 
@@ -594,11 +596,42 @@ validate_data <- function(df,
     df[, get_facet_name(df)] <- df$`_var_facet` # required to keep sorting after summarising
   }
   
-  # very last part before setting max items - everything has been transformed as needed
+  # sankey plot reorganisation to be able to use {ggforce} later on
+  if (dots$type_backup == "sankey") {
+    x_names <- plot2_env$sankey_x_names
+    df_new <- df |> 
+      mutate(`_sankey_split` = df |> pull(x_names[1]) |> as.character(),
+             `_sankey_x` = x_names[1],
+             `_sankey_id` = seq_len(nrow(df)))
+    for (i in 2:length(x_names)) {
+      df_new <- df_new |> 
+        bind_rows(df |> 
+                    mutate(`_sankey_split` = df |> pull(x_names[i]) |> as.character(),
+                           `_sankey_x` = x_names[i],
+                           `_sankey_id` = seq_len(nrow(df))))
+    }
+    # make sure that order of x gets preserved
+    if (is.null(dots$x.sort)) {
+      dots$x.sort <- "inorder"
+    }
+    df_new$`_sankey_x` <- sort_data(values = df_new$`_sankey_x`,
+                                    original_values = df_new$`_sankey_x`,
+                                    sort_method = dots$x.sort,
+                                    datapoints = df_new$`_var_y`,
+                                    summarise_function = dots$summarise_function,
+                                    summarise_fn_name = dots$summarise_fn_name,
+                                    horizontal = dots$horizontal,
+                                    drop = dots$x.drop,
+                                    argument = "x.sort")
+    df <- df_new
+  }
+  
+  # very last part before setting max items - everything has been transformed as needed.
   # are the data distinct, were tidyverse language selectors used in the right way?
   type_validated <- suppressMessages(validate_type(dots$type, df))
   if ((!geom_is_continuous(type_validated) || geom_is_line_or_area(type_validated)) &&
       !is.null(dots$summarise_function) &&
+      dots$type_backup != "sankey" &&
       (df |> select(starts_with("_var")) |> distinct() |> nrow()) < nrow(df)) {
     y_name <- get_y_name(df)
     df <- df |> 
@@ -946,10 +979,10 @@ validate_y_scale <- function(df,
                         y.breaks, y.n_breaks, y.expand, stackedpercent,
                         y.age, y.percent, y.percent_break, y.24h, y.limits,
                         y.trans) {
-    data_min <- min(0, values, na.rm = TRUE) * - (1 + y.expand)
+    data_min <- min(0, values, na.rm = TRUE) * - (1 + y.expand[length(y.expand)])
     data_max <- max(values, na.rm = TRUE)
     if (!inherits(values, c("Date", "POSIXt"))) {
-      data_max <- data_max * (1 + y.expand)
+      data_max <- data_max * (1 + y.expand[length(y.expand)])
     }
     if (y.trans != "identity") {
       if (!is.null(y.breaks)) {
@@ -1620,6 +1653,7 @@ generate_geom <- function(type,
 #' @importFrom certestyle colourpicker add_white
 validate_colour <- function(df,
                             type,
+                            type_backup,
                             colour,
                             colour_fill,
                             colour_opacity,
@@ -1718,7 +1752,11 @@ validate_colour <- function(df,
     if (geom_is_continuous(type) && is.null(colour_fill)) {
       # specific treatment for continuous geoms (such as boxplots/violins/histograms/...)
       # note: for "certe" there is an exception earlier in this function
-      colour_fill <- add_white(colour, white = 0.75)
+      if (type_backup == "sankey") {
+        colour_fill <- add_white(colour, white = 0.5)
+      } else {
+        colour_fill <- add_white(colour, white = 0.75)
+      }
     } else {
       colour_fill <- colourpicker(colour_fill,
                                   length = ifelse(length(colour_fill) == 1, n_unique, 1),
@@ -1950,7 +1988,8 @@ validate_theme <- function(theme,
                            has_y_secondary,
                            has_category,
                            col_y_primary,
-                           col_y_secondary) {
+                           col_y_secondary,
+                           sankey.remove_axes) {
   
   if (!is.null(theme)) {
     if (is.character(theme)) {
@@ -2108,6 +2147,16 @@ validate_theme <- function(theme,
     theme$axis.ticks.y <- theme.bak$axis.ticks.x
     theme$axis.line.x <- theme$axis.line.y
     theme$axis.line.y <- theme.bak$axis.line.x
+  }
+  
+  # for Sankey plots, remove axes if indicated
+  if (isTRUE(sankey.remove_axes)) {
+    theme$axis.line <- element_blank()
+    theme$panel.grid.major <- element_blank()
+    theme$panel.grid.minor <- element_blank()
+    theme$axis.ticks <- element_blank()
+    theme$axis.text.y <- element_blank()
+    theme$axis.title <- element_blank()
   }
   
   # return the theme

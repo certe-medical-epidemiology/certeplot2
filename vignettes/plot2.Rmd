@@ -304,6 +304,37 @@ admitted_patients |>
         y.title = "Number of Unique Patients During Study")
 ```
 
+
+### Sankey plots for showing flow/movement/change from one state to another
+
+`plot2()` also supports Sankey plots, which requires the `x` axis to contain multiple variables:
+
+```{r, fig.height = 5}
+titanic <- tibble::as_tibble(Titanic)
+titanic
+
+titanic |> 
+  plot2(x = c(Class, Age, Survived),
+        y = n,
+        category = Sex,
+        type = "sankey")
+
+# as with the rest of plot2(), includes support for tidyselect language:
+titanic |> 
+  plot2(x = where(is.character),
+        y = n,
+        category = Sex,
+        type = "sankey")
+
+# and in-line calculations (for y in this case), and facets
+admitted_patients |>
+  plot2(x = c(hospital, ward),
+        y = n_distinct(patient_id),
+        category = age_group,
+        facet = gender,
+        type = "sankey")
+```
+
 ### Focus on one category
 
 Using `category.focus`, you can focus on one specific category in the data:

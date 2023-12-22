@@ -149,6 +149,12 @@
   legend.barwidth = 1.5,
   legend.nbin = 300,
   legend.italic = FALSE,
+  sankey.node_width = 0.15,
+  sankey.node_fill = "white",
+  sankey.node_border = "grey40",
+  sankey.labels_colour = "grey40",
+  sankey.alpha = 1,
+  sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
   print = FALSE,
@@ -294,6 +300,12 @@
   legend.barwidth = 1.5,
   legend.nbin = 300,
   legend.italic = FALSE,
+  sankey.node_width = 0.15,
+  sankey.node_fill = "white",
+  sankey.node_border = "grey40",
+  sankey.labels_colour = "grey40",
+  sankey.alpha = 1,
+  sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
   print = FALSE,
@@ -439,6 +451,12 @@
   legend.barwidth = 1.5,
   legend.nbin = 300,
   legend.italic = FALSE,
+  sankey.node_width = 0.15,
+  sankey.node_fill = "white",
+  sankey.node_border = "grey40",
+  sankey.labels_colour = "grey40",
+  sankey.alpha = 1,
+  sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
   print = FALSE,
@@ -584,6 +602,12 @@
   legend.barwidth = 1.5,
   legend.nbin = 300,
   legend.italic = FALSE,
+  sankey.node_width = 0.15,
+  sankey.node_fill = "white",
+  sankey.node_border = "grey40",
+  sankey.labels_colour = "grey40",
+  sankey.alpha = 1,
+  sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
   print = FALSE,
@@ -733,6 +757,12 @@
   legend.barwidth = 1.5,
   legend.nbin = 300,
   legend.italic = FALSE,
+  sankey.node_width = 0.15,
+  sankey.node_fill = "white",
+  sankey.node_border = "grey40",
+  sankey.labels_colour = "grey40",
+  sankey.alpha = 1,
+  sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
   print = FALSE,
@@ -878,6 +908,12 @@
   legend.barwidth = 1.5,
   legend.nbin = 300,
   legend.italic = FALSE,
+  sankey.node_width = 0.15,
+  sankey.node_fill = "white",
+  sankey.node_border = "grey40",
+  sankey.labels_colour = "grey40",
+  sankey.alpha = 1,
+  sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
   print = FALSE,
@@ -1023,6 +1059,12 @@
   legend.barwidth = 1.5,
   legend.nbin = 300,
   legend.italic = FALSE,
+  sankey.node_width = 0.15,
+  sankey.node_fill = "white",
+  sankey.node_border = "grey40",
+  sankey.labels_colour = "grey40",
+  sankey.alpha = 1,
+  sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
   print = FALSE,
@@ -1171,6 +1213,12 @@
   legend.barwidth = 1.5,
   legend.nbin = 300,
   legend.italic = FALSE,
+  sankey.node_width = 0.15,
+  sankey.node_fill = "white",
+  sankey.node_border = "grey40",
+  sankey.labels_colour = "grey40",
+  sankey.alpha = 1,
+  sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
   print = FALSE,
@@ -1316,6 +1364,12 @@
   legend.barwidth = 1.5,
   legend.nbin = 300,
   legend.italic = FALSE,
+  sankey.node_width = 0.15,
+  sankey.node_fill = "white",
+  sankey.node_border = "grey40",
+  sankey.labels_colour = "grey40",
+  sankey.alpha = 1,
+  sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
   print = FALSE,
@@ -1463,6 +1517,12 @@
   legend.barwidth = 1.5,
   legend.nbin = 300,
   legend.italic = FALSE,
+  sankey.node_width = 0.15,
+  sankey.node_fill = "white",
+  sankey.node_border = "grey40",
+  sankey.labels_colour = "grey40",
+  sankey.alpha = 1,
+  sankey.remove_axes = NULL,
   zoom = TRUE,
   sep = " / ",
   print = FALSE,
@@ -1611,6 +1671,12 @@
   legend.barwidth = 1.5,
   legend.nbin = 300,
   legend.italic = FALSE,
+  sankey.node_width = 0.15,
+  sankey.node_fill = "white",
+  sankey.node_border = "grey40",
+  sankey.labels_colour = "grey40",
+  sankey.alpha = 1,
+  sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
   print = FALSE,
@@ -1629,15 +1695,14 @@
 \itemize{
 \item A single variable from \code{.data}, such as \code{x = column1}
 \item A \link{function} to calculate over one or more variables from \code{.data}, such as \code{x = format(column1, "\%Y")}, or \code{x = ifelse(column1 == "A", "Group A", "Other")}
+\item Multiple variables from \code{.data}, such as \code{x = c(column1, column2, column2)}, or using \link[tidyselect:language]{selection helpers} such as \code{x = where(is.charaacter)} or \code{x = starts_with("var_")} \emph{(only allowed and required for Sankey plots using \code{type = "sankey"})}
 }}
 
 \item{y}{values to use for plotting along the y axis. This can be:
 \itemize{
 \item A single variable from \code{.data}, such as \code{y = column1}
-\item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)} or \code{y = c(name1 = column1, "name 2" = column2)} \emph{(only allowed if \code{category} is not set)}
-\item One or more variables from \code{.data} using \link[tidyselect:language]{selection helpers}, such as \code{y = where(is.double)} or \code{y = starts_with("var_")} \emph{(multiple variables only allowed if \code{category} is not set)}
-\item A \link{function} to calculate over \code{.data}, such as \verb{y = }\code{\link[=n]{n()}} for the row count
-\item A \link{function} to calculate over one or more variables from \code{.data}, such as \code{y = n_distinct(person_id)}, \code{y = max(column1)}, or \code{y = median(column2) / column3}
+\item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)} or \code{y = c(name1 = column1, "name 2" = column2)}, or using \link[tidyselect:language]{selection helpers} such as \code{y = where(is.double)} or \code{y = starts_with("var_")} \emph{(multiple variables only allowed if \code{category} is not set)}
+\item A \link{function} to calculate over \code{.data}, such as \code{y = n()} for the row count, or based on other variables such as \code{y = n_distinct(person_id)}, \code{y = max(column1)}, or \code{y = median(column2) / column3}
 }}
 
 \item{category, facet}{plotting 'direction' (\code{category} is called 'fill' and 'colour' in \code{ggplot2}). This can be:
@@ -1648,7 +1713,7 @@
 \item One or more variables from \code{.data} using \link[tidyselect:language]{selection helpers}, such as \code{category = where(is.double)} or \code{facet = starts_with("var_")}
 }
 
-The \code{category} can also be a date (class \code{Date} or \code{POSIXt}).}
+The \code{category} can also be a date or date/time (class \code{Date} or \code{POSIXt}).}
 
 \item{type, y_secondary.type}{type of visualisation to use. This can be:
 \itemize{
@@ -1656,12 +1721,13 @@ The \code{category} can also be a date (class \code{Date} or \code{POSIXt}).}
 
 Full function names can be used (e.g., \code{"geom_histogram"}), but they can also be abbreviated (e.g., \code{"h"}, \code{"hist"}). The following geoms can be abbreviated by their first character: area (\code{"a"}), boxplot (\code{"b"}), column (\code{"c"}), histogram (\code{"h"}), jitter (\code{"j"}), line (\code{"l"}), point (\code{"p"}), ribbon (\code{"r"}), and violin (\code{"v"}).
 
-Please note: in \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically. For this reason, \code{type = "bar"} will set \code{type = "col"} and \code{horizontal = TRUE}.
-\item A shortcut. There are currently three supported shortcuts:
+Please note: in \code{ggplot2}, 'bars' and 'columns' are equal, while it is common to many people that 'bars' are oriented horizontally and 'columns' are oriented vertically since Microsoft Excel has been using these terms this way for many years. For this reason, \code{type = "bar"} will set \code{type = "col"} and \code{horizontal = TRUE}.
+\item One of these additional types:
 \itemize{
-\item \code{"barpercent"} (short: \code{"bp"}), which will set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
-\item \code{"linedot"} (short: \code{"ld"}), which will set \code{type = "line"} and adds two point geoms using \code{\link[=add_point]{add_point()}}; one with large white dots and one with smaller dots using the colours set in \code{colour}. This is essentially equal to base \R \code{plot(..., type = "b")} but with closed shapes.
-\item \code{"dumbbell"} (short: \code{"d"}), which will set \code{type = "point"} and \code{horizontal = TRUE}, and adds a line between the point (using \code{\link[=geom_segment]{geom_segment()}}). The line colour cannot be changed. This plot type is only possible when the \code{category} has two distinct values.
+\item \code{"barpercent"} (short: \code{"bp"}), which is effectively a shortcut to set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
+\item \code{"linedot"} (short: \code{"ld"}), which sets \code{type = "line"} and adds two point geoms using \code{\link[=add_point]{add_point()}}; one with large white dots and one with smaller dots using the colours set in \code{colour}. This is essentially equal to base \R \code{plot(..., type = "b")} but with closed shapes.
+\item \code{"dumbbell"} (short: \code{"d"}), which sets \code{type = "point"} and \code{horizontal = TRUE}, and adds a line between the points (using \code{\link[=geom_segment]{geom_segment()}}). The line colour cannot be changed. This plot type is only possible when the \code{category} has two distinct values.
+= \code{"sankey"} (short: \code{"s"}), which requires \code{x} to contain multiple variables from \code{.data} to create a Sankey plot.
 }
 \item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no x axis or if the length of unique values per x axis item is at least 3, \code{"point"} if both the y and x axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} add a geom.
 }}
@@ -1837,6 +1903,18 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 \item{legend.position}{position of the legend, must be \code{"top"}, \code{"right"}, \code{"bottom"}, \code{"left"} or \code{"none"} (or \code{NA} or \code{NULL}), can be abbreviated. Defaults to \code{"right"} for numeric \code{category} values and 'sf' plots, and \code{"top"} otherwise.}
 
 \item{legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic}{other settings for the legend}
+
+\item{sankey.node_width}{width of the vertical nodes in a Sankey plot (i.e., when \code{type = "sankey"})}
+
+\item{sankey.node_fill}{fill colour of the vertical nodes in a Sankey plot (i.e., when \code{type = "sankey"})}
+
+\item{sankey.node_border}{border colour of the vertical nodes in a Sankey plot (i.e., when \code{type = "sankey"})}
+
+\item{sankey.labels_colour}{colour of the text in the nodes in a Sankey plot (i.e., when \code{type = "sankey"})}
+
+\item{sankey.alpha}{alpha of the flows in a Sankey plot (i.e., when \code{type = "sankey"})}
+
+\item{sankey.remove_axes}{logical to indicate whether all axes must be removed in a Sankey plot (i.e., when \code{type = "sankey"})}
 
 \item{zoom}{a \link{logical} to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0. This will set \code{x.zoom = TRUE} and \code{y.zoom = TRUE}.}
 

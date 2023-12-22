@@ -21,6 +21,9 @@ plot2_env <- new.env(hash = FALSE)
 
 globalVariables(c(".",
                   "_new_title",
+                  "_sankey_id",
+                  "_sankey_split",
+                  "_sankey_x",
                   "_var_category",
                   "_var_datalabels",
                   "_var_facet",
@@ -600,6 +603,7 @@ clean_plot2_env <- function() {
   plot2_env$mapping_facet <- NULL
   plot2_env$mapping_y_secondary <- NULL
   plot2_env$y_secondary_factor <- NULL
+  plot2_env$sankey_x_names <- NULL
 }
 
 sigfigs <- function(x) {

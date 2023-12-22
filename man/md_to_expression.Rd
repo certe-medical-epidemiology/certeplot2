@@ -18,8 +18,6 @@ This function converts common markdown language to an \R \link[grDevices:plotmat
 \details{
 This function only supports common markdown (italic, bold, bold-italic, subscript, superscript), but also supports some additional functionalities for more advanced expressions using \R \link[grDevices:plotmath]{plotmath}. Please see \emph{Examples}.
 
-\emph{Rationale}: we tried to use the \code{ggtext} package instead to support markdown using their \code{element_markdown()} function for \code{ggplot2} \link[ggplot2:theme]{themes}, but it currently supports only very limited markdown and no \link[grDevices:plotmath]{plotmath} at all.
-
 In \code{\link[=plot2]{plot2()}}, this function can be also set to argument \code{category.labels} to print the data values as expressions:
 \itemize{
 \item \code{plot2(..., category.labels = md_to_expression)}

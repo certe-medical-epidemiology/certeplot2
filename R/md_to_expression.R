@@ -23,8 +23,6 @@
 #' @param x text to convert, only the first value will be evaluated
 #' @details This function only supports common markdown (italic, bold, bold-italic, subscript, superscript), but also supports some additional functionalities for more advanced expressions using \R [plotmath][grDevices::plotmath]. Please see *Examples*.
 #' 
-#' *Rationale*: we tried to use the `ggtext` package instead to support markdown using their `element_markdown()` function for `ggplot2` [themes][ggplot2::theme()], but it currently supports only very limited markdown and no [plotmath][grDevices::plotmath] at all.
-#' 
 #' In [plot2()], this function can be also set to argument `category.labels` to print the data values as expressions:
 #' - `plot2(..., category.labels = md_to_expression)`
 #' @export
