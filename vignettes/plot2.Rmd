@@ -326,22 +326,18 @@ Titanic |>
   plot2(x = where(is.character),
         category = Sex,
         type = "sankey",
-        # increased whitespace between the nodes
-        sankey.node_whitespace = 0.1)
-Titanic |> 
-  plot2(x = where(is.character),
-        category = Sex,
-        type = "sankey",
         sankey.node_whitespace = 0,
         sankey.remove_axes = FALSE,
         sankey.node_width = 0.25,
         y.expand = c(0, 0.15),
         x.expand = c(0.1, 0.1),
         theme = NULL,
-        colour = "ggplot2",
         y.title = "Number of Individuals",
-        legend.title = "Gender:",
-        legend.position = "right")
+        category.title = "Gender:",
+        colour = "turbo",
+        datalabels.colour = "white",
+        datalabels.colour_fill = "turbo",
+        datalabels.size = 4)
 ```
 
 ### Focus on one category

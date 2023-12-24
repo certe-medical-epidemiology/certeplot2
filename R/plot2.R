@@ -31,7 +31,7 @@
 #' 
 #' - A [function] to calculate over one or more variables from `.data`, such as `x = format(column1, "%Y")`, or `x = ifelse(column1 == "A", "Group A", "Other")`
 #' 
-#' - Multiple variables from `.data`, such as `x = c(column1, column2, column2)`, or using [selection helpers][tidyselect::language] such as `x = where(is.charaacter)` or `x = starts_with("var_")` *(only allowed and required for Sankey plots using `type = "sankey"`)*
+#' - Multiple variables from `.data`, such as `x = c(column1, column2, column2)`, or using [selection helpers][tidyselect::language] such as `x = where(is.character)` or `x = starts_with("var_")` *(only allowed and required for Sankey plots using `type = "sankey"`)*
 #' @param y values to use for plotting along the y axis. This can be:
 #' 
 #' - A single variable from `.data`, such as `y = column1`

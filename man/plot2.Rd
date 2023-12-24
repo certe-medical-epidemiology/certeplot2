@@ -160,7 +160,7 @@ plot2(
 \itemize{
 \item A single variable from \code{.data}, such as \code{x = column1}
 \item A \link{function} to calculate over one or more variables from \code{.data}, such as \code{x = format(column1, "\%Y")}, or \code{x = ifelse(column1 == "A", "Group A", "Other")}
-\item Multiple variables from \code{.data}, such as \code{x = c(column1, column2, column2)}, or using \link[tidyselect:language]{selection helpers} such as \code{x = where(is.charaacter)} or \code{x = starts_with("var_")} \emph{(only allowed and required for Sankey plots using \code{type = "sankey"})}
+\item Multiple variables from \code{.data}, such as \code{x = c(column1, column2, column2)}, or using \link[tidyselect:language]{selection helpers} such as \code{x = where(is.character)} or \code{x = starts_with("var_")} \emph{(only allowed and required for Sankey plots using \code{type = "sankey"})}
 }}
 
 \item{y}{values to use for plotting along the y axis. This can be:
