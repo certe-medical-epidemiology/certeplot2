@@ -56,7 +56,10 @@ validate_type <- function(type, df = NULL) {
           count_nrs <- df |>
             group_by(across(c(get_x_name(df), get_category_name(df)))) |>
             summarise(n = n())
-          if (all(count_nrs$n, na.rm = TRUE) == 1) {
+          if (length(plot2_env$x_variable_names) > 1) {
+            plot2_message("To view the relation between multiple variables of ", font_blue("x"), ", a Sankey plot can be used (",
+                          font_blue("type = \"sankey\""), " or ", font_blue("type = \"s\""), ")")
+          } else if (all(count_nrs$n, na.rm = TRUE) == 1) {
             plot2_message("To compare single values in two categories (", font_blue(get_category_name(df)), "), a dumbbell plot can be used (",
                           font_blue("type = \"dumbbell\""), " or ", font_blue("type = \"d\""), ")")
           }
@@ -598,7 +601,7 @@ validate_data <- function(df,
   
   # sankey plot reorganisation to be able to use {ggforce} later on
   if (dots$type_backup == "sankey") {
-    x_names <- plot2_env$sankey_x_names
+    x_names <- plot2_env$x_variable_names
     df_new <- df |> 
       mutate(`_sankey_split` = df |> pull(x_names[1]) |> as.character(),
              `_sankey_x` = x_names[1],
@@ -756,7 +759,8 @@ validate_x_scale <- function(values,
                              x.zoom,
                              decimal.mark,
                              big.mark,
-                             horizontal) {
+                             horizontal,
+                             type_backup) {
   
   if (isTRUE(x.zoom) && is.null(x.limits)) {
     x.limits <- c(NA_real_, NA_real_)
@@ -766,6 +770,7 @@ validate_x_scale <- function(values,
     }
   }
   
+  set_x.expand <- !is.null(x.expand)
   if (is.null(x.expand)) {
     if (is.null(x.limits)) {
       # set default value to 0.5
@@ -809,7 +814,7 @@ validate_x_scale <- function(values,
     }
   }
   
-  if (!is.function(x.expand)) {
+  if (!is.function(x.expand) && !set_x.expand) {
     if (length(x.expand) == 1) {
       x.expand <- c(x.expand, x.expand)
     }
@@ -848,7 +853,8 @@ validate_x_scale <- function(values,
     if (!is.numeric(values)) {
       scale_x_discrete(position = x.position,
                        drop = x.drop, 
-                       labels = if (is.null(x.labels)) waiver() else x.labels)
+                       labels = if (is.null(x.labels)) waiver() else x.labels,
+                       expand = if (set_x.expand) x.expand else waiver())
     } else {
       if (x.trans == "identity" && isTRUE(horizontal)) {
         x.trans <- reverse_trans()
@@ -1127,32 +1133,26 @@ validate_y_scale <- function(df,
     }
   }
   
-  expand_fn <- function(values, y.expand, y.age, stackedpercent, limits) {
+  expand_fn <- function(values, y.expand, y.age, stackedpercent, y.limits, type_backup) {
     if (is.function(y.expand)) {
       y.expand
     } else if (isTRUE(y.age) || isTRUE(stackedpercent)) {
       expansion(mult = c(0, 0))
     } else {
+      y.expand.bak <- y.expand
       if (length(y.expand) == 1) {
         y.expand <- rep(y.expand, 2)
       }
-      if (is.numeric(limits) && length(limits) == 2) {
-        expansion(mult = c(ifelse(any(values < 0) || is.na(limits[1L]), y.expand[1], 0),
-                           ifelse(any(values > 0) || is.na(limits[2L]), y.expand[2], 0)))
+      if (is.numeric(y.limits) && length(y.limits[!is.na(y.limits)]) == 2) {
+        expansion(mult = c(ifelse(any(values < 0) || is.na(y.limits[1L]), y.expand[1], 0),
+                           ifelse(any(values > 0) || is.na(y.limits[2L]), y.expand[2], 0)))
       } else {
-        expansion(mult = c(ifelse(any(values < 0), y.expand[1], 0),
-                           ifelse(any(values > 0), y.expand[2], 0)))
+        # when y.limits is not numeric, but e.g. a function
+        expansion(mult = c(ifelse(any(values < 0) || length(y.expand.bak) == 2, y.expand[1], 0),
+                           ifelse(any(values > 0) || length(y.expand.bak) == 2, y.expand[2], 0)))
       }
     }
   }
-  
-  limits <- limits_fn(values = values,
-                      y.limits,
-                      y.expand = y.expand,
-                      facet.fixed_y = facet.fixed_y,
-                      y.age = y.age,
-                      y.trans = y.trans,
-                      df)
   
   if (isTRUE(add_y_secondary)) {
     # ggplot2::sec_axis() only supports a simple transformation function to determine the scale
@@ -1185,6 +1185,14 @@ validate_y_scale <- function(df,
     sec_y <- waiver()
   }
   
+  limits_evaluated <- limits_fn(values = values,
+                                y.limits,
+                                y.expand = y.expand,
+                                facet.fixed_y = facet.fixed_y,
+                                y.age = y.age,
+                                y.trans = y.trans,
+                                df)
+  
   scale_y_continuous(
     breaks = breaks_fn(values = values,
                        waiver = waiver(),
@@ -1209,12 +1217,12 @@ validate_y_scale <- function(df,
                        stackedpercent = stackedpercent,
                        decimal.mark = decimal.mark,
                        big.mark = big.mark),
-    limits = limits,
+    limits = limits_evaluated,
     expand = expand_fn(values = values,
                        y.expand = y.expand,
                        y.age = y.age,
                        stackedpercent = stackedpercent,
-                       limits = limits),
+                       y.limits = limits_evaluated),
     trans = y.trans,
     position = y.position,
     sec.axis = sec_y
@@ -1749,14 +1757,11 @@ validate_colour <- function(df,
     colour <- colourpicker(colour,
                            length = ifelse(length(colour) == 1, n_unique, 1),
                            opacity = colour_opacity)
-    if (geom_is_continuous(type) && is.null(colour_fill)) {
+    if (geom_is_continuous(type) && is.null(colour_fill) && type_backup != "sankey") {
       # specific treatment for continuous geoms (such as boxplots/violins/histograms/...)
+      # but not for Sankey plots - they have sankey.alpha
       # note: for "certe" there is an exception earlier in this function
-      if (type_backup == "sankey") {
-        colour_fill <- add_white(colour, white = 0.5)
-      } else {
-        colour_fill <- add_white(colour, white = 0.75)
-      }
+      colour_fill <- add_white(colour, white = 0.75)
     } else {
       colour_fill <- colourpicker(colour_fill,
                                   length = ifelse(length(colour_fill) == 1, n_unique, 1),
@@ -2155,7 +2160,11 @@ validate_theme <- function(theme,
     theme$panel.grid.major <- element_blank()
     theme$panel.grid.minor <- element_blank()
     theme$axis.ticks <- element_blank()
-    theme$axis.text.y <- element_blank()
+    if (isTRUE(horizontal)) {
+      theme$axis.text.x <- element_blank()
+    } else {
+      theme$axis.text.y <- element_blank()
+    }
     theme$axis.title <- element_blank()
   }
   

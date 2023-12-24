@@ -150,10 +150,8 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   sankey.node_width = 0.15,
-  sankey.node_fill = "white",
-  sankey.node_border = "grey40",
-  sankey.labels_colour = "grey40",
-  sankey.alpha = 1,
+  sankey.node_whitespace = 0.03,
+  sankey.alpha = 0.5,
   sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
@@ -301,10 +299,8 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   sankey.node_width = 0.15,
-  sankey.node_fill = "white",
-  sankey.node_border = "grey40",
-  sankey.labels_colour = "grey40",
-  sankey.alpha = 1,
+  sankey.node_whitespace = 0.03,
+  sankey.alpha = 0.5,
   sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
@@ -452,10 +448,8 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   sankey.node_width = 0.15,
-  sankey.node_fill = "white",
-  sankey.node_border = "grey40",
-  sankey.labels_colour = "grey40",
-  sankey.alpha = 1,
+  sankey.node_whitespace = 0.03,
+  sankey.alpha = 0.5,
   sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
@@ -603,10 +597,8 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   sankey.node_width = 0.15,
-  sankey.node_fill = "white",
-  sankey.node_border = "grey40",
-  sankey.labels_colour = "grey40",
-  sankey.alpha = 1,
+  sankey.node_whitespace = 0.03,
+  sankey.alpha = 0.5,
   sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
@@ -758,10 +750,8 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   sankey.node_width = 0.15,
-  sankey.node_fill = "white",
-  sankey.node_border = "grey40",
-  sankey.labels_colour = "grey40",
-  sankey.alpha = 1,
+  sankey.node_whitespace = 0.03,
+  sankey.alpha = 0.5,
   sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
@@ -909,10 +899,8 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   sankey.node_width = 0.15,
-  sankey.node_fill = "white",
-  sankey.node_border = "grey40",
-  sankey.labels_colour = "grey40",
-  sankey.alpha = 1,
+  sankey.node_whitespace = 0.03,
+  sankey.alpha = 0.5,
   sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
@@ -1060,10 +1048,8 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   sankey.node_width = 0.15,
-  sankey.node_fill = "white",
-  sankey.node_border = "grey40",
-  sankey.labels_colour = "grey40",
-  sankey.alpha = 1,
+  sankey.node_whitespace = 0.03,
+  sankey.alpha = 0.5,
   sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
@@ -1214,10 +1200,8 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   sankey.node_width = 0.15,
-  sankey.node_fill = "white",
-  sankey.node_border = "grey40",
-  sankey.labels_colour = "grey40",
-  sankey.alpha = 1,
+  sankey.node_whitespace = 0.03,
+  sankey.alpha = 0.5,
   sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
@@ -1365,10 +1349,8 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   sankey.node_width = 0.15,
-  sankey.node_fill = "white",
-  sankey.node_border = "grey40",
-  sankey.labels_colour = "grey40",
-  sankey.alpha = 1,
+  sankey.node_whitespace = 0.03,
+  sankey.alpha = 0.5,
   sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
@@ -1518,10 +1500,8 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   sankey.node_width = 0.15,
-  sankey.node_fill = "white",
-  sankey.node_border = "grey40",
-  sankey.labels_colour = "grey40",
-  sankey.alpha = 1,
+  sankey.node_whitespace = 0.03,
+  sankey.alpha = 0.5,
   sankey.remove_axes = NULL,
   zoom = TRUE,
   sep = " / ",
@@ -1672,10 +1652,8 @@
   legend.nbin = 300,
   legend.italic = FALSE,
   sankey.node_width = 0.15,
-  sankey.node_fill = "white",
-  sankey.node_border = "grey40",
-  sankey.labels_colour = "grey40",
-  sankey.alpha = 1,
+  sankey.node_whitespace = 0.03,
+  sankey.alpha = 0.5,
   sankey.remove_axes = NULL,
   zoom = FALSE,
   sep = " / ",
@@ -1727,7 +1705,7 @@ Please note: in \code{ggplot2}, 'bars' and 'columns' are equal, while it is comm
 \item \code{"barpercent"} (short: \code{"bp"}), which is effectively a shortcut to set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
 \item \code{"linedot"} (short: \code{"ld"}), which sets \code{type = "line"} and adds two point geoms using \code{\link[=add_point]{add_point()}}; one with large white dots and one with smaller dots using the colours set in \code{colour}. This is essentially equal to base \R \code{plot(..., type = "b")} but with closed shapes.
 \item \code{"dumbbell"} (short: \code{"d"}), which sets \code{type = "point"} and \code{horizontal = TRUE}, and adds a line between the points (using \code{\link[=geom_segment]{geom_segment()}}). The line colour cannot be changed. This plot type is only possible when the \code{category} has two distinct values.
-= \code{"sankey"} (short: \code{"s"}), which requires \code{x} to contain multiple variables from \code{.data} to create a Sankey plot.
+\item \code{"sankey"} (short: \code{"s"}) creates a Sankey plots using \code{category} for the flows and requires \code{x} to contain multiple variables from \code{.data}. At default, it also sets \code{x.expand = c(0.05, 0.05)} and \code{y.limits = c(NA, NA)} and \code{y.expand = c(0.01, 0.01)}. The so-called nodes (the 'blocks' with text) are considered the datalabels, so you can set the text size and colour of the nodes using \code{datalabels.size}, \code{datalabels.colour}, and \code{datalabels.colour_fill}. The transparency of the flows can be set using \code{sankey.alpha}, and the width of the nodes can be set using \code{sankey.node_width}. Sankey plots can also be flipped using \code{horizontal = TRUE}.
 }
 \item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no x axis or if the length of unique values per x axis item is at least 3, \code{"point"} if both the y and x axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} add a geom.
 }}
@@ -1906,11 +1884,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{sankey.node_width}{width of the vertical nodes in a Sankey plot (i.e., when \code{type = "sankey"})}
 
-\item{sankey.node_fill}{fill colour of the vertical nodes in a Sankey plot (i.e., when \code{type = "sankey"})}
-
-\item{sankey.node_border}{border colour of the vertical nodes in a Sankey plot (i.e., when \code{type = "sankey"})}
-
-\item{sankey.labels_colour}{colour of the text in the nodes in a Sankey plot (i.e., when \code{type = "sankey"})}
+\item{sankey.node_whitespace}{whitespace between the nodes}
 
 \item{sankey.alpha}{alpha of the flows in a Sankey plot (i.e., when \code{type = "sankey"})}
 

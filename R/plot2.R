@@ -66,7 +66,7 @@
 #'   - `"barpercent"` (short: `"bp"`), which is effectively a shortcut to set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
 #'   - `"linedot"` (short: `"ld"`), which sets `type = "line"` and adds two point geoms using [add_point()]; one with large white dots and one with smaller dots using the colours set in `colour`. This is essentially equal to base \R `plot(..., type = "b")` but with closed shapes.
 #'   - `"dumbbell"` (short: `"d"`), which sets `type = "point"` and `horizontal = TRUE`, and adds a line between the points (using [geom_segment()]). The line colour cannot be changed. This plot type is only possible when the `category` has two distinct values.
-#'   = `"sankey"` (short: `"s"`), which requires `x` to contain multiple variables from `.data` to create a Sankey plot.
+#'   - `"sankey"` (short: `"s"`) creates a Sankey plots using `category` for the flows and requires `x` to contain multiple variables from `.data`. At default, it also sets `x.expand = c(0.05, 0.05)` and `y.limits = c(NA, NA)` and `y.expand = c(0.01, 0.01)`. The so-called nodes (the 'blocks' with text) are considered the datalabels, so you can set the text size and colour of the nodes using `datalabels.size`, `datalabels.colour`, and `datalabels.colour_fill`. The transparency of the flows can be set using `sankey.alpha`, and the width of the nodes can be set using `sankey.node_width`. Sankey plots can also be flipped using `horizontal = TRUE`.
 #' 
 #' - Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no x axis or if the length of unique values per x axis item is at least 3, `"point"` if both the y and x axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* add a geom.
 #' @param title,subtitle,caption,tag,x.title,y.title,category.title,legend.title,y_secondary.title a title to use. This can be:
@@ -165,9 +165,7 @@
 #' @param legend.position position of the legend, must be `"top"`, `"right"`, `"bottom"`, `"left"` or `"none"` (or `NA` or `NULL`), can be abbreviated. Defaults to `"right"` for numeric `category` values and 'sf' plots, and `"top"` otherwise.
 #' @param legend.reverse,legend.barheight,legend.barwidth,legend.nbin,legend.italic other settings for the legend
 #' @param sankey.node_width width of the vertical nodes in a Sankey plot (i.e., when `type = "sankey"`)
-#' @param sankey.node_fill fill colour of the vertical nodes in a Sankey plot (i.e., when `type = "sankey"`)
-#' @param sankey.node_border border colour of the vertical nodes in a Sankey plot (i.e., when `type = "sankey"`)
-#' @param sankey.labels_colour colour of the text in the nodes in a Sankey plot (i.e., when `type = "sankey"`)
+#' @param sankey.node_whitespace whitespace between the nodes
 #' @param sankey.alpha alpha of the flows in a Sankey plot (i.e., when `type = "sankey"`)
 #' @param sankey.remove_axes logical to indicate whether all axes must be removed in a Sankey plot (i.e., when `type = "sankey"`)
 #' @param zoom a [logical] to indicate if the plot should be scaled to the data, i.e., not having the x and y axes to start at 0. This will set `x.zoom = TRUE` and `y.zoom = TRUE`.
@@ -315,8 +313,9 @@
 #'         
 #' # support for Sankey plots
 #' Titanic |> # a table from base R
-#'   tibble::as_tibble() |>
-#'   plot2(x = c(Age, Class, Survived), n, category = Sex, type = "sankey")
+#'   plot2(x = c(Age, Class, Survived),
+#'         category = Sex,
+#'         type = "sankey")
 #'
 #' # matrix support, such as for cor()
 #' correlation_matrix <- cor(mtcars)
@@ -514,10 +513,8 @@ plot2 <- function(.data,
                   legend.nbin = 300,
                   legend.italic = FALSE,
                   sankey.node_width = 0.15,
-                  sankey.node_fill = "white",
-                  sankey.node_border = "grey40",
-                  sankey.labels_colour = "grey40",
-                  sankey.alpha = 1,
+                  sankey.node_whitespace = 0.03,
+                  sankey.alpha = 0.5,
                   sankey.remove_axes = NULL,
                   zoom = FALSE,
                   sep = " / ",
@@ -724,9 +721,7 @@ plot2_exec <- function(.data,
                        legend.nbin,
                        legend.italic,
                        sankey.node_width,
-                       sankey.node_fill,
-                       sankey.node_border,
-                       sankey.labels_colour,
+                       sankey.node_whitespace,
                        sankey.alpha,
                        sankey.remove_axes,
                        zoom,
@@ -772,7 +767,7 @@ plot2_exec <- function(.data,
     x.drop <- !isTRUE(facet.fixed_x)
   }
   
-  # pre-validate types for special types ----
+  # pre-validate types and set type shortcuts ----
   if (!is_empty(type) && !is.character(type)) {
     stop("'type' must be a character", call. = FALSE)
   }
@@ -801,12 +796,19 @@ plot2_exec <- function(.data,
       horizontal <- TRUE
     }
     if (type %like% "^(sankey|s)$") {
-      type <- "line"
+      type <- "line" # this is to give the flows the right colour; a continuous geom without a fill
       type_backup <- "sankey"
-      horizontal <- FALSE
       datalabels <- FALSE
+      if (is.null(x.expand)) {
+        x.expand <- c(0.05, 0.05)
+      }
+      if (is.null(y.limits)) {
+        y.limits <- c(NA, NA)
+      }
+      if (is.null(y.expand)) {
+        y.expand <- c(0.01, 0.01)
+      }
       x.title = ""
-      plot2_env$sankey_x_names <- tryCatch(.data |> select({{ x }}) |> colnames(), error = function(e) NULL)
     }
     if (type %like% "bar") {
       type <- "col"
@@ -816,11 +818,12 @@ plot2_exec <- function(.data,
     type_backup <- ""
   }
   
-  set_plot2_env(dots$`_label.x`,
-                dots$`_label.y`,
-                dots$`_label.category`,
-                dots$`_label.facet`,
-                dots$`_label.y_secondary`)
+  set_plot2_env(x = dots$`_label.x`,
+                y = dots$`_label.y`,
+                category = dots$`_label.category`,
+                facet = dots$`_label.facet`,
+                y_secondary = dots$`_label.y_secondary`,
+                x_variable_names = tryCatch(.data |> select({{ x }}) |> colnames(), error = function(e) NULL))
   on.exit(clean_plot2_env())
   
   # get titles based on raw data ----
@@ -899,7 +902,7 @@ plot2_exec <- function(.data,
           bind_cols(y_select[, colnames(y_select)[which(!colnames(y_select) %in% colnames(.data))], drop = FALSE]) |> 
           pivot_longer(c(colnames(y_select), -matches("^_var_"), -get_x_name(.data)), names_to = "_var_category", values_to = "_var_y") |>
           # apply summarise_function
-          group_by(across(c(plot2_env$sankey_x_names, get_x_name(.data), get_category_name(.data), get_facet_name(.data),
+          group_by(across(c(plot2_env$x_variable_names, get_x_name(.data), get_category_name(.data), get_facet_name(.data),
                             matches("_var_(x|category|facet)")))) |> 
           summarise(`_var_y` = summarise_function(`_var_y`),
                     .groups = "drop") |> 
@@ -943,7 +946,7 @@ plot2_exec <- function(.data,
           # this will support e.g. `data |> plot2(y = n_distinct(id))`
           suppressWarnings(
             tryCatch(.data |> 
-                       group_by(across(c(plot2_env$sankey_x_names, get_x_name(.data), get_category_name(.data), get_facet_name(.data),
+                       group_by(across(c(plot2_env$x_variable_names, get_x_name(.data), get_category_name(.data), get_facet_name(.data),
                                          matches("_var_(x|category|facet)")))) |>
                        summarise(`_var_y` = {{ y }},
                                  .groups = "drop"),
@@ -1017,7 +1020,7 @@ plot2_exec <- function(.data,
     y_secondary.type <- suppressMessages(validate_type(type = y_secondary.type, df = df))
   }
   # transform data if not a continuous geom but group sizes are > 1
-  if (any(group_sizes(df) > 1) && !geom_is_continuous(type)) {
+  if (any(group_sizes(df) > 1) && !geom_is_continuous(type) && type_backup != "sankey") {
     if (identical(type_backup, "barpercent")) {
       plot2_message("Summarising values for ", font_blue("type = \"barpercent\""), " using ",
                     font_blue(paste0("summarise_function = ", dots$`_summarise_fn_name`)))
@@ -1082,8 +1085,7 @@ plot2_exec <- function(.data,
   linewidth <- validate_linewidth(linewidth = linewidth, type = type, type_backup = type_backup)
   
   # generate colour vectors ----
-  
-  # keep original ggplot2 colours if they have not been set ----
+  # keep original ggplot2 colours if they have not been set
   if (type == "geom_sf") {
     original_colours <- identical(colour_fill, "ggplot2") || is.null(colour_fill)
   } else {
@@ -1121,7 +1123,7 @@ plot2_exec <- function(.data,
                           colour_opacity = colour_opacity,
                           misses_colour_fill = misses_colour_fill,
                           horizontal = horizontal)
-
+  
   # generate mapping / aesthetics ----
   # IMPORTANT: in this part, the mapping will be generated anonymously, e.g. as `_var_x` and `_var_category`;
   # this is done for convenience - this is restored before returning the `ggplot` object in the end
@@ -1173,6 +1175,7 @@ plot2_exec <- function(.data,
   } else {
     p <- ggplot(data = df, mapping = mapping, colour = cols$colour, fill = cols$colour_fill)
   }
+  
   # generate geom ----
   if (type == "geom_boxplot") {
     # first add the whiskers, the actual boxplot will be added with `generate_geom()` below
@@ -1195,20 +1198,25 @@ plot2_exec <- function(.data,
     p <- p +
       geom_parallel_sets(aes(fill = `_var_category`),
                          alpha = sankey.alpha,
+                         # whitespace between nodes
+                         sep = sankey.node_whitespace,
+                         # width for flows, i.e., category
                          axis.width = sankey.node_width) +
-      geom_parallel_sets_axes(axis.width = sankey.node_width,
-                              fill = colourpicker(sankey.node_fill),
-                              colour = colourpicker(sankey.node_border)) +
-      geom_parallel_sets_labels(colour = colourpicker(sankey.labels_colour))
+      geom_parallel_sets_axes(fill = colourpicker(datalabels.colour_fill[1]),
+                              colour = colourpicker(datalabels.colour[1]),
+                              # whitespace between nodes
+                              sep = sankey.node_whitespace,
+                              # width of nodes
+                              axis.width = sankey.node_width) +
+      geom_parallel_sets_labels(colour = colourpicker(datalabels.colour[1]),
+                                size = datalabels.size,
+                                # whitespace between labels in nodes
+                                sep = sankey.node_whitespace,
+                                angle = ifelse(isTRUE(horizontal), 0, -90))
     if (is.null(sankey.remove_axes)) {
       # make the default TRUE, but give message so users will know which argument to set
       sankey.remove_axes <- TRUE
       plot2_message("Assuming ", font_blue("sankey.remove_axes = TRUE"))
-    }
-    if (isTRUE(sankey.remove_axes)) {
-      # set y range here, rest will be done in validate_theme() later on
-      y.limits <- c(NA, NA)
-      y.expand <- c(0, 0.01)
     }
   } else {
     p <- p +
@@ -1427,7 +1435,8 @@ plot2_exec <- function(.data,
                          x.zoom = x.zoom,
                          decimal.mark = decimal.mark,
                          big.mark = big.mark,
-                         horizontal = horizontal)
+                         horizontal = horizontal,
+                         type_backup = type_backup)
     } else {
       # no x
       p <- p +
@@ -1465,6 +1474,7 @@ plot2_exec <- function(.data,
       }
       p <- p +
         validate_y_scale(df = df,
+                         type = type,
                          y.24h = y.24h,
                          y.age = y.age,
                          y.scientific = y.scientific,
@@ -1553,7 +1563,7 @@ plot2_exec <- function(.data,
     if ("colour" %in% names(mapping)) {
       p <- p + labs(colour = legend.title)
     }
-    if ("fill" %in% names(mapping)) {
+    if ("fill" %in% names(mapping) || type_backup == "sankey") {
       p <- p + labs(fill = legend.title)
     }
     if ("group" %in% names(mapping)) {

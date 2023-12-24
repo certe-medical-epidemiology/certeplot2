@@ -307,32 +307,40 @@ admitted_patients |>
 
 ### Sankey plots for showing flow/movement/change from one state to another
 
-`plot2()` also supports Sankey plots, which requires the `x` axis to contain multiple variables:
+`plot2()` also supports Sankey plots, which just requires the `x` axis to contain multiple variables and `category` to define the flows:
 
 ```{r, fig.height = 5}
-titanic <- tibble::as_tibble(Titanic)
-titanic
-
-titanic |> 
+# Titanic is a data set of class 'table' from base R
+Titanic |> as.data.frame() |> tibble::as_tibble()
+Titanic |> 
   plot2(x = c(Class, Age, Survived),
-        y = n,
         category = Sex,
         type = "sankey")
+```
 
-# as with the rest of plot2(), includes support for tidyselect language:
-titanic |> 
+Notice how `y` gets set automatically, since transforming a `table` with `as.data.frame()` (which happens internally), will yield a `"Freq"` column.
+
+```{r, fig.height = 5}
+# as with the rest of plot2(), `x` supports tidyselect language for colmn selection:
   plot2(x = where(is.character),
-        y = n,
         category = Sex,
-        type = "sankey")
-
-# and in-line calculations (for y in this case), and facets
-admitted_patients |>
-  plot2(x = c(hospital, ward),
-        y = n_distinct(patient_id),
-        category = age_group,
-        facet = gender,
-        type = "sankey")
+        type = "sankey",
+        # increased whitespace between the nodes
+        sankey.node_whitespace = 0.1)
+Titanic |> 
+  plot2(x = where(is.character),
+        category = Sex,
+        type = "sankey",
+        sankey.node_whitespace = 0,
+        sankey.remove_axes = FALSE,
+        sankey.node_width = 0.25,
+        y.expand = c(0, 0.15),
+        x.expand = c(0.1, 0.1),
+        theme = NULL,
+        colour = "ggplot2",
+        y.title = "Number of Individuals",
+        legend.title = "Gender:",
+        legend.position = "right")
 ```
 
 ### Focus on one category

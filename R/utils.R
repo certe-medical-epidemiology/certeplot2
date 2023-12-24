@@ -574,7 +574,7 @@ restore_mapping <- function(p, df) {
   p
 }
 
-set_plot2_env <- function(x = NULL, y = NULL, category = NULL, facet = NULL, y_secondary = NULL) {
+set_plot2_env <- function(x = NULL, y = NULL, category = NULL, facet = NULL, y_secondary = NULL, x_variable_names = NULL) {
   x <- paste0(x, collapse = " ")
   y <- paste0(y, collapse = " ")
   category <- paste0(category, collapse = " ")
@@ -595,6 +595,7 @@ set_plot2_env <- function(x = NULL, y = NULL, category = NULL, facet = NULL, y_s
   if (!y_secondary %in% c("NULL", "") && is.null(plot2_env$mapping_y_secondary)) {
     plot2_env$mapping_y_secondary <- y_secondary
   }
+  plot2_env$x_variable_names <- x_variable_names
 }
 clean_plot2_env <- function() {
   plot2_env$mapping_x <- NULL
@@ -602,8 +603,8 @@ clean_plot2_env <- function() {
   plot2_env$mapping_category <- NULL
   plot2_env$mapping_facet <- NULL
   plot2_env$mapping_y_secondary <- NULL
+  plot2_env$x_variable_names <- NULL
   plot2_env$y_secondary_factor <- NULL
-  plot2_env$sankey_x_names <- NULL
 }
 
 sigfigs <- function(x) {
