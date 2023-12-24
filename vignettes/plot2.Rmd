@@ -322,6 +322,7 @@ Notice how `y` gets set automatically, since transforming a `table` with `as.dat
 
 ```{r, fig.height = 5}
 # as with the rest of plot2(), `x` supports tidyselect language for colmn selection:
+Titanic |> 
   plot2(x = where(is.character),
         category = Sex,
         type = "sankey",

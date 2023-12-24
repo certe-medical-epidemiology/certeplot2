@@ -40,7 +40,12 @@ euros <- function(x,
                   big.mark = big_mark(),
                   decimal.mark = dec_mark(),
                   ...) {
-  trimws(paste0("\u20ac ", trimws(format(x, decimal.mark = decimal.mark, big.mark = big.mark))))
+  if (identical(x, as.integer(x))) {
+    # no cents
+    trimws(paste0("\u20ac ", trimws(format(round(x, 0), decimal.mark = decimal.mark, big.mark = big.mark))))
+  } else {
+    trimws(paste0("\u20ac ", trimws(format(round(x, 2), decimal.mark = decimal.mark, big.mark = big.mark, nsmall = 2))))
+  }
 }
 
 #' @rdname labellers
@@ -49,5 +54,10 @@ dollars <- function(x,
                     big.mark = big_mark(),
                     decimal.mark = dec_mark(),
                     ...) {
-  trimws(paste0("$", format(trimws(x), decimal.mark = decimal.mark, big.mark = big.mark)))
+  if (identical(x, as.integer(x))) {
+    # no cents
+    trimws(paste0("$", trimws(format(round(x, 0), decimal.mark = decimal.mark, big.mark = big.mark))))
+  } else {
+    trimws(paste0("$", trimws(format(round(x, 2), decimal.mark = decimal.mark, big.mark = big.mark, nsmall = 2))))
+  }
 }
