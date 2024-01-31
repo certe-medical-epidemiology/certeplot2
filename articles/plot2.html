@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.22.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.22.4</span>
       </span>
     </div>
 
@@ -237,7 +237,7 @@ be a histogram:</p>
 <span>  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">x = x</span></span></span>
 <span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">type = "histogram"</span><span style="color: #080808;"> since the data has only one numeric variable and no other variables</span></span></span>
-<span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">binwidth = 0.277</span><span style="color: #080808;"> based on data</span></span></span>
+<span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">binwidth = 0.312</span><span style="color: #080808;"> based on data</span></span></span>
 <span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Assuming </span><span style="color: #008787;">smooth = TRUE</span><span style="color: #080808;"> for </span><span style="color: #008787;">type = "histogram"</span></span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-4-1.png" width="576"></p>
 <p>If there are multiple y values for each x, the default will be a
@@ -414,16 +414,16 @@ categorising on years:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,461 × 2</span></span></span>
 <span><span class="co">#&gt;    x              y</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2020-01-01 0.994</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 2020-01-02 0.976</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 2020-01-03 1.03 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 2020-01-04 1.07 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 2020-01-05 1.10 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 2020-01-06 0.846</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 2020-01-07 0.903</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 2020-01-08 0.829</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 2020-01-09 1.07 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 2020-01-10 0.952</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2020-01-01 1.01 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 2020-01-02 1.12 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 2020-01-03 1.11 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 2020-01-04 0.941</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 2020-01-05 0.789</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 2020-01-06 0.932</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 2020-01-07 0.924</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 2020-01-08 0.940</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 2020-01-09 0.986</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 2020-01-10 0.961</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,451 more rows</span></span></span>
 <span><span class="va">sample_df</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, type <span class="op">=</span> <span class="st">"l"</span>,</span>
@@ -488,12 +488,12 @@ of scale automatically:</p>
 <span>                          stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">character_z</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   x        y z</span></span>
-<span><span class="co">#&gt; 1 a 4.054547 K</span></span>
-<span><span class="co">#&gt; 2 b 3.766233 L</span></span>
-<span><span class="co">#&gt; 3 c 4.962357 K</span></span>
-<span><span class="co">#&gt; 4 d 6.314621 L</span></span>
-<span><span class="co">#&gt; 5 e 4.641229 K</span></span>
-<span><span class="co">#&gt; 6 a 3.634765 L</span></span>
+<span><span class="co">#&gt; 1 a 4.114301 K</span></span>
+<span><span class="co">#&gt; 2 b 4.351098 L</span></span>
+<span><span class="co">#&gt; 3 c 6.090838 K</span></span>
+<span><span class="co">#&gt; 4 d 4.968926 L</span></span>
+<span><span class="co">#&gt; 5 e 3.409232 K</span></span>
+<span><span class="co">#&gt; 6 a 2.755619 L</span></span>
 <span></span>
 <span><span class="va">numeric_z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="fl">10</span><span class="op">)</span>,</span>
 <span>                        y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">5</span><span class="op">)</span>,</span>
@@ -502,12 +502,12 @@ of scale automatically:</p>
 <span>                        stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">numeric_z</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   x        y        z</span></span>
-<span><span class="co">#&gt; 1 a 7.030740 5.788485</span></span>
-<span><span class="co">#&gt; 2 b 4.755954 5.337754</span></span>
-<span><span class="co">#&gt; 3 c 4.585418 4.618317</span></span>
-<span><span class="co">#&gt; 4 d 5.910632 5.121536</span></span>
-<span><span class="co">#&gt; 5 e 5.319980 5.399952</span></span>
-<span><span class="co">#&gt; 6 a 4.485785 4.291589</span></span>
+<span><span class="co">#&gt; 1 a 4.319307 5.071138</span></span>
+<span><span class="co">#&gt; 2 b 5.626906 5.284927</span></span>
+<span><span class="co">#&gt; 3 c 6.250845 5.907466</span></span>
+<span><span class="co">#&gt; 4 d 4.908310 5.152951</span></span>
+<span><span class="co">#&gt; 5 e 5.665122 4.486226</span></span>
+<span><span class="co">#&gt; 6 a 5.370629 5.701586</span></span>
 <span></span>
 <span><span class="va">character_z</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>, type <span class="op">=</span> <span class="st">"jitter"</span>,</span>
@@ -531,7 +531,7 @@ colour, it defaults to the centre of the current legend scale:</p>
 <span>    <span class="fu"><a href="../reference/plot2.html">plot2</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">z</span>,</span>
 <span>          type <span class="op">=</span> <span class="st">"jitter"</span>,</span>
 <span>          colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">category.midpoint = 5.29</span><span style="color: #080808;"> (the current </span><span style="color: #008787;">category</span><span style="color: #080808;"> scale centre)</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #008787;">i</span> <span style="color: #080808;">Using </span><span style="color: #008787;">category.midpoint = 3.65</span><span style="color: #080808;"> (the current </span><span style="color: #008787;">category</span><span style="color: #080808;"> scale centre)</span></span></span></code></pre></div>
 <p><img src="plot2_files/figure-html/unnamed-chunk-15-1.png" width="576"></p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">numeric_z</span> <span class="op">|&gt;</span>  </span>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.22.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.22.4</span>
       </span>
     </div>
 
@@ -1600,10 +1600,11 @@
 <span>  category <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  facet <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"line"</span>,</span>
-<span>  x.title <span class="op">=</span> <span class="st">"Maand"</span>,</span>
+<span>  x.title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">.data</span><span class="op">)</span><span class="op">$</span><span class="va">period_length_months</span> <span class="op">==</span> <span class="fl">12</span>, <span class="st">"Maand"</span>,</span>
+<span>    <span class="st">"Weken in periode"</span><span class="op">)</span>,</span>
 <span>  y.title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Cases ("</span>, <span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">.data</span><span class="op">)</span><span class="op">$</span><span class="va">moving_average_days</span>,</span>
 <span>    <span class="st">"-daags zwevend gemiddelde)"</span><span class="op">)</span>,</span>
-<span>  category.title <span class="op">=</span> <span class="st">"Jaar"</span>,</span>
+<span>  category.title <span class="op">=</span> <span class="st">"Periode"</span>,</span>
 <span>  title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">clusters</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span>, <span class="st">" cluster(s)"</span><span class="op">)</span>,</span>
 <span>  subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"O.b.v. uitbijter-vrije geschiedenis (coeff = "</span>,</span>
 <span>    <span class="fu">format2</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">.data</span><span class="op">)</span><span class="op">$</span><span class="va">remove_outliers_coefficient</span><span class="op">)</span>, <span class="st">") met pct = "</span>,</span>
@@ -1648,12 +1649,12 @@
 <span>  category.max_txt <span class="op">=</span> <span class="st">"(rest, x%n)"</span>,</span>
 <span>  facet.max_items <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  facet.max_txt <span class="op">=</span> <span class="st">"(rest, x%n)"</span>,</span>
-<span>  x.breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  x.breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">9999</span>, <span class="fl">14</span><span class="op">)</span>,</span>
 <span>  x.n_breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.trans <span class="op">=</span> <span class="st">"identity"</span>,</span>
 <span>  x.expand <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.limits <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  x.labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  x.labels <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">/</span><span class="fl">7</span>,</span>
 <span>  x.character <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x.drop <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  x.mic <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -1691,7 +1692,7 @@
 <span>  category.date_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.character <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  x.sort <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  category.sort <span class="op">=</span> <span class="st">"desc"</span>,</span>
+<span>  category.sort <span class="op">=</span> <span class="st">"asc"</span>,</span>
 <span>  facet.sort <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  datalabels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  datalabels.round <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">y.percent</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>,</span>
@@ -1723,7 +1724,7 @@
 <span>  width <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  jitter_seed <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  violin_scale <span class="op">=</span> <span class="st">"count"</span>,</span>
-<span>  legend.position <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  legend.position <span class="op">=</span> <span class="st">"right"</span>,</span>
 <span>  legend.title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  legend.reverse <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  legend.barheight <span class="op">=</span> <span class="fl">6</span>,</span>
@@ -2166,7 +2167,9 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://msberends.github.io/AMR/" class="external-link">"AMR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># AMR DATA ANALYSIS ----------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://msberends.github.io/AMR/" class="external-link">"AMR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">example_isolates</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mo"</span>, <span class="st">"AMX"</span>, <span class="st">"AMC"</span>, <span class="st">"ward"</span><span class="op">)</span><span class="op">]</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://msberends.github.io/AMR/reference/antibiogram.html" class="external-link">antibiogram</a></span><span class="op">(</span>mo_transform <span class="op">=</span> <span class="st">"gramstain"</span>,</span></span>
 <span class="r-in"><span>                language <span class="op">=</span> <span class="st">"nl"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
@@ -2185,6 +2188,22 @@
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Colour palette expanded using grDevices::colorRampPalette()</span>
 <span class="r-plt img"><img src="plot2-methods-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># DISEASE CLUSTERS -----------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="va">cases</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2015-01-01"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                      <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2022-12-31"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                      <span class="st">"1 day"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                  size <span class="op">=</span> <span class="fl">300</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                    patient <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>, size <span class="op">=</span> <span class="fl">300</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">check</span> <span class="op">&lt;-</span> <span class="fu">certestats</span><span class="fu">::</span><span class="fu"><a href="https://certe-medical-epidemiology.github.io/certestats/reference/early_warning_cluster.html" class="external-link">early_warning_cluster</a></span><span class="op">(</span><span class="va">cases</span>,</span></span>
+<span class="r-in"><span>                                           minimum_cases <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                                           threshold_percentile <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using column 'date' for dates</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using column 'patient' for patient IDs</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">check</span> <span class="op">|&gt;</span> <span class="fu"><a href="plot2.html">plot2</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #008787;">i</span> <span style="color: #080808;">The </span><span style="color: #008787;">category</span><span style="color: #080808;"> seems to contain markdown, assuming </span><span style="color: #008787;">category.labels = md_to_expression</span></span>
+<span class="r-plt img"><img src="plot2-methods-3.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </div>
