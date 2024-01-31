@@ -1521,10 +1521,11 @@
   category = NULL,
   facet = NULL,
   type = "line",
-  x.title = "Maand",
+  x.title = ifelse(attributes(.data)$period_length_months == 12, "Maand",
+    "Weken in periode"),
   y.title = paste0("Cases (", attributes(.data)$moving_average_days,
     "-daags zwevend gemiddelde)"),
-  category.title = "Jaar",
+  category.title = "Periode",
   title = paste0(n_distinct(.data$clusters$cluster), " cluster(s)"),
   subtitle = paste0("O.b.v. uitbijter-vrije geschiedenis (coeff = ",
     format2(attributes(.data)$remove_outliers_coefficient), ") met pct = ",
@@ -1569,12 +1570,12 @@
   category.max_txt = "(rest, x\%n)",
   facet.max_items = Inf,
   facet.max_txt = "(rest, x\%n)",
-  x.breaks = NULL,
+  x.breaks = seq(0, 9999, 14),
   x.n_breaks = NULL,
   x.trans = "identity",
   x.expand = NULL,
   x.limits = NULL,
-  x.labels = NULL,
+  x.labels = function(x) x/7,
   x.character = NULL,
   x.drop = FALSE,
   x.mic = FALSE,
@@ -1612,7 +1613,7 @@
   category.date_labels = NULL,
   category.character = TRUE,
   x.sort = NULL,
-  category.sort = "desc",
+  category.sort = "asc",
   facet.sort = TRUE,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
@@ -1644,7 +1645,7 @@
   width = NULL,
   jitter_seed = NA,
   violin_scale = "count",
-  legend.position = NULL,
+  legend.position = "right",
   legend.title = NULL,
   legend.reverse = FALSE,
   legend.barheight = 6,
@@ -1929,6 +1930,8 @@ The QC-test can be acquired with \code{\link[certestats:qc_rules]{certestats::qc
 The detection of \href{https://en.wikipedia.org/wiki/Disease_cluster}{disease clusters} can be done using \code{\link[certestats:early_warning_cluster]{certestats::early_warning_cluster()}}. Use \code{size} to alter the size of the triangles that indicate clusters.
 }
 \examples{
+
+# AMR DATA ANALYSIS ----------------------------------------------------
 if (require("AMR")) {
   example_isolates[, c("mo", "AMX", "AMC", "ward")] |>
     antibiogram(mo_transform = "gramstain",
@@ -1943,4 +1946,16 @@ if (require("AMR")) {
                 syndromic_group = "ward") |>
     plot2()
 }
+
+# DISEASE CLUSTERS -----------------------------------------------------
+cases <- data.frame(date = sample(seq(as.Date("2015-01-01"),
+                                      as.Date("2022-12-31"),
+                                      "1 day"),
+                                  size = 300),
+                    patient = sample(LETTERS, size = 300, replace = TRUE))
+check <- certestats::early_warning_cluster(cases,
+                                           minimum_cases = 1,
+                                           threshold_percentile = 0.75)
+
+check |> plot2()
 }

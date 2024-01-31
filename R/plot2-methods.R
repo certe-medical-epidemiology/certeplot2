@@ -2409,6 +2409,8 @@ plot2.bug_drug_combinations <- function(.data,
 #' @importFrom certestyle colourpicker dec_mark big_mark
 #' @export
 #' @examples
+#' 
+#' # AMR DATA ANALYSIS ----------------------------------------------------
 #' if (require("AMR")) {
 #'   example_isolates[, c("mo", "AMX", "AMC", "ward")] |>
 #'     antibiogram(mo_transform = "gramstain",
@@ -3438,20 +3440,33 @@ plot2.qc_test <- function(.data,
 }
 
 #' @rdname plot2-methods
-#' @importFrom dplyr group_by summarise n_distinct `%>%` filter
+#' @importFrom dplyr group_by summarise n_distinct `%>%` filter right_join
 #' @importFrom ggplot2 geom_point aes
 #' @importFrom certestyle colourpicker add_white format2
 #' @details The detection of [disease clusters](https://en.wikipedia.org/wiki/Disease_cluster) can be done using [certestats::early_warning_cluster()]. Use `size` to alter the size of the triangles that indicate clusters.
 #' @export
+#' @examples
+#' 
+#' # DISEASE CLUSTERS -----------------------------------------------------
+#' cases <- data.frame(date = sample(seq(as.Date("2015-01-01"),
+#'                                       as.Date("2022-12-31"),
+#'                                       "1 day"),
+#'                                   size = 300),
+#'                     patient = sample(LETTERS, size = 300, replace = TRUE))
+#' check <- certestats::early_warning_cluster(cases,
+#'                                            minimum_cases = 1,
+#'                                            threshold_percentile = 0.75)
+#' 
+#' check |> plot2()
 plot2.early_warning_cluster <- function(.data,
                                         x = NULL,
                                         y = NULL,
                                         category = NULL,
                                         facet = NULL,
                                         type = "line",
-                                        x.title = "Maand",
+                                        x.title = ifelse(attributes(.data)$period_length_months == 12, "Maand", "Weken in periode"),
                                         y.title = paste0("Cases (", attributes(.data)$moving_average_days, "-daags zwevend gemiddelde)"),
-                                        category.title = "Jaar",
+                                        category.title = "Periode",
                                         title = paste0(n_distinct(.data$clusters$cluster), " cluster(s)"),
                                         subtitle = paste0("O.b.v. uitbijter-vrije geschiedenis (coeff = ",
                                                           format2(attributes(.data)$remove_outliers_coefficient),
@@ -3497,12 +3512,12 @@ plot2.early_warning_cluster <- function(.data,
                                         category.max_txt = "(rest, x%n)",
                                         facet.max_items = Inf,
                                         facet.max_txt = "(rest, x%n)",
-                                        x.breaks = NULL,
+                                        x.breaks = seq(0, 9999, 14),
                                         x.n_breaks = NULL,
                                         x.trans = "identity",
                                         x.expand = NULL,
                                         x.limits = NULL,
-                                        x.labels = NULL,
+                                        x.labels = function(x) x / 7,
                                         x.character = NULL,
                                         x.drop = FALSE,
                                         x.mic = FALSE,
@@ -3540,7 +3555,7 @@ plot2.early_warning_cluster <- function(.data,
                                         category.date_labels = NULL,
                                         category.character = TRUE,
                                         x.sort = NULL,
-                                        category.sort = "desc",
+                                        category.sort = "asc",
                                         facet.sort = TRUE,
                                         datalabels = TRUE,
                                         datalabels.round = ifelse(y.percent, 2, 1),
@@ -3572,7 +3587,7 @@ plot2.early_warning_cluster <- function(.data,
                                         width = NULL,
                                         jitter_seed = NA,
                                         violin_scale = "count",
-                                        legend.position = NULL,
+                                        legend.position = "right",
                                         legend.title = NULL, # TRUE in numeric categories
                                         legend.reverse = FALSE,
                                         legend.barheight = 6,
@@ -3640,32 +3655,43 @@ plot2.early_warning_cluster <- function(.data,
   
   if (NROW(cluster_data$clusters) == 0) {
     clusters <- data.frame(cluster = integer(0), xmin = Sys.Date()[0], xmax = Sys.Date()[0])
+    if (attributes(.data)$period_length_months != 12) {
+      clusters <- data.frame(cluster = integer(0), xmin = double(0), xmax = double(0))
+    }
   } else {
-    is_leap <- any(format(cluster_data$details$month_day, "%Y") == "1972")
-    clusters <- cluster_data$clusters |>
-      group_by(cluster) |>
-      summarise(xmin = unify_years(min(date), as_leap_year = is_leap),
-                xmax = unify_years(max(date), as_leap_year = is_leap))
+    if (attributes(.data)$period_length_months == 12) {
+      is_leap <- any(format(cluster_data$details$period_date, "%Y") == "1972")
+      clusters <- cluster_data$clusters |>
+        group_by(cluster) |>
+        summarise(xmin = unify_years(min(date), as_leap_year = is_leap),
+                  xmax = unify_years(max(date), as_leap_year = is_leap))
+    } else {
+      clusters <- cluster_data$details |>
+        right_join(cluster_data$clusters, by = "date") |> 
+        group_by(cluster) |> 
+        summarise(xmin = min(day_in_period),
+                  xmax = max(day_in_period))
+    }
   }
   
   if (identical(colour, "certe")) {
-    colour <- c("certeblauw", colourpicker("greyscale", n_distinct(cluster_data$details$year) - 1))
+    colour <- c("certeblauw", colourpicker("greyscale", n_distinct(cluster_data$details$period) - 1))
     if (isTRUE(attributes(cluster_data)$based_on_historic_maximum)) {
       colour <- c(colour, "certeroze2")
     }
   } else {
     # set number of colours needed
     if (isTRUE(attributes(cluster_data)$based_on_historic_maximum)) {
-      colour <- colourpicker(colour, n_distinct(cluster_data$details$year) + 1)
+      colour <- colourpicker(colour, n_distinct(cluster_data$details$period) + 1)
     } else {
-      colour <- colourpicker(colour, n_distinct(cluster_data$details$year))
+      colour <- colourpicker(colour, n_distinct(cluster_data$details$period))
     }
   }
   
   p <- cluster_data$details |> 
-    plot2(x = month_day,
+    plot2(x = if (attributes(cluster_data)$period_length_months == 12) period_date else day_in_period,
           y = ma_5c,
-          category = year,
+          category = period_txt,
           # facet = {{facet}},
           type = type,
           x.title = x.title,
@@ -3833,8 +3859,12 @@ plot2.early_warning_cluster <- function(.data,
           `_summarise_fn_name` = deparse(substitute(summarise_function)),
           `_misses.summarise_function` = missing(summarise_function),
           ...) %>%
-    add_line(ma_5c, data = .$data |> filter(in_scope), colour = colour[1], linewidth = 0.75) |>
-    add_line(ma_5c_pct_outscope, colour = colour[1], linetype = 2, geom_type = "hline", linewidth = 0.75) +
+    add_line(ma_5c, data = .$data |> filter(period_txt %like% "Periode 0:"), colour = colour[1], linewidth = 0.75) %>%
+    (function(x) if ("ma_5c_pct_outscope" %in% x$data) {
+      x |> add_line(ma_5c_pct_outscope, colour = colour[1], linetype = 2, geom_type = "hline", linewidth = 0.75)  
+    } else {
+      x
+    })() +
     geom_point(data = clusters,
                mapping = aes(y = max(cluster_data$details$ma_5c, na.rm = TRUE),
                              x = xmin),
