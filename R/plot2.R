@@ -38,7 +38,9 @@
 #' 
 #' - Multiple variables from `.data`, such as `y = c(column1, column2)` or `y = c(name1 = column1, "name 2" = column2)`, or using [selection helpers][tidyselect::language] such as `y = where(is.double)` or `y = starts_with("var_")` *(multiple variables only allowed if `category` is not set)*
 #' 
-#' - A [function] to calculate over `.data`, such as `y = n()` for the row count, or based on other variables such as `y = n_distinct(person_id)`, `y = max(column1)`, or `y = median(column2) / column3`
+#' - A [function] to calculate over `.data` returning a single value, such as `y = n()` for the row count, or based on other variables such as `y = n_distinct(person_id)`, `y = max(column1)`, or `y = median(column2) / column3`
+#' 
+#' - A [function] to calculate over `.data` returning multiple values, such as `y = quantile(column1, c(0.25, 0.75))` or `y = range(age)`  *(multiple values only allowed if `category` is not set)*
 #' @param category,facet plotting 'direction' (`category` is called 'fill' and 'colour' in `ggplot2`). This can be:
 #' 
 #' - A single variable from `.data`, such as `category = column1`
@@ -100,6 +102,7 @@
 #' @param x.lbl_taxonomy a [logical] to transform all words of the `x` labels into italics that are in the [microorganisms][AMR::microorganisms] data set of the `AMR` package. This uses [md_to_expression()] internally and will set `x.labels` to parse expressions.
 #' @param x.character a [logical] to indicate whether the values of the x axis should be forced to [character]. The default is `FALSE`, except for years (values between 2000 and 2050) and months (values from 1 to 12).
 #' @param x.drop [logical] to indicate whether factor levels should be dropped
+#' @param x.complete,category.complete,facet.complete a value to complete the data. This makes use of [tidyr::full_seq()] and [tidyr::complete()]. For example, using `x.complete = 0` will apply `data |> complete(full_seq(x, ...), fill = list(x = 0))`. Using value `TRUE` (e.g., `x.complete = TRUE`) is identical to using value `0`.
 #' @param x.mic [logical] to indicate whether the x axis should be formatted as [MIC values][AMR::as.mic()], by dropping all factor levels and adding missing factors of 2
 #' @param x.remove,y.remove a [logical] to indicate whether the axis labels and title should be removed
 #' @param y.24h a [logical] to indicate whether the y labels and breaks should be formatted as 24-hour sequences
@@ -475,6 +478,9 @@ plot2 <- function(.data,
                   x.sort = NULL,
                   category.sort = TRUE,
                   facet.sort = TRUE,
+                  x.complete = NULL,
+                  category.complete = NULL,
+                  facet.complete = NULL,
                   datalabels = TRUE,
                   datalabels.round = ifelse(y.percent, 2, 1),
                   datalabels.format = "%n",
@@ -683,6 +689,9 @@ plot2_exec <- function(.data,
                        x.sort,
                        category.sort,
                        facet.sort,
+                       x.complete,
+                       category.complete,
+                       facet.complete,
                        datalabels,
                        datalabels.round,
                        datalabels.colour,
@@ -937,7 +946,6 @@ plot2_exec <- function(.data,
                      summarise(val = {{ y }}),
                    error = function(e) stop(format_error(e), call. = FALSE))
         )
-        
         y_precalc <- y_precalc$val # will be NULL if y is missing
         
         if (isTRUE(length(y_precalc) == 1)) {
@@ -949,6 +957,26 @@ plot2_exec <- function(.data,
                        group_by(across(c(plot2_env$x_variable_names, get_x_name(.data), get_category_name(.data), get_facet_name(.data),
                                          matches("_var_(x|category|facet)")))) |>
                        summarise(`_var_y` = {{ y }},
+                                 .groups = "drop"),
+                     error = function(e) stop(format_error(e, replace = "_var_y", by = "y"), call. = FALSE))
+          )
+          
+        } else if (!has_category(.data) &&
+                   !is.null(y_precalc) &&
+                   length(y_precalc) != NROW(.data)) {
+          # outcome of y is a multi-length calculated value (by using e.g. range(...)),
+          # so calculate it over all groups that are available and add a category
+          # this will support e.g. `data |> plot2(y = range(age))`
+          plot2_caution("Using a vector of values for ", font_blue("y"), " is not optimal; categories were auto-generated")
+          plot2_env$mapping_category <- "category"
+          # take the first call or function from what was given to y
+          y_call <- as.character(str2lang(plot2_env$mapping_y))[1]
+          suppressWarnings(
+            tryCatch(.data |> 
+                       group_by(across(c(get_x_name(.data), get_facet_name(.data),
+                                         matches("_var_(x|facet)")))) |> 
+                       summarise(`_var_y` = {{ y }},
+                                 `_var_category` = paste0(y_call, " (", seq_len(length(y_precalc)), ")"),
                                  .groups = "drop"),
                      error = function(e) stop(format_error(e, replace = "_var_y", by = "y"), call. = FALSE))
           )
@@ -979,6 +1007,9 @@ plot2_exec <- function(.data,
                   x.sort = x.sort,
                   category.sort = category.sort,
                   facet.sort = facet.sort,
+                  x.complete = x.complete,
+                  category.complete = category.complete,
+                  facet.complete = facet.complete,
                   summarise_function = summarise_function,
                   summarise_fn_name = dots$`_summarise_fn_name`,
                   misses_summarise_function = misses_summarise_function,

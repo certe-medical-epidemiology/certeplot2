@@ -359,6 +359,10 @@ test_that("y scale works", {
                  plot2(x, c(y1, y2),
                        # category must not be set
                        category = 1))
+  expect_s3_class(admitted_patients |>
+                    plot2(x = hospital,
+                          y = quantile(age, c(0.25, 0.5, 0.75))),
+                  "gg")
 })
 
 test_that("category scale works", {
@@ -446,6 +450,13 @@ test_that("misc elements works", {
   expect_s3_class(AMR::example_isolates |>
                     cleaner::freq(AMR::mo_name(mo, "nl")) |>
                     plot2(type = "barpercent", x.lbl_taxonomy = TRUE), "gg")
+})
+
+test_that("completing data works", {
+  expect_s3_class(data.frame(x = c(1, 5, 6, 9),
+                             y = 10) |>
+                    plot2(type = "l", x.complete = 5),
+                  "gg")
 })
 
 test_that("get title works", {

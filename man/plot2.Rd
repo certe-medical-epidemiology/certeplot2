@@ -101,6 +101,9 @@ plot2(
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
+  x.complete = NULL,
+  category.complete = NULL,
+  facet.complete = NULL,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
@@ -167,7 +170,8 @@ plot2(
 \itemize{
 \item A single variable from \code{.data}, such as \code{y = column1}
 \item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)} or \code{y = c(name1 = column1, "name 2" = column2)}, or using \link[tidyselect:language]{selection helpers} such as \code{y = where(is.double)} or \code{y = starts_with("var_")} \emph{(multiple variables only allowed if \code{category} is not set)}
-\item A \link{function} to calculate over \code{.data}, such as \code{y = n()} for the row count, or based on other variables such as \code{y = n_distinct(person_id)}, \code{y = max(column1)}, or \code{y = median(column2) / column3}
+\item A \link{function} to calculate over \code{.data} returning a single value, such as \code{y = n()} for the row count, or based on other variables such as \code{y = n_distinct(person_id)}, \code{y = max(column1)}, or \code{y = median(column2) / column3}
+\item A \link{function} to calculate over \code{.data} returning multiple values, such as \code{y = quantile(column1, c(0.25, 0.75))} or \code{y = range(age)}  \emph{(multiple values only allowed if \code{category} is not set)}
 }}
 
 \item{category, facet}{plotting 'direction' (\code{category} is called 'fill' and 'colour' in \code{ggplot2}). This can be:
@@ -313,6 +317,8 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 \item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (lowest value first)
 }}
 
+\item{x.complete, category.complete, facet.complete}{a value to complete the data. This makes use of \code{\link[tidyr:full_seq]{tidyr::full_seq()}} and \code{\link[tidyr:complete]{tidyr::complete()}}. For example, using \code{x.complete = 0} will apply \code{data |> complete(full_seq(x, ...), fill = list(x = 0))}. Using value \code{TRUE} (e.g., \code{x.complete = TRUE}) is identical to using value \code{0}.}
+
 \item{datalabels}{values to show as datalabels, see also \code{datalabels.format}. This can be:
 \itemize{
 \item Left blank. This will default to the values of \code{y} in column-type plots, or when plotting spatial 'sf' data, the values of the first column. It will print a maximum of 25 labels unless \code{datalabels = TRUE}.
@@ -427,7 +433,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 145 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 148 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 options(plot2.colour = NULL, plot2.colour_sf_fill = NULL)

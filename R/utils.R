@@ -649,23 +649,27 @@ digit_to_text <- function(x) {
   out
 }
 
+#' @importFrom rlang cnd_message
+#' @importFrom certestyle font_stripstyle
 format_error <- function(e, replace = character(0), by = character(0)) {
-  if (is.null(e$bullets)) {
-    txt <- c(e$message, e$parent$message, e$parent$parent$message, e$parent$parent$parent$message)
+  if (inherits(e, "rlang_error")) {
+    txt <- cnd_message(e)
+    txt <- font_stripstyle(txt)
+    txt <- gsub(".*Caused by error[:](\n!)?", "", txt)
   } else {
-    txt <- e$bullets
+    txt <- c(e$message, e$parent$message, e$parent$parent$message, e$parent$parent$parent$message)
   }
   txt <- txt[txt %unlike% "^Problem while"]
   if (length(txt) == 0) {
     # return original error
     stop(e, call. = FALSE)
   }
-  out <- gsub(".*(\033\\[31m)?x(\033\\[39m)? ", "", paste(txt, collapse = "\n"))
   for (i in seq_len(length(replace))) {
-    out <- gsub(replace[i], by[i], out)
+    txt <- gsub(replace[i], by[i], txt)
   }
-  if (out == "") {
-    out <- "Plot cannot be generated due to unknown error"
+  if (all(txt == "")) {
+    txt <- "Plot cannot be generated due to unknown error"
   }
-  out
+  txt <- trimws(txt)
+  paste0(txt, collapse = "\n")
 }

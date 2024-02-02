@@ -112,6 +112,9 @@
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
+  x.complete = NULL,
+  category.complete = NULL,
+  facet.complete = NULL,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
@@ -261,6 +264,9 @@
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
+  x.complete = NULL,
+  category.complete = NULL,
+  facet.complete = NULL,
   datalabels = FALSE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
@@ -410,6 +416,9 @@
   x.sort = "freq-desc",
   category.sort = TRUE,
   facet.sort = TRUE,
+  x.complete = NULL,
+  category.complete = NULL,
+  facet.complete = NULL,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
@@ -559,6 +568,9 @@
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
+  x.complete = NULL,
+  category.complete = NULL,
+  facet.complete = NULL,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = NULL,
@@ -712,6 +724,9 @@
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
+  x.complete = NULL,
+  category.complete = NULL,
+  facet.complete = NULL,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
@@ -861,6 +876,9 @@
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
+  x.complete = NULL,
+  category.complete = NULL,
+  facet.complete = NULL,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
@@ -1010,6 +1028,9 @@
   x.sort = NULL,
   category.sort = FALSE,
   facet.sort = TRUE,
+  x.complete = NULL,
+  category.complete = NULL,
+  facet.complete = NULL,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
@@ -1162,6 +1183,9 @@
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
+  x.complete = NULL,
+  category.complete = NULL,
+  facet.complete = NULL,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
@@ -1311,6 +1335,9 @@
   x.sort = NULL,
   category.sort = FALSE,
   facet.sort = TRUE,
+  x.complete = NULL,
+  category.complete = NULL,
+  facet.complete = NULL,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
@@ -1462,6 +1489,9 @@
   x.sort = NULL,
   category.sort = TRUE,
   facet.sort = TRUE,
+  x.complete = NULL,
+  category.complete = NULL,
+  facet.complete = NULL,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
@@ -1615,6 +1645,9 @@
   x.sort = NULL,
   category.sort = "asc",
   facet.sort = TRUE,
+  x.complete = NULL,
+  category.complete = NULL,
+  facet.complete = NULL,
   datalabels = TRUE,
   datalabels.round = ifelse(y.percent, 2, 1),
   datalabels.format = "\%n",
@@ -1681,7 +1714,8 @@
 \itemize{
 \item A single variable from \code{.data}, such as \code{y = column1}
 \item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)} or \code{y = c(name1 = column1, "name 2" = column2)}, or using \link[tidyselect:language]{selection helpers} such as \code{y = where(is.double)} or \code{y = starts_with("var_")} \emph{(multiple variables only allowed if \code{category} is not set)}
-\item A \link{function} to calculate over \code{.data}, such as \code{y = n()} for the row count, or based on other variables such as \code{y = n_distinct(person_id)}, \code{y = max(column1)}, or \code{y = median(column2) / column3}
+\item A \link{function} to calculate over \code{.data} returning a single value, such as \code{y = n()} for the row count, or based on other variables such as \code{y = n_distinct(person_id)}, \code{y = max(column1)}, or \code{y = median(column2) / column3}
+\item A \link{function} to calculate over \code{.data} returning multiple values, such as \code{y = quantile(column1, c(0.25, 0.75))} or \code{y = range(age)}  \emph{(multiple values only allowed if \code{category} is not set)}
 }}
 
 \item{category, facet}{plotting 'direction' (\code{category} is called 'fill' and 'colour' in \code{ggplot2}). This can be:
@@ -1826,6 +1860,8 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 \item \code{"freq"} or \code{"freq-desc"}: sort descending according to the frequencies of \code{y} computed by \code{summarise_function} (highest value first)
 \item \code{"freq-asc"}: sort ascending according to the frequencies of \code{y} computed by \code{summarise_function} (lowest value first)
 }}
+
+\item{x.complete, category.complete, facet.complete}{a value to complete the data. This makes use of \code{\link[tidyr:full_seq]{tidyr::full_seq()}} and \code{\link[tidyr:complete]{tidyr::complete()}}. For example, using \code{x.complete = 0} will apply \code{data |> complete(full_seq(x, ...), fill = list(x = 0))}. Using value \code{TRUE} (e.g., \code{x.complete = TRUE}) is identical to using value \code{0}.}
 
 \item{datalabels}{values to show as datalabels, see also \code{datalabels.format}. This can be:
 \itemize{

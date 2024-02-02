@@ -63,7 +63,7 @@ To start, load the package:
 library(certeplot2)
 ```
 
-The `ggplot2` package must (of course) be installed, but it does not need to be loaded using `library()` as that will happen automatically. For other tidyverse packages, such as `dplyr`, `forcats` and `stringr`, they are only used internally and not required to load before using the `plot2()` function.
+The `ggplot2` package must (of course) be installed, but it does not need to be loaded using `library()`. For `ggplot2` and other tidyverse packages, such as `dplyr`, `forcats` and `stringr`, they are only used internally and not required to load before using the `plot2()` function.
 
 If the `certeplot2` package is loaded, these tidyverse functions are available to use inside `plot2()` without loading other packages: `r paste0("\u0060", reexported, "()\u0060", collapse = ", ")`.
 
@@ -116,7 +116,7 @@ data.frame(x = c("a", "a", "a", "a",
                  "b", "b", "b", "b",
                  "c", "c", "c", "c"),
            y = rnorm(12, mean = 10)) |> 
-  plot2(type = "j") # abbreviation of "jitter"
+  plot2(type = "jitter") # can also be "j" or "geom_jitter"
 ```
 
 # Setting the 3 plotting directions 
@@ -564,7 +564,14 @@ admitted_patients |>
 In `ggplot2`, the values for `y` must be numeric. In `plot2()`, you can also use an in-place calculation of a (non-numeric) variable. The input will be evaluated while taking into account all plotting directions, such as `x` and `category`:
 
 ```{r}
-admitted_patients 
+df <- data.frame(group = c(rep("A", 10), rep("B", 10), rep("C", 10), rep("D", 10)),
+                 size = round(runif(40, min = 10, max = 100)))
+head(df, n = 12)
+
+df |>
+  plot2(group, max(size))
+
+admitted_patients
 
 admitted_patients |>
     plot2(x = hospital,
@@ -573,7 +580,16 @@ admitted_patients |>
           title = "Unique available age groups per hospital")
 ```
 
-Since the plotting directions allow for in-place transformations as well, you can plot your data without the need to use `group_by()`, `count()` or `summarise()` yourself:
+You can even use functions for `y` that return a length larger than 1, though this is not optimal:
+
+```{r}
+admitted_patients |>
+    plot2(x = hospital,
+          y = quantile(age, c(0.25, 0.5, 0.75)),
+          title = "Q1, Q2, Q3 in age per hospital")
+```
+
+Since the plotting directions (`x`, `category`, `facet`) allow for in-place transformations as well, you can plot your data without the need to use `group_by()`, `count()` or `summarise()` yourself:
 
 ```{r, fig.width = 8}
 admitted_patients |>

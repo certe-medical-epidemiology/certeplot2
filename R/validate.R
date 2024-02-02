@@ -467,6 +467,12 @@ validate_data <- function(df,
                          ""),
                   " with regular integers")
   }
+  
+  # complete data
+  df <- df |> 
+    complete_direction("x", has_x(df), dots$x.complete) |> 
+    complete_direction("category", has_category(df), dots$category.complete) |> 
+    complete_direction("facet", has_facet(df), dots$facet.complete)
     
   # remove or replace NAs
   rows_with_NA <- df |>
@@ -537,6 +543,7 @@ validate_data <- function(df,
   }
   
   if (has_x(df) && isTRUE(dots$x.mic)) {
+    # TODO replace with adding AMR::scale_x_mic() to plot2_exec()
     loadNamespace("AMR") # will throw an error if not installed
     # fix x axis for MIC values
     vals <- sort(unique(AMR::as.mic(get_x(df))))
@@ -2456,6 +2463,40 @@ validate_font <- function(font) {
     plot2_warning("Ignoring unknown font family \"", font.bak, "\"")
     return("")
   }
+}
+
+#' @importFrom tidyr complete full_seq
+complete_direction <- function(df, direction, has_direction, filler) {
+  if (has_direction && !is.null(filler) && !isFALSE(filler)) {
+    direction_data <- df[[paste0("_var_", direction)]]
+    if (isTRUE(filler)) {
+      filler <- 0
+    }
+    fill_list <- list(`_var_y` = filler,
+                      y_name = filler)
+    names(fill_list)[2] <- get_y_name(df)
+    if (!inherits(direction_data, c("Date", "POSIXt")) && is.double(direction_data)) {
+      # determine significance
+      sig <- max(sigfigs(diff(direction_data)), na.rm = TRUE)
+      period <- 1 / 10 ^ sig
+    } else {
+      period <- 1
+    }
+    if (direction == "x") {
+      df <- df |> 
+        complete(`_var_x` = full_seq(direction_data, period = period), fill = fill_list)
+      df[, get_x_name(df)] <- df$`_var_x`  
+    } else if (direction == "category") {
+      df <- df |> 
+        complete(`_var_category` = full_seq(direction_data, period = period), fill = fill_list)
+      df[, get_category_name(df)] <- df$`_var_category`  
+    } else if (direction == "facet") {
+      df <- df |> 
+        complete(`_var_facet` = full_seq(direction_data, period = period), fill = fill_list)
+      df[, get_facet_name(df)] <- df$`_var_facet`  
+    }
+  }
+  df
 }
 
 validate_sorting <- function(sort_method, horizontal) {
