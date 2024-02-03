@@ -3601,7 +3601,7 @@ plot2.early_warning_cluster <- function(.data,
                                         y_secondary.scientific = NULL,
                                         y_secondary.percent = FALSE,
                                         y_secondary.labels = NULL,
-                                        category.labels = NULL,
+                                        category.labels = md_to_expression,
                                         category.percent = FALSE,
                                         category.breaks = NULL,
                                         category.limits = NULL,
@@ -3929,10 +3929,10 @@ plot2.early_warning_cluster <- function(.data,
           `_summarise_fn_name` = deparse(substitute(summarise_function)),
           `_misses.summarise_function` = missing(summarise_function),
           ...) %>%
-    add_line(ma_5c, data = .$data |> filter(period_txt %like% "Periode 0:"), colour = colour[1], linewidth = 0.75) %>%
+    add_line(ma_5c, data = .$data |> filter(period_txt %like% "Periode 0:"), colour = colour[1], linewidth = 0.6) %>%
     (function(x) {
       if ("ma_5c_pct_outscope" %in% x$data) {
-        x |> add_line(ma_5c_pct_outscope, colour = colour[1], linetype = 2, geom_type = "hline", linewidth = 0.75)
+        x |> add_line(ma_5c_pct_outscope, colour = colour[1], linetype = 2, geom_type = "hline", linewidth = 0.6)
       } else {
         x
       }})() |> 
@@ -3955,9 +3955,9 @@ plot2.early_warning_cluster <- function(.data,
                            yend = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.05),
              lineend = "round",
              linejoin = "round",
-             arrow = grid::arrow(length = unit(5, "pt")),
+             arrow = grid::arrow(angle = 90, length = unit(2, "pt")),
              colour = colourpicker(colour[1]),
-             size = 0.75,
+             linewidth = 0.5,
              inherit.aes = FALSE) |> 
     # arrow right to left (arrow head on the left)
     add_type(data = clusters,
@@ -3968,9 +3968,9 @@ plot2.early_warning_cluster <- function(.data,
                            yend = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.05),
              lineend = "round",
              linejoin = "round",
-             arrow = grid::arrow(length = unit(5, "pt")),
+             arrow = grid::arrow(angle = 90, length = unit(2, "pt")),
              colour = colourpicker(colour[1]),
-             size = 0.75,
+             linewidth = 0.5,
              inherit.aes = FALSE) |> 
     # arrow right to left (arrow head on the left)
     add_type(data = clusters,
@@ -3979,7 +3979,7 @@ plot2.early_warning_cluster <- function(.data,
                            x = xmax - (xmax - xmin) / 2,
                            y = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.1),
              colour = colourpicker(colour[1]),
-             size = 3,
+             size = 2.5,
              fontface = "bold",
              inherit.aes = FALSE)
   
