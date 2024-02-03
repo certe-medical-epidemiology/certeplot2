@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.23.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.23.1</span>
       </span>
     </div>
 
@@ -83,7 +83,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_type</span><span class="op">(</span><span class="va">plot</span>, type <span class="op">=</span> <span class="cn">NULL</span>, mapping <span class="op">=</span> <span class="fu">aes</span><span class="op">(</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_type</span><span class="op">(</span><span class="va">plot</span>, type <span class="op">=</span> <span class="cn">NULL</span>, mapping <span class="op">=</span> <span class="fu">aes</span><span class="op">(</span><span class="op">)</span>, <span class="va">...</span>, data <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">add_line</span><span class="op">(</span></span>
 <span>  <span class="va">plot</span>,</span>
@@ -163,6 +163,10 @@
 
 <dt>mapping</dt>
 <dd><p>a mapping created with <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code> to pass on to the geom</p></dd>
+
+
+<dt>data</dt>
+<dd><p>data to use in mapping</p></dd>
 
 
 <dt>x, y</dt>
