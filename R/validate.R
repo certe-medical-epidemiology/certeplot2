@@ -314,27 +314,27 @@ validate_data <- function(df,
   if (has_x(df) && !is.null(plot2_env$mapping_x) &&
       !plot2_env$mapping_x %in% colnames(df) && plot2_env$mapping_x != "NULL") {
     df$`_label_x` <- get_x(df)
-    colnames(df)[colnames(df) == "_label_x"] <- concat(plot2_env$mapping_x)
+    colnames(df)[colnames(df) == "_label_x"] <- paste0(trimws(plot2_env$mapping_x), collapse = " ")
   }
   if (has_y(df) && !is.null(plot2_env$mapping_y) &&
       !plot2_env$mapping_y %in% colnames(df) && plot2_env$mapping_y != "NULL") {
     df$`_label_y` <- get_y(df)
-    colnames(df)[colnames(df) == "_label_y"] <- concat(plot2_env$mapping_y)
+    colnames(df)[colnames(df) == "_label_y"] <- paste0(trimws(plot2_env$mapping_y), collapse = " ")
   }
   if (has_category(df) && !is.null(plot2_env$mapping_category) &&
       !plot2_env$mapping_category %in% colnames(df) && plot2_env$mapping_category != "NULL") {
     df$`_label_category` <- get_category(df)
-    colnames(df)[colnames(df) == "_label_category"] <- concat(plot2_env$mapping_category)
+    colnames(df)[colnames(df) == "_label_category"] <- paste0(trimws(plot2_env$mapping_category), collapse = " ")
   }
   if (has_facet(df) && !is.null(plot2_env$mapping_facet) &&
       !plot2_env$mapping_facet %in% colnames(df) && plot2_env$mapping_facet != "NULL") {
     df$`_label_facet` <- get_facet(df)
-    colnames(df)[colnames(df) == "_label_facet"] <- concat(plot2_env$mapping_facet)
+    colnames(df)[colnames(df) == "_label_facet"] <- paste0(trimws(plot2_env$mapping_facet), collapse = " ")
   }
   if (has_y_secondary(df) && !is.null(plot2_env$mapping_y_secondary) &&
       !plot2_env$mapping_y_secondary %in% colnames(df) && plot2_env$mapping_y_secondary != "NULL") {
     df$`_label_y_secondary` <- get_y_secondary(df)
-    colnames(df)[colnames(df) == "_label_y_secondary"] <- concat(plot2_env$mapping_y_secondary)
+    colnames(df)[colnames(df) == "_label_y_secondary"] <- paste0(trimws(plot2_env$mapping_y_secondary), collapse = " ")
   }
   
   if (has_datalabels(df)) {
@@ -792,7 +792,6 @@ validate_x_scale <- function(values,
       }
     }
   }
-  
   if (is.null(x.trans)) {
     x.trans <- "identity"
   }

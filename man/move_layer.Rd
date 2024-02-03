@@ -9,7 +9,7 @@ move_layer(plot, move = -1, layer = length(plot$layers))
 \arguments{
 \item{plot}{a \code{ggplot} object}
 
-\item{move}{number of layer to move \code{layer} up or down}
+\item{move}{number of layers to move \code{layer} up or down}
 
 \item{layer}{the layer to affect, defaults to top layer}
 }

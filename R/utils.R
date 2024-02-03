@@ -32,6 +32,7 @@ globalVariables(c(".",
                   "_var_y_secondary",
                   "ab",
                   "antibiotic", 
+                  "cases",
                   "cluster",
                   "count",
                   "day_in_period",
@@ -45,6 +46,7 @@ globalVariables(c(".",
                   "mo",
                   "month_day",
                   "n",
+                  "n_cases",
                   "name",
                   "period_date",
                   "period_txt",
@@ -56,6 +58,7 @@ globalVariables(c(".",
                   "value",
                   "where",
                   "x_axis",
+                  "xmax",
                   "xmin",
                   "y_max",
                   "y_min",
@@ -193,7 +196,7 @@ add_direction <- function(df, direction, var_name, var_label, sep) {
       var_label <- new_var_name
     }
   }, error = function(e) invisible())
-
+  
   df <- tryCatch({
     out <- df |> 
       mutate(`_var_` = {{ direction }})
@@ -207,6 +210,7 @@ add_direction <- function(df, direction, var_name, var_label, sep) {
   })
   
   # this adds the column again with the right label
+  var_label <- paste0(trimws(var_label), collapse = " ")
   if (var_label != "NULL" && !var_label %in% colnames(df)) {
     df$`_var_new` <- df[, paste0("_var_", var_name), drop = TRUE]
     colnames(df)[colnames(df) == "_var_new"] <- var_label
@@ -523,7 +527,7 @@ update_aes <- function(current = aes(), ..., as_symbol = FALSE) {
 
 restore_mapping <- function(p, df) {
   # helper function
-  new_mapping <- function(mapping, df) {
+  fn_new_mapping <- function(mapping, df) {
     if (is.null(mapping)) {
       return(mapping)
     }
@@ -549,10 +553,10 @@ restore_mapping <- function(p, df) {
   }
   
   # general plot mapping
-  p$mapping <- new_mapping(mapping = p$mapping, df = df)
+  p$mapping <- fn_new_mapping(mapping = p$mapping, df = df)
   # mapping for each extra layer, such as geom_smooth()
   for (i in seq_len(length(p$layers))) {
-    p$layers[[i]]$mapping <- new_mapping(mapping = p$layers[[i]]$mapping, df = df)
+    p$layers[[i]]$mapping <- fn_new_mapping(mapping = p$layers[[i]]$mapping, df = df)
   }
   
   # facet mapping
@@ -578,8 +582,8 @@ restore_mapping <- function(p, df) {
 }
 
 set_plot2_env <- function(x = NULL, y = NULL, category = NULL, facet = NULL, y_secondary = NULL, x_variable_names = NULL) {
-  x <- paste0(x, collapse = " ")
-  y <- paste0(y, collapse = " ")
+  x <- paste0(trimws(x), collapse = " ")
+  y <- paste0(trimws(y), collapse = " ")
   category <- paste0(category, collapse = " ")
   facet <- paste0(facet, collapse = " ")
   y_secondary <- paste0(y_secondary, collapse = " ")
@@ -657,7 +661,7 @@ format_error <- function(e, replace = character(0), by = character(0)) {
     txt <- font_stripstyle(txt)
     txt <- gsub(".*Caused by error[:](\n!)?", "", txt)
   } else {
-    txt <- c(e$message, e$parent$message, e$parent$parent$message, e$parent$parent$parent$message)
+    txt <- c(e$message, e$parent$message, e$parent$parent$message, e$parent$parent$parent$message, e$call)
   }
   txt <- txt[txt %unlike% "^Problem while"]
   if (length(txt) == 0) {

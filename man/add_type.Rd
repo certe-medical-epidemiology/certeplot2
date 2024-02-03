@@ -9,7 +9,7 @@
 \alias{add_sf}
 \title{Add Plot Element}
 \usage{
-add_type(plot, type = NULL, mapping = aes(), ...)
+add_type(plot, type = NULL, mapping = aes(), ..., data = NULL)
 
 add_line(
   plot,
@@ -82,6 +82,8 @@ add_sf(
 \item{type}{a \code{ggplot2} geom name, all geoms are supported. Full function names can be used (e.g., \code{"geom_line"}), but they can also be abbreviated (e.g., \code{"l"}, \code{"line"}). These geoms can be abbreviated by their first character: area (\code{"a"}), boxplot (\code{"b"}), column (\code{"c"}), histogram (\code{"h"}), jitter (\code{"j"}), line (\code{"l"}), point (\code{"p"}), ribbon (\code{"r"}), violin (\code{"v"}).}
 
 \item{mapping}{a mapping created with \code{\link[ggplot2:aes]{aes()}} to pass on to the geom}
+
+\item{data}{data to use in mapping}
 
 \item{x, y}{aesthetic arguments}
 

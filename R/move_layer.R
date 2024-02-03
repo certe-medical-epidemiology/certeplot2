@@ -21,7 +21,7 @@
 #' 
 #' Use this function to move a certain plot layer up or down. This function returns a `ggplot` object.
 #' @param plot a `ggplot` object
-#' @param move number of layer to move `layer` up or down
+#' @param move number of layers to move `layer` up or down
 #' @param layer the layer to affect, defaults to top layer
 #' @importFrom ggplot2 is.ggplot
 #' @export
@@ -34,7 +34,7 @@ move_layer <- function(plot, move = -1, layer = length(plot$layers)) {
   layers <- plot$layers
   layers_backup <- layers
   layer_old <- layer
-  layer_new <- layer + move
+  layer_new <- max(1, layer + move)
   
   if (!layer_old %in% seq_len(length(layers))) {
     stop("This plot contains only ", length(layers), " layers. Layer ",

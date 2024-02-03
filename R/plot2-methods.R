@@ -525,7 +525,7 @@ plot2.numeric <- function(.data,
                           background = getOption("plot2.colour_background", "white"),
                           markdown = TRUE,
                           ...) {
-  y_deparse <- paste0(deparse(substitute(.data)), collapse = "")
+  y_deparse <- paste0(trimws(deparse(substitute(.data))), collapse = " ")
   if (nchar(y_deparse) > 30) {
     y_deparse <- "y"
   }
@@ -3497,7 +3497,7 @@ plot2.qc_test <- function(.data,
 }
 
 #' @rdname plot2-methods
-#' @importFrom dplyr group_by summarise n_distinct `%>%` filter right_join
+#' @importFrom dplyr group_by summarise n_distinct `%>%` filter left_join
 #' @importFrom ggplot2 geom_point aes
 #' @importFrom certestyle colourpicker add_white format2
 #' @details The detection of [disease clusters](https://en.wikipedia.org/wiki/Disease_cluster) can be done using [certestats::early_warning_cluster()]. Use `size` to alter the size of the triangles that indicate clusters.
@@ -3521,15 +3521,15 @@ plot2.early_warning_cluster <- function(.data,
                                         category = NULL,
                                         facet = NULL,
                                         type = "line",
-                                        x.title = ifelse(attributes(.data)$period_length_months == 12, "Maand", "Weken in periode"),
+                                        x.title = ifelse(attributes(.data)$period_length_months == 12, "Maand in periode", "Week in periode"),
                                         y.title = paste0("Cases (", attributes(.data)$moving_average_days, "-daags zwevend gemiddelde)"),
                                         category.title = "Periode",
-                                        title = paste0(n_distinct(.data$clusters$cluster), " cluster(s)"),
-                                        subtitle = paste0("O.b.v. uitbijter-vrije geschiedenis (coeff = ",
-                                                          format2(attributes(.data)$remove_outliers_coefficient),
-                                                          ") met pct = ",
-                                                          format2(attributes(.data)$threshold_percentile)),
-                                        caption = NULL,
+                                        title = paste0(n_distinct(.data$clusters$cluster), " cluster", ifelse(n_distinct(.data$clusters$cluster) != 1, "s", "")),
+                                        subtitle = NULL,
+                                        caption = paste0("O.b.v. uitbijter-vrije geschiedenis (coeff = ",
+                                                         format2(attributes(.data)$remove_outliers_coefficient),
+                                                         ") met pct = ",
+                                                         format2(attributes(.data)$threshold_percentile)),
                                         tag = NULL,
                                         title.linelength = 60,
                                         title.colour = getOption("plot2.colour_font_primary", "black"),
@@ -3552,7 +3552,7 @@ plot2.early_warning_cluster <- function(.data,
                                         facet.relative = FALSE,
                                         x.date_breaks = "1 month",
                                         x.date_labels = "mmm",
-                                        x.date_remove_years = TRUE,
+                                        x.date_remove_years = FALSE, # has no impact anyway, see below at x.date_remove_years
                                         category.focus = NULL,
                                         colour = getOption("plot2.colour", "ggplot2"),
                                         colour_fill = NULL,
@@ -3669,9 +3669,9 @@ plot2.early_warning_cluster <- function(.data,
                                         ...) {
   loadNamespace("certestats") # will throw an error if not installed
   
-  cluster_data <- .data
+  early_warning_object <- .data
   
-  if (NROW(cluster_data$details) == 0) {
+  if (NROW(early_warning_object$details) == 0) {
     # check if markdown is required
     markdown <- validate_markdown(markdown, x.title, y.title, c(category.title, legend.title), title, subtitle, tag, caption)
     plot2_warning("No observations, returning an empty plot")
@@ -3712,43 +3712,51 @@ plot2.early_warning_cluster <- function(.data,
     }
   }
   
-  if (NROW(cluster_data$clusters) == 0) {
-    clusters <- data.frame(cluster = integer(0), xmin = Sys.Date()[0], xmax = Sys.Date()[0])
-    if (attributes(.data)$period_length_months != 12) {
+  if (NROW(early_warning_object$clusters) == 0) {
+    if (attributes(early_warning_object)$period_length_months == 12) {
+      # plot as years
+      clusters <- data.frame(cluster = integer(0), xmin = Sys.Date()[0], xmax = Sys.Date()[0])
+    } else {
+      # plot as days in period
       clusters <- data.frame(cluster = integer(0), xmin = double(0), xmax = double(0))
     }
   } else {
-    if (attributes(.data)$period_length_months == 12) {
-      is_leap <- any(format(cluster_data$details$period_date, "%Y") == "1972")
-      clusters <- cluster_data$clusters |>
+    if (attributes(early_warning_object)$period_length_months == 12) {
+      # plot as years
+      clusters <- early_warning_object$clusters |>
+        left_join(early_warning_object$details |>
+                           select(date, period_date),
+                         by = "date") |> 
         group_by(cluster) |>
-        summarise(xmin = unify_years(min(date), as_leap_year = is_leap),
-                  xmax = unify_years(max(date), as_leap_year = is_leap))
+        summarise(xmin = min(period_date, na.rm = TRUE),
+                  xmax = max(period_date, na.rm = TRUE),
+                  n_cases = sum(cases, na.rm = TRUE))
     } else {
-      clusters <- cluster_data$details |>
-        right_join(cluster_data$clusters, by = "date") |> 
-        group_by(cluster) |> 
-        summarise(xmin = min(day_in_period),
-                  xmax = max(day_in_period))
+      # plot as days in period
+      clusters <- early_warning_object$clusters |>
+        group_by(cluster) |>
+        summarise(xmin = min(day_in_period, na.rm = TRUE),
+                  xmax = max(day_in_period, na.rm = TRUE),
+                  n_cases = sum(cases, na.rm = TRUE))
     }
   }
   
   if (identical(colour, "certe")) {
-    colour <- c("certeblauw", colourpicker("greyscale", n_distinct(cluster_data$details$period) - 1))
-    if (isTRUE(attributes(cluster_data)$based_on_historic_maximum)) {
+    colour <- c("certeblauw", colourpicker("greyscale", n_distinct(early_warning_object$details$period) - 1))
+    if (isTRUE(attributes(early_warning_object)$based_on_historic_maximum)) {
       colour <- c(colour, "certeroze2")
     }
   } else {
     # set number of colours needed
-    if (isTRUE(attributes(cluster_data)$based_on_historic_maximum)) {
-      colour <- colourpicker(colour, n_distinct(cluster_data$details$period) + 1)
+    if (isTRUE(attributes(early_warning_object)$based_on_historic_maximum)) {
+      colour <- colourpicker(colour, n_distinct(early_warning_object$details$period) + 1)
     } else {
-      colour <- colourpicker(colour, n_distinct(cluster_data$details$period))
+      colour <- colourpicker(colour, n_distinct(early_warning_object$details$period))
     }
   }
   
-  p <- cluster_data$details |> 
-    plot2(x = if (attributes(cluster_data)$period_length_months == 12) period_date else day_in_period,
+  p <- early_warning_object$details |> 
+    plot2(x = if (attributes(early_warning_object)$period_length_months == 12) period_date else day_in_period,
           y = ma_5c,
           category = period_txt,
           # facet = {{facet}},
@@ -3781,7 +3789,7 @@ plot2.early_warning_cluster <- function(.data,
           facet.relative = facet.relative,
           x.date_breaks = x.date_breaks,
           x.date_labels = x.date_labels,
-          x.date_remove_years = x.date_remove_years,
+          x.date_remove_years = FALSE, # otherwise the diease cluster years will be 1970 (as plot2() works like that in unify_years())
           category.focus = category.focus,
           colour = colour,
           colour_fill = colour_fill,
@@ -3922,25 +3930,63 @@ plot2.early_warning_cluster <- function(.data,
           `_misses.summarise_function` = missing(summarise_function),
           ...) %>%
     add_line(ma_5c, data = .$data |> filter(period_txt %like% "Periode 0:"), colour = colour[1], linewidth = 0.75) %>%
-    (function(x) if ("ma_5c_pct_outscope" %in% x$data) {
-      x |> add_line(ma_5c_pct_outscope, colour = colour[1], linetype = 2, geom_type = "hline", linewidth = 0.75)  
-    } else {
-      x
-    })() +
-    geom_point(data = clusters,
-               mapping = aes(y = max(cluster_data$details$ma_5c, na.rm = TRUE),
-                             x = xmin),
-               colour = colourpicker(colour[1]),
-               size = validate_size(size, type = "geom_point", type_backup = "geom_point"),
-               shape = 25, # triangle down
-               stroke = validate_size(size, type = "geom_point", type_backup = "geom_point") / 4, # thickness of triangle outline
-               fill = add_white(colourpicker(colour[1]), 0.75),
-               inherit.aes = FALSE)
+    (function(x) {
+      if ("ma_5c_pct_outscope" %in% x$data) {
+        x |> add_line(ma_5c_pct_outscope, colour = colour[1], linetype = 2, geom_type = "hline", linewidth = 0.75)
+      } else {
+        x
+      }})() |> 
+    add_type(data = clusters,
+             type = "rect",
+             mapping = aes(xmin = xmin,
+                           xmax = xmax,
+                           ymin = 0,
+                           ymax = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.05),
+             fill = colourpicker(colour[1]),
+             alpha = 0.1,
+             inherit.aes = FALSE) |> 
+    move_layer(move = -99) |> 
+    # arrow left to right (arrow head on the right)
+    add_type(data = clusters,
+             type = "segment",
+             mapping = aes(x = xmin,
+                           xend = xmax,
+                           y = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.05,
+                           yend = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.05),
+             lineend = "round",
+             linejoin = "round",
+             arrow = grid::arrow(length = unit(5, "pt")),
+             colour = colourpicker(colour[1]),
+             size = 0.75,
+             inherit.aes = FALSE) |> 
+    # arrow right to left (arrow head on the left)
+    add_type(data = clusters,
+             type = "segment",
+             mapping = aes(x = xmax,
+                           xend = xmin,
+                           y = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.05,
+                           yend = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.05),
+             lineend = "round",
+             linejoin = "round",
+             arrow = grid::arrow(length = unit(5, "pt")),
+             colour = colourpicker(colour[1]),
+             size = 0.75,
+             inherit.aes = FALSE) |> 
+    # arrow right to left (arrow head on the left)
+    add_type(data = clusters,
+             type = "text",
+             mapping = aes(label = paste0("N = ", n_cases),
+                           x = xmax - (xmax - xmin) / 2,
+                           y = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.1),
+             colour = colourpicker(colour[1]),
+             size = 3,
+             fontface = "bold",
+             inherit.aes = FALSE)
   
-  if (isTRUE(attributes(cluster_data)$based_on_historic_maximum)) {
+  if (isTRUE(attributes(early_warning_object)$based_on_historic_maximum)) {
     p <- p |>
       add_line(max_ma_5c,
-               data = p$data |> mutate(year = "0 Maximum"),
+               data = p$data |> mutate(period_txt = "Maximum"),
                linewidth = 0.5)
   }
   

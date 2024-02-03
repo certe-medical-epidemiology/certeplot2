@@ -24,6 +24,7 @@
 #' @param type a `ggplot2` geom name, all geoms are supported. Full function names can be used (e.g., `"geom_line"`), but they can also be abbreviated (e.g., `"l"`, `"line"`). These geoms can be abbreviated by their first character: area (`"a"`), boxplot (`"b"`), column (`"c"`), histogram (`"h"`), jitter (`"j"`), line (`"l"`), point (`"p"`), ribbon (`"r"`), violin (`"v"`).
 #' @param mapping a mapping created with [`aes()`][ggplot2::aes()] to pass on to the geom
 #' @param group,linetype,linewidth,shape,size,width,... arguments passed on to the geom
+#' @param data data to use in mapping
 #' @importFrom ggplot2 is.ggplot aes
 #' @rdname add_type
 #' @export
@@ -85,7 +86,7 @@
 #'            linetype = 2,
 #'            linewidth = 0.5)
 #' }
-add_type <- function(plot, type = NULL, mapping = aes(), ...) {
+add_type <- function(plot, type = NULL, mapping = aes(), ..., data = NULL) {
   if (!is.ggplot(plot)) {
     stop("`plot` must be a ggplot2 model.", call. = FALSE)
   }
@@ -97,10 +98,12 @@ add_type <- function(plot, type = NULL, mapping = aes(), ...) {
   }
   geom_fn <- getExportedValue(name = type, ns = asNamespace("ggplot2"))
   
+  args <- utils::modifyList(list(mapping = mapping, data = data),
+                            list(...))
+  args <- args[!vapply(FUN.VALUE = logical(1), args, is.null)]
+  
   plot +
-    do.call(geom_fn,
-            args = c(list(mapping = mapping),
-                     c(...)))
+    do.call(geom_fn, args = args)
 }
 
 #' @rdname add_type
