@@ -651,13 +651,15 @@ validate_data <- function(df,
                 .groups = "drop")
     df[, y_name] <- df$`_var_y`
     
-    plot2_warning("Values in ", font_blue("y"), " were not summarised, now using ",
-                  font_blue(paste0("y = ", dots$summarise_fn_name, "(", get_y_name(df), ")")), " since ",
-                  font_blue(paste0("summarise_function = ", dots$summarise_fn_name)), " was set.\n",
-                  "  When using a transformation function on ", font_blue("x"), 
-                  ifelse(has_category(df), paste0(" or ", font_blue("category")), ""),
-                  ifelse(has_facet(df), paste0(" or ", font_blue("facet")), ""),
-                  ", also use a summarising function on ", font_blue("y"), ".")
+    if (!dots$summarise_fn_name %in% c("summarise_function", "function(x) x")) {
+      plot2_warning("Values in ", font_blue("y"), " were not summarised, now using ",
+                    font_blue(paste0("y = ", dots$summarise_fn_name, "(", get_y_name(df), ")")), " since ",
+                    font_blue(paste0("summarise_function = ", dots$summarise_fn_name)), " was set.\n",
+                    "  When using a transformation function on ", font_blue("x"), 
+                    ifelse(has_category(df), paste0(" or ", font_blue("category")), ""),
+                    ifelse(has_facet(df), paste0(" or ", font_blue("facet")), ""),
+                    ", also use a summarising function on ", font_blue("y"), ".")
+    }
   }
   
   if (type != "geom_sf") {

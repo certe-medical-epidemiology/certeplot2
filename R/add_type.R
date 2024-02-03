@@ -96,12 +96,15 @@ add_type <- function(plot, type = NULL, mapping = aes(), ..., data = NULL) {
   } else if (type == "geom_smooth") {
     plot2_caution("Adding a smooth using `add_type()` is less convenient than using `plot2(..., smooth = TRUE)")
   }
-  geom_fn <- getExportedValue(name = type, ns = asNamespace("ggplot2"))
   
-  args <- utils::modifyList(list(mapping = mapping, data = data),
-                            list(...))
+  args <- list(...)
+  if (length(args) == 1 && is.list(args[[1]])) {
+    args <- args[[1]]
+  }
+  args <- utils::modifyList(list(mapping = mapping, data = data), args)
   args <- args[!vapply(FUN.VALUE = logical(1), args, is.null)]
   
+  geom_fn <- getExportedValue(name = type, ns = asNamespace("ggplot2"))
   plot +
     do.call(geom_fn, args = args)
 }
