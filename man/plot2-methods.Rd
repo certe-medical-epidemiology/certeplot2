@@ -1633,7 +1633,7 @@
   y_secondary.scientific = NULL,
   y_secondary.percent = FALSE,
   y_secondary.labels = NULL,
-  category.labels = NULL,
+  category.labels = md_to_expression,
   category.percent = FALSE,
   category.breaks = NULL,
   category.limits = NULL,
