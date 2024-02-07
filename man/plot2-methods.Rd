@@ -618,7 +618,7 @@
   text_factor = 1,
   font = getOption("plot2.font"),
   theme = theme_minimal2(panel.grid.major = element_blank(), panel.grid.minor =
-    element_blank(), panel.border = element_blank(), plot.margin = unit(c(5, 5, -15, 5),
+    element_blank(), panel.border = element_blank(), plot.margin = unit(c(5, 5, 0, 0),
     units = "pt"), axis.title = element_blank(), axis.text = element_blank(), axis.line =
     element_blank(), axis.ticks = element_blank()),
   background = getOption("plot2.colour_background", "white"),
