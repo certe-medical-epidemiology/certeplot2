@@ -111,6 +111,7 @@ plot2(
   datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
+  datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
   big.mark = big_mark(),
   summarise_function = base::sum,
@@ -330,7 +331,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{datalabels.format}{format to use for datalabels. This can be a function (such as \code{\link[=euros]{euros()}}) or a text. For the text, \code{"\%n"} will be replaced by the count number, and \code{"\%p"} will be replaced by the percentage of the total count. Use \code{datalabels.format = NULL} to \emph{not} transform the datalabels.}
 
-\item{datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle}{settings for the datalabels}
+\item{datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle, datalabels.lineheight}{settings for the datalabels}
 
 \item{decimal.mark}{decimal mark, defaults to \code{\link[=dec_mark]{dec_mark()}}}
 
@@ -433,7 +434,7 @@ The \code{\link[=plot2]{plot2()}} function is a convenient wrapper around many \
 \item Support for any \code{ggplot2} extension based on \code{\link[ggplot2:fortify]{ggplot2::fortify()}}
 }
 
-The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 148 arguments, all with a default value. \strong{Less typing, faster coding.}
+The \code{ggplot2} package in conjunction with the \code{tidyr}, \code{forcats} and \code{cleaner} packages can provide above functionalities, but the goal of the \code{\link[=plot2]{plot2()}} function is to generalise this into one function. The generic \code{\link[=plot2]{plot2()}} function currently has 149 arguments, all with a default value. \strong{Less typing, faster coding.}
 }
 \examples{
 options(plot2.colour = NULL, plot2.colour_sf_fill = NULL)

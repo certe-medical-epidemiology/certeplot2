@@ -143,7 +143,7 @@
 #' - A function to calculate over `.data`, such as `datalabels = paste(round(column1), "\n", column2)`
 #' @param datalabels.round number of digits to round the datalabels, applies to both `"%n"` and `"%p"` for replacement (see `datalabels.format`)
 #' @param datalabels.format format to use for datalabels. This can be a function (such as [euros()]) or a text. For the text, `"%n"` will be replaced by the count number, and `"%p"` will be replaced by the percentage of the total count. Use `datalabels.format = NULL` to *not* transform the datalabels.
-#' @param datalabels.colour,datalabels.colour_fill,datalabels.size,datalabels.angle settings for the datalabels
+#' @param datalabels.colour,datalabels.colour_fill,datalabels.size,datalabels.angle,datalabels.lineheight settings for the datalabels
 #' @param decimal.mark decimal mark, defaults to [dec_mark()]
 #' @param big.mark thousands separator, defaults to [big_mark()]
 #' @param summarise_function a [function] to use if the data has to be summarised, see *Examples*. This can also be `NULL`, which will be converted to `function(x) x`.
@@ -488,6 +488,7 @@ plot2 <- function(.data,
                   datalabels.colour_fill = NULL,
                   datalabels.size = (3 * text_factor),
                   datalabels.angle = 0,
+                  datalabels.lineheight = 1.0,
                   decimal.mark = dec_mark(),
                   big.mark = big_mark(),
                   summarise_function = base::sum,
@@ -699,6 +700,7 @@ plot2_exec <- function(.data,
                        datalabels.colour_fill,
                        datalabels.size,
                        datalabels.angle,
+                       datalabels.lineheight,
                        decimal.mark,
                        big.mark,
                        summarise_function,
@@ -744,7 +746,7 @@ plot2_exec <- function(.data,
                        ...) {
   
   dots <- list(...)
-  dots_geom <- dots[names(dots) %unlike% "^_(label[.]|misses[.]|sf.column|summarise_fn_name)"]
+  dots_geom <- dots[names(dots) %unlike% "^_(label[.]|misses[.]|sf.column|summarise_fn_name|datalabels.centroid)"]
   if (length(dots_geom) > 0) {
     plot2_message(ifelse(length(dots_geom) == 1,
                          "This additional argument is given to the geom: ",
@@ -1657,6 +1659,8 @@ plot2_exec <- function(.data,
                         datalabels.colour = datalabels.colour,
                         datalabels.size = datalabels.size,
                         datalabels.angle = datalabels.angle,
+                        datalabels.lineheight = datalabels.lineheight,
+                        datalabels.centroid = dots$`_datalabels.centroid`,
                         font = font,
                         reverse = reverse,
                         horizontal = horizontal,

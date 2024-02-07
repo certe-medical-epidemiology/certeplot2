@@ -122,6 +122,7 @@
   datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
+  datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
   big.mark = big_mark(),
   summarise_function = base::sum,
@@ -274,6 +275,7 @@
   datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
+  datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
   big.mark = big_mark(),
   summarise_function = base::sum,
@@ -426,6 +428,7 @@
   datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
+  datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
   big.mark = big_mark(),
   summarise_function = base::sum,
@@ -578,6 +581,7 @@
   datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
+  datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
   big.mark = big_mark(),
   summarise_function = base::sum,
@@ -624,6 +628,7 @@
   background = getOption("plot2.colour_background", "white"),
   markdown = TRUE,
   crs = NULL,
+  datalabels.centroid = NULL,
   ...
 )
 
@@ -734,6 +739,7 @@
   datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
+  datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
   big.mark = big_mark(),
   summarise_function = base::sum,
@@ -886,6 +892,7 @@
   datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
+  datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
   big.mark = big_mark(),
   summarise_function = base::sum,
@@ -1038,6 +1045,7 @@
   datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
+  datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
   big.mark = big_mark(),
   summarise_function = base::sum,
@@ -1193,6 +1201,7 @@
   datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
+  datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
   big.mark = big_mark(),
   summarise_function = base::sum,
@@ -1345,6 +1354,7 @@
   datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
+  datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
   big.mark = big_mark(),
   summarise_function = base::sum,
@@ -1499,6 +1509,7 @@
   datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
+  datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
   big.mark = big_mark(),
   summarise_function = base::sum,
@@ -1656,6 +1667,7 @@
   datalabels.colour_fill = NULL,
   datalabels.size = (3 * text_factor),
   datalabels.angle = 0,
+  datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
   big.mark = big_mark(),
   summarise_function = base::sum,
@@ -1875,7 +1887,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{datalabels.format}{format to use for datalabels. This can be a function (such as \code{\link[=euros]{euros()}}) or a text. For the text, \code{"\%n"} will be replaced by the count number, and \code{"\%p"} will be replaced by the percentage of the total count. Use \code{datalabels.format = NULL} to \emph{not} transform the datalabels.}
 
-\item{datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle}{settings for the datalabels}
+\item{datalabels.colour, datalabels.colour_fill, datalabels.size, datalabels.angle, datalabels.lineheight}{settings for the datalabels}
 
 \item{decimal.mark}{decimal mark, defaults to \code{\link[=dec_mark]{dec_mark()}}}
 
@@ -1947,6 +1959,8 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 \item{...}{any argument to give to the geom. This will override automatically-set settings for the geom.}
 
 \item{crs}{the coordinate reference system (CRS) to use. If this is not left blank, \code{\link[sf:st_transform]{sf::st_transform()}} will be used to transform the geometric data to the new CRS.}
+
+\item{datalabels.centroid}{a \link{logical} to indicate whether datalabels must be centred on the polygon (using \code{\link[sf:geos_unary]{sf::st_centroid()}}, the default), or be placed on the 'best' spot on the surface (using \code{\link[sf:geos_unary]{sf::st_point_on_surface()}})}
 
 \item{minimum}{minimum number of results, defaults to \code{30}}
 

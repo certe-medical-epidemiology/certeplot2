@@ -2257,6 +2257,8 @@ set_datalabels <- function(p,
                            datalabels.colour,
                            datalabels.size,
                            datalabels.angle,
+                           datalabels.lineheight,
+                           datalabels.centroid,
                            font,
                            reverse,
                            horizontal,
@@ -2325,11 +2327,23 @@ set_datalabels <- function(p,
     # these functions from the 'sf' package fix invalid geometries
     st_is_valid <- getExportedValue(name = "st_is_valid", ns = asNamespace("sf"))
     st_point <- getExportedValue(name = "st_point", ns = asNamespace("sf"))
+    st_centroid <- getExportedValue(name = "st_centroid", ns = asNamespace("sf"))
     st_point_on_surface <- getExportedValue(name = "st_point_on_surface", ns = asNamespace("sf"))
     st_zm <- getExportedValue(name = "st_zm", ns = asNamespace("sf"))
-    geometry_fix_fn <- function(x) {
-      x[!st_is_valid(x)] <- st_point()
-      suppressWarnings(st_point_on_surface(st_zm(x)))
+    if (is.null(datalabels.centroid)) {
+      plot2_message("Assuming ", font_blue("datalabels.centroid = TRUE"), ". Set to FALSE for a point-on-surface placing of datalabels.")
+      datalabels.centroid <- TRUE
+    }
+    if (isTRUE(datalabels.centroid)) {
+      geometry_fix_fn <- function(x) {
+        x[!st_is_valid(x)] <- st_point()
+        suppressWarnings(st_centroid(st_zm(x)))
+      }
+    } else {
+      geometry_fix_fn <- function(x) {
+        x[!st_is_valid(x)] <- st_point()
+        suppressWarnings(st_point_on_surface(st_zm(x)))
+      }  
     }
   }
   
@@ -2346,6 +2360,7 @@ set_datalabels <- function(p,
                           size = datalabels.size,
                           family = font,
                           angle = datalabels.angle,
+                          lineheight = datalabels.lineheight,
                           na.rm = TRUE),
                      # only when there's a category:
                      list(position = position_fn)[has_category(df) & !isTRUE(is_sf)],
@@ -2366,6 +2381,7 @@ set_datalabels <- function(p,
                           size = datalabels.size * ifelse(isTRUE(markdown) & isTRUE(is_sf), 1.05, 1),
                           family = font,
                           angle = datalabels.angle,
+                          lineheight = datalabels.lineheight,
                           na.rm = TRUE),
                      # only when there's a category:
                      list(position = position_fn)[has_category(df) & !isTRUE(is_sf) & !isTRUE(is_tile)],
