@@ -3519,7 +3519,7 @@ plot2.qc_test <- function(.data,
 }
 
 #' @rdname plot2-methods
-#' @importFrom dplyr group_by summarise n_distinct `%>%` filter left_join
+#' @importFrom dplyr group_by mutate ungroup summarise n_distinct `%>%` filter left_join
 #' @importFrom ggplot2 geom_point aes
 #' @importFrom certestyle colourpicker add_white format2
 #' @details The detection of [disease clusters](https://en.wikipedia.org/wiki/Disease_cluster) can be done using [certestats::early_warning_cluster()]. Use `size` to alter the size of the triangles that indicate clusters.
@@ -3778,9 +3778,14 @@ plot2.early_warning_cluster <- function(.data,
     }
   }
   
+  early_warning_object$details <- early_warning_object$details |>
+    group_by(period = abs(period)) |>
+    mutate(period_txt = paste0("**Periode ", abs(period), ":** ", format2(min(date), "d mmm \u2019yy"), " - ", format2(max(date), "d mmm \u2019yy"))) |>
+    ungroup()
+  
   p <- early_warning_object$details |> 
     plot2(x = if (attributes(early_warning_object)$period_length_months == 12) period_date else day_in_period,
-          y = ma_5c,
+          y = moving_avg,
           category = period_txt,
           # facet = {{facet}},
           type = type,
@@ -3953,10 +3958,10 @@ plot2.early_warning_cluster <- function(.data,
           `_summarise_fn_name` = deparse(substitute(summarise_function)),
           `_misses.summarise_function` = missing(summarise_function),
           ...) %>%
-    add_line(ma_5c, data = .$data |> filter(period_txt %like% "Periode 0:"), colour = colour[1], linewidth = 0.6) %>%
+    add_line(moving_avg, data = .$data |> filter(period_txt %like% "Periode 0:"), colour = colour[1], linewidth = 0.6) %>%
     (function(x) {
-      if ("ma_5c_pct_outscope" %in% x$data) {
-        x |> add_line(ma_5c_pct_outscope, colour = colour[1], linetype = 2, geom_type = "hline", linewidth = 0.6)
+      if ("moving_avg_limit" %in% x$data) {
+        x |> add_line(moving_avg_limit, colour = colour[1], linetype = 2, geom_type = "hline", linewidth = 0.6)
       } else {
         x
       }})() |> 
@@ -3965,7 +3970,7 @@ plot2.early_warning_cluster <- function(.data,
              mapping = aes(xmin = xmin,
                            xmax = xmax,
                            ymin = 0,
-                           ymax = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.05),
+                           ymax = max(early_warning_object$details$moving_avg, na.rm = TRUE) * 1.05),
              fill = colourpicker(colour[1]),
              alpha = 0.1,
              inherit.aes = FALSE) |> 
@@ -3975,8 +3980,8 @@ plot2.early_warning_cluster <- function(.data,
              type = "segment",
              mapping = aes(x = xmin,
                            xend = xmax,
-                           y = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.05,
-                           yend = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.05),
+                           y = max(early_warning_object$details$moving_avg, na.rm = TRUE) * 1.05,
+                           yend = max(early_warning_object$details$moving_avg, na.rm = TRUE) * 1.05),
              lineend = "round",
              linejoin = "round",
              arrow = grid::arrow(angle = 90, length = unit(2, "pt")),
@@ -3988,8 +3993,8 @@ plot2.early_warning_cluster <- function(.data,
              type = "segment",
              mapping = aes(x = xmax,
                            xend = xmin,
-                           y = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.05,
-                           yend = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.05),
+                           y = max(early_warning_object$details$moving_avg, na.rm = TRUE) * 1.05,
+                           yend = max(early_warning_object$details$moving_avg, na.rm = TRUE) * 1.05),
              lineend = "round",
              linejoin = "round",
              arrow = grid::arrow(angle = 90, length = unit(2, "pt")),
@@ -4001,7 +4006,7 @@ plot2.early_warning_cluster <- function(.data,
              type = "text",
              mapping = aes(label = paste0("N = ", n_cases),
                            x = xmax - (xmax - xmin) / 2,
-                           y = max(early_warning_object$details$ma_5c, na.rm = TRUE) * 1.1),
+                           y = max(early_warning_object$details$moving_avg, na.rm = TRUE) * 1.1),
              colour = colourpicker(colour[1]),
              size = 2.5,
              fontface = "bold",
@@ -4009,7 +4014,7 @@ plot2.early_warning_cluster <- function(.data,
   
   if (isTRUE(attributes(early_warning_object)$based_on_historic_maximum)) {
     p <- p |>
-      add_line(max_ma_5c,
+      add_line(moving_avg_max,
                data = p$data |> mutate(period_txt = "Maximum"),
                linewidth = 0.5)
   }
