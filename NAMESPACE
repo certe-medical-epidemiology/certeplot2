@@ -2,9 +2,11 @@
 
 S3method(plot2,antibiogram)
 S3method(plot2,bug_drug_combinations)
+S3method(plot2,character)
 S3method(plot2,data.frame)
 S3method(plot2,default)
 S3method(plot2,early_warning_cluster)
+S3method(plot2,factor)
 S3method(plot2,freq)
 S3method(plot2,matrix)
 S3method(plot2,numeric)

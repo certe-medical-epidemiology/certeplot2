@@ -536,7 +536,10 @@ plot2.numeric <- function(.data,
     .data <- y
     y_deparse <- "y"
   }
-  if (geom_is_continuous_x(validate_type(type))) {
+  if (is.character(.data) || is.factor(.data)) {
+    df <- as.data.frame(table(.data))
+    colnames(df) <- c(y_deparse, "n")
+  } else if (geom_is_continuous_x(validate_type(type))) {
     df <- data.frame(x = .data, stringsAsFactors = FALSE)
   } else {
     df <- data.frame(y = .data, stringsAsFactors = FALSE)
@@ -727,6 +730,15 @@ plot2.numeric <- function(.data,
              `_misses.summarise_function` = missing(summarise_function),
              ...)
 }
+
+
+#' @rdname plot2-methods
+#' @export
+plot2.factor <- plot2.numeric
+
+#' @rdname plot2-methods
+#' @export
+plot2.character <- plot2.numeric
 
 #' @rdname plot2-methods
 #' @export
