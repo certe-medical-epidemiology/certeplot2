@@ -1455,8 +1455,12 @@ plot2_exec <- function(.data,
     if (has_x(df)) {
       if (isTRUE(x.mic)) {
         loadNamespace("AMR") # will throw an error if not installed
-        p <- p +
-          AMR::scale_x_mic(drop = x.drop, mic_range = x.limits)
+        if ("scale_x_mic" %in% ls(envir = asNamespace("AMR"))) {
+          p <- p +
+            AMR::scale_x_mic(drop = x.drop, mic_range = x.limits)
+        } else {
+          plot2_caution("AMR::scale_x_mic() not found, update to latest AMR version or use `x.mic = FALSE`")
+        }
       } else {
         p <- p + 
           validate_x_scale(values = get_x(df),
