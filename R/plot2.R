@@ -1453,23 +1453,29 @@ plot2_exec <- function(.data,
   }
   if (!type %in% c("geom_sf", "geom_tile", "geom_raster", "geom_rect")) {
     if (has_x(df)) {
-      p <- p + 
-        validate_x_scale(values = get_x(df),
-                         x.date_breaks = x.date_breaks,
-                         x.date_labels = x.date_labels,
-                         x.breaks = x.breaks,
-                         x.expand = x.expand,
-                         x.labels = x.labels,
-                         x.n_breaks = x.n_breaks,
-                         x.limits = x.limits,
-                         x.position = x.position,
-                         x.trans = x.trans,
-                         x.drop = x.drop,
-                         x.zoom = x.zoom,
-                         decimal.mark = decimal.mark,
-                         big.mark = big.mark,
-                         horizontal = horizontal,
-                         type_backup = type_backup)
+      if (isTRUE(x.mic)) {
+        loadNamespace("AMR") # will throw an error if not installed
+        p <- p +
+          AMR::scale_x_mic(drop = x.drop, mic_range = x.limits)
+      } else {
+        p <- p + 
+          validate_x_scale(values = get_x(df),
+                           x.date_breaks = x.date_breaks,
+                           x.date_labels = x.date_labels,
+                           x.breaks = x.breaks,
+                           x.expand = x.expand,
+                           x.labels = x.labels,
+                           x.n_breaks = x.n_breaks,
+                           x.limits = x.limits,
+                           x.position = x.position,
+                           x.trans = x.trans,
+                           x.drop = x.drop,
+                           x.zoom = x.zoom,
+                           decimal.mark = decimal.mark,
+                           big.mark = big.mark,
+                           horizontal = horizontal,
+                           type_backup = type_backup)    
+      }
     } else {
       # no x
       p <- p +

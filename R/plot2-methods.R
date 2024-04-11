@@ -24,6 +24,7 @@
 #' @name plot2-methods
 #' @inheritParams plot2
 #' @importFrom ggplot2 fortify
+#' @importFrom dplyr count filter
 #' @importFrom certestyle font_black font_blue
 #' @export
 plot2.default <- function(.data,
@@ -176,27 +177,53 @@ plot2.default <- function(.data,
                           background = getOption("plot2.colour_background", "white"),
                           markdown = TRUE,
                           ...) {
-  
   if (is.function(.data)) {
-    stop("`plot2()` does not support functions to be plotted", call. = FALSE)
+    stop("`plot2()` does not yet support functions to be plotted", call. = FALSE)
   }
   
-  # ggplot2's fortify() will try to make this a data.frame,
-  # so that plot2.data.frame() can be called
-  new_df <- tryCatch(fortify(.data), error = function(e) NULL)
-  if (is.null(new_df)) {
-    # then try to make a regular data.frame
-    new_df <- tryCatch(as.data.frame(.data, stringsAsFactors = FALSE),
-                       error = function(e) NULL)
-    if (!is.data.frame(new_df)) {
-      stop("Unable to initialise plot2(): input class '", paste(class(.data), collapse = "/"), "' is unsupported",
-           call. = FALSE)
+  if (tryCatch(suppressWarnings(is.atomic(.data) && !is.table(.data) && !is.matrix(.data)), error = function(e) FALSE)) {
+    # an atomic vector, such as numeric, character, factor
+    y_deparse <- paste0(trimws(deparse(substitute(.data))), collapse = " ")
+    if (nchar(y_deparse) > 30) {
+      y_deparse <- "y"
     }
-    plot2_caution("Input class ", paste0("'", class(.data), "'", collapse = "/"), " was transformed using `as.data.frame()`")
-    if (inherits(.data, "table")) {
-      # if using `as.data.table()` on a `table`, the resulting count column with be "Freq"
-      plot2_message("Using ", font_blue("y = Freq"), font_black(" since `as.data.table()` on a `table` results in a 'Freq' column"))
-      y <- str2lang("Freq")
+    if (missing(.data)) {
+      .data <- y
+      y_deparse <- "y"
+    }
+    if (is.character(.data) || is.factor(.data)) {
+      new_df <- as.data.frame(table(.data))
+      colnames(new_df) <- c(y_deparse, "y")
+      new_df <- new_df |> filter(y != 0)
+    } else if (is.numeric(.data) && missing(y)) {
+      new_df <- data.frame(x = seq_len(length(.data)),
+                           y = .data, stringsAsFactors = FALSE)
+    } else if (!is.numeric(.data) && missing(x)) {
+      new_df <- data.frame(x = .data, stringsAsFactors = FALSE) |> count(x, name = "y")
+    }
+    if (is.null(type)) {
+      type <- getOption("plot2.default_type", "geom_col")
+    }
+    
+  } else {
+    # not an atomic vector
+    # ggplot2's fortify() will try to make this a data.frame,
+    # so that plot2.data.frame() can be called
+    new_df <- tryCatch(fortify(.data), error = function(e) NULL)
+    if (is.null(new_df)) {
+      # then try to make a regular data.frame
+      new_df <- tryCatch(as.data.frame(.data, stringsAsFactors = FALSE),
+                         error = function(e) NULL)
+      if (!is.data.frame(new_df)) {
+        stop("Unable to initialise plot2(): input class '", paste(class(.data), collapse = "/"), "' is unsupported",
+             call. = FALSE)
+      }
+      plot2_caution("Input class ", paste0("'", class(.data), "'", collapse = "/"), " was transformed using `as.data.frame()`")
+      if (inherits(.data, "table")) {
+        # if using `as.data.table()` on a `table`, the resulting count column with be "Freq"
+        plot2_message("Using ", font_blue("y = Freq"), font_black(" since `as.data.table()` on a `table` results in a 'Freq' column"))
+        y <- str2lang("Freq")
+      }
     }
   }
   
@@ -375,370 +402,6 @@ plot2.default <- function(.data,
              `_misses.summarise_function` = missing(summarise_function),
              ...)
 }
-
-#' @rdname plot2-methods
-#' @export
-plot2.numeric <- function(.data,
-                          x = NULL,
-                          y = NULL,
-                          category = NULL,
-                          facet = NULL,
-                          type = NULL,
-                          x.title = TRUE,
-                          y.title = TRUE,
-                          category.title = NULL,
-                          title = NULL,
-                          subtitle = NULL,
-                          caption = NULL,
-                          tag = NULL,
-                          title.linelength = 60,
-                          title.colour = getOption("plot2.colour_font_primary", "black"),
-                          subtitle.linelength = 60,
-                          subtitle.colour = getOption("plot2.colour_font_secondary", "grey35"),
-                          na.replace = "",
-                          na.rm = FALSE,
-                          facet.position = "top",
-                          facet.fill = NULL,
-                          facet.bold = TRUE,
-                          facet.italic = FALSE,
-                          facet.size = 10,
-                          facet.margin = 8,
-                          facet.repeat_lbls_x = TRUE,
-                          facet.repeat_lbls_y = TRUE,
-                          facet.fixed_y = NULL,
-                          facet.fixed_x = TRUE,
-                          facet.drop = FALSE,
-                          facet.nrow = NULL,
-                          facet.relative = FALSE,
-                          x.date_breaks = NULL,
-                          x.date_labels = NULL,
-                          x.date_remove_years = NULL,
-                          category.focus = NULL,
-                          colour = getOption("plot2.colour", "ggplot2"),
-                          colour_fill = NULL,
-                          colour_opacity = 0,
-                          x.lbl_angle = 0,
-                          x.lbl_align = NULL,
-                          x.lbl_italic = FALSE,
-                          x.lbl_taxonomy = FALSE,
-                          x.remove = FALSE,
-                          x.position = "bottom",
-                          x.max_items = Inf,
-                          x.max_txt = "(rest, x%n)",
-                          category.max_items = Inf,
-                          category.max_txt = "(rest, x%n)",
-                          facet.max_items = Inf,
-                          facet.max_txt = "(rest, x%n)",
-                          x.breaks = NULL,
-                          x.n_breaks = NULL,
-                          x.trans = "identity",
-                          x.expand = NULL,
-                          x.limits = NULL,
-                          x.labels = NULL,
-                          x.character = NULL,
-                          x.drop = FALSE,
-                          x.mic = FALSE,
-                          x.zoom = FALSE,
-                          y.remove = FALSE,
-                          y.24h = FALSE,
-                          y.age = FALSE,
-                          y.scientific = NULL,
-                          y.percent = FALSE,
-                          y.percent_break = 0.1,
-                          y.breaks = NULL,
-                          y.n_breaks = NULL,
-                          y.limits = NULL,
-                          y.labels = NULL,
-                          y.expand = NULL,
-                          y.trans = "identity",
-                          y.position = "left",
-                          y.zoom = FALSE,
-                          y_secondary = NULL,
-                          y_secondary.type = type,
-                          y_secondary.title = TRUE,
-                          y_secondary.colour = "certeroze",
-                          y_secondary.colour_fill = "certeroze6",
-                          y_secondary.scientific = NULL,
-                          y_secondary.percent = FALSE,
-                          y_secondary.labels = NULL,
-                          category.labels = NULL,
-                          category.percent = FALSE,
-                          category.breaks = NULL,
-                          category.limits = NULL,
-                          category.expand = 0,
-                          category.midpoint = NULL,
-                          category.trans = "identity",
-                          category.date_breaks = NULL,
-                          category.date_labels = NULL,
-                          category.character = NULL,
-                          x.sort = NULL,
-                          category.sort = TRUE,
-                          facet.sort = TRUE,
-                          x.complete = NULL,
-                          category.complete = NULL,
-                          facet.complete = NULL,
-                          datalabels = FALSE,
-                          datalabels.round = ifelse(y.percent, 2, 1),
-                          datalabels.format = "%n",
-                          datalabels.colour = "grey25",
-                          datalabels.colour_fill = NULL,
-                          datalabels.size = (3 * text_factor),
-                          datalabels.angle = 0,
-                          datalabels.lineheight = 1.0,
-                          decimal.mark = dec_mark(),
-                          big.mark = big_mark(),
-                          summarise_function = base::sum,
-                          stacked = FALSE,
-                          stackedpercent = FALSE,
-                          horizontal = FALSE,
-                          reverse = horizontal,
-                          smooth = NULL,
-                          smooth.method = NULL,
-                          smooth.formula = NULL,
-                          smooth.se = TRUE,
-                          smooth.level = 0.95,
-                          smooth.alpha = 0.25,
-                          smooth.linewidth = 0.75,
-                          smooth.linetype = 3,
-                          smooth.colour = NULL,
-                          size = NULL,
-                          linetype = 1,
-                          linewidth = NULL,
-                          binwidth = NULL,
-                          width = NULL,
-                          jitter_seed = NA,
-                          violin_scale = "count",
-                          legend.position = NULL,
-                          legend.title = NULL, # TRUE in numeric categories
-                          legend.reverse = FALSE,
-                          legend.barheight = 6,
-                          legend.barwidth = 1.5,
-                          legend.nbin = 300,
-                          legend.italic = FALSE,
-                          sankey.node_width = 0.15,
-                          sankey.node_whitespace = 0.03,
-                          sankey.alpha = 0.5,
-                          sankey.remove_axes = NULL,
-                          zoom = FALSE,
-                          sep = " / ",
-                          print = FALSE,
-                          text_factor = 1,
-                          font = getOption("plot2.font"),
-                          theme = getOption("plot2.theme", "theme_minimal2"),
-                          background = getOption("plot2.colour_background", "white"),
-                          markdown = TRUE,
-                          ...) {
-  y_deparse <- paste0(trimws(deparse(substitute(.data))), collapse = " ")
-  if (nchar(y_deparse) > 30) {
-    y_deparse <- "y"
-  }
-  if (missing(.data)) {
-    .data <- y
-    y_deparse <- "y"
-  }
-  if (is.character(.data) || is.factor(.data)) {
-    df <- as.data.frame(table(.data))
-    colnames(df) <- c(y_deparse, "n")
-  } else if (geom_is_continuous_x(validate_type(type))) {
-    df <- data.frame(x = .data, stringsAsFactors = FALSE)
-  } else {
-    df <- data.frame(y = .data, stringsAsFactors = FALSE)
-    colnames(df) <- ifelse(y_deparse == "x", "y", y_deparse) # support `plot2(x)` if x is a dbl vector
-    if (missing(x)) {
-      df$x <- seq_len(nrow(df))
-    } else {
-      df$x <- x
-    }
-  }
-  
-  if (is.null(type)) {
-    type <- getOption("plot2.default_type", "geom_col")
-  }
-  
-  plot2_exec(df,
-             x = x,
-             y = {{ y }},
-             category = {{ category }},
-             facet = {{ facet }},
-             type = type,
-             x.title = {{ x.title }},
-             y.title = {{ y.title }},
-             category.title = {{ category.title }},
-             title = {{ title }},
-             subtitle = {{ subtitle }},
-             caption = {{ caption }},
-             tag = {{ tag }},
-             title.linelength = title.linelength,
-             title.colour = title.colour,
-             subtitle.linelength = subtitle.linelength,
-             subtitle.colour = subtitle.colour,
-             na.replace = na.replace,
-             na.rm = na.rm,
-             facet.position = facet.position,
-             facet.fill = facet.fill,
-             facet.bold = facet.bold,
-             facet.italic = facet.italic,
-             facet.size = facet.size,
-             facet.margin = facet.margin,
-             facet.repeat_lbls_x = facet.repeat_lbls_x,
-             facet.repeat_lbls_y = facet.repeat_lbls_y,
-             facet.fixed_y = facet.fixed_y,
-             facet.fixed_x = facet.fixed_x,
-             facet.drop = facet.drop,
-             facet.nrow = facet.nrow,
-             facet.relative = facet.relative,
-             x.date_breaks = x.date_breaks,
-             x.date_labels = x.date_labels,
-             x.date_remove_years = x.date_remove_years,
-             category.focus = category.focus,
-             colour = colour,
-             colour_fill = colour_fill,
-             colour_opacity = colour_opacity,
-             x.lbl_angle = x.lbl_angle,
-             x.lbl_align = x.lbl_align,
-             x.lbl_italic = x.lbl_italic,
-             x.lbl_taxonomy = x.lbl_taxonomy,
-             x.remove = x.remove,
-             x.position = x.position,
-             x.max_items = x.max_items,
-             x.max_txt = x.max_txt,
-             category.max_items = category.max_items,
-             category.max_txt = category.max_txt,
-             facet.max_items = facet.max_items,
-             facet.max_txt = facet.max_txt,
-             x.breaks = x.breaks,
-             x.n_breaks = x.n_breaks,
-             x.trans = x.trans,
-             x.expand = x.expand,
-             x.limits = x.limits,
-             x.labels = x.labels,
-             x.character = x.character,
-             x.drop = x.drop,
-             x.mic = x.mic,
-             x.zoom = x.zoom,
-             y.remove = y.remove,
-             y.24h = y.24h,
-             y.age = y.age,
-             y.scientific = y.scientific,
-             y.percent = y.percent,
-             y.percent_break = y.percent_break,
-             y.breaks = y.breaks,
-             y.n_breaks = y.n_breaks,
-             y.limits = y.limits,
-             y.labels = y.labels,
-             y.expand = y.expand,
-             y.trans = y.trans,
-             y.position = y.position,
-             y.zoom = y.zoom,
-             y_secondary = {{ y_secondary }},
-             y_secondary.type = y_secondary.type,
-             y_secondary.title = {{ y_secondary.title }},
-             y_secondary.colour = y_secondary.colour,
-             y_secondary.colour_fill = y_secondary.colour_fill,
-             y_secondary.scientific = y_secondary.scientific,
-             y_secondary.percent = y_secondary.percent,
-             y_secondary.labels = y_secondary.labels,
-             category.labels = category.labels,
-             category.percent = category.percent,
-             category.breaks = category.breaks,
-             category.limits = category.limits,
-             category.expand = category.expand,
-             category.midpoint = category.midpoint,
-             category.trans = category.trans,
-             category.date_breaks = category.date_breaks,
-             category.date_labels = category.date_labels,
-             category.character = category.character,
-             x.sort = x.sort,
-             category.sort = category.sort,
-             facet.sort = facet.sort,
-             x.complete = x.complete,
-             category.complete = category.complete,
-             facet.complete = facet.complete,
-             datalabels = {{ datalabels }},
-             datalabels.round = datalabels.round,
-             datalabels.colour = datalabels.colour,
-             datalabels.format = datalabels.format,
-             datalabels.colour_fill = datalabels.colour_fill,
-             datalabels.size = datalabels.size,
-             datalabels.angle = datalabels.angle,
-             datalabels.lineheight = datalabels.lineheight,
-             decimal.mark = decimal.mark,
-             big.mark = big.mark,
-             summarise_function = summarise_function,
-             stacked = stacked,
-             stackedpercent = stackedpercent,
-             horizontal = horizontal,
-             reverse = reverse,
-             smooth = smooth,
-             smooth.method = smooth.method,
-             smooth.formula = smooth.formula,
-             smooth.se = smooth.se,
-             smooth.level = smooth.level,
-             smooth.alpha = smooth.alpha,
-             smooth.linewidth = smooth.linewidth,
-             smooth.linetype = smooth.linetype,
-             smooth.colour = smooth.colour,
-             size = size,
-             linetype = linetype,
-             linewidth = linewidth,
-             binwidth = binwidth,
-             width = width,
-             jitter_seed = jitter_seed,
-             violin_scale = violin_scale,
-             legend.position = legend.position,
-             legend.title = {{ legend.title }},
-             legend.reverse = legend.reverse,
-             legend.barheight = legend.barheight,
-             legend.barwidth = legend.barwidth,
-             legend.nbin = legend.nbin,
-             legend.italic = legend.italic,
-             sankey.node_width = sankey.node_width,
-             sankey.node_whitespace = sankey.node_whitespace,
-             sankey.alpha = sankey.alpha,
-             sankey.remove_axes = sankey.remove_axes,
-             zoom = zoom,
-             sep = sep,
-             print = print,
-             text_factor = text_factor,
-             font = font,
-             theme = theme,
-             background = background,
-             markdown = markdown,
-             `_misses.x` = missing(x),
-             `_misses.y` = missing(y),
-             `_misses.category` = missing(category),
-             `_misses.facet` = missing(facet),
-             `_misses.datalabels` = missing(datalabels),
-             `_misses.colour_fill` = missing(colour_fill),
-             `_misses.x.title` = missing(x.title),
-             `_misses.y.title` = missing(y.title),
-             `_misses.title` = missing(title),
-             `_misses.subtitle` = missing(subtitle),
-             `_misses.tag` = missing(tag),
-             `_misses.caption` = missing(caption),
-             `_misses.y.percent` = missing(y.percent),
-             `_misses.y.percent_break` = missing(y.percent_break),
-             `_misses.x.zoom` = missing(x.zoom),
-             `_misses.x.max_items` = missing(x.max_items),
-             `_misses.facet.fixed_x` = missing(facet.fixed_x),
-             `_label.x` = deparse(substitute(x)),
-             `_label.y` = deparse(substitute(y)),
-             `_label.category` = deparse(substitute(category)),
-             `_label.facet` = deparse(substitute(facet)),
-             `_label.y_secondary` = deparse(substitute(y_secondary)),
-             `_summarise_fn_name` = deparse(substitute(summarise_function)),
-             `_misses.summarise_function` = missing(summarise_function),
-             ...)
-}
-
-
-#' @rdname plot2-methods
-#' @export
-plot2.factor <- plot2.numeric
-
-#' @rdname plot2-methods
-#' @export
-plot2.character <- plot2.numeric
 
 #' @rdname plot2-methods
 #' @export

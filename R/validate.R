@@ -542,22 +542,6 @@ validate_data <- function(df,
     df[, get_x_name(df)] <- df$`_var_x`
   }
   
-  if (has_x(df) && isTRUE(dots$x.mic)) {
-    # TODO replace with adding AMR::scale_x_mic() to plot2_exec()
-    loadNamespace("AMR") # will throw an error if not installed
-    # fix x axis for MIC values
-    vals <- sort(unique(AMR::as.mic(get_x(df))))
-    vals <- vals[!is.na(vals)]
-    vals_chr <- as.character(vals)
-    vals_dbl <- as.double(vals)
-    factors2 <- 2 ^ c(floor(log2(min(vals_dbl))):ceiling(log2(max(vals_dbl))))
-    factors2 <- factors2[which(factors2 %in% as.double(AMR::as.mic(levels(vals))) & !factors2 %in% vals_dbl)]
-    breaks <- sort(AMR::as.mic(c(vals_chr, factors2)))
-    new_x <- factor(get_x(df), levels = breaks, ordered = TRUE)
-    df$`_var_x` <- new_x
-    df[, get_x_name(df)] <- new_x
-  }
-  
   # apply sorting
   df.bak <- df
   if (has_x(df) && type != "geom_sf") {
