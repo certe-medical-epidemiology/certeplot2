@@ -1,14 +1,14 @@
 /* 
 Certe colours, check with certestyle::colourpicker("certe", 3)
-#01617E - certeblauw
-#8B9934 - certegroen
-#E04883 - certeroze
+#49647D - certeblauw
+#93984C - certegroen
+#B4527F - certeroze
 */
 
 /* import fonts from Google */
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Fira+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Source+Sans+3:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 body {
-  font-family: 'Fira Sans', sans-serif !important;
+  font-family: 'Source Sans 3', sans-serif !important;
 }
 pre code {
   font-family: 'Fira Code', monospace !important;
@@ -29,11 +29,11 @@ h1, h1 code,
 h2, h2 code,
 h3, h3 code,
 a, a code {
-  color: #01617E !important;
+  color: #49647D !important;
 }
 .navbar-default {
   background-color: white;
-  border-color: #01617E;
+  border-color: #49647D;
 }
 .navbar-brand .navbar-link {
   background-image: url("/certeplot2/logo.svg");
@@ -45,7 +45,7 @@ a, a code {
   padding-left: 44px;
 }
 .label-default {
-  background-color: #01617E !important;
+  background-color: #49647D !important;
 }
 .navbar-default .navbar-nav>.active>a,
 .navbar-default .navbar-nav>.active>a:focus,
@@ -56,8 +56,8 @@ a, a code {
   background: #EEEEEE !important;
 }
 .btn-primary {
-  background-color: #E04883 !important;
-  border-color: #E04883 !important;
+  background-color: #B4527F !important;
+  border-color: #B4527F !important;
 }
 
 /* syntax colours: */
@@ -68,18 +68,18 @@ a, a code {
 }
 .cn {
   /* values such as TRUE and NULL */
-  color: #E04883;
+  color: #B4527F;
   font-style: italic;
 }
 .fl {
   /* numbers */
-  color: #E04883;
+  color: #B4527F;
 }
 .sc {
   /* $ operator */
-  color: #E04883;
+  color: #B4527F;
 }
 .st {
   /* text strings */
-  color: #8B9934;
+  color: #93984C;
 }
