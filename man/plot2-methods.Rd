@@ -1511,7 +1511,7 @@
   datalabels.format = "\%n",
   datalabels.colour = "grey25",
   datalabels.colour_fill = NULL,
-  datalabels.size = (3 * text_factor),
+  datalabels.size = (2.5 * text_factor),
   datalabels.angle = 0,
   datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
