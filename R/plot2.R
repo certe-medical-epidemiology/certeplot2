@@ -68,7 +68,7 @@
 #'   - `"barpercent"` (short: `"bp"`), which is effectively a shortcut to set `type = "col"` and `horizontal = TRUE` and `x.max_items = 10` and `x.sort = "freq-desc"` and `datalabels.format = "%n (%p)"`.
 #'   - `"linedot"` (short: `"ld"`), which sets `type = "line"` and adds two point geoms using [add_point()]; one with large white dots and one with smaller dots using the colours set in `colour`. This is essentially equal to base \R `plot(..., type = "b")` but with closed shapes.
 #'   - `"dumbbell"` (short: `"d"`), which sets `type = "point"` and `horizontal = TRUE`, and adds a line between the points (using [geom_segment()]). The line colour cannot be changed. This plot type is only possible when the `category` has two distinct values.
-#'   - `"sankey"` (short: `"s"`) creates a Sankey plots using `category` for the flows and requires `x` to contain multiple variables from `.data`. At default, it also sets `x.expand = c(0.05, 0.05)` and `y.limits = c(NA, NA)` and `y.expand = c(0.01, 0.01)`. The so-called nodes (the 'blocks' with text) are considered the datalabels, so you can set the text size and colour of the nodes using `datalabels.size`, `datalabels.colour`, and `datalabels.colour_fill`. The transparency of the flows can be set using `sankey.alpha`, and the width of the nodes can be set using `sankey.node_width`. Sankey plots can also be flipped using `horizontal = TRUE`.
+#'   - `"sankey"` (short: `"s"`) creates a Sankey plots using `category` for the flows and requires `x` to contain multiple variables from `.data`. At default, it also sets `x.expand = c(0.05, 0.05)` and `y.limits = c(NA, NA)` and `y.expand = c(0.01, 0.01)`. The so-called 'nodes' (the 'blocks' with text) are considered the datalabels, so you can set the text size and colour of the nodes using `datalabels.size`, `datalabels.colour`, and `datalabels.colour_fill`. The transparency of the flows can be set using `sankey.alpha`, and the width of the nodes can be set using `sankey.node_width`. Sankey plots can also be flipped using `horizontal = TRUE`.
 #' 
 #' - Left blank. In this case, the type will be determined automatically: `"boxplot"` if there is no x axis or if the length of unique values per x axis item is at least 3, `"point"` if both the y and x axes are numeric, and the [option][options()] `"plot2.default_type"` otherwise (which defaults to `"col"`). Use `type = "blank"` or `type = "geom_blank"` to *not* add a geom.
 #' @param title,subtitle,caption,tag,x.title,y.title,category.title,legend.title,y_secondary.title a title to use. This can be:
@@ -76,8 +76,6 @@
 #' - A [character], which supports markdown by using [md_to_expression()] internally if `markdown = TRUE` (which is the default)
 #' - A [function] to calculate over `.data`, such as `title = paste("Based on n =", n_distinct(person_id), "individuals")` or `subtitle = paste("Total rows:", n())`, see *Examples*
 #' - An [expression], e.g. using `parse(text = "...")`
-#' 
-#' The `title` will be guessed with [get_plot_title()] when left blank.
 #' 
 #' The `category.title` defaults to `TRUE` if the legend items are numeric.
 #' @param title.linelength maximum number of characters per line in the title, before a linebreak occurs
@@ -115,7 +113,7 @@
 #' @param x.limits,y.limits limits to use for the axis, can be length 1 or 2. Use `NA` for the highest or lowest value in the data, e.g. `y.limits = c(0, NA)` to have the y scale start at zero.
 #' @param x.labels,y.labels,y_secondary.labels a labels function or character vector to use for the axis
 #' @param x.expand,y.expand [expansion][ggplot2::expansion] to use for the axis, can be length 1 or 2. `x.expand` defaults to 0.5 and `y.expand` defaults to `0.25`, except for sf objects (then both default to 0).
-#' @param x.trans,y.trans,category.trans a transformation function to use, e.g. `"log2"`. This can be: `r paste0('\u0060"', sort(gsub("_trans$", "", ls(envir = asNamespace("scales"))[grepl("_trans$", ls(envir = asNamespace("scales")))])), '"\u0060', collapse = ", ")`.
+#' @param x.transform,y.transform,category.transform a transformation function to use, e.g. `"log2"`. This can be: `r paste0('\u0060"', sort(gsub("_trans$", "", ls(envir = asNamespace("scales"))[grepl("_trans$", ls(envir = asNamespace("scales")))])), '"\u0060', collapse = ", ")`.
 #' @param x.position,y.position position of the axis
 #' @param x.zoom,y.zoom a [logical] to indicate if the axis should be zoomed on the data, by setting `x.limits = c(NA, NA)` and `x.expand = 0` for the x axis, or `y.limits = c(NA, NA)` and `y.expand = 0` for the y axis
 #' @param category.labels,category.percent,category.breaks,category.expand,category.midpoint settings for the plotting direction `category`.
@@ -435,7 +433,7 @@ plot2 <- function(.data,
                   facet.max_txt = "(rest, x%n)",
                   x.breaks = NULL,
                   x.n_breaks = NULL,
-                  x.trans = "identity",
+                  x.transform = "identity",
                   x.expand = NULL,
                   x.limits = NULL,
                   x.labels = NULL,
@@ -454,7 +452,7 @@ plot2 <- function(.data,
                   y.limits = NULL,
                   y.labels = NULL,
                   y.expand = NULL,
-                  y.trans = "identity",
+                  y.transform = "identity",
                   y.position = "left",
                   y.zoom = FALSE,
                   y_secondary = NULL,
@@ -471,7 +469,7 @@ plot2 <- function(.data,
                   category.limits = NULL,
                   category.expand = 0,
                   category.midpoint = NULL,
-                  category.trans = "identity",
+                  category.transform = "identity",
                   category.date_breaks = NULL,
                   category.date_labels = NULL,
                   category.character = NULL,
@@ -588,7 +586,7 @@ plot2 <- function(.data,
   }
 }
 
-#' @importFrom dplyr mutate vars group_by across summarise select bind_cols filter
+#' @importFrom dplyr mutate vars group_by across summarise select bind_cols filter as_tibble
 #' @importFrom forcats fct_relabel
 #' @importFrom ggplot2 ggplot aes labs stat_boxplot scale_colour_manual scale_fill_manual coord_flip geom_smooth geom_density guides guide_legend scale_x_discrete waiver ggplot_build after_stat scale_fill_continuous scale_fill_date scale_fill_datetime scale_fill_continuous scale_colour_date scale_colour_datetime scale_colour_continuous geom_segment
 #' @importFrom tidyr pivot_longer
@@ -647,7 +645,7 @@ plot2_exec <- function(.data,
                        facet.max_txt,
                        x.breaks,
                        x.n_breaks,
-                       x.trans,
+                       x.transform,
                        x.expand,
                        x.limits,
                        x.labels,
@@ -666,7 +664,7 @@ plot2_exec <- function(.data,
                        y.limits,
                        y.labels,
                        y.expand,
-                       y.trans,
+                       y.transform,
                        y.position,
                        y.zoom,
                        y_secondary,
@@ -683,7 +681,7 @@ plot2_exec <- function(.data,
                        category.limits,
                        category.expand,
                        category.midpoint,
-                       category.trans,
+                       category.transform,
                        category.date_breaks,
                        category.date_labels,
                        category.character,
@@ -1072,6 +1070,12 @@ plot2_exec <- function(.data,
   if (isTRUE(zoom)) {
     x.zoom <- TRUE
     y.zoom <- TRUE
+    if (is.null(x.expand)) {
+      x.expand <- c(0.15, 0.15)
+    }
+    if (is.null(y.expand)) {
+      y.expand <- c(0.15, 0.15)
+    }
   }
   
   # check if markdown is required
@@ -1379,7 +1383,7 @@ plot2_exec <- function(.data,
                               category.limits = category.limits,
                               category.expand = category.expand,
                               category.midpoint = category.midpoint,
-                              category.trans = category.trans,
+                              category.transform = category.transform,
                               category.date_breaks = category.date_breaks,
                               category.date_labels = category.date_labels,
                               stackedpercent = stackedpercent,
@@ -1473,7 +1477,7 @@ plot2_exec <- function(.data,
                            x.n_breaks = x.n_breaks,
                            x.limits = x.limits,
                            x.position = x.position,
-                           x.trans = x.trans,
+                           x.transform = x.transform,
                            x.drop = x.drop,
                            x.zoom = x.zoom,
                            decimal.mark = decimal.mark,
@@ -1502,7 +1506,7 @@ plot2_exec <- function(.data,
                          y.percent_break = y.percent_break,
                          misses_y.percent_break = misses_y.percent_break,
                          y.position = y.position,
-                         y.trans = y.trans,
+                         y.transform = y.transform,
                          y.zoom = y.zoom,
                          stacked = stacked,
                          stackedpercent = stackedpercent,
@@ -1531,7 +1535,7 @@ plot2_exec <- function(.data,
                          y.percent_break = y.percent_break,
                          misses_y.percent_break = misses_y.percent_break,
                          y.position = y.position,
-                         y.trans = y.trans,
+                         y.transform = y.transform,
                          y.zoom = y.zoom,
                          stacked = stacked,
                          stackedpercent = stackedpercent,
@@ -1735,11 +1739,10 @@ plot2_exec <- function(.data,
   if (type_backup == "sankey") {
     p$data <- p$data |> select(-get_x_name(df))
   }
-  
-  # add plot title if missing
-  if (isTRUE(misses_title) && is.null(title)) {
-    p <- p + labs(title = validate_title(get_plot_title(p, valid_filename = FALSE),
-                                         markdown = isTRUE(markdown), df = df))
+  # be sure to end with a tibble - the as_tibble() function also has some consistency checks built-in
+  # but only when it's nothing more than a data.frame without row names
+  if (identical(class(p$data), "data.frame") && identical(rownames(p$data), as.character(seq_len(nrow(p$data))))) {
+    p$data <- as_tibble(p$data)
   }
   
   # return plot ----

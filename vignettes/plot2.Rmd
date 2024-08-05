@@ -260,7 +260,7 @@ numeric_z |>
           caption = "*category* is numeric based on inputdata.")
 ```
 
-Settings to this scale can be set with arguments such as `category.labels`, `category.breaks`, `category.limits`, `category.expand` and `category.trans`.
+Settings to this scale can be set with arguments such as `category.labels`, `category.breaks`, `category.limits`, `category.expand` and `category.transform`.
 
 For continuous scales, `plot2()` has an additional argument: `category.midpoint`. When using a 3-point colour scale, this is the value of `y` that should have the middle colour, it defaults to the centre of the current legend scale:
 

@@ -26,12 +26,6 @@
 #' @importFrom ggplot2 is.ggplot
 #' @export
 #' @examples
-#' # plot2() uses get_plot_title() for the main title if the title is not set manually:
-#' iris |>
-#'   plot2()
-#' admitted_patients |>
-#'   plot2(age_group, n_distinct(patient_id), ward, gender)
-#' 
 #' without_title <- plot2(mtcars)
 #' with_title <- plot2(mtcars, title = "Plotting **mpg** vs. **cyl**!")
 #' 

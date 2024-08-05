@@ -747,7 +747,7 @@ validate_x_scale <- function(values,
                              x.labels,
                              x.limits,
                              x.position,
-                             x.trans,
+                             x.transform,
                              x.drop,
                              x.zoom,
                              decimal.mark,
@@ -778,8 +778,8 @@ validate_x_scale <- function(values,
       }
     }
   }
-  if (is.null(x.trans)) {
-    x.trans <- "identity"
+  if (is.null(x.transform)) {
+    x.transform <- "identity"
   }
   
   if (!is.null(x.limits)) {
@@ -848,13 +848,13 @@ validate_x_scale <- function(values,
                        labels = if (is.null(x.labels)) waiver() else x.labels,
                        expand = if (set_x.expand) x.expand else waiver())
     } else {
-      if (x.trans == "identity" && isTRUE(horizontal)) {
-        x.trans <- reverse_trans()
+      if (x.transform == "identity" && isTRUE(horizontal)) {
+        x.transform <- reverse_trans()
       }
       if (is.null(x.limits)) {
         x.limits <- c(ifelse(min(values) < 0, NA_real_, 0), NA_real_)
       }
-      if (tryCatch(x.trans != "identity", error = function(x) FALSE)) {
+      if (tryCatch(x.transform != "identity", error = function(x) FALSE)) {
         # some transformations, such as log, do not allow 0
         x.limits[x.limits == 0] <- NA_real_ 
       }
@@ -876,16 +876,28 @@ validate_x_scale <- function(values,
           pretty_breaks(n = ifelse(is.null(x.n_breaks), 5, x.n_breaks))
         }
       }
+      
+      if (set_x.expand == FALSE) {
+        if (min(values, na.rm = TRUE) >= 0) {
+          x.expand <- expansion(mult = c(0.025, 0.05))
+        } else {
+          x.expand <- expansion(mult = c(0.05, 0.05))
+        }
+      } else if (length(x.expand) == 1) {
+        x.expand <- expansion(mult = c(x.expand, x.expand))
+      } else if (length(x.expand) == 2) {
+        x.expand <- expansion(mult = x.expand)
+      }
       scale_x_continuous(labels = x.labels,
                          breaks = breaks_fn(values = values,
                                             x.breaks = x.breaks,
                                             x.n_breaks = x.n_breaks,
                                             waiver = waiver()),
                          n.breaks = x.n_breaks,
-                         trans = x.trans,
+                         transform = x.transform,
                          position = x.position,
                          limits = x.limits,
-                         expand = expansion(mult = c(0.05, 0.05)))
+                         expand = x.expand)
     }
   }
 }
@@ -909,7 +921,7 @@ validate_y_scale <- function(df,
                              y.percent_break,
                              misses_y.percent_break,
                              y.position,
-                             y.trans,
+                             y.transform,
                              y.zoom,
                              stacked,
                              stackedpercent,
@@ -926,11 +938,11 @@ validate_y_scale <- function(df,
   if (isTRUE(y.zoom) && is.null(y.limits)) {
     y.limits <- c(NA_real_, NA_real_)
     if (is.null(y.expand)) {
-      y.expand <- 0.25
+      y.expand <- c(0.25, 0.25)
     }
   }
-  if (is.null(y.trans)) {
-    y.trans <- "identity"
+  if (is.null(y.transform)) {
+    y.transform <- "identity"
   }
   if (is.null(y.expand)) {
     if (is.null(y.limits)) {
@@ -976,16 +988,16 @@ validate_y_scale <- function(df,
   breaks_fn <- function(values, waiver,
                         y.breaks, y.n_breaks, y.expand, stackedpercent,
                         y.age, y.percent, y.percent_break, y.24h, y.limits,
-                        y.trans) {
+                        y.transform) {
     data_min <- min(0, values, na.rm = TRUE) * - (1 + y.expand[length(y.expand)])
     data_max <- max(values, na.rm = TRUE)
     if (!inherits(values, c("Date", "POSIXt"))) {
       data_max <- data_max * (1 + y.expand[length(y.expand)])
     }
-    if (y.trans != "identity") {
+    if (y.transform != "identity") {
       if (!is.null(y.breaks)) {
         plot2_warning("Ignoring ", font_blue("y.breaks"), " since ",
-                      font_blue(paste0("y.trans = \"", y.trans, "\"")))
+                      font_blue(paste0("y.transform = \"", y.transform, "\"")))
       }
       return(waiver)
     } else if (!is.null(y.breaks)) {
@@ -1092,10 +1104,10 @@ validate_y_scale <- function(df,
   }
   
   limits_fn <- function(values, y.limits,
-                        y.expand, facet.fixed_y, y.age, y.trans,
+                        y.expand, facet.fixed_y, y.age, y.transform,
                         df) {
     min_value <- min(0, min(values, na.rm = TRUE))
-    if (y.trans != "identity") {
+    if (y.transform != "identity") {
       # in certain transformations, such as log, 0 is not allowed
       min_value <- NA_real_
     }
@@ -1160,7 +1172,7 @@ validate_y_scale <- function(df,
       fun <- function(x) x * fctr
       br <- br * plot2_env$y_secondary_factor
     }
-    sec_y <- sec_axis(trans = fun,
+    sec_y <- sec_axis(transform = fun,
                       breaks = br,
                       labels = labels_fn(values = secondary_values,
                                          waiver = waiver(),
@@ -1182,7 +1194,7 @@ validate_y_scale <- function(df,
                                 y.expand = y.expand,
                                 facet.fixed_y = facet.fixed_y,
                                 y.age = y.age,
-                                y.trans = y.trans,
+                                y.transform = y.transform,
                                 df)
   
   scale_y_continuous(
@@ -1197,7 +1209,7 @@ validate_y_scale <- function(df,
                        y.percent_break = y.percent_break,
                        y.24h = y.24h,
                        y.limits = y.limits,
-                       y.trans = y.trans),
+                       y.transform = y.transform),
     n.breaks = y.n_breaks,
     labels = labels_fn(values = values,
                        waiver = waiver(),
@@ -1215,7 +1227,7 @@ validate_y_scale <- function(df,
                        y.age = y.age,
                        stackedpercent = stackedpercent,
                        y.limits = limits_evaluated),
-    trans = y.trans,
+    transform = y.transform,
     position = y.position,
     sec.axis = sec_y
   )
@@ -1234,7 +1246,7 @@ validate_category_scale <- function(values,
                                     category.limits,
                                     category.expand,
                                     category.midpoint,
-                                    category.trans,
+                                    category.transform,
                                     category.date_breaks,
                                     category.date_labels,
                                     stackedpercent,
@@ -1251,8 +1263,8 @@ validate_category_scale <- function(values,
                                     ...) {
   # only for a numeric and date category scale
   
-  if (is.null(category.trans)) {
-    category.trans <- "identity"
+  if (is.null(category.transform)) {
+    category.transform <- "identity"
   }
   if (is.null(legend.position)) {
     legend.position <- "right"
@@ -1277,11 +1289,11 @@ validate_category_scale <- function(values,
       function(x, dec = decimal.mark, big = big.mark, ...) format2(x, decimal.mark = dec, big.mark = big)
     }
   }
-  breaks_fn <- function(values, category.breaks, category.percent, category.trans, category.date_breaks, waiver) {
-    if (category.trans != "identity") {
+  breaks_fn <- function(values, category.breaks, category.percent, category.transform, category.date_breaks, waiver) {
+    if (category.transform != "identity") {
       if (!is.null(category.breaks)) {
         plot2_warning("Ignoring ", font_blue("category.breaks"), " since ",
-                      font_blue(paste0("category.trans = \"", category.trans, "\"")))
+                      font_blue(paste0("category.transform = \"", category.transform, "\"")))
       }
       return(waiver)
     } else if (!is.null(category.breaks)) {
@@ -1319,12 +1331,12 @@ validate_category_scale <- function(values,
       pretty_breaks(n = 5)
     }
   }
-  limits_fn <- function(values, category.limits, category.percent, category.trans, category.date_breaks, waiver) {
-    if (category.trans != "identity") {
+  limits_fn <- function(values, category.limits, category.percent, category.transform, category.date_breaks, waiver) {
+    if (category.transform != "identity") {
       # in certain transformations, such as log, 0 is not allowed
       if (!is.null(category.limits)) {
         plot2_warning("Ignoring ", font_blue("category.limits"), " since ",
-                      font_blue(paste0("category.trans = \"", category.trans, "\"")))
+                      font_blue(paste0("category.transform = \"", category.transform, "\"")))
       }
       c(NA_real_, NA_real_)
     } else if (!is.null(category.limits)) {
@@ -1393,15 +1405,15 @@ validate_category_scale <- function(values,
                breaks = breaks_fn(values = values,
                                   category.breaks = category.breaks,
                                   category.percent = category.percent,
-                                  category.trans = category.trans,
+                                  category.transform = category.transform,
                                   category.date_breaks = category.date_breaks,
                                   waiver = waiver()),
                limits = limits_fn(values = values,
                                   category.limits = category.limits,
                                   category.percent = category.percent,
-                                  category.trans = category.trans,
+                                  category.transform = category.transform,
                                   category.date_breaks = category.date_breaks),
-               trans = category.trans)
+               transform = category.transform)
   
   if (isTRUE(original_colours)) {
     # original ggplot2 colours chosen, so just return scale without setting manual colours

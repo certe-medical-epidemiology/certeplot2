@@ -17,12 +17,6 @@ get_plot_title(plot, valid_filename = TRUE, default = NULL)
 Get the title of the plot, or a default value. If the title is not set in a plot, this function tries to generate one from the plot mapping.
 }
 \examples{
-# plot2() uses get_plot_title() for the main title if the title is not set manually:
-iris |>
-  plot2()
-admitted_patients |>
-  plot2(age_group, n_distinct(patient_id), ward, gender)
-
 without_title <- plot2(mtcars)
 with_title <- plot2(mtcars, title = "Plotting **mpg** vs. **cyl**!")
 

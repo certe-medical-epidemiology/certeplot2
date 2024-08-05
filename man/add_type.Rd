@@ -9,65 +9,67 @@
 \alias{add_sf}
 \title{Add Plot Element}
 \usage{
-add_type(plot, type = NULL, mapping = aes(), ..., data = NULL)
+add_type(plot, type = NULL, mapping = aes(), ..., data = NULL, move = 0)
 
 add_line(
   plot,
   y = NULL,
   x = NULL,
-  group = 1,
-  colour = "certeblauw",
-  geom_type = NULL,
+  colour = getOption("plot2.colour", "ggplot2"),
   linetype,
   linewidth,
   ...,
-  inherit.aes = TRUE
+  inherit.aes = NULL,
+  move = 0,
+  legend.value = NULL
 )
 
 add_point(
   plot,
   y = NULL,
   x = NULL,
-  group = 1,
-  colour = "certeblauw",
+  colour = getOption("plot2.colour", "ggplot2"),
   size,
   shape,
   ...,
-  inherit.aes = TRUE
+  inherit.aes = NULL,
+  move = 0,
+  legend.value = NULL
 )
 
 add_col(
   plot,
   y = NULL,
   x = NULL,
-  colour = "certeblauw",
-  colour_fill = "certeblauw",
+  colour = getOption("plot2.colour", "ggplot2"),
+  colour_fill,
   width,
   ...,
-  inherit.aes = TRUE
+  inherit.aes = NULL,
+  move = 0,
+  legend.value = NULL
 )
 
 add_errorbar(
   plot,
-  min = NULL,
-  max = NULL,
-  y = NULL,
-  x = NULL,
-  colour = "certeroze",
+  min,
+  max,
+  colour = getOption("plot2.colour", "ggplot2"),
   width = 0.5,
   ...,
-  inherit.aes = TRUE
+  inherit.aes = FALSE,
+  move = 0
 )
 
 add_sf(
   plot,
   sf_data,
-  colour = "certeblauw",
-  colour_fill = "certeblauw",
+  colour = getOption("plot2.colour_sf", "grey50"),
+  colour_fill = getOption("plot2.colour_sf_fill", getOption("plot2.colour", "ggplot2")),
   size = 2,
   linewidth = 0.1,
   datalabels = NULL,
-  datalabels.colour = colour,
+  datalabels.colour = "black",
   datalabels.size = 3,
   datalabels.angle = 0,
   datalabels.font = getOption("plot2.font"),
@@ -85,15 +87,17 @@ add_sf(
 
 \item{data}{data to use in mapping}
 
-\item{x, y}{aesthetic arguments}
+\item{move}{number of layers to move the newly added geom down, e.g., \code{move = 1} will place the newly added geom down 1 layer, thus directly under the highest layer}
 
-\item{group, linetype, linewidth, shape, size, width, ...}{arguments passed on to the geom}
+\item{x, y}{aesthetic arguments}
 
 \item{colour, colour_fill}{colour of the line or column, will be evaluated with \code{\link[certestyle:colourpicker]{certestyle::colourpicker()}}. If \code{colour_fill} is missing but \code{colour} is given, \code{colour_fill} will inherit the colour set with \code{colour}.}
 
-\item{geom_type}{type of line, can be "vline" or "hline" to force the type of line}
+\item{linetype, linewidth, shape, size, width, ...}{arguments passed on to the geom}
 
 \item{inherit.aes}{a \link{logical} to indicate whether the default aesthetics should be inherited, rather than combining with them}
+
+\item{legend.value}{text to show in an additional legend that will be created. Since \code{ggplot2} does not actually support this, it may give some false-positive warnings or messages, such as "Removed 1 row containing missing values or values outside the scale range".}
 
 \item{min, max}{minimum (lower) and maximum (upper) values of the error bars}
 
@@ -105,38 +109,99 @@ add_sf(
 
 \item{datalabels.nudge_y}{is \code{datalabels} is not \code{NULL}, the amount of vertical adjustment of the datalabels (positive value: more to the North, negative value: more to the South)}
 }
+\value{
+a \code{ggplot} object
+}
 \description{
-Quickly add a new 'geom' to an existing \code{plot2}/\code{ggplot} model. Like \code{\link[=plot2]{plot2()}}, they support tidy evaluation, meaning that variables can be unquoted. They can be added using the pipe (new base \R \verb{|>} or tidyverse \verb{\%>\%}).
+Quickly and conveniently add a new 'geom' to an existing \code{plot2}/\code{ggplot} model. Like \code{\link[=plot2]{plot2()}}, these functions support tidy evaluation, meaning that variables can be unquoted. Better yet, they can contain any function with any output length, or any vector. They can be added using the pipe (new base \R's \verb{|>} or tidyverse's \verb{\%>\%}).
 }
 \details{
 The function \code{\link[=add_line]{add_line()}} will add:
 \itemize{
-\item \code{\link[ggplot2:geom_abline]{geom_hline()}} if only \code{y} is provided and \code{y} contains one unique value;
-\item \code{\link[ggplot2:geom_abline]{geom_vline()}} if only \code{x} is provided and \code{x} contains one unique value;
+\item \code{\link[ggplot2:geom_abline]{geom_hline()}} if only \code{y} is provided;
+\item \code{\link[ggplot2:geom_abline]{geom_vline()}} if only \code{x} is provided;
 \item \code{\link[ggplot2:geom_path]{geom_line()}} in all other cases.
 }
 
 The function \code{\link[=add_errorbar]{add_errorbar()}} only adds error bars to the \code{y} values, see \emph{Examples}.
 }
 \examples{
+head(iris)
+                 
+p <- iris |>
+  plot2(x = Sepal.Length,
+        y = Sepal.Width,
+        category = Species,
+        zoom = TRUE)
+p
+  
+# if not specifying x or y, current plot data are taken
+p |> add_line()
+  
+# single values for add_line() will plot 'hline' or 'vline'
+# even considering the `category` if set
+p |> 
+  add_line(y = mean(Sepal.Width))
+
+# set `colour` to ignore existing colours
+# and use `legend.value` to add a legend
+p |> 
+  add_line(y = mean(Sepal.Width),
+           colour = "red",
+           legend.value = "Average")
+  
+p |> 
+  add_line(y = mean(Sepal.Width)) |> 
+  add_line(x = mean(Sepal.Length))
+  
+# multiple values will just plot multiple lines
+p |> 
+  add_line(y = fivenum(Sepal.Width),
+           colour = "blue",
+           legend.value = "Tukey's Numbers")
+  
+p |> 
+  add_line(y = quantile(Sepal.Width, c(0.25, 0.5, 0.75)),
+           colour = c("red", "black", "red"),
+           linewidth = 1)
+  
+# use move to move the new layer down
+p |> 
+  add_point(size = 5,
+            colour = "lightpink",
+            move = -1)
+
+# providing x and y will just plot the points as new data,
+p |> 
+  add_point(y = 2:4,
+            x = 5:7,
+            colour = "red",
+            size = 5)
+# even with expanded grid if x and y are not of the same length
+p |> 
+  add_point(y = 2:4,
+            x = 5:8,
+            colour = "red",
+            size = 5)
+
+# any mathematical transformation of current values is supported
 df <- data.frame(var_1 = c(1:100),
                  var_2 = rnorm(100, 100, 25))
 df |>
   plot2() |> 
-  add_line(mean(var_2))
-  
-df |>
-  plot2() |> 
   add_line(y = mean(var_2), 
-           linewidth = 2,
-           linetype = 3) |>
+           linetype = 3,
+           legend.value = "Average") |>
   add_col(y = var_2 / 5,
           width = 0.25,
-          colour = "certeroze")
-       
+          colour = "blue",
+          legend.value = "This *is* **some** symbol: $beta$")
+
+# plotting error bars was never easier
 if (require("dplyr", warn.conflicts = FALSE)) {   
   df2 <- df |> 
     as_tibble() |> 
+    slice(1:25) |>
     filter(var_1 <= 50) |> 
     mutate(error1 = var_2 * 0.9,
            error2 = var_2 * 1.1)
@@ -144,7 +209,7 @@ if (require("dplyr", warn.conflicts = FALSE)) {
   print(df2)
   
   df2 |> 
-    plot2(type = "c", colour = "certeroze4") |> 
+    plot2(type = "col", datalabels = FALSE, alpha = 0.25, width = 0.75) |> 
     # add the error bars, simply by referencing the lower and upper values
     add_errorbar(error1, error2)
 }

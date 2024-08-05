@@ -21,6 +21,7 @@ plot2_env <- new.env(hash = FALSE)
 
 globalVariables(c(".",
                   "_new_title",
+                  "_row_index",
                   "_sankey_id",
                   "_sankey_split",
                   "_sankey_x",
@@ -37,6 +38,7 @@ globalVariables(c(".",
                   "count",
                   "day_in_period",
                   "geom",
+                  "group",
                   "in_scope",
                   "interpretation",
                   "isolates",
@@ -61,11 +63,14 @@ globalVariables(c(".",
                   "total",
                   "value",
                   "where",
+                  "x",
                   "x_axis",
                   "xmax",
                   "xmin",
                   "y_max",
                   "y_min",
+                  "ymax",
+                  "ymin",
                   "year"))
 
 #' @importFrom dplyr n
@@ -521,7 +526,11 @@ update_aes <- function(current = aes(), ..., as_symbol = FALSE) {
       x <- as.symbol(x)
     } else {
       # use str2lang() to get a `call` type:
-      x <- str2lang(as.character(x))
+      x <- as.character(x)
+      if (x %unlike% "^[A-Za-z0-9]") {
+        x <- paste0("`", x, "`")
+      }
+      x <- str2lang(x)
     }
     new_quosure(x, env = caller_env)
   })

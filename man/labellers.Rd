@@ -23,6 +23,7 @@ dollars(x, big.mark = big_mark(), decimal.mark = dec_mark(), ...)
 Format numbers as currency, rounding values to dollars or cents using a convenient heuristic.
 }
 \examples{
+\dontrun{
 profit <- data.frame(group = LETTERS[1:4],
                      profit = runif(4, 10000, 25000))
 
@@ -33,4 +34,5 @@ profit |>
 profit |>
   plot2(y.labels = euros,
         datalabels.format = euros)
+}
 }

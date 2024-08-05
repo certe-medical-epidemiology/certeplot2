@@ -25,7 +25,7 @@
 #' @importFrom ggplot2 aes
 #' @export
 #' @examples 
-#' p <- iris |> plot2(Sepal.Length, Sepal.Width)
+#' p <- iris |> plot2(Sepal.Length, Sepal.Width, Species, zoom = TRUE)
 #' p
 #' 
 #' p |> add_mapping(shape = Species)

@@ -58,7 +58,7 @@ plot2(
   facet.max_txt = "(rest, x\%n)",
   x.breaks = NULL,
   x.n_breaks = NULL,
-  x.trans = "identity",
+  x.transform = "identity",
   x.expand = NULL,
   x.limits = NULL,
   x.labels = NULL,
@@ -77,7 +77,7 @@ plot2(
   y.limits = NULL,
   y.labels = NULL,
   y.expand = NULL,
-  y.trans = "identity",
+  y.transform = "identity",
   y.position = "left",
   y.zoom = FALSE,
   y_secondary = NULL,
@@ -94,7 +94,7 @@ plot2(
   category.limits = NULL,
   category.expand = 0,
   category.midpoint = NULL,
-  category.trans = "identity",
+  category.transform = "identity",
   category.date_breaks = NULL,
   category.date_labels = NULL,
   category.character = NULL,
@@ -197,7 +197,7 @@ Please note: in \code{ggplot2}, 'bars' and 'columns' are equal, while it is comm
 \item \code{"barpercent"} (short: \code{"bp"}), which is effectively a shortcut to set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
 \item \code{"linedot"} (short: \code{"ld"}), which sets \code{type = "line"} and adds two point geoms using \code{\link[=add_point]{add_point()}}; one with large white dots and one with smaller dots using the colours set in \code{colour}. This is essentially equal to base \R \code{plot(..., type = "b")} but with closed shapes.
 \item \code{"dumbbell"} (short: \code{"d"}), which sets \code{type = "point"} and \code{horizontal = TRUE}, and adds a line between the points (using \code{\link[=geom_segment]{geom_segment()}}). The line colour cannot be changed. This plot type is only possible when the \code{category} has two distinct values.
-\item \code{"sankey"} (short: \code{"s"}) creates a Sankey plots using \code{category} for the flows and requires \code{x} to contain multiple variables from \code{.data}. At default, it also sets \code{x.expand = c(0.05, 0.05)} and \code{y.limits = c(NA, NA)} and \code{y.expand = c(0.01, 0.01)}. The so-called nodes (the 'blocks' with text) are considered the datalabels, so you can set the text size and colour of the nodes using \code{datalabels.size}, \code{datalabels.colour}, and \code{datalabels.colour_fill}. The transparency of the flows can be set using \code{sankey.alpha}, and the width of the nodes can be set using \code{sankey.node_width}. Sankey plots can also be flipped using \code{horizontal = TRUE}.
+\item \code{"sankey"} (short: \code{"s"}) creates a Sankey plots using \code{category} for the flows and requires \code{x} to contain multiple variables from \code{.data}. At default, it also sets \code{x.expand = c(0.05, 0.05)} and \code{y.limits = c(NA, NA)} and \code{y.expand = c(0.01, 0.01)}. The so-called 'nodes' (the 'blocks' with text) are considered the datalabels, so you can set the text size and colour of the nodes using \code{datalabels.size}, \code{datalabels.colour}, and \code{datalabels.colour_fill}. The transparency of the flows can be set using \code{sankey.alpha}, and the width of the nodes can be set using \code{sankey.node_width}. Sankey plots can also be flipped using \code{horizontal = TRUE}.
 }
 \item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no x axis or if the length of unique values per x axis item is at least 3, \code{"point"} if both the y and x axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} add a geom.
 }}
@@ -208,8 +208,6 @@ Please note: in \code{ggplot2}, 'bars' and 'columns' are equal, while it is comm
 \item A \link{function} to calculate over \code{.data}, such as \code{title = paste("Based on n =", n_distinct(person_id), "individuals")} or \code{subtitle = paste("Total rows:", n())}, see \emph{Examples}
 \item An \link{expression}, e.g. using \code{parse(text = "...")}
 }
-
-The \code{title} will be guessed with \code{\link[=get_plot_title]{get_plot_title()}} when left blank.
 
 The \code{category.title} defaults to \code{TRUE} if the legend items are numeric.}
 
@@ -265,7 +263,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{x.n_breaks, y.n_breaks}{number of breaks, only useful if \code{x.breaks} cq. \code{y.breaks} is \code{NULL}}
 
-\item{x.trans, y.trans, category.trans}{a transformation function to use, e.g. \code{"log2"}. This can be: \code{"asinh"}, \code{"asn"}, \code{"atanh"}, \code{"boxcox"}, \code{"compose"}, \code{"date"}, \code{"exp"}, \code{"hms"}, \code{"identity"}, \code{"log"}, \code{"log10"}, \code{"log1p"}, \code{"log2"}, \code{"logit"}, \code{"modulus"}, \code{"probability"}, \code{"probit"}, \code{"pseudo_log"}, \code{"reciprocal"}, \code{"reverse"}, \code{"sqrt"}, \code{"time"}, \code{"timespan"}, \code{"yj"}.}
+\item{x.transform, y.transform, category.transform}{a transformation function to use, e.g. \code{"log2"}. This can be: \code{"asinh"}, \code{"asn"}, \code{"atanh"}, \code{"boxcox"}, \code{"compose"}, \code{"date"}, \code{"exp"}, \code{"hms"}, \code{"identity"}, \code{"log"}, \code{"log10"}, \code{"log1p"}, \code{"log2"}, \code{"logit"}, \code{"modulus"}, \code{"probability"}, \code{"probit"}, \code{"pseudo_log"}, \code{"reciprocal"}, \code{"reverse"}, \code{"sqrt"}, \code{"time"}, \code{"timespan"}, \code{"yj"}.}
 
 \item{x.expand, y.expand}{\link[ggplot2:expansion]{expansion} to use for the axis, can be length 1 or 2. \code{x.expand} defaults to 0.5 and \code{y.expand} defaults to \code{0.25}, except for sf objects (then both default to 0).}
 
