@@ -967,7 +967,9 @@ plot2_exec <- function(.data,
           # outcome of y is a multi-length calculated value (by using e.g. range(...)),
           # so calculate it over all groups that are available and add a category
           # this will support e.g. `data |> plot2(y = range(age))`
-          plot2_caution("Using a vector of values for ", font_blue("y"), " is not optimal; categories were auto-generated")
+          if (is.null(category.labels)) {
+            plot2_caution("Categories were auto-generated since ", font_blue("y"), " is a vector - use ", font_blue("category.labels"), " to manually name them.")
+          }
           plot2_env$mapping_category <- "category"
           # take the first call or function from what was given to y
           y_call <- as.character(str2lang(plot2_env$mapping_y))[1]

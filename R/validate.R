@@ -854,7 +854,7 @@ validate_x_scale <- function(values,
       if (is.null(x.limits)) {
         x.limits <- c(ifelse(min(values) < 0, NA_real_, 0), NA_real_)
       }
-      if (tryCatch(x.transform != "identity", error = function(x) FALSE)) {
+      if (tryCatch(length(x.transform) == 1 && x.transform != "identity", error = function(x) FALSE)) {
         # some transformations, such as log, do not allow 0
         x.limits[x.limits == 0] <- NA_real_ 
       }

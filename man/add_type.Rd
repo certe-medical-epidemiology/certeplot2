@@ -151,8 +151,15 @@ p |>
            legend.value = "Average")
   
 p |> 
-  add_line(y = mean(Sepal.Width)) |> 
-  add_line(x = mean(Sepal.Length))
+  add_line(x = mean(Sepal.Length)) |> 
+  add_line(y = mean(Sepal.Width))
+  
+p |>
+  add_point(x = median(Sepal.Length),
+            y = median(Sepal.Width),
+            shape = 13,
+            size = 25,
+            show.legend = FALSE)
   
 # multiple values will just plot multiple lines
 p |> 

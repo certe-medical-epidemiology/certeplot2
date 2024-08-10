@@ -29,7 +29,7 @@ navbar:
     - text: "Manual"
       icon: "fa-book-open"
       href: "reference/index.html"
-    - text: "plot2()"
+    - text: "plot2(): a Gentle Intro"
       icon: "fa-chart-bar"
       href: "articles/plot2.html"
     - text: "Source Code"

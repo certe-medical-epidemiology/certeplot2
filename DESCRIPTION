@@ -1,6 +1,6 @@
 Package: certeplot2
 Title: A Certe R Package for Convenient Plotting
-Version: 1.24.0
+Version: 1.24.1
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
          family = "Berends",

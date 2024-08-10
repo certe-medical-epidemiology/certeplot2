@@ -1,8 +1,8 @@
 ---
-title: "plot2()"
+title: "A Gentle Introduction to `plot2()`: Enhancing Your `ggplot2` Workflow"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{plot2()}
+  %\VignetteIndexEntry{Mastering plot2()}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -18,475 +18,320 @@ knitr::opts_chunk$set(
 ) 
 library(certeplot2)
 # load this as well, so function names will get tidyverse links on the website
+library(ggplot2)
 library(patchwork)
 library(dplyr, warn.conflicts = FALSE)
-args <- names(formals(plot2))
-x_settings <- args[grepl("^x[.]", args)]
-category_settings <- args[grepl("^category[.]", args)]
-facet_settings <- args[grepl("^facet[.]", args)]
+library(tidyr, warn.conflicts = FALSE)
 exported <- getNamespaceExports("certeplot2")
-all_ls <- ls(envir = asNamespace("certeplot2"))
-reexported <- sort(exported[!exported %in% c(all_ls, "big_mark", "dec_mark")])
+all_ls <- c(ls(envir = asNamespace("certeplot2")), ls(envir = asNamespace("certestyle")))
+reexported <- sort(exported[!exported %in% all_ls])
 ```
 
 # Introduction
 
-*Plotting with `plot2()` - **Less typing, faster coding***
+If you've been using `ggplot2` for a while, you're likely familiar with its strengths and versatility in creating a wide array of visualisations. However, as powerful as `ggplot2` is, it often requires you to define every single detail yourself. Whether it's specifying aesthetics, selecting geoms, or adjusting scales, you're in control of every element. And that's one of the reasons we love `ggplot2`; it offers immense flexibility and precision.
 
-The `plot2()` function is a convenient wrapper around many `ggplot2` functions such as `ggplot()`, `aes()`, `geom_col()`, `facet_wrap()`, `labs()`, etc., and provides:
+But what if you could streamline this process for many common tasks? Enter `plot2()`, a friendly companion to `ggplot2` designed to reduce the repetitive aspects of plotting without sacrificing the customizability that `ggplot2` is known for. Think of `plot2()` as your plotting assistant, doing a lot of the heavy lifting automatically so you can focus on the fun parts — like exploring your data and finding insights.
 
-  * Writing as few lines of codes as possible
-  * Easy plotting in three 'directions': `x` (the regular x axis), `category` (replaces 'fill' and 'colour') and `facet`
-  * Automatic setting of these 'directions' based on the input data
-  * Setting in-place calculations for all plotting directions and even `y`
-  * Easy way for sorting data in many ways (such as on alphabet, numeric value, frequency, original data order), by setting a single argument for the 'direction': `x.sort`, `category.sort` and `facet.sort`
-  * Easy limiting values, e.g. by setting `x.max_items = 5` or `category.max_items = 5`
-  * Markdown support for any title text, with any theme
-  * Integrated support for any Google Font and any installed system font
-  * An extra clean, minimalistic theme with a lot of whitespace (but without unnecessary margins) that is ideal for printing: `theme_minimal2()`
-  * Some conveniences from Microsoft Excel:
-    * The y axis starts at 0 if possible
-    * The y scale expands at the top to be better able to interpret all data points
-    * Date breaks can be written in a human-readable format (such as "d mmm yyyy")
-    * Labels with data values can easily be printed and are automatically determined
-  * Support for any `ggplot2` extension based on `ggplot2::fortify()`
-  
-The `ggplot2` package in conjunction with the `dplyr`, `forcats` and `cleaner` packages can provide above functionalities, but *the goal of the `plot2()` function is to generalise this into one function*. The default `plot2()` function currently has `r length(args)` arguments, all with a default value. Every `plot2` object is just a `ggplot` object, and thus extendible and editable with any other `ggplot2` function, using `+` (per the `ggplot2` convention`).
+In this vignette, we'll take a deep dive into the `plot2()` function and its companion `add_*()` functions. We'll walk through everything from the basics to some of the more advanced features, helping you unlock the full potential of this powerful tool. Whether you're plotting simple bar charts or complex Sankey diagrams, `plot2()` has got you covered.
 
-Adding layers atop of other layers using functions (i.e., how `ggplot2` works) is conceptually pure brilliance. But the costs are at the user's side: it lacks convenience as it requires a lot of recurrent code. Who wants to type `ggplot()`, `aes()` and `geom_whatever()` and their arguments over and over again, and then add another bunch of functions to get the desired scales and style? The `plot2()` function is arguably what `ggplot2::qplot()` could have been. 
+## The Plot2 Philosophy: Less Typing, More Plotting
 
-### Initialisation
+Before we dive into the code, let's talk briefly about the philosophy behind `plot2()`. At its core, `plot2()` is designed to make plotting in R more intuitive and less cumbersome. If you've ever been frustrated by having to write out `ggplot()` and `aes()` over and over again, `plot2()` is the answer.
 
-To start, load the package:
+The concept is simple, and the exact opposite of `ggplot2`: give `plot2()` your data, and it will figure out the rest, while enabling many popular plotting options without ever needed to leave this single function. The goal is to get you from data to visualisation with as little friction as possible. And since `plot2()` just returns a ggplot object, you can extend it in any way you would with the outcome of `ggplot2::ggplot()`.
+
+# Getting Started with `plot2()`
+
+Let's start with the basics. The `plot2()` function is a wrapper around `ggplot2` that simplifies many of the tasks you usually have to handle manually. To begin with, you don't even need to specify what kind of plot you want — `plot2()` will make an educated guess based on your data.
+
+### Basic Usage: Let `plot2()` Do the Work
+
+To get started, you can pass your data directly into `plot2()` without specifying any additional arguments. For example:
 
 ```{r}
 library(certeplot2)
-```
-
-The `ggplot2` package must (of course) be installed, but it does not need to be loaded using `library()`. For `ggplot2` and other tidyverse packages, such as `dplyr`, `forcats` and `stringr`, they are only used internally and not required to load before using the `plot2()` function.
-
-If the `certeplot2` package is loaded, these tidyverse functions are available to use inside `plot2()` without loading other packages: `r paste0("\u0060", reexported, "()\u0060", collapse = ", ")`.
-
-# Setting plot type / geom
-
-`plot2()` was designed to help you with creating plots by doing non-intrusive suggestions, much to the contrary of `ggplot2`, where every detail has to be defined manually.
-
-To start with, the plot **type** will be determined automatically if left blank.
-
-```{r}
-data.frame(x = c(1:10),
-           y = c(11:20)) |> 
-  plot2()
-
-data.frame(x = letters[1:10],
-           y = c(11:20)) |> 
+data.frame(x = LETTERS[1:10], y = 11:20) |> 
   plot2()
 ```
 
-Notice how the y axis starts at `y = 0` and all columns have datalabels (since the default value for the `datalabels` argument is `TRUE` for a discrete x axis) that do not interfere with plot lines.
+In this simple example, `plot2()` automatically generates a column plot because it recognises that the x-axis is categorical and the y-axis is numeric. It even adds data labels by default because the x-axis is discrete. This is `plot2()` at its most basic — no need to specify a plot type or worry about details like labels and scales.
 
-If the y axis is absent and the x axis is numeric, the default will be a histogram:
+You'll also notice the clean, uncluttered appearance of the plot, thanks to `theme_minimal2()`, which is applied by default in `plot2()`. Unlike `ggplot2`’s default `theme_grey()` that features a grey background, `theme_minimal2()` provides an even more spacious, white background that reduces visual clutter and is optimised for printing directly to production formats like PDFs. This makes `plot2()` plots ideal for reports, publications, and presentations where a clean, professional look is essential.
 
-```{r}
-# rnorm() here generates a thousand random values according to a normal distribution
-data.frame(x = rnorm(1000, mean = 10)) |> 
-  plot2()
-```
+### Customising the Plot Type
 
-If there are multiple y values for each x, the default will be a boxplot:
+But what if you want something different? Maybe a scatter plot or a line chart? No problem. You can easily specify the `type` argument to get exactly what you want.
 
 ```{r}
-data.frame(x = c("a", "a", "a", "a",
-                 "b", "b", "b", "b",
-                 "c", "c", "c", "c"),
-           y = rnorm(12, mean = 10)) |> 
-  plot2()
+data.frame(x = 1:10, y = rnorm(10)) |> 
+  plot2(type = "point")
 ```
 
-The `type` arguments accepts any (abbreviation of) `ggplot2` geoms:
+Here, we've explicitly set `type = "point"` to create a scatter plot. `plot2()` supports a wide range of plot types, and you can use either the full name (`"geom_point"`) or an abbreviation (`"point"`, `"p"`).
+
+As you start to get comfortable with `plot2()`, you'll find that it often knows exactly what you want to do. But when you need more control, it's easy to take the reins and specify the plot type that best fits your data.
+
+### A Closer Look at the Axes
+
+One of the key strengths of `plot2()` is how it handles axes. The `x` and `y` arguments are straightforward, but they come with a lot of flexibility. Let’s start with the basics and then build up to more advanced configurations.
+
+#### Setting Up Basic Axes
+
+To create a simple scatter plot, you might pass a single variable to the `x` and `y` arguments:
 
 ```{r}
-data.frame(x = c("a", "a", "a", "a",
-                 "b", "b", "b", "b",
-                 "c", "c", "c", "c"),
-           y = rnorm(12, mean = 10)) |> 
-  plot2(type = "violin") # can also be "v" or "geom_violin"
-
-data.frame(x = c("a", "a", "a", "a",
-                 "b", "b", "b", "b",
-                 "c", "c", "c", "c"),
-           y = rnorm(12, mean = 10)) |> 
-  plot2(type = "jitter") # can also be "j" or "geom_jitter"
+mtcars |> 
+  plot2(mpg, hp)
 ```
 
-# Setting the 3 plotting directions 
+This creates a scatter plot of miles per gallon (`mpg`) against horsepower (`hp`). This is as basic as it gets — two variables, one for each axis.
 
-`plot2()` comes with three different plotting directions: `x`, `category` and `facet`. The `x` direction plots along the x axis, the `category` plots using the legend (and replaces `ggplot2`'s *colour* and *fill*), and the `facet` direction plots using facets.
+#### Working with Multiple Variables
 
-In `ggplot2`, everything set in `aes()` will in fact become such a direction. `plot2()` provides no support for plotting categorically using e.g., *shape*, *linetype* or *size*, although mapping can be added manually using `add_type()`.
-
-### Tidy evaluation
-
-All plotting directions in `plot2()` support tidy evaluation. This means that pretty much any input can be given, and `plot2()` (or actually, the `rlang` package) handles everything for you:
+Now, what if you want to compare multiple variables on the same plot? `plot2()` makes this easy by allowing you to pass a vector of variables:
 
 ```{r}
-#    this is x <-|    |-> this is y
-mtcars |> plot2(mpg, hp)
-# y can contain multiple variables:
-mtcars |> plot2(mpg, c(hp, disp))
-# and even supports tidyverse selection helpers:
-mtcars |> plot2(mpg, everything())
+mtcars |> 
+  plot2(mpg, c(hp, disp))
 ```
 
-Tidy evaluation allows for in-place transformations as well:
+In this example, `plot2()` plots both `hp` and `disp` against `mpg` on the same graph, using different colours or other visual distinctions to separate them.
+
+
+### Delving into Categories
+
+Categories in `plot2()` replace the `colour` and `fill` aesthetics from `ggplot2`. The `category` argument is where you define how your data should be grouped. Let’s start with a simple example and then explore how to take it further.
+
+#### Basic Grouping
+
+A basic use of the `category` argument might look something like this:
 
 ```{r}
-my_y_values <- mtcars$hp ^ 3
-mtcars |>
-  plot2(x = mpg ^ 2,
-        y = all_of(my_y_values))
+mtcars |> 
+  plot2(mpg, hp, category = cyl)
 ```
 
-## The `x` direction
+Here, the `cyl` variable is used to group the data by the number of cylinders, and `plot2()` automatically assigns different colours to each group. This is particularly useful for comparing subsets of your data within the same plot.
 
-The x axis is the most commonly used way to categorise values of *y* according to another variable. All arguments of `plot2()` that start with `x.` are for adjusting settings of the x axis. These are: `r paste0("'", sort(x_settings), "'", collapse = ", ")`.
+#### Customising Categories
 
-### `x` labels
-
-Many of these arguments are determined based on the input data. For example, `x.date_breaks` and `x.date_labels` are automatically determined if they are left blank:
+But `plot2()` doesn’t stop there. You can fully customise how categories are displayed. For instance, you might want to control the colours used for each category:
 
 ```{r}
-library(cleaner) # 'cleaner' has a rdate() function for random dates
-data.frame(x = rdate(100, min = "2016-01-01", max = "2021-12-31"),
-           y = rnorm(100, mean = 10)) |> 
-  plot2(type = "p")
-data.frame(x = rdate(100, min = "2021-01-01", max = "2021-05-31"),
-           y = rnorm(100, mean = 10)) |> 
-  plot2(type = "p")
+mtcars |> 
+  plot2(mpg, hp, category = cyl, colour = c("4" = "red", "6" = "blue", "8" = "green"))
 ```
 
-If you have crowded x labels, it's easy to turn them:
+Here, we’ve specified the exact colours to use for each category, giving you full control over the appearance of your plot.
+
+### Exploring Facets
+
+Faceting in `plot2()` allows you to split your plot into multiple panels, one for each level of a categorical variable. It’s an excellent way to compare data across different groups.
+
+#### Basic Faceting
+
+A simple example of faceting might look like this:
 
 ```{r}
-data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
-           y = rnorm(100, mean = 10)) |> 
-  plot2(x.date_breaks = "1 day",
-        x.date_labels = "ddd d mmm yyyy",
-        type = "p",
-        title = "Change this...")
-data.frame(x = rdate(100, min = "2021-12-01", max = "2021-12-31"),
-           y = rnorm(100, mean = 10)) |> 
-  plot2(x.date_breaks = "1 day",
-        x.date_labels = "ddd d mmm yyyy",
-        x.lbl_angle = 90,        # <- only requires this argument
-        type = "p",
-        title = "... into this:")
+mtcars |> 
+  plot2(mpg, hp, facet = gear)
 ```
 
-These arguments automatically pop up if you press <kbd>tab</kbd> after typing `plot2(x.)`:
+This command splits the plot by the number of gears, giving you a separate panel for each group. This is a quick way to see how relationships vary across different subsets of your data.
 
-```{r, echo = FALSE, out.width = "347px", out.height = "188px"}
-knitr::include_graphics("x_elements.png")
-```
+#### Advanced Faceting Options
 
-This means that users no longer need to memorise many `ggplot2` functions *and* their arguments to actually make one tiny adjustment. So, this 'library' with all settings and options is constantly available for all who code, lowering the bar for beginners as well.
-
-### Dates on `x`
-
-Besides using `x.date_breaks` and `x.date_labels`, plotting dates of multiple years can be unified on the `x` axis. Use `x.date_remove_years` to remove the years (i.e., set years of the `x` values to 1970). This allows to use a regular date scale on `x`, while categorising on years:
+`plot2()` offers additional control over how facets are displayed. You can specify the number of rows in the facet grid, control whether scales are fixed or free, and more:
 
 ```{r}
-library(tibble)
-sample_df <- tibble(x = seq.Date(as.Date("2020-01-01"),
-                                 as.Date("2023-12-31"),
-                                 by = "1 day"),
-                    y = rnorm(length(x),
-                              mean = as.integer(format(x, "%Y")) - 2019,
-                              sd = 0.1))
-sample_df
-sample_df |> 
-  plot2(x, y, type = "l",
-        caption = "With keeping years")
-sample_df |> 
-  plot2(x, y, type = "l",
-        caption = "With removing years",
-        category = format(x, "%Y"),
-        x.date_remove_years = TRUE) # <- not even necessary, will be set automatically
+mtcars |> 
+  plot2(mpg, hp, facet = gear, facet.nrow = 2, facet.fixed_y = TRUE)
 ```
 
-### Microbiological taxonomy
+In this example, we limit the facet grid to two rows and ensure that all y-axes have the same scale.
 
-Aside from the argument `x.lbl_italic` (which transforms all x labels to italics), `plot2()` also provides a wrapper around the `AMR` package for antimicrobial resistance (AMR) data analysis. If taxonomic names appear on the x axis, they can be transformed to italics using the scientific convention:
+### Leveraging Inline Transformations with `plot2()`
+
+One of the standout features of `plot2()` is its ability to perform transformations directly within the function call. This capability can dramatically reduce the need for additional data manipulation steps, allowing you to focus on the visualisation itself. Whether you’re calculating aggregates, formatting labels, or even applying mathematical transformations, `plot2()` lets you do it all on the fly.
+
+#### Aggregations Made Easy
+
+Suppose you want to count the number of patients admitted to each hospital. With `plot2()`, there’s no need to pre-calculate these counts; you can simply use `n()` directly within the function:
 
 ```{r}
-library(AMR)
-
-example_isolates$mo |> 
-  mo_name() |> 
-  table() |>
-  plot2(type = "barpercent",
-        x.lbl_taxonomy = TRUE,
-        x.title = "Microorganism")
-```
-
-## The `category` direction
-
-The `category` plotting direction replaces *colour* and *fill*, which were in our opinion very poorly worded (isn't fill in the plot a colour as well?). `plot2()` automatically determines the colour and fill based on the input data.
-
-### `category` scales
-
-The scale for the `category` is also something that can be determined automatically quite easily - it is after all based on the input data and input choices. `plot2()` determines the type of scale automatically:
-
-```{r}
-character_z <- data.frame(x = rep(letters[1:5], 10),
-                          y = rnorm(50, 5),
-                          # these are 5 letters:
-                          z = rep(c("K", "L"), 25),
-                          stringsAsFactors = FALSE)
-head(character_z)
-
-numeric_z <- data.frame(x = rep(letters[1:5], 10),
-                        y = rnorm(50, 5),
-                        # these are 5 numbers:
-                        z = rnorm(50, 5),
-                        stringsAsFactors = FALSE)
-head(numeric_z)
-
-character_z |> 
-    plot2(x, y, z, type = "jitter",
-          caption = "*category* is non-numeric based on inputdata.")
-numeric_z |>  
-    plot2(x, y, z, type = "jitter",
-          caption = "*category* is numeric based on inputdata.")
-```
-
-Settings to this scale can be set with arguments such as `category.labels`, `category.breaks`, `category.limits`, `category.expand` and `category.transform`.
-
-For continuous scales, `plot2()` has an additional argument: `category.midpoint`. When using a 3-point colour scale, this is the value of `y` that should have the middle colour, it defaults to the centre of the current legend scale:
-
-```{r}
-numeric_z |>  
-    plot2(x, y, z,
-          type = "jitter",
-          colour = c("red", "green", "blue"))
-numeric_z |>  
-    plot2(x, y, z,
-          type = "jitter",
-          colour = c("red", "green", "blue"),
-          category.midpoint = 6,
-          category.title = "*New* midpoint for green!")
-```
-
-### Dumbbell plots for comparing two categories
-
-When comparing two categories with single values without setting a type, `plot2()` suggests that a dumbbell plot might be a better solution:
-
-```{r}
-character_z |> 
-    plot2(x, min(y), z)
-character_z |> 
-    plot2(x, min(y), z, type = "dumbbell")
-```
-
-Another example showing the potential of dumbbell plots:
-
-```{r, fig.height = 5}
-admitted_patients |>
-  plot2(x = age_group,
-        y = n_distinct(patient_id),
-        category = ward,
-        facet = ifelse(gender == "M", "Males", "Females"),
-        type = "d",
-        # this is all just for styling:
-        facet.nrow = 2,
-        facet.fixed_y = TRUE,
-        x.title = "Age Group",
-        y.title = "Number of Unique Patients During Study")
-```
-
-
-### Sankey plots for showing flow/movement/change from one state to another
-
-`plot2()` also supports Sankey plots, which just requires the `x` axis to contain multiple variables and `category` to define the flows:
-
-```{r, fig.height = 5}
-# Titanic is a data set of class 'table' from base R
-Titanic |> as.data.frame() |> tibble::as_tibble()
-Titanic |> 
-  plot2(x = c(Class, Age, Survived),
-        category = Sex,
-        type = "sankey")
-```
-
-Notice how `y` gets set automatically, since transforming a `table` with `as.data.frame()` (which happens internally), will yield a `"Freq"` column.
-
-```{r, fig.height = 5}
-# as with the rest of plot2(), `x` supports tidyselect language for colmn selection:
-Titanic |> 
-  plot2(x = where(is.character),
-        category = Sex,
-        type = "sankey",
-        sankey.node_whitespace = 0,
-        sankey.remove_axes = FALSE,
-        sankey.node_width = 0.25,
-        y.expand = c(0, 0.15),
-        x.expand = c(0.1, 0.1),
-        theme = NULL,
-        y.title = "Number of Individuals",
-        category.title = "Gender:",
-        colour = "turbo",
-        datalabels.colour = "white",
-        datalabels.colour_fill = "turbo",
-        datalabels.size = 4)
-```
-
-### Focus on one category
-
-Using `category.focus`, you can focus on one specific category in the data:
-
-```{r}
-numeric_z |>
-  plot2(x = y,
-        y = mean(z), 
-        category = x,
-        type = "l",
-        zoom = TRUE,
-        colour = "viridis")
-numeric_z |>
-  plot2(x = y,
-        y = mean(z), 
-        category = x,
-        type = "l",
-        zoom = TRUE,
-        colour = "viridis",
-        category.focus = "b")
-```
-
-This input for `category.focus` can be the name of the value (in this case `"b"`) or the index number (in this case `2`).
-
-## The `facet` direction
-
-The `facet` plotting direction splits the plot into multiple plots. Several settings are available: `r paste0("'", sort(facet_settings), "'", collapse = ", ")`.
-
-For controlling the `y` axis, `facet.repeat_lbls_y` (defaults to `TRUE`) makes sure that all plots have their own y axis (also notice that the `y` argument is set to the number of rows with `n()`):
-
-```{r, fig.height = 5}
+# included data set:
 admitted_patients
 
-admitted_patients |>
-  plot2(x = age_group, y = n(), facet = hospital,
-        caption = "All y axes on their own")
-admitted_patients |>
-  plot2(x = age_group, y = n(), facet = hospital,
-        facet.repeat_lbls_y = FALSE,
-        caption = "Same y axes")
+admitted_patients |> 
+  plot2(x = hospital, y = n())
 ```
 
-You can omit repeated x labels as well with `facet.repeat_lbls_x`, and let all y axes be the same with `facet.fixed_y`:
+This will produce a column plot showing the number of admissions per hospital, calculated directly within `plot2()`. 
 
-```{r, fig.height = 5}
-admitted_patients |>
-  plot2(x = age_group, y = n(), facet = hospital,
-        facet.repeat_lbls_x = FALSE,
-        facet.fixed_y = TRUE)
-```
-
-Or change the number of rows the facet should be in, using `facet.nrow`:
-
-```{r, fig.height = 8}
-admitted_patients |>
-  plot2(x = age_group, y = n(), facet = hospital,
-        facet.nrow = 4)
-```
-
-No need to memorise how again the `scales`, `shrink` and `switch` arguments of the `facet_wrap()` function work!
-
-## Setting multiple columns
-
-For all plotting directions (`x`, `category` and `facet`), you can use multiple variables as input, for example using `c()`:
+Want to add another dimension, like the number of unique age groups within each hospital? You can do that just as easily:
 
 ```{r}
-admitted_patients |>
-  plot2(x = age_group,
+admitted_patients |> 
+  plot2(x = hospital, y = n_distinct(age_group))
+```
+
+Here, `n_distinct(age_group)` counts the number of unique age groups per hospital, again with no need for additional code outside of `plot2()`.
+
+The `n_distinct()` function comes from `dplyr`, yet it is not needed to load `dplyr` before creating the above plot command. The following tidyverse functions are available to use inside `plot2()` without loading other packages: `r paste0("\u0060", reexported, "()\u0060", collapse = ", ")`.
+
+
+#### Combining Data with Inline Transformations
+
+The real power of `plot2()` comes when you start combining these inline transformations. For example, you might want to see the median age of patients in each hospital, broken down by gender:
+
+```{r}
+admitted_patients |> 
+  plot2(x = hospital, y = median(age), category = gender)
+```
+
+This creates a grouped column plot, showing the median age of patients at each hospital, with separate bars for each gender. You didn’t need to `group_by()` or `summarise()` your data beforehand—`plot2()` takes care of it all.
+
+#### Inline Math Transformations
+
+You can also apply mathematical transformations directly within `plot2()`, making it easy to explore relationships in your data. For example, to plot the logarithm of patient ages across different wards, you can do this:
+
+```{r}
+admitted_patients |> 
+  plot2(x = log(age), y = n(), category = ward)
+```
+
+#### Advanced Formatting on the Fly
+
+In addition to aggregations, `plot2()` makes it easy to apply text transformations directly within the plotting function. For instance, you might want to format the date or combine different variables for the labels:
+
+```{r}
+admitted_patients |> 
+  plot2(x = paste("Hospital", hospital),
         y = n(),
-        facet = c(gender, ward))
+        category = format(date, "%Y"))
 ```
 
-You can even use [Tidyverse selectors](https://tidyselect.r-lib.org/reference/language.html):
+This example creates a plot where the x-axis labels combine the text "Hospital" with the hospital name, and the categories are based on the year extracted from the `date` variable. This level of flexibility allows for highly customised plots without the need for extra preprocessing steps.
+
+This produces a scatter plot of the log-transformed ages, categorised by ward, allowing you to quickly see patterns in how age distributions differ across wards.
+
+#### Combining Everything Together
+
+Let’s put it all together in a more complex example. Suppose you want to examine the distribution of patient ages across hospitals, with each bar split by gender, and you want the x-axis to reflect the hospital name and use facets for the year of admission:
 
 ```{r}
-library(dplyr)
-admitted_patients |>
-  plot2(x = age_group,
-        y = n(),
-        facet = where(is.character),
-        sep = " -- ")
+admitted_patients |> 
+  plot2(x = ifelse(gender == "F", "Females", "Males"),
+        y = median(age),
+        category = format(date, "%Y"),
+        facet = paste("Hospital", hospital),
+        x.title = "",
+        y.title = "Median Patient Age",
+        category.title = "Year")
 ```
 
-## Sorting
+In this plot, we’re using multiple inline transformations, showcasing the use of only 8 lines of code without using `dplyr` transformations manually. This level of complexity, achieved with just one `plot2()` call, demonstrates the power and flexibility of inline transformations.
 
-`plot2()` has a powerful sorting option for all three plotting directions: `x.sort`, `category.sort` and `facet.sort`. 
+### Sorting and Limiting Data
 
-Applying one of the sorting methods will transform the values to an ordered `factor`, which will be used to orient the data. Valid options are:
-  
-  - a manual vector of values
-  - `TRUE`: sort as `"asc"`
-  - `FALSE`: sort according to the order in the data
-  - `NULL`: do not sort/transform at all
-  - `"asc"` or `"alpha"`: sort `factor`s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (*numeric* sort)
-  - `"desc"`: sort `factor`s on their reversed levels, otherwise sort descending on alphabet, while maintaining numbers in the text (*numeric* sort)
-  - `"order"` or `"inorder"`: sort as `FALSE`
-  - `"freq"` or `"freq-desc"`: sort descending according to the frequencies of `y` computed by `summarise_function` (highest value first)
-  - `"freq-asc"`: sort ascending according to the frequencies of `y` computed by `summarise_function` (lowest value first)
-  
-The default for all plotting directions is `TRUE`, except for continuous values on the `x` axis (such as dates and numbers).
+Sorting is a crucial part of data visualisation, as it helps bring clarity and focus to your plots. With `plot2()`, you have a variety of options to sort your data in different directions. Whether you want to sort by frequency, alphabetically, or by a custom order, `plot2()` provides flexible and powerful tools to get the job done.
+
+Limiting your data helps in keeping plots clean. If you only want to display the top few items, `x.max_items` and `category.max_items`, and `facet.max_items` have got you covered.
+
+#### Basic Sorting
+
+Let’s start with a simple sort based on frequency:
 
 ```{r}
-admitted_patients |>
-  plot2(hospital, y = n(), age_group,
-        y.title = "count",
-        stacked = TRUE,
-        caption = "No sorting")
-admitted_patients |>
-  plot2(hospital, y = n(), age_group,
-        y.title = "count",
-        stacked = TRUE,
-        x.sort = "freq-asc",
-        category.sort = "desc",
-        caption = paste("Hospitals (x) now sorted on frequencies (low to high),",
-                        "Age groups (category) now sorted on alphabet (desc)",
-                        sep = "\n"))
-admitted_patients |>
-    plot2(hospital, y = n(),
-          x.sort = c("B", "D", "A"),
-          caption = "Hospitals are now sorted according to a manual sort.")
+mtcars |> 
+  plot2(carb, y = n(), x.sort = "freq-desc")
 ```
 
-The sorting can be used in combination with setting a maximum number of items to plot per plotting direction.
+In this example, the data is sorted by the frequency of carburettor counts in descending order. This is particularly useful when you want to highlight the most common categories in your data.
 
-## Setting a maximum number of items
+#### Sorting Alphabetically
 
-`plot2()` has a an option to limit data values for all three plotting directions: `x.max_items`, `category.max_items` and `facet.max_items`. They take a numeric values as input:
+If you prefer to sort alphabetically, `plot2()` makes it straightforward. You can use `"asc"` or `"alpha"` to sort your data in ascending alphabetical order:
 
 ```{r}
-admitted_patients |>
-    plot2(hospital, y = n())
-admitted_patients |>
-    plot2(hospital, y = n(),
-          x.max_items = 3)
+mtcars |> 
+  plot2(carb, y = n(), x.sort = "asc")
 ```
 
-This can be combined with sorting:
+This command will sort the carburettor counts alphabetically, which is useful when your data naturally follows an alphabetical order.
+
+#### Sorting with a Custom Order
+
+Sometimes, you may want to present your data in a specific order that doesn’t follow a standard sorting method. You can define a custom order by providing a manual vector of values:
 
 ```{r}
-admitted_patients |>
-    plot2(hospital, y = n(),
-          x.sort = "freq-desc",
-          x.max_items = 3,
-          x.max_txt = "%n other hospitals (%p)")
+mtcars |> 
+  plot2(carb, y = n(), x.sort = c(4, 1, 6, 8))
 ```
 
-# Setting colours
+In this example, the carburettor counts will be displayed in the order of 4, 1, 6, and 8, regardless of their frequency or alphabetical order. This approach is particularly useful when you want to highlight certain categories or follow a logical sequence.
+
+#### Limiting Data
+
+You might not always want to show every single item in your plot. For example, if you’re dealing with a lot of categories, you can limit the display to just the most frequent ones:
+
+```{r}
+mtcars |> 
+  plot2(carb, y = n(), x.max_items = 5, type = "col")
+```
+
+This limits the plot to the top 5 most frequent carburetor counts, simplifying the visualisation and making it easier to focus on the most important data.
+
+#### Combining Sorting with Limiting
+
+Sorting can be combined with other features in `plot2()` to create more sophisticated plots. For example, you might want to sort by frequency and also limit the number of items displayed:
+
+```{r}
+mtcars |> 
+  plot2(carb, y = n(), x.sort = "freq-desc", x.max_items = 5, type = "col")
+```
+
+This plot will show only the top 3 most frequent carburettor counts, sorted in descending order. This combination helps to declutter your visualisation and focus on the most significant parts of your data.
+
+#### Visualising Sorting Options
+
+To illustrate the impact of different sorting options, let’s create a plot that uses a custom sort order and highlights the flexibility of `plot2()`:
+
+```{r}
+admitted_patients |> 
+  plot2(x = age_group, y = n(), x.sort = c("55-74", "75+", "25-54"), category = hospital, stacked = TRUE)
+```
+
+In this example, the `age_group` axis is sorted in a custom order, with the "55-74" group first, followed by "75+" and then "25-54". The bars are stacked by hospital, providing a clear comparison across the specified age groups.
+
+### Customising Colours
+
+Customising colours in `plot2()` is intuitive and flexible. You can use pre-set colour scales like `viridis`, or define your own colours. The `colour` and `colour_fill` arguments control the appearance of your plot.
+
+#### Using Pre-set Colour Scales
+
+For a quick and visually appealing colour scheme, you might use a `viridis` palette:
+
+```{r}
+mtcars |> 
+  plot2(mpg, hp, category = cyl, colour = "viridis")
+```
+
+This applies the `viridis` colour scale, which is particularly good for making sure your plot is accessible to those with colour vision deficiencies.
+
+#### Defining Custom Colours
+
+If you want more control, you can define specific colours for each category:
+
+```{r}
+mtcars |> 
+  plot2(mpg, hp, category = cyl, colour = c("4" = "red", "6" = "blue", "8" = "green"))
+```
+
+This approach gives you full creative control over the colour scheme, allowing you to match your plot’s aesthetics to your presentation or publication needs.
+
+#### Default Colours
 
 At default, `plot2()` sets no colours, meaning that it uses ggplot2 colours. With some simple R options, it is very easy to switch to another colour set.
 
@@ -542,161 +387,198 @@ plots()
 options(plot2.colour = NULL, plot2.colour_sf_fill = NULL)
 ```
 
-# Adding calculations to titles
 
-All titles support in-line calculations as well, which is very convenient for describing part of the data in plot titles:
+### Advanced Plot Types: Geographies, Dumbbells and Sankey Diagrams
 
-```{r}
-admitted_patients |>
-  plot2(age, type = "hist")
-admitted_patients |>
-  plot2(age, type = "hist",
-        title = paste("Based on n =", n_distinct(patient_id), "patients"),
-        subtitle = paste("Total rows:", n()),
-        # also supports the {glue} package:
-        caption = glue::glue("From {n_distinct(hospital)} hospitals"),
-        tag = paste("Median:", median(age)),
-        x.title = paste("Age ranging from", paste(range(age), collapse = " to ")))
-```
+`plot2()` shines when it comes to more complex plot types. Let’s explore three advanced options: geography plots, dumbbell plots and Sankey diagrams.
 
-# Setting the values of `y`
+#### Plotting geometries (`sf` objects)
 
-In `ggplot2`, the values for `y` must be numeric. In `plot2()`, you can also use an in-place calculation of a (non-numeric) variable. The input will be evaluated while taking into account all plotting directions, such as `x` and `category`:
-
-```{r}
-df <- data.frame(group = c(rep("A", 10), rep("B", 10), rep("C", 10), rep("D", 10)),
-                 size = round(runif(40, min = 10, max = 100)))
-head(df, n = 12)
-
-df |>
-  plot2(group, max(size))
-
-admitted_patients
-
-admitted_patients |>
-    plot2(x = hospital,
-          y = n_distinct(age_group),
-          category = ward,
-          title = "Unique available age groups per hospital")
-```
-
-You can even use functions for `y` that return a length larger than 1, though this is not optimal:
-
-```{r}
-admitted_patients |>
-    plot2(x = hospital,
-          y = quantile(age, c(0.25, 0.5, 0.75)),
-          title = "Q1, Q2, Q3 in age per hospital")
-```
-
-Since the plotting directions (`x`, `category`, `facet`) allow for in-place transformations as well, you can plot your data without the need to use `group_by()`, `count()` or `summarise()` yourself:
-
-```{r, fig.width = 8}
-admitted_patients |>
-  plot2(x = format(date, "%Y"),
-        y = median(age),
-        y.age = TRUE,
-        category = ward,
-        datalabels = FALSE)
-```
-
-Including all transformations, we used in total 3 functions (`plot2()`, `format()`, `median()`) - the very least - written in 6 lines of code using a common code style. Compare that to the required `dplyr` + `ggplot2` code:
-
-```{r, fig.width = 8}
-library(ggplot2)
-
-admitted_patients |>
-  group_by(format(date, "%Y"),
-           ward) |>
-  summarise(median(age)) |>
-  ggplot(aes(x = `format(date, "%Y")`,
-             y = `median(age)`,
-             fill = ward)) +
-  geom_col(position = "dodge",
-           width = 0.5) +
-  # this part is just for styling:
-  scale_y_continuous(expand = expansion(mult = c(NA, 0.25)),
-                     breaks = seq(0, 100, 10),
-                     labels = function(x) paste(x, "yrs")) +
-  theme_minimal2(legend.position = "top")
-```
-
-Now, we had to use 13 functions to get the plot - while defining all variables twice - written in 14 lines of code using the same common code style as above. Even the bare functional part (until `geom_col()`) took 7 functions. Aside from it being a lot of redundant code, using all of these functions requires users to know them *and* their arguments. How many users would know `expansion()` to add some extra margin to an axis? The obligations on the user side are quite insane.
-
-And why is 2014 still so wide?? Look at it like this: if you know the solution, you're way deeper into `ggplot2` than should ever be necessary for an R package. 
-
-# Markdown and plotmath expressions
-
-`plot2()` provides support for markdown and advanced plotmath expressions, by running all title texts through the helper function `md_to_expression()`:
-
-```{r}
-md_to_expression("This is *some italic* and this is **some bold** text")
-
-mtcars |>
-  plot2(mpg ^ 2, hp ^ 2,
-        title = "This is *italic*, **bold** and ***bold-italic*** text",
-        subtitle = "And these are the **Greek** lower $omega$ and upper $Omega$",
-        caption = "Notice the x and y axis titles?")
-```
-
-Combined markdown, in-line calculations and plotmath is also supported:
-
-```{r}
-mtcars |>
-  plot2(mpg, hp,
-        title = paste("This is about **n =", n(), "cars** in total"),
-        subtitle = paste("$sum(x[i], i==1, n)$ =", n()))
-```
-
-# Plotting geometries (`sf` objects)
-
-Objects of class `sf` (*simple feature*) are treated specially by the `ggplot2` package, although `plot2()` handles these objects like any other data set.
+Objects of class `sf` (*simple feature*) are handled by `plot2()` like any other data set; `plot2()` applies spatial functions such as `geom_sf()` and `geom_sf_text()` automatically wherever needed. The built-in `theme_minimal2()` theme makes sure you get a clean map, by removing the unnecessarily verbose axes and background colour.
 
 The included `netherlands` data set is such an `sf` object:
 
 ```{r}
-library(sf)
-print(netherlands)
-```
-
-These objects can be used with `plot2()` in the same way as any other data set - `plot2()` applies spatial functions such as `geom_sf()` and `geom_sf_text()` automatically wherever needed. The built-in `theme_minimal2()` theme makes sure you get a clean map, by removing the unnecessarily verbose axes and background colour:
-
-```{r}
 plot2(netherlands)
-plot2(netherlands,
-      # this used the full viridis colour set:
-      colour_fill = "viridis",
-      # datalabels support tidy evaluation too:
-      datalabels = paste0(province, "\n", round(area_km2)))
 ```
 
-Use the R option Use `plot2.colour_sf_fill` with a single colour to set one specific colour for sf plots:
+#### Dumbbell Plots for Comparisons
+
+Dumbbell plots are excellent for comparing two categories side by side:
 
 ```{r}
-plot2(netherlands,
-      # but this uses only the first viridis colour:
-      colour_fill = colourpicker("viridis", length = 1),
-      datalabels = paste0(province, "\n", round(area_km2)))
+admitted_patients |> 
+  plot2(x = hospital,
+        y = n_distinct(patient_id),
+        category = gender,
+        type = "dumbbell")
 ```
 
+This plot type is particularly useful for showing the difference between two related metrics across different groups.
 
-# Support for any font, including all Google Fonts
+#### Creating Sankey Diagrams
 
-Any installed font and all of the [over 1400 Google Fonts](https://fonts.google.com) are supported in `plot2()`. Missing fonts will be downloaded automatically and the required DPI will be set automatically as well, even in R Markdown such as this page:
+Sankey diagrams are another powerful visualisation, perfect for showing flow or movement from one state to another:
 
 ```{r}
-mtcars |>
-  plot2(mpg, hp, font = "Rock Salt",
-        title = "This plot uses a Google Font",
-        text_factor = 1.5)
-iris |>
-  plot2(x = Sepal.Length,
-        x.limits = c(4, 8),
-        y = Sepal.Width,
-        category = Petal.Length,
-        facet = Petal.Width |> cut(0:3),
-        facet.repeat_lbls_y = FALSE,
-        title = "Flower Species of the 'iris' Data Set",
-        font = "Send Flowers",
-        text_factor = 3)
+Titanic |> 
+  plot2(x = c(Class, Age, Survived), category = Sex, type = "sankey")
 ```
+
+Sankey plots are a great way to visualise transitions, such as the survival rates of passengers on the Titanic across different classes and age groups.
+
+
+### Customising Fonts in `plot2()`
+
+Another powerful feature of `plot2()` is its flexibility with fonts. Whether you’re aiming for a professional look, something playful, or anything in between, `plot2()` allows you to easily customise fonts to suit your needs.
+
+#### Using System Fonts and Google Fonts
+
+`plot2()` supports all installed system fonts, as well as over 1,400 Google Fonts, giving you an extensive range of choices for your plots. Missing fonts will be downloaded automatically, and the required DPI will be set for you, even in R Markdown outputs.
+
+Here’s how you can apply a custom font from Google Fonts:
+
+```{r}
+mtcars |> 
+  plot2(mpg, hp, font = "Rock Salt", text_factor = 1.5, 
+        title = "Custom Font Example", 
+        x.title = "Miles per Gallon", 
+        y.title = "Horsepower")
+```
+
+In this example, the `Rock Salt` font, a playful and hand-drawn style, is applied across the plot. The `text_factor` argument is used to scale the size of the text, ensuring readability and aesthetic balance.
+
+#### Creating Consistent Themes with Fonts
+
+By setting font options globally through R options, you can maintain consistent styling across multiple plots. This is particularly useful when preparing a series of visualisations for a report or presentation.
+
+```{r}
+options(plot2.font = "Roboto")
+options(plot2.colour = "viridis")
+
+# Now every plot will use the Roboto font by default
+mtcars |> 
+  plot2(mpg, hp, title = "Consistent Font Example")
+```
+
+In this example, all plots will now use the `Roboto` font, ensuring a consistent and professional appearance across your visualisations.
+
+```{r}
+# reset again
+options(plot2.font = NULL, plot2.colour = NULL)
+```
+
+Customising fonts in `plot2()` is both flexible and straightforward, allowing you to tailor the typography of your plots to match your project's style. Whether you're using a system font or one of the many Google Fonts, `plot2()` makes it easy to create visually appealing and consistent plots with minimal effort.
+
+## Adding Elements with `add_*()` Functions
+
+Beyond the basics, `plot2()` allows you to add layers and elements to your plots with the `add_*()` functions. These are designed to integrate seamlessly with `plot2()` and `ggplot2`.
+
+### Adding Lines, Points, and Columns
+
+Adding a line to an existing plot is as easy as calling `add_line()`:
+
+```{r}
+p <- mtcars |> 
+  plot2(mpg, hp)
+p |> 
+  add_line(y = mean(hp), colour = "red", legend.value = "Average HP")
+```
+
+This adds a line at the mean horsepower, with a red colour and a legend entry labeled "Average HP."
+
+Multiple lines for a single axis are also supported, for example to show the `range()` or `fivenum()` of an axis:
+```{r}
+p |> 
+  add_line(y = range(hp), colour = "blue", legend.value = "Min/Max HP")
+
+p2 <- ggplot(mtcars) +
+  geom_point(aes(mpg, hp)) +
+  labs(title = "Also Works On ggplot()")
+p2 |> 
+  add_line(y = range(hp), colour = "blue", legend.value = "Min/Max HP")
+```
+
+#### Adding Points
+
+Points can be added to highlight specific values or observations:
+
+```{r}
+p |> 
+  add_point(x = median(mpg), y = median(hp), shape = 4, size = 10)
+```
+
+In this example, we add a point at the median `mpg` and `hp`, using a cross shape and a larger size for emphasis.
+
+#### Adding Columns
+
+Adding columns is just as straightforward, and can be used to create bar charts or other similar visualisations:
+
+```{r}
+p |> 
+  add_col(x = cyl, y = n(), width = 0.5)
+```
+
+Here, we add columns based on the number of cylinders, making it easy to compare the counts across different groups.
+
+### Plotting Error Bars
+
+Plotting error bars is just as simple:
+
+```{r}
+p |> 
+  add_errorbar(min = hp - 10, max = hp + 10, colour = "black")
+```
+
+This adds error bars to the plot, showing a range of ±10 around the `hp` values.
+
+### Adding Spatial Features with add_sf()
+
+For those working with geographic data, `add_sf()` makes it easy to integrate spatial features:
+
+```{r}
+plot2(netherlands) |> 
+  add_sf(netherlands, colour_fill = NA, colour = "red", linewidth = 2)
+```
+
+This example adds spatial features to a plot of the Netherlands, with an extra border around the provinces.
+
+# Discussion
+
+`plot2()` is more than just a wrapper for `ggplot2`; it embodies a philosophy of simplifying and streamlining the plotting process while building on the robust foundation that `ggplot2` provides. If you're familiar with `ggplot2`, you know that its explicit, detailed approach to plot creation is one of its greatest strengths, allowing for unparalleled control over every aspect of a visualisation. However, with that power comes the need for repetitive coding and a certain level of complexity that can be challenging, especially for beginners.
+
+### Enhancing Workflow Efficiency
+
+The primary goal of `plot2()` is to make data visualisation faster and more intuitive by automating many of the routine tasks involved in creating plots. Whether you’re working with simple data or complex datasets requiring advanced transformations, `plot2()` helps you get to the final visualisation with fewer lines of code and less cognitive load. This not only speeds up your workflow but also makes your code more readable and maintainable.
+
+For instance, the ability to perform inline transformations directly within the plotting function eliminates the need for pre-processing steps that would otherwise require additional code blocks using, e.g., `dplyr` or `tidyr`. This feature of `plot2()` alone can drastically reduce the complexity of your code, especially when working with large and multifaceted datasets.
+
+### A Natural Extension of `ggplot2`
+
+`ggplot2` has established itself as a cornerstone of data visualisation in R, and for good reason. Its layer-based approach and extensive customisation options make it incredibly powerful. `plot2()` is designed to complement these strengths by offering a more streamlined interface that automates many of the common tasks in `ggplot2`. Think of `plot2()` as a natural extension of `ggplot2` — one that retains the underlying power while simplifying the process, especially for users who prefer a more direct path from data to visualisation.
+
+The `add_*()` functions exemplify this philosophy by allowing users to add layers and elements with minimal code, maintaining the flexibility of `ggplot2` while reducing the need for repetitive boilerplate. This makes it easier to experiment with different visualisations and iterate quickly on your designs.
+
+### Flexibility Without Complexity
+
+One of the key advantages of `plot2()` is that it retains the flexibility of `ggplot2` while reducing the need for detailed specification. The automatic handling of plot types, axis settings, and scales means that you can create sophisticated plots with minimal input. Yet, when you need to take control, `plot2()` offers all the options you would expect, from custom sorting to precise colour control and font selection.
+
+This balance between flexibility and simplicity is what makes `plot2()` a powerful tool for both beginners and experienced users. Beginners can quickly produce high-quality plots without getting bogged down in the details, while advanced users can still leverage the full power of `ggplot2` when necessary.
+
+### Philosophical Underpinnings
+
+At the heart of `plot2()` is a commitment to making data visualisation more accessible and less intimidating. The goal is to lower the barriers to entry for creating professional-quality plots, thereby empowering more people to engage with data in a meaningful way. This aligns with the broader trend in the R community and the tidyverse towards creating tools that are both powerful and easy to use.
+
+`plot2()` is also designed with the understanding that not every user needs — or wants — to be an expert in the intricacies of `ggplot2`. By providing sensible defaults and automating common tasks, `plot2()` allows users to focus on the most important part of the visualisation process: interpreting and communicating their data.
+
+### Reflecting on Usage Scenarios
+
+The real value of `plot2()` becomes evident in real-world usage scenarios. Whether you’re creating a quick exploratory plot or preparing a polished visualisation for publication, `plot2()` adapts to your needs. Its versatility makes it suitable for a wide range of applications, from routine data analysis to sophisticated data storytelling.
+
+Moreover, `plot2()` integrates seamlessly with the broader tidyverse ecosystem. It works effortlessly with other tidyverse packages, allowing you to incorporate it into your existing workflows without disruption. This ensures that you can continue to use the tools you’re familiar with while benefiting from the efficiencies that `plot2()` brings.
+
+### Looking Forward
+
+As the R community continues to evolve, so too will the tools we use for data visualisation. `plot2()` represents a step towards a more user-friendly and efficient future, where the focus is on insights and communication rather than technical details. It’s a tool that grows with you — whether you’re just starting out or pushing the boundaries of what’s possible with data visualisation.
+
+In the end, the success of any tool is measured by how well it meets the needs of its users. `plot2()` has been designed with a deep understanding of the challenges and frustrations that come with creating complex plots in R. By addressing these challenges head-on, `plot2()` aims to make your data visualisation journey smoother, more enjoyable, and ultimately more productive.

@@ -58,8 +58,15 @@
 #'            legend.value = "Average")
 #'   
 #' p |> 
-#'   add_line(y = mean(Sepal.Width)) |> 
-#'   add_line(x = mean(Sepal.Length))
+#'   add_line(x = mean(Sepal.Length)) |> 
+#'   add_line(y = mean(Sepal.Width))
+#'   
+#' p |>
+#'   add_point(x = median(Sepal.Length),
+#'             y = median(Sepal.Width),
+#'             shape = 13,
+#'             size = 25,
+#'             show.legend = FALSE)
 #'   
 #' # multiple values will just plot multiple lines
 #' p |> 
@@ -288,6 +295,8 @@ new_geom_data <- function(plot, x, y, ..., colour_missing, inherit.aes) {
   
   if (!colour_missing && !has_category) {
     out$params$colour <- list(...)$colour
+  } else if (has_category && !inherit.aes) {
+    out$mapping <- update_aes(out$mapping, colour = category_name)
   }
   
   if (!is.null(out$params$colour)) {
