@@ -1,25 +1,11 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://certe-medical-epidemiology.github.io/certeplot2/404.html</loc></url>
 <url><loc>https://certe-medical-epidemiology.github.io/certeplot2/LICENSE.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/articles/index.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/articles/plot2.html</loc></url>
 <url><loc>https://certe-medical-epidemiology.github.io/certeplot2/authors.html</loc></url>
 <url><loc>https://certe-medical-epidemiology.github.io/certeplot2/index.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/add_mapping.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/add_type.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/admitted_patients.html</loc></url>
 <url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/certeplot2-package.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/get_plot_title.html</loc></url>
 <url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/index.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/labellers.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/md_to_expression.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/move_layer.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/netherlands.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/plot2-methods.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/plot2.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/plotly.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/reexports.html</loc></url>
+<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/plot2-extensions.html</loc></url>
 <url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/scale_certe.html</loc></url>
-<url><loc>https://certe-medical-epidemiology.github.io/certeplot2/reference/theme_minimal2.html</loc></url>
 </urlset>
 

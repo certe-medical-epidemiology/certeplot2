@@ -83,3 +83,15 @@ a, a code {
   /* text strings */
   color: #93984C;
 }
+
+/* specific for certeplot2 */
+.template-article h4, .template-article h4 code,
+.template-article h5, .template-article h5 code {
+  color: #49647D !important;
+}
+.template-article h4 {
+  font-size: 24px;
+}
+.template-article h5 {
+  font-size: 18px;
+}
