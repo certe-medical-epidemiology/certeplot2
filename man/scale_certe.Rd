@@ -141,7 +141,7 @@ name(s) of the aesthetic(s) that this scale works with. This can be useful, for
 example, to apply colour settings to the \code{colour} and \code{fill} aesthetics at the
 same time, via \code{aesthetics = c("colour", "fill")}.}
 
-\item{colour}{a Certe colour set: \code{"certe"}, \code{"certe2"}, \code{"certe3"}, etc. Will be evaluated with \code{\link[certestyle:colourpicker]{certestyle::colourpicker()}}.}
+\item{colour}{a Certe colour set: \code{"certe"}, \code{"certe2"}, \code{"certe3"}, etc. Will be evaluated with \code{\link[=get_colour]{get_colour()}}.}
 }
 \description{
 These scales apply the colours of Certe, using the 'certestyle' package.

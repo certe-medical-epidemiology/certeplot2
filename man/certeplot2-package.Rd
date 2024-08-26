@@ -6,7 +6,7 @@
 \alias{certeplot2-package}
 \title{certeplot2: A Certe R Package for Convenient Plotting}
 \description{
-A Certe R Package for fast and convenient plotting, by providing wrappers around 'tidyverse' packages such as 'ggplot2', while also providing plotting in the Certe organisational style. This package is part of the 'certedata' universe.
+A Certe R Package for fast and convenient plotting based on 'plot2', by providing wrappers around 'tidyverse' packages such as 'ggplot2', while also providing plotting in the Certe organisational style. This package is part of the 'certedata' universe.
 }
 \seealso{
 Useful links:

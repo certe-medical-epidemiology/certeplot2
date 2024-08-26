@@ -22,7 +22,6 @@
 #' These scales apply the colours of Certe, using the 'certestyle' package.
 #' @inheritParams ggplot2::scale_colour_gradientn
 #' @importFrom ggplot2 scale_colour_gradientn scale_colour_discrete scale_fill_discrete
-#' @importFrom certestyle colourpicker
 #' @name scale_certe
 #' @rdname scale_certe
 #' @export
@@ -33,8 +32,8 @@ scale_colour_certe_c <- function(...,
                                  guide = "colourbar",
                                  aesthetics = "colour") {
   scale_colour_gradientn(..., 
-                         colours = colourpicker(c("certeblauw0", "certegroen",
-                                                  "certegeel", "certeroze")),
+                         colours = get_colour(c("certeblauw0", "certegroen",
+                                            "certegeel", "certeroze")),
                          values = values,
                          space = space,
                          na.value = na.value, 
@@ -55,8 +54,8 @@ scale_fill_certe_c <- function(...,
                                guide = "colourbar",
                                aesthetics = "fill") {
   scale_colour_gradientn(..., 
-                         colours = colourpicker(c("certeblauw0", "certegroen",
-                                                  "certegeel", "certeroze")),
+                         colours = get_colour(c("certeblauw0", "certegroen",
+                                            "certegeel", "certeroze")),
                          values = values,
                          space = space,
                          na.value = na.value, 
@@ -65,10 +64,10 @@ scale_fill_certe_c <- function(...,
 }
 
 #' @rdname scale_certe
-#' @param colour a Certe colour set: `"certe"`, `"certe2"`, `"certe3"`, etc. Will be evaluated with [certestyle::colourpicker()].
+#' @param colour a Certe colour set: `"certe"`, `"certe2"`, `"certe3"`, etc. Will be evaluated with [get_colour()].
 #' @export
 scale_colour_certe_d <- function(colour = "certe") {
-  scale_colour_discrete(type = colourpicker(colour, 50))
+  scale_colour_discrete(type = get_colour(colour, 50))
 }
 
 #' @rdname scale_certe
@@ -78,5 +77,5 @@ scale_color_certe_d <- scale_colour_certe_d
 #' @rdname scale_certe
 #' @export
 scale_fill_certe_d <- function(colour = "certe") {
-  scale_fill_discrete(type = colourpicker(colour, 50))
+  scale_fill_discrete(type = get_colour(colour, 50))
 }
