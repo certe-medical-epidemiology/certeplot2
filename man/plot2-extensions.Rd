@@ -159,6 +159,7 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = getOption("plot2.colour_background", "white"),
   markdown = TRUE,
+  data = NULL,
   minimum = 30,
   remove_intrinsic_resistant = TRUE,
   language = "nl",
@@ -315,6 +316,7 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = getOption("plot2.colour_background", "white"),
   markdown = TRUE,
+  data = NULL,
   ...
 )
 
@@ -468,6 +470,7 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = getOption("plot2.colour_background", "white"),
   markdown = TRUE,
+  data = NULL,
   ...
 )
 
@@ -623,6 +626,7 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = getOption("plot2.colour_background", "white"),
   markdown = TRUE,
+  data = NULL,
   ...
 )
 
@@ -781,11 +785,12 @@
   theme = getOption("plot2.theme", "theme_minimal2"),
   background = getOption("plot2.colour_background", "white"),
   markdown = TRUE,
+  data = NULL,
   ...
 )
 }
 \arguments{
-\item{.data}{data to plot}
+\item{.data, data}{data to plot}
 
 \item{x}{plotting 'direction' for the x axis. This can be:
 \itemize{

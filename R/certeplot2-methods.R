@@ -183,6 +183,7 @@ plot2.bug_drug_combinations <- function(.data,
                                         theme = getOption("plot2.theme", "theme_minimal2"),
                                         background = getOption("plot2.colour_background", "white"),
                                         markdown = TRUE,
+                                        data = NULL,
                                         minimum = 30,
                                         remove_intrinsic_resistant = TRUE,
                                         language = "nl",
@@ -548,6 +549,7 @@ plot2.antibiogram <- function(.data,
                               theme = getOption("plot2.theme", "theme_minimal2"),
                               background = getOption("plot2.colour_background", "white"),
                               markdown = TRUE,
+                              data = NULL,
                               ...) {
   
   df <- attributes(.data)$long
@@ -808,6 +810,7 @@ plot2.sir_df <- function(.data,
                          theme = getOption("plot2.theme", "theme_minimal2"),
                          background = getOption("plot2.colour_background", "white"),
                          markdown = TRUE,
+                         data = NULL,
                          ...) {
   
   if (!"isolates" %in% colnames(.data) && !is.integer(.data$value)) {
@@ -1156,6 +1159,7 @@ plot2.qc_test <- function(.data,
                           theme = getOption("plot2.theme", "theme_minimal2"),
                           background = getOption("plot2.colour_background", "white"),
                           markdown = TRUE,
+                          data = NULL,
                           ...) {
   
   loadNamespace("certestats") # will throw an error if not installed
@@ -1610,6 +1614,7 @@ plot2.early_warning_cluster <- function(.data,
                                         theme = getOption("plot2.theme", "theme_minimal2"),
                                         background = getOption("plot2.colour_background", "white"),
                                         markdown = TRUE,
+                                        data = NULL,
                                         ...) {
   loadNamespace("certestats") # will throw an error if not installed
   
