@@ -622,7 +622,6 @@ plot2.antibiogram <- function(.data,
                           col_y_secondary = NULL)
   
   validate_y_scale <- get("validate_y_scale", envir = asNamespace("plot2"))
-  print(p)
   y_scale <- validate_y_scale(df = df |> mutate(`_var_y` = SI),
                               type = "geom_col",
                               y.24h = FALSE,
