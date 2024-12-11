@@ -1015,7 +1015,7 @@ plot2.sir_df <- function(.data,
 #' qc_result <- certestats::qc_test(x)
 #' qc_result
 #' 
-#' plot2(qc_test)
+#' plot2(qc_result)
 plot2.qc_test <- function(.data,
                           x = x,
                           y = y,

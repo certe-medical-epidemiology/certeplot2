@@ -1072,7 +1072,7 @@ x <- runif(1000)
 qc_result <- certestats::qc_test(x)
 qc_result
 
-plot2(qc_test)
+plot2(qc_result)
 
 # DISEASE CLUSTERS -----------------------------------------------------
 cases <- data.frame(date = sample(seq(as.Date("2015-01-01"),
