@@ -67,7 +67,7 @@ scale_fill_certe_c <- function(...,
 #' @param colour a Certe colour set: `"certe"`, `"certe2"`, `"certe3"`, etc. Will be evaluated with [get_colour()].
 #' @export
 scale_colour_certe_d <- function(colour = "certe") {
-  scale_colour_discrete(type = get_colour(colour, 50))
+  scale_colour_discrete(type = get_colour(colour, 15))
 }
 
 #' @rdname scale_certe
@@ -77,5 +77,5 @@ scale_color_certe_d <- scale_colour_certe_d
 #' @rdname scale_certe
 #' @export
 scale_fill_certe_d <- function(colour = "certe") {
-  scale_fill_discrete(type = get_colour(colour, 50))
+  scale_fill_discrete(type = get_colour(colour, 15))
 }

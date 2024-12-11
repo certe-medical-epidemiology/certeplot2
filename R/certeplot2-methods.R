@@ -19,7 +19,7 @@
 
 #' Methods for [plot2()]
 #' 
-#' These are the implemented methods for different S3 classes to be used in [plot2()]. Since they have an extensive list of arguments, they are placed here on a separate manual page.
+#' These are the implemented methods for different S3 classes to be used in [plot2()].
 #' @rdname plot2-extensions
 #' @name plot2-extensions
 #' @importFrom plot2 plot2
@@ -622,7 +622,6 @@ plot2.antibiogram <- function(.data,
                           col_y_secondary = NULL)
   
   validate_y_scale <- get("validate_y_scale", envir = asNamespace("plot2"))
-  print(p)
   y_scale <- validate_y_scale(df = df |> mutate(`_var_y` = SI),
                               type = "geom_col",
                               y.24h = FALSE,
@@ -1009,6 +1008,14 @@ plot2.sir_df <- function(.data,
 #' @importFrom plot2 plot2 get_colour
 #' @details The QC-test can be acquired with [certestats::qc_test()]. It applies the Nelson QC rules for a vector of values.
 #' @export
+#' @examples
+#' 
+#' # QUALITY ANALYSIS -----------------------------------------------------
+#' x <- runif(1000)
+#' qc_result <- certestats::qc_test(x)
+#' qc_result
+#' 
+#' plot2(qc_test)
 plot2.qc_test <- function(.data,
                           x = x,
                           y = y,
@@ -1126,7 +1133,7 @@ plot2.qc_test <- function(.data,
                           datalabels.lineheight = 1.0,
                           decimal.mark = dec_mark(),
                           big.mark = big_mark(),
-                          summarise_function = base::sum,
+                          summarise_function = function(x) x,
                           stacked = FALSE,
                           stacked_fill = FALSE,
                           horizontal = FALSE,
@@ -1210,7 +1217,7 @@ plot2.qc_test <- function(.data,
   p <- plot2(.data = df,
              x = x,
              y = y,
-             category = category,
+             category = rule,
              facet = facet,
              type = "blank",
              x.title = {{ x.title }},

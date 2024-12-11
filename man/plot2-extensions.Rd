@@ -586,7 +586,7 @@
   datalabels.lineheight = 1,
   decimal.mark = dec_mark(),
   big.mark = big_mark(),
-  summarise_function = base::sum,
+  summarise_function = function(x) x,
   stacked = FALSE,
   stacked_fill = FALSE,
   horizontal = FALSE,
@@ -1040,7 +1040,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 \item{...}{any argument to give to the geom. This will override automatically-set settings for the geom.}
 }
 \description{
-These are the implemented methods for different S3 classes to be used in \code{\link[=plot2]{plot2()}}. Since they have an extensive list of arguments, they are placed here on a separate manual page.
+These are the implemented methods for different S3 classes to be used in \code{\link[=plot2]{plot2()}}.
 }
 \details{
 For antimicrobial resistance (AMR) data analysis, use the \code{\link[AMR:bug_drug_combinations]{bug_drug_combinations()}} or the \code{\link[AMR:proportion]{sir_df()}} function from the \code{AMR} package on a data set with antibiograms. The result can be used as input for \code{\link[=plot2]{plot2()}}.
@@ -1066,6 +1066,13 @@ if (require("AMR")) {
                 syndromic_group = "ward") |>
     plot2()
 }
+
+# QUALITY ANALYSIS -----------------------------------------------------
+x <- runif(1000)
+qc_result <- certestats::qc_test(x)
+qc_result
+
+plot2(qc_test)
 
 # DISEASE CLUSTERS -----------------------------------------------------
 cases <- data.frame(date = sample(seq(as.Date("2015-01-01"),
