@@ -1,6 +1,6 @@
 Package: certeplot2
 Title: A Certe R Package for Convenient Plotting
-Version: 2.0.4
+Version: 2.0.5
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
          family = "Berends",
@@ -22,7 +22,7 @@ Depends:
   plot2 (>= 1.25.0)
 Imports: 
   certestyle,
-  AMR (>= 2.0.0),
+  AMR (>= 3.0.0),
   dplyr (>= 1.0.0),
   ggplot2 (>= 3.5.1),
   tidyr (>= 1.0.0),
