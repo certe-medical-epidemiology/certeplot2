@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.7</span>
       </span>
     </div>
 
@@ -168,6 +168,7 @@
 <span>  y_secondary.scientific <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  y_secondary.percent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  y_secondary.labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  category_type <span class="op">=</span> <span class="st">"colour"</span>,</span>
 <span>  category.labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.percent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  category.breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -327,6 +328,7 @@
 <span>  y_secondary.scientific <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  y_secondary.percent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  y_secondary.labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  category_type <span class="op">=</span> <span class="st">"colour"</span>,</span>
 <span>  category.labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.percent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  category.breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -485,6 +487,7 @@
 <span>  y_secondary.scientific <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  y_secondary.percent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  y_secondary.labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  category_type <span class="op">=</span> <span class="st">"colour"</span>,</span>
 <span>  category.labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.percent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  category.breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -642,6 +645,7 @@
 <span>  y_secondary.scientific <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  y_secondary.percent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  y_secondary.labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  category_type <span class="op">=</span> <span class="st">"colour"</span>,</span>
 <span>  category.labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category.percent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  category.breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -802,6 +806,7 @@
 <span>  y_secondary.scientific <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  y_secondary.percent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  y_secondary.labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  category_type <span class="op">=</span> <span class="st">"colour"</span>,</span>
 <span>  category.labels <span class="op">=</span> <span class="va">md_to_expression</span>,</span>
 <span>  category.percent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  category.breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -911,7 +916,7 @@
 <li><p>One of these additional types:</p><ul><li><p><code>"barpercent"</code> (short: <code>"bp"</code>), which is effectively a shortcut to set <code>type = "col"</code> and <code>horizontal = TRUE</code> and <code>x.max_items = 10</code> and <code>x.sort = "freq-desc"</code> and <code>datalabels.format = "%n (%p)"</code>.</p></li>
 <li><p><code>"linedot"</code> (short: <code>"ld"</code>), which sets <code>type = "line"</code> and adds two point geoms using <code><a href="https://msberends.github.io/plot2/reference/add_type.html" class="external-link">add_point()</a></code>; one with large white dots and one with smaller dots using the colours set in <code>colour</code>. This is essentially equal to base <span style="R">R</span> <code>plot(..., type = "b")</code> but with closed shapes.</p></li>
 <li><p><code>"upset"</code> or <code>"UpSet"</code> (short: <code>"u"</code>) creates an <a href="https://en.wikipedia.org/wiki/UpSet_plot" class="external-link">UpSet plot</a>, which requires <code>x</code> to contain multiple variables from <code>.data</code> that contain <code>0</code>/<code>1</code> or <code>FALSE</code>/<code>TRUE</code> values. It is also possible to provide <code>y</code>, on which then <code>summarise_function</code> will be applied.</p></li>
-<li><p><code>"dumbbell"</code> (short: <code>"d"</code>), which sets <code>type = "point"</code> and <code>horizontal = TRUE</code>, and adds a line between the points (using <code>geom_segment()</code>). The line colour cannot be changed. This plot type is only possible when the <code>category</code> has two distinct values.</p></li>
+<li><p><code>"dumbbell"</code> (short: <code>"d"</code>), which sets <code>type = "point"</code> and <code>horizontal = TRUE</code>, and adds a line between the points (using <code><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment()</a></code>). The line colour cannot be changed. This plot type is only possible when the <code>category</code> has two distinct values.</p></li>
 <li><p><code>"sankey"</code> (short: <code>"s"</code>) creates a <a href="https://en.wikipedia.org/wiki/Sankey_diagram" class="external-link">Sankey plot</a> using <code>category</code> for the flows and requires <code>x</code> to contain multiple variables from <code>.data</code>. At default, it also sets <code>x.expand = c(0.05, 0.05)</code> and <code>y.limits = c(NA, NA)</code> and <code>y.expand = c(0.01, 0.01)</code>. The so-called 'nodes' (the 'blocks' with text) are considered the datalabels, so you can set the text size and colour of the nodes using <code>datalabels.size</code>, <code>datalabels.colour</code>, and <code>datalabels.colour_fill</code>. The transparency of the flows can be set using <code>sankey.alpha</code>, and the width of the nodes can be set using <code>sankey.node_width</code>. Sankey plots can also be flipped using <code>horizontal = TRUE</code>.</p></li>
 </ul></li>
 <li><p>Left blank. In this case, the type will be determined automatically: <code>"boxplot"</code> if there is no x axis or if the length of unique values per x axis item is at least 3, <code>"point"</code> if both the y and x axes are numeric, and the <a href="https://rdrr.io/r/base/options.html" class="external-link">option</a> <code>"plot2.default_type"</code> otherwise (which defaults to <code>"col"</code>). Use <code>type = "blank"</code> or <code>type = "geom_blank"</code> to <em>not</em> add a geom.</p></li>
@@ -1089,6 +1094,10 @@
 <dd><p>colours to set for the secondary y axis, will be evaluated with <code><a href="https://msberends.github.io/plot2/reference/colour.html" class="external-link">get_colour()</a></code></p></dd>
 
 
+<dt id="arg-category-type">category_type<a class="anchor" aria-label="anchor" href="#arg-category-type"></a></dt>
+<dd><p>type of the <code>category</code>, one of: <code>"colour"</code> or <code>"color"</code> (default), <code>"shape"</code>, <code>"size"</code>, <code>"linetype"</code>, <code>"linewidth"</code>, <code>"alpha"</code>. There is never a need to set <code>"fill"</code> as that will be included in <code>"colour"</code>.</p></dd>
+
+
 <dt id="arg-category-labels-category-percent-category-breaks-category-expand-category-midpoint">category.labels, category.percent, category.breaks, category.expand, category.midpoint<a class="anchor" aria-label="anchor" href="#arg-category-labels-category-percent-category-breaks-category-expand-category-midpoint"></a></dt>
 <dd><p>settings for the plotting direction <code>category</code>.</p></dd>
 
@@ -1182,7 +1191,7 @@
 
 
 <dt id="arg-size">size<a class="anchor" aria-label="anchor" href="#arg-size"></a></dt>
-<dd><p>size of the geom. Defaults to <code>2</code> for geoms <a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">point</a>, <a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html" class="external-link">jitter</a>, and beeswarm; <code>5</code> for a dumbbell plots (using <code>type = "dumbbell"</code>); <code>0.75</code> otherwise.</p></dd>
+<dd><p>size of the geom. Defaults to <code>2</code> for geoms <a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">point</a>, <a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html" class="external-link">jitter</a>, and beeswarm; <code>4</code> for a UpSet plots (using <code>type = "upset"</code>); <code>5</code> for a dumbbell plots (using <code>type = "dumbbell"</code>); <code>0.75</code> otherwise.</p></dd>
 
 
 <dt id="arg-linetype">linetype<a class="anchor" aria-label="anchor" href="#arg-linetype"></a></dt>
@@ -1193,7 +1202,7 @@
 <dd><p>linewidth of the geom, only suitable for geoms that draw lines. Defaults to:</p><ul><li><p><code>0.5</code> for geoms <a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">boxplot</a> and <a href="https://ggplot2.tidyverse.org/reference/geom_violin.html" class="external-link">violin</a>, and for geoms that have no area (such as <a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">line</a>)</p></li>
 <li><p><code>0.1</code> for <a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">sf</a></p></li>
 <li><p><code>0.25</code> for geoms that are continous and have fills (such as <a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">area</a>)</p></li>
-<li><p><code>1.0</code> for dumbbell plots (using <code>type = "dumbbell"</code>)</p></li>
+<li><p><code>1.0</code> for dumbbell plots (using <code>type = "dumbbell"</code>) and UpSet plots (using <code>type = "upset"</code>)</p></li>
 <li><p><code>0.5</code> otherwise (such as <a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">histogram</a> and <a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">area</a>)</p></li>
 </ul></dd>
 
@@ -1322,8 +1331,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Quality Control Rules According to Nelson</span> <span style="color: #00BBBB;">───────────────────────────────────</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  n    =  1000 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  mean =  0.5060361 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  sd   =  0.2944883 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  mean =  0.5057711 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  sd   =  0.2941342 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">QC Rule 1: One Point is more than 3 Standard Deviations from the Mean</span> ──</span>
@@ -1333,7 +1342,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">QC Rule 2: 9 (or more) Points in a Row are on the Same Side of the Mean</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting position:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 523</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 521</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting value:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.07588305</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1344,7 +1353,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">QC Rule 4: 14 (or more) Points in a Row Alternate in Direction, Increasing then Decreasing</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting position:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 868</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 866</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting value:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2935854</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1355,7 +1364,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">QC Rule 6: 4 Out of 5 Points in a Row are &gt;1 Sd from the Mean</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting positions:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 159 160 367 732 808 809</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 157 158 365 730 806 807</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting values:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.46401357 0.91766051 0.93648743 0.03350404 0.34585360 0.06731983</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1368,6 +1377,21 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> No violations</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://msberends.github.io/plot2/reference/plot2.html" class="external-link">plot2</a></span><span class="op">(</span><span class="va">qc_result</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
 <span class="r-plt img"><img src="plot2-extensions-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># DISEASE CLUSTERS -----------------------------------------------------</span></span></span>
@@ -1383,6 +1407,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Using column 'patient' for patient IDs</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">check</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://msberends.github.io/plot2/reference/plot2.html" class="external-link">plot2</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Ignoring unknown labels:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> <span style="color: #00BB00;">fill</span> : <span style="color: #0000BB;">"Periode"</span></span>
 <span class="r-plt img"><img src="plot2-extensions-4.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
