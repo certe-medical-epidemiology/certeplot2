@@ -1,6 +1,6 @@
 Package: certeplot2
 Title: A Certe R Package for Convenient Plotting
-Version: 2.0.6
+Version: 2.0.7
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
          family = "Berends",
@@ -19,10 +19,10 @@ Description: A Certe R Package for fast and convenient plotting based on 'plot2'
 URL: https://certe-medical-epidemiology.github.io/certeplot2, https://github.com/certe-medical-epidemiology/certeplot2
 Depends: 
   R (>= 4.1.0),
-  plot2 (>= 1.25.0)
+  plot2 (>= 1.99.0)
 Imports: 
   certestyle,
-  AMR (>= 3.0.0),
+  AMR (>= 3.0.1),
   dplyr (>= 1.1.0),
   ggplot2 (>= 3.5.1),
   tidyr (>= 1.3.0),
@@ -35,5 +35,5 @@ Suggests:
 License: GPL-2
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Config/testthat/edition: 2
