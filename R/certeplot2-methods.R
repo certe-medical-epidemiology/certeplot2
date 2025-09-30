@@ -390,14 +390,16 @@ plot2.bug_drug_combinations <- function(.data,
 #' # AMR DATA ANALYSIS ----------------------------------------------------
 #' if (require("AMR")) {
 #'   example_isolates[, c("mo", "AMX", "AMC", "ward")] |>
-#'     antibiogram(mo_transform = "gramstain",
+#'     antibiogram(aminopenicillins(),
+#'                 mo_transform = "gramstain",
 #'                 language = "nl") |>
 #'     plot2()
 #' }
 #' 
 #' if (require("AMR")) {
 #'   example_isolates[, c("mo", "AMX", "AMC", "ward")] |>
-#'     antibiogram(mo_transform = "gramstain",
+#'     antibiogram(aminopenicillins(),
+#'                 mo_transform = "gramstain",
 #'                 language = "nl",
 #'                 syndromic_group = "ward") |>
 #'     plot2()

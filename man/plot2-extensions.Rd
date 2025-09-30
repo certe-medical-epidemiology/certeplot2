@@ -935,7 +935,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{y_secondary.colour, y_secondary.colour_fill}{colours to set for the secondary y axis, will be evaluated with \code{\link[plot2:get_colour]{get_colour()}}}
 
-\item{category_type}{type of the \code{category}, one of: \code{"colour"} or \code{"color"} (default), \code{"shape"}, \code{"size"}, \code{"linetype"}, \code{"linewidth"}, \code{"alpha"}. There is never a need to set \code{"fill"} as that will be included in \code{"colour"}.}
+\item{category_type}{type of the \code{category}, one or more of: \code{"colour"} (default), \code{"shape"}, \code{"size"}, \code{"linetype"}, \code{"linewidth"}, \code{"alpha"}. There is no need to set \code{"fill"}, as \code{plot2} handles colour-setting internally and determines automatically whether the \code{colour} or \code{fill} aesthetic must be used.}
 
 \item{category.labels, category.percent, category.breaks, category.expand, category.midpoint}{settings for the plotting direction \code{category}.}
 
@@ -1065,14 +1065,16 @@ The detection of \href{https://en.wikipedia.org/wiki/Disease_cluster}{disease cl
 # AMR DATA ANALYSIS ----------------------------------------------------
 if (require("AMR")) {
   example_isolates[, c("mo", "AMX", "AMC", "ward")] |>
-    antibiogram(mo_transform = "gramstain",
+    antibiogram(aminopenicillins(),
+                mo_transform = "gramstain",
                 language = "nl") |>
     plot2()
 }
 
 if (require("AMR")) {
   example_isolates[, c("mo", "AMX", "AMC", "ward")] |>
-    antibiogram(mo_transform = "gramstain",
+    antibiogram(aminopenicillins(),
+                mo_transform = "gramstain",
                 language = "nl",
                 syndromic_group = "ward") |>
     plot2()
