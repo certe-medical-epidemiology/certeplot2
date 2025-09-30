@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.8</span>
       </span>
     </div>
 
@@ -1095,7 +1095,7 @@
 
 
 <dt id="arg-category-type">category_type<a class="anchor" aria-label="anchor" href="#arg-category-type"></a></dt>
-<dd><p>type of the <code>category</code>, one of: <code>"colour"</code> or <code>"color"</code> (default), <code>"shape"</code>, <code>"size"</code>, <code>"linetype"</code>, <code>"linewidth"</code>, <code>"alpha"</code>. There is never a need to set <code>"fill"</code> as that will be included in <code>"colour"</code>.</p></dd>
+<dd><p>type of the <code>category</code>, one or more of: <code>"colour"</code> (default), <code>"shape"</code>, <code>"size"</code>, <code>"linetype"</code>, <code>"linewidth"</code>, <code>"alpha"</code>. There is no need to set <code>"fill"</code>, as <code>plot2</code> handles colour-setting internally and determines automatically whether the <code>colour</code> or <code>fill</code> aesthetic must be used.</p></dd>
 
 
 <dt id="arg-category-labels-category-percent-category-breaks-category-expand-category-midpoint">category.labels, category.percent, category.breaks, category.expand, category.midpoint<a class="anchor" aria-label="anchor" href="#arg-category-labels-category-percent-category-breaks-category-expand-category-midpoint"></a></dt>
@@ -1308,20 +1308,24 @@
 <span class="r-in"><span><span class="co"># AMR DATA ANALYSIS ----------------------------------------------------</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://amr-for-r.org" class="external-link">"AMR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">example_isolates</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mo"</span>, <span class="st">"AMX"</span>, <span class="st">"AMC"</span>, <span class="st">"ward"</span><span class="op">)</span><span class="op">]</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://amr-for-r.org/reference/antibiogram.html" class="external-link">antibiogram</a></span><span class="op">(</span>mo_transform <span class="op">=</span> <span class="st">"gramstain"</span>,</span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://amr-for-r.org/reference/antibiogram.html" class="external-link">antibiogram</a></span><span class="op">(</span><span class="fu"><a href="https://amr-for-r.org/reference/antimicrobial_selectors.html" class="external-link">aminopenicillins</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                mo_transform <span class="op">=</span> <span class="st">"gramstain"</span>,</span></span>
 <span class="r-in"><span>                language <span class="op">=</span> <span class="st">"nl"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://msberends.github.io/plot2/reference/plot2.html" class="external-link">plot2</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: AMR</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i For </span><span style="color: #0000BB; background-color: #444444;">`aminopenicillins()`</span><span style="color: #0000BB;"> using column '</span><span style="color: #0000BB; font-weight: bold;">AMX</span><span style="color: #0000BB;">' (amoxicillin)</span></span>
 <span class="r-plt img"><img src="plot2-extensions-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://amr-for-r.org" class="external-link">"AMR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">example_isolates</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mo"</span>, <span class="st">"AMX"</span>, <span class="st">"AMC"</span>, <span class="st">"ward"</span><span class="op">)</span><span class="op">]</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://amr-for-r.org/reference/antibiogram.html" class="external-link">antibiogram</a></span><span class="op">(</span>mo_transform <span class="op">=</span> <span class="st">"gramstain"</span>,</span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://amr-for-r.org/reference/antibiogram.html" class="external-link">antibiogram</a></span><span class="op">(</span><span class="fu"><a href="https://amr-for-r.org/reference/antimicrobial_selectors.html" class="external-link">aminopenicillins</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                mo_transform <span class="op">=</span> <span class="st">"gramstain"</span>,</span></span>
 <span class="r-in"><span>                language <span class="op">=</span> <span class="st">"nl"</span>,</span></span>
 <span class="r-in"><span>                syndromic_group <span class="op">=</span> <span class="st">"ward"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://msberends.github.io/plot2/reference/plot2.html" class="external-link">plot2</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">i For </span><span style="color: #0000BB; background-color: #444444;">`aminopenicillins()`</span><span style="color: #0000BB;"> using column '</span><span style="color: #0000BB; font-weight: bold;">AMX</span><span style="color: #0000BB;">' (amoxicillin)</span></span>
 <span class="r-plt img"><img src="plot2-extensions-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># QUALITY ANALYSIS -----------------------------------------------------</span></span></span>
@@ -1331,8 +1335,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Quality Control Rules According to Nelson</span> <span style="color: #00BBBB;">───────────────────────────────────</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  n    =  1000 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  mean =  0.5057711 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  sd   =  0.2941342 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  mean =  0.5070973 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  sd   =  0.2936843 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">QC Rule 1: One Point is more than 3 Standard Deviations from the Mean</span> ──</span>
@@ -1342,7 +1346,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">QC Rule 2: 9 (or more) Points in a Row are on the Same Side of the Mean</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting position:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 521</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 517</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting value:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.07588305</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1353,7 +1357,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">QC Rule 4: 14 (or more) Points in a Row Alternate in Direction, Increasing then Decreasing</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting position:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 866</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 862</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting value:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2935854</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1364,9 +1368,10 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">QC Rule 6: 4 Out of 5 Points in a Row are &gt;1 Sd from the Mean</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting positions:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 157 158 365 730 806 807</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 153 154 198 199 361 726 802 803</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting values:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.46401357 0.91766051 0.93648743 0.03350404 0.34585360 0.06731983</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.46401357 0.91766051 0.03209271 0.14531584 0.93648743 0.03350404 0.34585360</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [8] 0.06731983</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">QC Rule 7: &gt;=15 Points in a Row are Within 1 Sd of the Mean</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -1377,6 +1382,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> No violations</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://msberends.github.io/plot2/reference/plot2.html" class="external-link">plot2</a></span><span class="op">(</span><span class="va">qc_result</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
