@@ -51,9 +51,9 @@ test_that("S3 implementations work", {
                   "gg")
   
   # type should become boxplot here
-  expect_s3_class(admitted_patients |> plot2(x = hospital, y = certestats::z_score(age)), "gg")
+  expect_s3_class(plot2::admitted_patients |> plot2(x = hospital, y = certestats::z_score(age)), "gg")
   # this uses the format2_scientific function for the y axis
-  expect_s3_class(admitted_patients |>
+  expect_s3_class(plot2::admitted_patients |>
                     plot2(format(date, "%Y"),
                           certestats::z_score(age),
                           hospital,
@@ -90,5 +90,5 @@ test_that("errorbars work", {
   expect_s3_class(plotdata |>
                     dplyr::mutate(error1 = n * 0.9, error2 = n * 1.1) |> 
                     plot2(type = "c", colour = "certeroze4") |>
-                    add_errorbar(error1, error2), "gg")
+                    plot2::add_errorbar(error1, error2), "gg")
 })

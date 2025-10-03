@@ -60,6 +60,6 @@ certeplot2_env <- new.env(parent = emptyenv())
     }
   }
   if (length(opts_to_unset) > 0) {
-    options(setNames(rep(list(NULL), length(opts_to_unset)), opts_to_unset))
+    options(stats::setNames(rep(list(NULL), length(opts_to_unset)), opts_to_unset))
   }
 }

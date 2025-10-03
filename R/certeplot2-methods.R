@@ -1716,7 +1716,7 @@ plot2.qc_test <- function(.data,
 #' @rdname plot2-extensions
 #' @importFrom dplyr group_by mutate ungroup summarise n_distinct `%>%` filter left_join
 #' @importFrom ggplot2 geom_point aes unit
-#' @importFrom plot2 add_type add_line plot2 get_colour
+#' @importFrom plot2 add_type add_line plot2 get_colour move_layer md_to_expression
 #' @importFrom certestyle format2
 #' @details The detection of [disease clusters](https://en.wikipedia.org/wiki/Disease_cluster) can be done using [certestats::early_warning_cluster()]. Use `size` to alter the size of the triangles that indicate clusters.
 #' @export
