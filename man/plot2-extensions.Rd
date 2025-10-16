@@ -6,7 +6,7 @@
 \alias{plot2.antibiogram}
 \alias{plot2.sir_df}
 \alias{plot2.qc_test}
-\alias{plot2.early_warning_cluster}
+\alias{plot2.disease_cluster}
 \title{Methods for \code{\link[plot2:plot2]{plot2::plot2()}}}
 \usage{
 \method{plot2}{bug_drug_combinations}(
@@ -638,7 +638,7 @@
   ...
 )
 
-\method{plot2}{early_warning_cluster}(
+\method{plot2}{disease_cluster}(
   .data,
   x = NULL,
   y = NULL,
@@ -770,7 +770,7 @@
   smooth.colour = NULL,
   size = NULL,
   linetype = 1,
-  linewidth = NULL,
+  linewidth = 1,
   binwidth = NULL,
   width = NULL,
   jitter_seed = NA,
@@ -1067,7 +1067,7 @@ For antimicrobial resistance (AMR) data analysis, use the \code{\link[AMR:bug_dr
 
 The QC-test can be acquired with \code{\link[certestats:qc_rules]{certestats::qc_test()}}. It applies the Nelson QC rules for a vector of values.
 
-The detection of \href{https://en.wikipedia.org/wiki/Disease_cluster}{disease clusters} can be done using \code{\link[certestats:early_warning_cluster]{certestats::early_warning_cluster()}}. Use \code{size} to alter the size of the triangles that indicate clusters.
+The detection of \href{https://en.wikipedia.org/wiki/Disease_cluster}{disease clusters} can be done using \code{\link[certestats:detect_disease_clusters]{certestats::detect_disease_clusters()}}. Use \code{size} to alter the size of the triangles that indicate clusters.
 }
 \examples{
 
@@ -1100,11 +1100,14 @@ plot2(qc_result)
 cases <- data.frame(date = sample(seq(as.Date("2015-01-01"),
                                       as.Date("2022-12-31"),
                                       "1 day"),
-                                  size = 300),
-                    patient = sample(LETTERS, size = 300, replace = TRUE))
-check <- certestats::early_warning_cluster(cases,
-                                           minimum_cases = 1,
-                                           threshold_percentile = 0.75)
+                                  size = 3000,
+                                  replace = TRUE),
+                    patient = sample(LETTERS,
+                                     size = 3000,
+                                     replace = TRUE))
+check <- certestats::detect_disease_clusters(cases,
+                                             minimum_cases = 1,
+                                             threshold_percentile = 0.75)
 
 check |> plot2()
 }

@@ -1718,7 +1718,7 @@ plot2.qc_test <- function(.data,
 #' @importFrom ggplot2 geom_point aes unit
 #' @importFrom plot2 add_type add_line plot2 get_colour move_layer md_to_expression
 #' @importFrom certestyle format2
-#' @details The detection of [disease clusters](https://en.wikipedia.org/wiki/Disease_cluster) can be done using [certestats::early_warning_cluster()]. Use `size` to alter the size of the triangles that indicate clusters.
+#' @details The detection of [disease clusters](https://en.wikipedia.org/wiki/Disease_cluster) can be done using [certestats::detect_disease_clusters()]. Use `size` to alter the size of the triangles that indicate clusters.
 #' @export
 #' @examples
 #' 
@@ -1726,14 +1726,17 @@ plot2.qc_test <- function(.data,
 #' cases <- data.frame(date = sample(seq(as.Date("2015-01-01"),
 #'                                       as.Date("2022-12-31"),
 #'                                       "1 day"),
-#'                                   size = 300),
-#'                     patient = sample(LETTERS, size = 300, replace = TRUE))
-#' check <- certestats::early_warning_cluster(cases,
-#'                                            minimum_cases = 1,
-#'                                            threshold_percentile = 0.75)
+#'                                   size = 3000,
+#'                                   replace = TRUE),
+#'                     patient = sample(LETTERS,
+#'                                      size = 3000,
+#'                                      replace = TRUE))
+#' check <- certestats::detect_disease_clusters(cases,
+#'                                              minimum_cases = 1,
+#'                                              threshold_percentile = 0.75)
 #' 
 #' check |> plot2()
-plot2.early_warning_cluster <- function(.data,
+plot2.disease_cluster <- function(.data,
                                         x = NULL,
                                         y = NULL,
                                         category = NULL,
@@ -1862,7 +1865,7 @@ plot2.early_warning_cluster <- function(.data,
                                         smooth.colour = NULL,
                                         size = NULL,
                                         linetype = 1,
-                                        linewidth = NULL,
+                                        linewidth = 1,
                                         binwidth = NULL,
                                         width = NULL,
                                         jitter_seed = NA,
@@ -1894,9 +1897,11 @@ plot2.early_warning_cluster <- function(.data,
   
   if (NROW(early_warning_object$details) == 0) {
     # check if markdown is required
+    validate_theme <- get("validate_theme", envir = asNamespace("plot2"))
+    validate_markdown <- get("validate_markdown", envir = asNamespace("plot2"))
+    validate_title <- get("validate_title", envir = asNamespace("plot2"))
     markdown <- validate_markdown(markdown, x.title, y.title, c(category.title, legend.title), title, subtitle, tag, caption)
     plot2_warning("No observations, returning an empty plot")
-    validate_theme <- get("validate_theme", envir = asNamespace("plot2"))
     p <- ggplot() +
       validate_theme(theme = theme,
                      type = "",
@@ -2016,7 +2021,7 @@ plot2.early_warning_cluster <- function(.data,
           facet.relative = facet.relative,
           x.date_breaks = x.date_breaks,
           x.date_labels = x.date_labels,
-          x.date_remove_years = FALSE, # otherwise the diease cluster years will be 1970 (as plot2() works like that in unify_years())
+          x.date_remove_years = FALSE, # otherwise the disease cluster years will be 1970 (as plot2() works like that in unify_years())
           category.focus = category.focus,
           colour = colour,
           colour_fill = colour_fill,
@@ -2106,9 +2111,8 @@ plot2.early_warning_cluster <- function(.data,
           smooth.linewidth = smooth.linewidth,
           smooth.linetype = smooth.linetype,
           smooth.colour = smooth.colour,
-          # size = size,
-          linetype = linetype,
-          linewidth = linewidth,
+          linetype = 1,
+          linewidth = 0.05,
           binwidth = binwidth,
           width = width,
           jitter_seed = jitter_seed,
@@ -2158,11 +2162,6 @@ plot2.early_warning_cluster <- function(.data,
           `_summarise_fn_name` = deparse(substitute(summarise_function)),
           `_misses.summarise_function` = missing(summarise_function),
           ...) %>%
-    add_line(y = moving_avg,
-             data = .$data |> filter(period_txt %like% "Periode 0:"),
-             colour = colour[1],
-             linewidth = 0.6,
-             inherit.aes = FALSE) %>%
     (function(x) {
       if ("moving_avg_limit" %in% x$data) {
         x |> add_line(y = moving_avg_limit,
@@ -2172,7 +2171,7 @@ plot2.early_warning_cluster <- function(.data,
                       inherit.aes = FALSE)
       } else {
         x
-      }})() |> 
+      }})() |>
     add_type(data = clusters,
              type = "rect",
              mapping = aes(xmin = xmin,
@@ -2219,6 +2218,14 @@ plot2.early_warning_cluster <- function(.data,
              size = datalabels.size,
              fontface = "bold",
              inherit.aes = FALSE)
+  
+  p <- p +
+    geom_line(data = early_warning_object$details |> filter(period == 0),
+              aes(x = period_date, y = moving_avg),
+              inherit.aes = FALSE,
+              colour = get_colour(colour[1]),
+              linewidth = linewidth,
+              linetype = linetype)
   
   if (isTRUE(attributes(early_warning_object)$based_on_historic_maximum)) {
     p <- p |>

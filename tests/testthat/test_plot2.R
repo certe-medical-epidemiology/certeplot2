@@ -46,7 +46,7 @@ test_that("S3 implementations work", {
                                                "1 day"),
                                            size = 300),
                              patient = sample(LETTERS, size = 300, replace = TRUE)) |> 
-                    certestats::early_warning_cluster(minimum_cases = 1, threshold_percentile = 0.75) |>
+                    certestats::detect_disease_clusters(minimum_cases = 1, threshold_percentile = 0.75) |>
                     plot2(),
                   "gg")
   

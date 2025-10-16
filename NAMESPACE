@@ -2,7 +2,7 @@
 
 S3method(plot2,antibiogram)
 S3method(plot2,bug_drug_combinations)
-S3method(plot2,early_warning_cluster)
+S3method(plot2,disease_cluster)
 S3method(plot2,qc_test)
 S3method(plot2,sir_df)
 export(scale_color_certe_c)
