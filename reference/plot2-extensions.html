@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">certeplot2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.13</span>
       </span>
     </div>
 
@@ -716,7 +716,7 @@
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for class 'disease_cluster'</span></span>
+<span><span class="co"># S3 method for class 'detect_disease_clusters'</span></span>
 <span><span class="fu">plot2</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
 <span>  x <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -1304,7 +1304,7 @@
     <h2>Details</h2>
     <p>For antimicrobial resistance (AMR) data analysis, use the <code><a href="https://amr-for-r.org/reference/bug_drug_combinations.html" class="external-link">bug_drug_combinations()</a></code> or the <code><a href="https://amr-for-r.org/reference/proportion.html" class="external-link">sir_df()</a></code> function from the <code>AMR</code> package on a data set with antibiograms. The result can be used as input for <code><a href="https://msberends.github.io/plot2/reference/plot2.html" class="external-link">plot2::plot2()</a></code>.</p>
 <p>The QC-test can be acquired with <code><a href="https://certe-medical-epidemiology.github.io/certestats/reference/qc_rules.html" class="external-link">certestats::qc_test()</a></code>. It applies the Nelson QC rules for a vector of values.</p>
-<p>The detection of <a href="https://en.wikipedia.org/wiki/Disease_cluster" class="external-link">disease clusters</a> can be done using <code>certestats::detect_disease_clusters()</code>. Use <code>size</code> to alter the size of the triangles that indicate clusters.</p>
+<p>The detection of <a href="https://en.wikipedia.org/wiki/Disease_cluster" class="external-link">disease clusters</a> can be done using <code><a href="https://certe-medical-epidemiology.github.io/certestats/reference/detect_disease_clusters.html" class="external-link">certestats::detect_disease_clusters()</a></code>. Use <code>size</code> to alter the size of the triangles that indicate clusters.</p>
     </div>
 
     <div id="ref-examples">
@@ -1320,8 +1320,8 @@
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: AMR</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ For </span><span style="color: #0000BB; background-color: #444444;">`aminopenicillins()`</span><span style="color: #0000BB;"> using column '</span><span style="color: #0000BB; font-weight: bold;">AMX</span><span style="color: #0000BB;">' (amoxicillin)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Package 'showtext' and 'showtextdb' and 'sysfonts' not installed, ignoring</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">font = "Source Sans Pro"</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Downloaded font <span style="color: #0000BB;">https://fonts.google.com/specimen/Source+Sans+Pro</span> from Google</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fonts</span>
 <span class="r-plt img"><img src="plot2-extensions-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://amr-for-r.org" class="external-link">"AMR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -1333,8 +1333,6 @@
 <span class="r-in"><span>    <span class="fu">plot2</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ For </span><span style="color: #0000BB; background-color: #444444;">`aminopenicillins()`</span><span style="color: #0000BB;"> using column '</span><span style="color: #0000BB; font-weight: bold;">AMX</span><span style="color: #0000BB;">' (amoxicillin)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Package 'showtext' and 'showtextdb' and 'sysfonts' not installed, ignoring</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">font = "Source Sans Pro"</span></span>
 <span class="r-plt img"><img src="plot2-extensions-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># QUALITY ANALYSIS -----------------------------------------------------</span></span></span>
@@ -1344,8 +1342,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Quality Control Rules According to Nelson</span> <span style="color: #00BBBB;">───────────────────────────────────</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  n    =  1000 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  mean =  0.5071298 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  sd   =  0.2937324 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  mean =  0.507178 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  sd   =  0.2936928 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">QC Rule 1: One Point is more than 3 Standard Deviations from the Mean</span> ──</span>
@@ -1355,7 +1353,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">QC Rule 2: 9 (or more) Points in a Row are on the Same Side of the Mean</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting position:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 515</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 516</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting value:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.07588305</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1366,7 +1364,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">QC Rule 4: 14 (or more) Points in a Row Alternate in Direction, Increasing then Decreasing</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting position:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 860</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 861</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting value:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2935854</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1377,7 +1375,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">QC Rule 6: 4 Out of 5 Points in a Row are &gt;1 Sd from the Mean</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting positions:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 151 152 196 197 359 724 800 801</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 152 153 197 198 360 725 801 802</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Violation on starting values:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.46401357 0.91766051 0.03209271 0.14531584 0.93648743 0.03350404 0.34585360</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [8] 0.06731983</span>
@@ -1391,8 +1389,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> No violations</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">plot2</span><span class="op">(</span><span class="va">qc_result</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Package 'showtext' and 'showtextdb' and 'sysfonts' not installed, ignoring</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">font = "Source Sans Pro"</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Values set in <span style="color: #0000BB;">x.limits</span> are of class <span style="color: #0000BB;">numeric</span>, while the values on <span style="color: #0000BB;">x</span> are of</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> class <span style="color: #0000BB;">integer</span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
@@ -1413,23 +1409,6 @@
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Ignoring empty aesthetic: `linewidth`.</span>
 <span class="r-plt img"><img src="plot2-extensions-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># DISEASE CLUSTERS -----------------------------------------------------</span></span></span>
-<span class="r-in"><span><span class="va">cases</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2015-01-01"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                                      <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2022-12-31"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                                      <span class="st">"1 day"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                                  size <span class="op">=</span> <span class="fl">3000</span>,</span></span>
-<span class="r-in"><span>                                  replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                    patient <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">LETTERS</span>,</span></span>
-<span class="r-in"><span>                                     size <span class="op">=</span> <span class="fl">3000</span>,</span></span>
-<span class="r-in"><span>                                     replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">check</span> <span class="op">&lt;-</span> <span class="fu">certestats</span><span class="fu">::</span><span class="fu">detect_disease_clusters</span><span class="op">(</span><span class="va">cases</span>,</span></span>
-<span class="r-in"><span>                                             minimum_cases <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>                                             threshold_percentile <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> 'detect_disease_clusters' is not an exported object from 'namespace:certestats'</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">check</span> <span class="op">|&gt;</span> <span class="fu">plot2</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'check' not found</span>
 </code></pre></div>
     </div>
   </div>
@@ -1444,7 +1423,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>
