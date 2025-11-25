@@ -6,7 +6,7 @@
 \alias{plot2.antibiogram}
 \alias{plot2.sir_df}
 \alias{plot2.qc_test}
-\alias{plot2.disease_cluster}
+\alias{plot2.detect_disease_clusters}
 \title{Methods for \code{\link[plot2:plot2]{plot2::plot2()}}}
 \usage{
 \method{plot2}{bug_drug_combinations}(
@@ -638,7 +638,7 @@
   ...
 )
 
-\method{plot2}{disease_cluster}(
+\method{plot2}{detect_disease_clusters}(
   .data,
   x = NULL,
   y = NULL,
@@ -1095,19 +1095,4 @@ qc_result <- certestats::qc_test(x)
 qc_result
 
 plot2(qc_result)
-
-# DISEASE CLUSTERS -----------------------------------------------------
-cases <- data.frame(date = sample(seq(as.Date("2015-01-01"),
-                                      as.Date("2022-12-31"),
-                                      "1 day"),
-                                  size = 3000,
-                                  replace = TRUE),
-                    patient = sample(LETTERS,
-                                     size = 3000,
-                                     replace = TRUE))
-check <- certestats::detect_disease_clusters(cases,
-                                             minimum_cases = 1,
-                                             threshold_percentile = 0.75)
-
-check |> plot2()
 }
