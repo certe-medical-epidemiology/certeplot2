@@ -93,7 +93,7 @@
   y_secondary.scientific = NULL,
   y_secondary.percent = FALSE,
   y_secondary.labels = NULL,
-  category_type = "colour",
+  category.type = "colour",
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -144,6 +144,7 @@
   legend.position = NULL,
   legend.title = NULL,
   legend.reverse = TRUE,
+  legend.nrow = NULL,
   legend.barheight = 6,
   legend.barwidth = 1.5,
   legend.nbin = 300,
@@ -252,7 +253,7 @@
   y_secondary.scientific = NULL,
   y_secondary.percent = FALSE,
   y_secondary.labels = NULL,
-  category_type = "colour",
+  category.type = "colour",
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -303,6 +304,7 @@
   legend.position = NULL,
   legend.title = NULL,
   legend.reverse = TRUE,
+  legend.nrow = NULL,
   legend.barheight = 6,
   legend.barwidth = 1.5,
   legend.nbin = 300,
@@ -410,7 +412,7 @@
   y_secondary.scientific = NULL,
   y_secondary.percent = FALSE,
   y_secondary.labels = NULL,
-  category_type = "colour",
+  category.type = "colour",
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -461,6 +463,7 @@
   legend.position = NULL,
   legend.title = NULL,
   legend.reverse = FALSE,
+  legend.nrow = NULL,
   legend.barheight = 6,
   legend.barwidth = 1.5,
   legend.nbin = 300,
@@ -567,7 +570,7 @@
   y_secondary.scientific = NULL,
   y_secondary.percent = FALSE,
   y_secondary.labels = NULL,
-  category_type = "colour",
+  category.type = "colour",
   category.labels = NULL,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -618,6 +621,7 @@
   legend.position = "right",
   legend.title = NULL,
   legend.reverse = FALSE,
+  legend.nrow = NULL,
   legend.barheight = 6,
   legend.barwidth = 1.5,
   legend.nbin = 300,
@@ -727,7 +731,7 @@
   y_secondary.scientific = NULL,
   y_secondary.percent = FALSE,
   y_secondary.labels = NULL,
-  category_type = "colour",
+  category.type = "colour",
   category.labels = md_to_expression,
   category.percent = FALSE,
   category.breaks = NULL,
@@ -778,6 +782,7 @@
   legend.position = "right",
   legend.title = NULL,
   legend.reverse = FALSE,
+  legend.nrow = NULL,
   legend.barheight = 6,
   legend.barwidth = 1.5,
   legend.nbin = 300,
@@ -801,14 +806,14 @@
 \arguments{
 \item{.data, data}{Data to plot.}
 
-\item{x}{Plotting 'direction' for the x axis. This can be:
+\item{x}{Plotting 'direction' for the X-axis. This can be:
 \itemize{
 \item A single variable from \code{.data}, such as \code{x = column1}
 \item A \link{function} to calculate over one or more variables from \code{.data}, such as \code{x = format(column1, "\%Y")}, or \code{x = ifelse(column1 == "A", "Group A", "Other")}
 \item Multiple variables from \code{.data}, such as \code{x = c(column1, column2, column2)}, or using \link[tidyselect:language]{selection helpers} such as \code{x = where(is.character)} or \code{x = starts_with("var_")} \emph{(only allowed and required for Sankey plots using \code{type = "sankey"})}
 }}
 
-\item{y}{Values to use for plotting along the y axis. This can be:
+\item{y}{Values to use for plotting along the Y-axis. This can be:
 \itemize{
 \item A single variable from \code{.data}, such as \code{y = column1}
 \item Multiple variables from \code{.data}, such as \code{y = c(column1, column2)} or \code{y = c(name1 = column1, "name 2" = column2)}, or using \link[tidyselect:language]{selection helpers} such as \code{y = where(is.double)} or \code{y = starts_with("var_")} \emph{(multiple variables only allowed if \code{category} is not set)}
@@ -826,7 +831,7 @@
 
 The \code{category} can also be a date or date/time (class \code{Date} or \code{POSIXt}).}
 
-\item{type, y_secondary.type}{Type of visualisation to use. This can be:
+\item{type}{Type of visualisation to use. This can be:
 \itemize{
 \item A \code{ggplot2} geom name or their abbreviation such as \code{"col"} and \code{"point"}. All geoms are supported (including \code{\link[ggplot2:geom_blank]{geom_blank()}}).
 
@@ -836,12 +841,13 @@ Please note: in \code{ggplot2}, 'bars' and 'columns' are equal, while it is comm
 \item One of these additional types:
 \itemize{
 \item \code{"barpercent"} (short: \code{"bp"}), which is effectively a shortcut to set \code{type = "col"} and \code{horizontal = TRUE} and \code{x.max_items = 10} and \code{x.sort = "freq-desc"} and \code{datalabels.format = "\%n (\%p)"}.
-\item \code{"linedot"} (short: \code{"ld"}), which sets \code{type = "line"} and adds two point geoms using \code{\link[plot2:add_point]{add_point()}}; one with large white dots and one with smaller dots using the colours set in \code{colour}. This is essentially equal to base \R \code{plot(..., type = "b")} but with closed shapes.
-\item \code{"upset"} or \code{"UpSet"} (short: \code{"u"}) creates an \href{https://en.wikipedia.org/wiki/UpSet_plot}{UpSet plot}, which requires \code{x} to contain multiple variables from \code{.data} that contain \code{0}/\code{1} or \code{FALSE}/\code{TRUE} values. It is also possible to provide \code{y}, on which then \code{summarise_function} will be applied.
 \item \code{"dumbbell"} (short: \code{"d"}), which sets \code{type = "point"} and \code{horizontal = TRUE}, and adds a line between the points (using \code{\link[ggplot2:geom_segment]{geom_segment()}}). The line colour cannot be changed. This plot type is only possible when the \code{category} has two distinct values.
+\item \code{"linedot"} (short: \code{"ld"}), which sets \code{type = "line"} and adds two point geoms using \code{\link[plot2:add_point]{add_point()}}; one with large white dots and one with smaller dots using the colours set in \code{colour}. This is essentially equal to base \R \code{plot(..., type = "b")} but with closed shapes.
+\item \code{"back-to-back"} (short: \code{"b2b"}) creates a back-to-back plot, sometimes called a \href{https://en.wikipedia.org/wiki/Tornado_diagram}{Tornado diagram}, a \href{https://en.wikipedia.org/wiki/Tornado_diagram}{Butterfly plot}, or a \href{https://en.wikipedia.org/wiki/Population_pyramid}{Population Pyramid}. It uses \code{facet} to distinquish the left and right plots. Therefore, \code{facet} must be set to (a column containing) two unique values.
+\item \code{"upset"} or \code{"UpSet"} (short: \code{"u"}) creates an \href{https://en.wikipedia.org/wiki/UpSet_plot}{UpSet plot}, which requires \code{x} to contain multiple variables from \code{.data} that contain \code{0}/\code{1} or \code{FALSE}/\code{TRUE} values. It is also possible to provide \code{y}, on which then \code{summarise_function} will be applied.
 \item \code{"sankey"} (short: \code{"s"}) creates a \href{https://en.wikipedia.org/wiki/Sankey_diagram}{Sankey plot} using \code{category} for the flows and requires \code{x} to contain multiple variables from \code{.data}. At default, it also sets \code{x.expand = c(0.05, 0.05)} and \code{y.limits = c(NA, NA)} and \code{y.expand = c(0.01, 0.01)}. The so-called 'nodes' (the 'blocks' with text) are considered the datalabels, so you can set the text size and colour of the nodes using \code{datalabels.size}, \code{datalabels.colour}, and \code{datalabels.colour_fill}. The transparency of the flows can be set using \code{sankey.alpha}, and the width of the nodes can be set using \code{sankey.node_width}. Sankey plots can also be flipped using \code{horizontal = TRUE}.
 }
-\item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no x axis or if the length of unique values per x axis item is at least 3, \code{"point"} if both the y and x axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} add a geom.
+\item Left blank. In this case, the type will be determined automatically: \code{"boxplot"} if there is no X-axis or if the length of unique values per X-axis item is at least 3, \code{"point"} if both the y and x axes are numeric, and the \link[=options]{option} \code{"plot2.default_type"} otherwise (which defaults to \code{"col"}). Use \code{type = "blank"} or \code{type = "geom_blank"} to \emph{not} add a geom.
 }}
 
 \item{title, subtitle, caption, tag, x.title, y.title, category.title, legend.title, y_secondary.title}{A title to use. This can be:
@@ -871,9 +877,9 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{facet.fixed_x}{A \link{logical} to indicate whether all x scales should have the same breaks. This acts like the inverse of \code{x.drop}.}
 
-\item{x.date_breaks}{Breaks to use when the x axis contains dates, will be determined automatically if left blank. This accepts values such as \code{"1 day"} and \code{"2 years"}.}
+\item{x.date_breaks}{Breaks to use when the X-axis contains dates, will be determined automatically if left blank. This accepts values such as \code{"1 day"} and \code{"2 years"}.}
 
-\item{x.date_labels}{Labels to use when the x axis contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as \code{"d mmmm yyyy"}.}
+\item{x.date_labels}{Labels to use when the X-axis contains dates, will be determined automatically if left blank. This accepts 'Excel' date-language such as \code{"d mmmm yyyy"}.}
 
 \item{x.date_remove_years}{A \link{logical} to indicate whether the years of all \code{x} values must be unified. This will set the years of all \code{x} values \href{https://en.wikipedia.org/wiki/Unix_time}{to 1970} if the data does not contain a leap year, and to 1972 otherwise. This allows to plot years on the \code{category} while maintaining a date range on \code{x}. The default is \code{FALSE}, unless \code{category} contains all years present in \code{x}.}
 
@@ -885,9 +891,9 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{colour_opacity}{Amount of opacity for \code{colour}/\code{colour_fill} (0 = solid, 1 = transparent).}
 
-\item{x.lbl_angle}{Angle to use for the x axis in a counter-clockwise direction (i.e., a value of \code{90} will orient the axis labels from bottom to top, a value of \code{270} will orient the axis labels from top to bottom).}
+\item{x.lbl_angle}{Angle to use for the X-axis in a counter-clockwise direction (i.e., a value of \code{90} will orient the axis labels from bottom to top, a value of \code{270} will orient the axis labels from top to bottom).}
 
-\item{x.lbl_align}{Alignment for the x axis between \code{0} (left aligned) and \code{1} (right aligned).}
+\item{x.lbl_align}{Alignment for the X-axis between \code{0} (left aligned) and \code{1} (right aligned).}
 
 \item{x.lbl_italic}{\link{logical} to indicate whether the x labels should in in \emph{italics}.}
 
@@ -897,7 +903,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{x.position, y.position}{Position of the axis.}
 
-\item{x.max_items, category.max_items, facet.max_items}{Number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the \code{summarise_function} function. \strong{Please note:} the sorting will be applied first, allowing to e.g. plot the top \emph{n} most frequent values of the x axis by combining \code{x.sort = "freq-desc"} with \verb{x.max_items =} \emph{n}.}
+\item{x.max_items, category.max_items, facet.max_items}{Number of maximum items to use, defaults to infinite. All other values will be grouped and summarised using the \code{summarise_function} function. \strong{Please note:} the sorting will be applied first, allowing to e.g. plot the top \emph{n} most frequent values of the X-axis by combining \code{x.sort = "freq-desc"} with \verb{x.max_items =} \emph{n}.}
 
 \item{x.max_txt, category.max_txt, facet.max_txt}{The text to use of values not included number of \verb{*.max_items}. The placeholder \verb{\%n} will be replaced with the outcome of the \code{summarise_function} function, the placeholder \verb{\%p} will be replaced with the percentage.}
 
@@ -913,13 +919,13 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{x.labels, y.labels, y_secondary.labels}{A labels function or character vector to use for the axis.}
 
-\item{x.character}{A \link{logical} to indicate whether the values of the x axis should be forced to \link{character}. The default is \code{FALSE}, except for years (values between 2000 and 2050) and months (values from 1 to 12).}
+\item{x.character}{A \link{logical} to indicate whether the values of the X-axis should be forced to \link{character}. The default is \code{FALSE}, except for years (values between 2000 and 2050) and months (values from 1 to 12).}
 
 \item{x.drop}{\link{logical} to indicate whether factor levels should be dropped.}
 
-\item{x.mic}{\link{logical} to indicate whether the x axis should be formatted as \link[AMR:as.mic]{MIC values}, by dropping all factor levels and adding missing factors of 2.}
+\item{x.mic}{\link{logical} to indicate whether the X-axis should be formatted as \link[AMR:as.mic]{MIC values}, by dropping all factor levels and adding missing factors of 2.}
 
-\item{x.zoom, y.zoom}{A \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} and \code{x.expand = 0} for the x axis, or \code{y.limits = c(NA, NA)} and \code{y.expand = 0} for the y axis.}
+\item{x.zoom, y.zoom}{A \link{logical} to indicate if the axis should be zoomed on the data, by setting \code{x.limits = c(NA, NA)} and \code{x.expand = 0} for the X-axis, or \code{y.limits = c(NA, NA)} and \code{y.expand = 0} for the Y-axis.}
 
 \item{y.24h}{a \link{logical} to indicate whether the y labels and breaks should be formatted as 24-hour sequences}
 
@@ -929,13 +935,15 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{y.percent, y_secondary.percent}{A \link{logical} to indicate whether the y labels should be formatted as percentages.}
 
-\item{y.percent_break}{A value on which the y axis should have breaks.}
+\item{y.percent_break}{A value on which the Y-axis should have breaks.}
 
-\item{y_secondary}{Values to use for plotting along the secondary y axis. This functionality is poorly supported by \code{ggplot2} and might give unexpected results. Setting the secondary y axis will set the colour to the axis titles.}
+\item{y_secondary}{Values to use for plotting along the secondary Y-axis. This functionality is poorly supported by \code{ggplot2} and might give unexpected results. Setting the secondary Y-axis will set the colour to the axis titles.}
 
-\item{y_secondary.colour, y_secondary.colour_fill}{Colours to set for the secondary y axis, will be evaluated with \code{\link[plot2:get_colour]{get_colour()}}.}
+\item{y_secondary.type}{see \strong{\code{type}}}
 
-\item{category_type}{Type of the \code{category}, one or more of: \code{"colour"} (default), \code{"shape"}, \code{"size"}, \code{"linetype"}, \code{"linewidth"}, \code{"alpha"}. There is no need to set \code{"fill"}, as \code{plot2} handles colour-setting internally and determines automatically whether the \code{colour} or \code{fill} aesthetic must be used.}
+\item{y_secondary.colour, y_secondary.colour_fill}{Colours to set for the secondary Y-axis, will be evaluated with \code{\link[plot2:get_colour]{get_colour()}}.}
+
+\item{category.type}{Type of the \code{category}, one or more of: \code{"colour"} (default), \code{"shape"}, \code{"size"}, \code{"linetype"}, \code{"linewidth"}, \code{"alpha"}. There is no need to set \code{"fill"}, as \code{plot2} handles colour-setting internally and determines automatically whether the \code{colour} or \code{fill} aesthetic must be used.}
 
 \item{category.labels, category.percent, category.breaks, category.expand, category.midpoint}{Settings for the plotting direction \code{category}.}
 
@@ -947,7 +955,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{category.character}{A \link{logical} to indicate whether the values of the category should be forced to \link{character}. The default is \code{FALSE}, except for years (values between 2000 and 2050) and months (values from 1 to 12).}
 
-\item{x.sort, category.sort, facet.sort}{Sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the x axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
+\item{x.sort, category.sort, facet.sort}{Sorting of the plotting direction, defaults to \code{TRUE}, except for continuous values on the X-axis (such as dates and numbers). Applying one of the sorting methods will transform the values to an ordered \link{factor}, which \code{ggplot2} uses to orient the data. Valid values are:
 \itemize{
 \item A manual vector of values
 \item \code{TRUE}: sort \link{factor}s on their levels, otherwise sort ascending on alphabet, while maintaining numbers in the text (\emph{numeric} sort)
@@ -985,7 +993,7 @@ The \code{category.title} defaults to \code{TRUE} if the legend items are numeri
 
 \item{stacked_fill}{A \link{logical} to indicate that values must be \link[ggplot2:position_stack]{filled} (i.e., stacked to 100\%).}
 
-\item{horizontal}{A \link{logical} to turn the plot 90 degrees using \code{\link[ggplot2:coord_flip]{coord_flip()}}. This option also updates some theme options, so that e.g., \code{x.lbl_italic} will still apply to the original x axis.}
+\item{horizontal}{A \link{logical} to turn the plot 90 degrees using \code{\link[ggplot2:coord_flip]{coord_flip()}}. This option also updates some theme options, so that e.g., \code{x.lbl_italic} will still apply to the original X-axis.}
 
 \item{reverse}{A \link{logical} to reverse the \emph{values} of \code{category}. Use \code{legend.reverse} to reverse the \emph{legend} of \code{category}.}
 
@@ -1025,7 +1033,7 @@ Both numbers and text are supported, e.g., \code{linetype = 2} and \code{linetyp
 
 \item{legend.position}{Position of the legend, must be \code{"top"}, \code{"right"}, \code{"bottom"}, \code{"left"} or \code{"none"} (or \code{NA} or \code{NULL}), can be abbreviated. Defaults to \code{"right"} for numeric \code{category} values and 'sf' plots, and \code{"top"} otherwise.}
 
-\item{legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic}{Other settings for the legend.}
+\item{legend.reverse, legend.barheight, legend.barwidth, legend.nbin, legend.italic, legend.nrow}{Other settings for the legend.}
 
 \item{sankey.node_width}{Width of the vertical nodes in a Sankey plot.}
 
