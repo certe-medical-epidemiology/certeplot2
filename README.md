@@ -18,6 +18,9 @@ You can read the [manual with explanation about its functions here](https://cert
   <a href="https://certe-medical-epidemiology.github.io/certeapi/" target="_blank">
     <img src="https://certe-medical-epidemiology.github.io/certeapi/logo.svg" alt="The certeapi R package" style="position: absolute; left: 270px; top: 0px; width: 136px; height: 156px;">
   </a>
+  <a href="https://certe-medical-epidemiology.github.io/certellm/" target="_blank">
+    <img src="https://certe-medical-epidemiology.github.io/certellm/logo.svg" alt="The certellm R package" style="position: absolute; left: 405px; top: 0px; width: 136px; height: 156px;">
+  </a>
 
   <a href="https://certe-medical-epidemiology.github.io/certeplot2/" target="_blank">
     <img src="https://certe-medical-epidemiology.github.io/certeplot2/logo.svg" alt="The certeplot2 R package" style="position: absolute; left: 67.5px; top: 122px; width: 136px; height: 156px;">
