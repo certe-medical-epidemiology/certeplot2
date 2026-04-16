@@ -50,3 +50,38 @@ globalVariables(c(".",
                   "value",
                   "xmax",
                   "xmin"))
+
+#' @importFrom certestyle colourpicker
+interactive <- function() {
+  plot2::create_interactively(logo_path = system.file("logo.svg", package = "certeplot2"),
+                              pretty_labels = FALSE,
+                              hide_generated_code = FALSE,
+                              hide_export_buttons = TRUE,
+                              upload_tab = FALSE,
+                              css_code = paste0(
+                                "#sidebar {",
+                                "  background-color: ", colourpicker("certeblauw6"), ";",
+                                "}",
+                                ".irs-to, .irs-single {",
+                                "  background-color: ", colourpicker("certeblauw"), " !important;",
+                                "}",
+                                ".irs--shiny .irs-bar {",
+                                "  border-top: 1px solid ", colourpicker("certeblauw"), " !important;",
+                                "  border-bottom: 1px solid ", colourpicker("certeblauw"), " !important;",
+                                "  background-color: ", colourpicker("certeblauw"), " !important;",
+                                "}",
+                                "a, .optgroup-header {",
+                                "  color: ", colourpicker("certeblauw"), " !important;",
+                                "}",
+                                ".selectize-dropdown .selected {",
+                                "  background-color: ", colourpicker("certeblauw"), " !important;",
+                                "}",
+                                "#copy_btn {",
+                                "  border-color: ", colourpicker("certeblauw"), " !important;",
+                                "  background-color: ", colourpicker("certeblauw"), " !important;",
+                                "}",
+                                ".form-check-input:checked, .shiny-input-container .checkbox input:checked, .shiny-input-container .checkbox-inline input:checked, .shiny-input-container .radio input:checked, .shiny-input-container .radio-inline input:checked {",
+                                "  background-color: ", colourpicker("certeblauw"), ";",
+                                "  border-color: ", colourpicker("certeblauw"), ";",
+                                "}", collapse = "\n"))
+}
